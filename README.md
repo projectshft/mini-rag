@@ -41,8 +41,51 @@ In this app, we mimic RAG by:
 
 ### Installation
 
-1. Clone the repository:
+1.  Clone the repository:
+
     ```bash
     git clone https://github.com/projectshft/mini-rag
     cd mini-rag
     ```
+
+2.  Install dependencies:
+    `
+npm install
+	`
+
+3.  Create an .env.local file in the root directory and add your OpenAI API key:
+
+```
+OPEN_AI_API_KEY=your-api-key-here
+```
+
+4. Start the development server:
+
+```
+npm run dev
+```
+
+5. Open your browser and visit http://localhost:3000.
+
+## Example Use Case
+
+1. Enter a prompt:
+
+“I want to post about my promotion to team lead.”
+
+2. The app retrieves relevant cringy LinkedIn posts as context.
+
+3. It uses the OpenAI API to generate a post like:
+
+“Wow. Just wow. I’m so humbled to announce my promotion to team lead. This isn’t just my success; it’s OUR success. #Gratitude #Leadership”
+
+## Why This App?
+
+While this app won’t replace full-fledged RAG systems, it’s a fun way to:
+• Learn how RAG works in a simplified environment.
+• Experiment with OpenAI’s API to build context-aware responses.
+• Get a laugh out of cringy LinkedIn posts while building better ones.
+
+## Contributing
+
+Feel free to fork the repo and contribute improvements! Whether it’s enhancing the retrieval logic or adding even cringier posts, your contributions are welcome.
