@@ -2,6 +2,8 @@
 
 This is a small app that helps users create LinkedIn posts by providing them with examples of cringy LinkedIn posts as context. It’s a simplified, “poor-man’s” Retrieval-Augmented Generation (RAG) implementation built with **Next.js**, **TypeScript**, and **OpenAI’s API**.
 
+You can watch me code this up (and bumble around) here: https://youtu.be/TMNpjpHQ0l4
+
 ---
 
 ## What is RAG?
