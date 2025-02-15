@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import OpenAI from 'openai';
-
-const opeAiClient = new OpenAI({ apiKey: process.env.OPEN_AI_API_KEY });
+import { openaiClient } from '@/app/libs/openai';
 
 const cringyLinkedInPosts = [
 	'Wow. Just wow. I’m so humbled to announce that I’ve been awarded *Employee of the Decade* at [Company Name]. I never thought a small-town kid like me would ever achieve something so big. This isn’t just my win; it’s OUR win. To everyone who believed in me when I doubted myself, thank you. #Gratitude #NeverStopDreaming #Leadership',
@@ -23,7 +21,7 @@ export async function POST(req: Request, res: NextResponse) {
 	const body = await req.json();
 	const { search } = body;
 
-	const searchResult = await opeAiClient.chat.completions.create({
+	const searchResult = await openaiClient.chat.completions.create({
 		model: 'gpt-4o-mini',
 		response_format: {
 			type: 'json_object',
