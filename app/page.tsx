@@ -1,56 +1,207 @@
 'use client';
-import { useState } from 'react';
 
-export default function Home() {
-	const [search, setSearch] = useState<string>('');
-	const [response, setResponse] = useState<{
-		post: string;
-		title: string;
-		hashtags: string[];
-	} | null>(null);
+import { useState, useRef } from 'react';
+import { Message } from 'ai/react';
 
-	const handleSearch = async () => {
-		const response = await fetch('/api/search', {
-			method: 'POST',
-			body: JSON.stringify({ search }),
-			headers: {
-				'Content-Type': 'application/json',
-			},
-		});
+export default function Chat() {
+	const [messages, setMessages] = useState<Message[]>([]);
+	const [isRecording, setIsRecording] = useState(false);
+	const [inputText, setInputText] = useState('');
+	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+	const audioChunksRef = useRef<Blob[]>([]);
 
-		const data = await response.json();
+	const startRecording = async () => {
+		try {
+			const stream = await navigator.mediaDevices.getUserMedia({
+				audio: true,
+			});
+			const mediaRecorder = new MediaRecorder(stream);
+			mediaRecorderRef.current = mediaRecorder;
+			audioChunksRef.current = [];
 
-		setResponse(data.response);
+			mediaRecorder.ondataavailable = (event) => {
+				if (event.data.size > 0) {
+					audioChunksRef.current.push(event.data);
+				}
+			};
+
+			mediaRecorder.onstop = async () => {
+				const audioBlob = new Blob(audioChunksRef.current, {
+					type: 'audio/webm',
+				});
+				await sendAudioMessage(audioBlob);
+			};
+
+			mediaRecorder.start();
+			setIsRecording(true);
+		} catch (error) {
+			console.error('Error accessing microphone:', error);
+		}
+	};
+
+	const stopRecording = () => {
+		if (mediaRecorderRef.current && isRecording) {
+			mediaRecorderRef.current.stop();
+			mediaRecorderRef.current.stream
+				.getTracks()
+				.forEach((track) => track.stop());
+			setIsRecording(false);
+		}
+	};
+
+	const sendAudioMessage = async (audioBlob: Blob) => {
+		const formData = new FormData();
+		formData.append('audio', audioBlob);
+
+		try {
+			const response = await fetch('/api/audio-chat', {
+				method: 'POST',
+				body: formData,
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to send audio message');
+			}
+
+			const data = await response.json();
+
+			setMessages((prev) => [
+				...prev,
+				{
+					id: Date.now().toString(),
+					role: 'user',
+					content: '🎤 Audio message sent',
+				},
+				{
+					id: (Date.now() + 1).toString(),
+					role: 'assistant',
+					content: data.response,
+				},
+			]);
+		} catch (error) {
+			console.error('Error sending audio:', error);
+		}
+	};
+
+	const sendTextMessage = async (e: React.FormEvent) => {
+		e.preventDefault();
+		if (!inputText.trim()) return;
+
+		try {
+			const response = await fetch('/api/audio-chat', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({ text: inputText }),
+			});
+
+			if (!response.ok) {
+				throw new Error('Failed to send text message');
+			}
+
+			const data = await response.json();
+
+			setMessages((prev) => [
+				...prev,
+				{
+					id: Date.now().toString(),
+					role: 'user',
+					content: inputText,
+				},
+				{
+					id: (Date.now() + 1).toString(),
+					role: 'assistant',
+					content: data.response,
+				},
+			]);
+
+			setInputText('');
+		} catch (error) {
+			console.error('Error sending text:', error);
+		}
 	};
 
 	return (
-		<div className='grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]'>
-			<main className='flex flex-col gap-8 row-start-2 items-center sm:items-start'>
-				{response?.post && (
-					<div className='flex flex-col gap-4 items-center'>
-						<h2 className='text-2xl font-bold'>{response.title}</h2>
-						<p>{response.post}</p>
-						<div className='flex gap-2'>
-							{response.hashtags.map((hashtag: string) => (
-								<span
-									key={hashtag}
-									className='rounded bg-blue-300 text-white p-1'
-								>
-									{hashtag}
-								</span>
-							))}
-						</div>
+		<div className='flex flex-col w-full max-w-xl py-24 mx-auto stretch gap-4 px-4'>
+			<h1 className='text-3xl text-center font-bold text-gray-400'>
+				Brian Clone
+			</h1>
+			{messages?.map((m: Message) => (
+				<div
+					key={m.id}
+					className={`flex ${
+						m.role === 'assistant' ? 'flex-row' : 'flex-row-reverse'
+					} items-start gap-2 w-full`}
+				>
+					<div
+						className={`w-8 h-8 rounded-full flex items-center justify-center ${
+							m.role === 'assistant'
+								? 'bg-blue-500 text-white'
+								: 'bg-gray-200 text-gray-600'
+						}`}
+					>
+						{m.role === 'assistant' ? '🤖' : '👤'}
 					</div>
-				)}
-				<input
-					className='rounded border bg-white text-black'
-					onChange={(e) => setSearch(e.target.value)}
-					type='text'
-				/>
-				<button onClick={handleSearch} className='rounded bg-blue-300'>
-					Search
+
+					<div
+						className={`flex flex-col gap-1 max-w-[80%] text-gray-800 ${
+							m.role === 'assistant'
+								? 'bg-blue-100 rounded-tr-xl rounded-br-xl rounded-bl-xl'
+								: 'bg-gray-100 rounded-tl-xl rounded-bl-xl rounded-br-xl'
+						} p-4`}
+					>
+						<p className='whitespace-pre-wrap'>{m.content}</p>
+						{m.toolInvocations?.map((toolInvocation) => (
+							<div
+								key={toolInvocation.toolCallId}
+								className='bg-white/50 rounded-lg p-4 mt-2 text-gray-800'
+							>
+								{toolInvocation.toolName === 'createPost' &&
+									('result' in toolInvocation ? (
+										<div className='flex flex-col gap-2'>
+											<h3 className='font-semibold'>
+												Generated LinkedIn Post:
+											</h3>
+											<div className='whitespace-pre-wrap'>
+												{toolInvocation.result}
+											</div>
+										</div>
+									) : (
+										<div className='text-gray-500'>
+											Generating your LinkedIn post...
+										</div>
+									))}
+							</div>
+						))}
+					</div>
+				</div>
+			))}
+
+			<div className='fixed bottom-0 left-0 right-0 flex justify-center items-center gap-4 p-4 bg-white/80 backdrop-blur-sm'>
+				<form
+					onSubmit={sendTextMessage}
+					className='flex-1 max-w-xl mx-4'
+				>
+					<input
+						type='text'
+						value={inputText}
+						onChange={(e) => setInputText(e.target.value)}
+						placeholder='Type your message...'
+						className='w-full p-4 border border-gray-300 rounded-full shadow-xl text-black'
+						disabled={isRecording}
+					/>
+				</form>
+
+				<button
+					onClick={isRecording ? stopRecording : startRecording}
+					className={`w-16 h-16 rounded-full shadow-xl flex items-center justify-center ${
+						isRecording ? 'bg-red-500' : 'bg-blue-500'
+					} text-white`}
+				>
+					{isRecording ? '⏹️' : '🎤'}
 				</button>
-			</main>
+			</div>
 		</div>
 	);
 }
