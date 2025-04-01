@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { typedRoute } from '../typedRoute';
 import { openai } from '@ai-sdk/openai';
 
-const searchDocuments = async (query: string) => {
+const searchDocuments = async (query: string): Promise<string> => {
 	try {
 		const embeddings = await openaiClient.embeddings.create({
 			input: query,
@@ -16,9 +16,11 @@ const searchDocuments = async (query: string) => {
 
 		const docs = await pineconeClient.Index('linkedin').query({
 			vector: embedding,
-			topK: 6,
+			topK: 3,
 			includeMetadata: true,
 		});
+
+		console.log(docs.matches);
 
 		const rerankedDocs = await pineconeClient.inference.rerank(
 			'bge-reranker-v2-m3',
@@ -26,7 +28,7 @@ const searchDocuments = async (query: string) => {
 			docs.matches.map((match) => match.metadata?.post as string)
 		);
 
-		return rerankedDocs.data.map((result) => result.document);
+		return rerankedDocs.data.map((result) => result.document).join('\n');
 	} catch (error) {
 		console.error({ error });
 		throw error;
@@ -50,7 +52,6 @@ const handler = typedRoute(
 	async ({ messages }) => {
 		try {
 			const documents = await searchDocuments(messages[0].content);
-
 
 			const result = streamText({
 				model: openai('gpt-4o-mini'),
@@ -80,16 +81,7 @@ const handler = typedRoute(
 						${messages[0].content}
 
 						Example posts to match style and tone:
-						${documents
-							.map(
-								(doc, index) =>
-									`Example ${index + 1}:\n${JSON.stringify(
-										doc
-										null,
-										2
-									)}\n`
-							)
-							.join('\n')}
+						${documents}
 
 						Create a new post that follows these patterns while addressing the user's request.`,
 					},
