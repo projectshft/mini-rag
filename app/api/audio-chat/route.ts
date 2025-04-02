@@ -1,28 +1,6 @@
 import { NextRequest } from 'next/server';
 import { openaiClient } from '@/app/libs/openai';
-import { pineconeClient } from '@/app/libs/pinecone';
-
-const searchDocuments = async (query: string) => {
-	try {
-		const embeddings = await openaiClient.embeddings.create({
-			input: query,
-			model: 'text-embedding-ada-002', // TODO update to text-embedding-3-small
-		});
-
-		const embedding = embeddings.data[0].embedding;
-
-		const docs = await pineconeClient.Index('linkedin').query({
-			vector: embedding,
-			topK: 3,
-			includeMetadata: true,
-		});
-
-		return docs.matches.map((doc) => doc.metadata?.post).join('\n');
-	} catch (error) {
-		console.error({ error });
-		throw error;
-	}
-};
+import { searchDocuments } from '@/app/libs/pinecone';
 
 export async function POST(request: NextRequest) {
 	try {
@@ -31,7 +9,6 @@ export async function POST(request: NextRequest) {
 		const contentType = request.headers.get('content-type') || '';
 
 		if (contentType.includes('multipart/form-data')) {
-			// Handle audio input
 			const formData = await request.formData();
 			const audioFile = formData.get('audio') as Blob;
 
@@ -39,7 +16,6 @@ export async function POST(request: NextRequest) {
 				return new Response('No audio file received', { status: 400 });
 			}
 
-			// Transcribe audio to text
 			const result = await openaiClient.audio.transcriptions.create({
 				file: new File([audioFile], 'audio.webm', {
 					type: 'audio/webm',
@@ -90,7 +66,9 @@ export async function POST(request: NextRequest) {
 					role: 'user',
 					content: `User's input: ${userInput}
 
-					Example posts to match style and tone: ${documents}`,
+					Example posts to match style and tone: ${documents
+						.map((doc) => doc.metadata?.post)
+						.join('\n')}`,
 				},
 			],
 			temperature: 0.7,
