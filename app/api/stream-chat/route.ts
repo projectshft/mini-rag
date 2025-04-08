@@ -60,7 +60,7 @@ const handler = typedRoute(
 			return result.toDataStreamResponse({
 				getErrorMessage(error) {
 					console.error({ error });
-					console.log(JSON.stringify(error, null, 2));
+
 					return 'An error occurred';
 				},
 			});

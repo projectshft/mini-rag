@@ -26,7 +26,6 @@ export async function POST(request: NextRequest) {
 			userInput = result.text;
 			transcription = result.text;
 		} else {
-			// Handle text input
 			const { text } = await request.json();
 			if (!text) {
 				return new Response('No text received', { status: 400 });
@@ -45,7 +44,8 @@ export async function POST(request: NextRequest) {
 			messages: [
 				{
 					role: 'system',
-					content: `You are a LinkedIn post generation expert. Your task is to create engaging LinkedIn posts that match the style and tone of successful examples.
+					content: `
+					You are a LinkedIn post generation expert. Your task is to create engaging LinkedIn posts that match the style and tone of successful examples.
 
 					Instructions:
 					1. Analyze the example posts provided below for:
