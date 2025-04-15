@@ -2,14 +2,13 @@ import * as fs from 'fs';
 import { Pinecone } from '@pinecone-database/pinecone';
 import * as path from 'path';
 import { OpenAI } from 'openai';
+import dotenv from 'dotenv';
 
-const OPENAI_API_KEY = '';
+dotenv.config();
 
-const PINECONE_API_KEY = '';
-
-const openaiClient = new OpenAI({ apiKey: OPENAI_API_KEY });
+const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const pineconeClient = new Pinecone({
-	apiKey: PINECONE_API_KEY,
+	apiKey: process.env.PINECONE_API_KEY || '',
 });
 
 async function retryWithBackoff<T>(
@@ -31,49 +30,61 @@ async function retryWithBackoff<T>(
 }
 
 async function main() {
-	const indexName = 'linkedin';
+	const indexName = 'articles';
 	const index = await ensureIndex(pineconeClient, indexName, 1536);
 
-	const filePath = path.resolve(__dirname, 'data', 'linkedinposts.txt');
-	const fileContent = fs.readFileSync(filePath, 'utf8');
+	const dataDir = path.resolve(__dirname, 'data');
+	const conservativeDir = path.join(dataDir, 'conservative');
+	const liberalDir = path.join(dataDir, 'liberal');
 
-	// Split posts at the metadata pattern and URN
-	const posts = fileContent
-		.split(/,TEXT,.*?urn:li:activity:\d+,/s)
-		.filter(Boolean)
-		.map((post) => post.trim())
-		.filter((post) => post.length > 0);
+	// Process conservative articles
+	await processArticles(conservativeDir, 'conservative', index);
 
-	console.log(`Found ${posts.length} posts to process`);
+	// Process liberal articles
+	await processArticles(liberalDir, 'liberal', index);
 
-	// Process each post sequentially
-	for (let i = 0; i < posts.length; i++) {
-		const post = posts[i];
+	console.log('Finished uploading all articles to Pinecone.');
+}
+
+async function processArticles(
+	dir: string,
+	bias: 'conservative' | 'liberal',
+	index: ReturnType<typeof pineconeClient.Index>
+) {
+	const files = fs.readdirSync(dir);
+	console.log(`Processing ${files.length} ${bias} articles...`);
+
+	for (let i = 0; i < files.length; i++) {
+		const file = files[i];
+		const filePath = path.join(dir, file);
+
 		try {
-			const embedding = await getEmbedding(openaiClient, post);
+			const content = fs.readFileSync(filePath, 'utf8');
+			const embedding = await getEmbedding(openaiClient, content);
 
 			await retryWithBackoff(() =>
 				index.upsert([
 					{
-						id: `post-${i + 1}`,
+						id: `${bias}-${i + 1}`,
 						values: embedding,
 						metadata: {
-							post,
+							content,
+							bias,
+							source: file,
 						},
 					},
 				])
 			);
 
 			console.log(
-				`Uploaded post ${i + 1} of ${posts.length} to Pinecone.`
+				`Uploaded ${bias} article ${i + 1} of ${
+					files.length
+				} to Pinecone.`
 			);
 		} catch (error) {
-			console.error(`Error processing post ${i + 1}:`, error);
-			console.error('Post content:', post.substring(0, 100) + '...');
+			console.error(`Error processing ${bias} article ${file}:`, error);
 		}
 	}
-
-	console.log('Finished uploading posts to Pinecone.');
 }
 
 async function ensureIndex(
@@ -107,7 +118,7 @@ async function ensureIndex(
 
 async function getEmbedding(api: OpenAI, text: string): Promise<number[]> {
 	const response = await api.embeddings.create({
-		model: 'text-embedding-ada-002', // TODO update to text-embedding-3-small
+		model: 'text-embedding-3-small',
 		input: text,
 	});
 	return response.data[0].embedding;

@@ -4,7 +4,7 @@ import o200k_base from 'js-tiktoken/ranks/o200k_base';
 import { pineconeClient } from '@/app/libs/pinecone';
 import { openaiClient } from '@/app/libs/openai/openai';
 
-const pineconeIndex = pineconeClient.Index('news');
+const pineconeIndex = pineconeClient.Index('articles');
 
 // OpenAI's recommended chunk size for embeddings
 const MAX_TOKENS = 512;
@@ -44,10 +44,11 @@ function createSemanticChunks(text: string): string[] {
 	return chunks;
 }
 
-export async function vectorizeArticle(
-	article: { content: string; url: string; title?: string },
-	topic: string = 'general'
-): Promise<void> {
+export async function vectorizeArticle(article: {
+	content: string;
+	bias: string;
+	topic?: string;
+}): Promise<void> {
 	if (!article.content || article.content.length < 20) {
 		throw new Error('Article content is too short.');
 	}
@@ -65,12 +66,12 @@ export async function vectorizeArticle(
 
 		await pineconeIndex.upsert([
 			{
-				id: `${article.url}-chunk-${index}`,
+				id: `${article.topic}-chunk-${index}`,
 				values: vector,
 				metadata: {
-					title: article.title || 'Untitled',
-					url: article.url,
-					topic,
+					content: article.content,
+					topic: article.topic ?? 'general',
+					bias: article.bias,
 					chunkIndex: index,
 					totalChunks: chunks.length,
 				},

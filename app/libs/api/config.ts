@@ -7,6 +7,7 @@ export const apiSchemas = {
 			text: z.string(),
 			url: z.string().optional(),
 			topic: z.string().optional(),
+			bias: z.string(),
 		}),
 		output: z.object({
 			message: z.string(),
@@ -20,7 +21,7 @@ export const apiSchemas = {
 			audio: z.instanceof(Blob).optional(),
 		}),
 		output: z.object({
-			selectedAgent: z.enum(['news', 'linkedin', 'general']),
+			selectedAgent: z.enum(['articles', 'linkedin', 'general']),
 			model: z.enum([
 				'gpt-4o-mini',
 				'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt',
@@ -35,7 +36,7 @@ export const apiSchemas = {
 				'gpt-4o-mini',
 				'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt',
 			]),
-			selectedAgent: z.enum(['news', 'linkedin', 'general']),
+			selectedAgent: z.enum(['articles', 'linkedin', 'general']),
 		}),
 
 		output: z.string(),

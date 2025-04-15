@@ -7,7 +7,9 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
-		"google-news": "ts-node app/services/run-google-news.ts"
+		"estimate-costs": "npx ts-node app/scripts/estimate-training-cost.ts",
+		"train": "npx ts-node app/scripts/upload-training-data.ts",
+		"upload-articles": "npx ts-node app/scripts/uploadArticlesToPinecone.ts"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.3.0",
@@ -16,7 +18,6 @@
 		"@types/node-fetch": "^2.6.12",
 		"@types/puppeteer": "^7.0.4",
 		"ai": "^4.2.0",
-		"cheerio": "^1.0.0",
 		"dot-env": "^0.0.1",
 		"dotenv": "^16.5.0",
 		"fs": "^0.0.1-security",
@@ -26,7 +27,6 @@
 		"node-fetch": "^3.3.2",
 		"openai": "^4.80.1",
 		"pinecone-client": "^2.0.0",
-		"puppeteer": "^24.4.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-markdown": "^10.1.0",

@@ -6,31 +6,45 @@ const pinecone = new Pinecone({
 });
 
 type NewsMetadata = {
-	text: string;
+	content: string;
+	bias: string;
 };
 
 async function searchVectors(query: string) {
-	const index = pinecone.Index('news');
+	console.log(
+		'Starting search with API key:',
+		process.env.PINECONE_API_KEY?.slice(0, 5) + '...'
+	);
+	const index = pinecone.Index('articles');
+
+	console.log('Getting embeddings for query:', query);
 	const queryEmbedding = await openaiClient.embeddings.create({
 		model: 'text-embedding-3-small',
 		input: query,
 	});
 
+	console.log(
+		'Querying Pinecone with embedding of length:',
+		queryEmbedding.data[0].embedding.length
+	);
 	const searchResults = await index.query({
 		vector: queryEmbedding.data[0].embedding,
 		topK: 5,
 		includeMetadata: true,
 	});
 
+	console.log('Search results:', JSON.stringify(searchResults, null, 2));
 	return (
 		searchResults.matches
-			?.map((match) => (match.metadata as NewsMetadata)?.text)
+			?.map((match) => (match.metadata as NewsMetadata)?.content)
 			.filter(Boolean) || []
 	);
 }
 
 export async function processNewsQuery(query: string, model: string) {
 	const relevantNews = await searchVectors(query);
+
+	console.log('relevantNews', { relevantNews });
 
 	const response = await openaiClient.chat.completions.create({
 		model: model,

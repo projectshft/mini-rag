@@ -5,7 +5,7 @@ import { typedRoute } from '../typedRoute';
 
 const agents = {
 	linkedin: processLinkedInQuery,
-	news: processNewsQuery,
+	articles: processNewsQuery,
 	general: processGeneralQuery,
 } as const;
 

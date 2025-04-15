@@ -3,7 +3,7 @@ import { z } from 'zod';
 
 export const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
-export type AgentType = 'linkedin' | 'news' | 'general';
+export type AgentType = 'linkedin' | 'articles' | 'general';
 
 export type AgentConfig = {
 	model: 'gpt-4o-mini' | 'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt';
@@ -18,10 +18,11 @@ export const AGENT_CONFIG: Record<AgentType, AgentConfig> = {
 		description:
 			'Specialized in LinkedIn-related posts about tech using a fine-tuned model',
 	},
-	news: {
+	articles: {
 		model: 'gpt-4o-mini',
-		name: 'news',
-		description: 'Handles news-related queries using vector search',
+		name: 'articles',
+		description:
+			'Handles news-related queries for conservative and liberal news viewpoints using vector search',
 	},
 	general: {
 		model: 'gpt-4o-mini',
@@ -31,6 +32,6 @@ export const AGENT_CONFIG: Record<AgentType, AgentConfig> = {
 };
 
 export const agentResponseSchema = z.object({
-	selectedAgent: z.enum(['news', 'linkedin', 'general']),
+	selectedAgent: z.enum(['articles', 'linkedin', 'general']),
 	agentQuery: z.string(),
 });

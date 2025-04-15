@@ -83,7 +83,7 @@ This repository serves as a practical guide for developers to learn:
 
 4. **Database Setup**
 
-    - Create a Pinecone index named 'news'
+    - Create a Pinecone index named 'articles'
     - Configure the index with dimension 1536 (for OpenAI embeddings)
 
 5. **Training Data**

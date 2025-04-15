@@ -23,12 +23,8 @@ export function typedRoute<T extends keyof typeof apiSchemas>(
 
 		const response = await handler(result.data);
 
-		console.log('response', { response });
-
 		if (response) {
 			const outputResult = outputSchema.safeParse(response);
-
-			console.log('outputResult', { outputResult });
 
 			if (!outputResult.success) {
 				return NextResponse.json(

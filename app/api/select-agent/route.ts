@@ -33,7 +33,7 @@ export const POST = typedRoute(
 					Output:
 					{
 						agentQuery: string,
-						selectedAgent: 'news' | 'linkedin' | 'general',
+						selectedAgent: 'articles' | 'linkedin' | 'general',
 					}
 				`,
 				});
@@ -41,7 +41,7 @@ export const POST = typedRoute(
 			const parsedUserQuery = z
 				.object({
 					agentQuery: z.string(),
-					selectedAgent: z.enum(['news', 'linkedin', 'general']),
+					selectedAgent: z.enum(['articles', 'linkedin', 'general']),
 				})
 				.parse(audioTranscription);
 
