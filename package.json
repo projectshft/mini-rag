@@ -6,20 +6,30 @@
 		"dev": "next dev --turbopack",
 		"build": "next build",
 		"start": "next start",
-		"lint": "next lint"
+		"lint": "next lint",
+		"google-news": "ts-node app/services/run-google-news.ts"
 	},
 	"dependencies": {
 		"@ai-sdk/openai": "^1.3.0",
 		"@pinecone-database/pinecone": "^5.1.1",
+		"@types/cheerio": "^0.22.35",
+		"@types/node-fetch": "^2.6.12",
 		"@types/puppeteer": "^7.0.4",
 		"ai": "^4.2.0",
+		"cheerio": "^1.0.0",
+		"dot-env": "^0.0.1",
+		"dotenv": "^16.5.0",
 		"fs": "^0.0.1-security",
+		"js-tiktoken": "^1.0.19",
+		"lucide-react": "^0.488.0",
 		"next": "15.1.6",
+		"node-fetch": "^3.3.2",
 		"openai": "^4.80.1",
 		"pinecone-client": "^2.0.0",
 		"puppeteer": "^24.4.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
+		"react-markdown": "^10.1.0",
 		"readline": "^1.3.0",
 		"type-fest": "^4.33.0",
 		"zod": "^3.24.1"
@@ -33,6 +43,7 @@
 		"eslint-config-next": "15.1.6",
 		"postcss": "^8",
 		"tailwindcss": "^3.4.1",
+		"ts-node": "^10.9.2",
 		"typescript": "^5"
 	}
 }

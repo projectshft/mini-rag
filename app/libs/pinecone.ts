@@ -3,7 +3,7 @@ import {
 	RecordMetadata,
 	ScoredPineconeRecord,
 } from '@pinecone-database/pinecone';
-import { openaiClient } from '@/app/libs/openai';
+import { openaiClient } from '@/app/libs/openai/openai';
 
 export const pineconeClient = new Pinecone({
 	apiKey: process.env.PINECONE_API_KEY as string,

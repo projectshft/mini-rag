@@ -1,24 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
+import { apiSchemas } from '@/app/libs/api/config';
 
-import { z, ZodTypeAny } from 'zod';
-
-export function typedRoute<
-	InputSchema extends ZodTypeAny,
-	OutputSchema extends ZodTypeAny
->(
-	{
-		input,
-		output,
-	}: {
-		input: InputSchema;
-		output: OutputSchema;
-	},
-	handler: ({
-		...reqBody
-	}: z.infer<InputSchema>) => Promise<z.infer<OutputSchema>> | void
+export function typedRoute<T extends keyof typeof apiSchemas>(
+	route: T,
+	handler: (
+		reqBody: z.infer<(typeof apiSchemas)[T]['input']>
+	) => Promise<z.infer<(typeof apiSchemas)[T]['output']>> | void
 ) {
 	return async (req: NextRequest) => {
-		const result = input.safeParse(await req.json());
+		const inputSchema = apiSchemas[route].input;
+		const outputSchema = apiSchemas[route].output;
+
+		const result = inputSchema.safeParse(await req.json());
 
 		if (!result.success) {
 			return NextResponse.json(
@@ -29,8 +23,12 @@ export function typedRoute<
 
 		const response = await handler(result.data);
 
+		console.log('response', { response });
+
 		if (response) {
-			const outputResult = output.safeParse(response);
+			const outputResult = outputSchema.safeParse(response);
+
+			console.log('outputResult', { outputResult });
 
 			if (!outputResult.success) {
 				return NextResponse.json(
@@ -39,7 +37,7 @@ export function typedRoute<
 				);
 			}
 
-			return outputResult.data;
+			return NextResponse.json(outputResult.data, { status: 200 });
 		}
 
 		return NextResponse.json({}, { status: 200 });

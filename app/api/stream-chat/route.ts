@@ -1,74 +1,23 @@
-import { searchDocuments } from '@/app/libs/pinecone';
-import { streamText } from 'ai';
-import { z } from 'zod';
+import { processLinkedInQuery } from '@/app/libs/openai/agents/linkedin-agent';
+import { processNewsQuery } from '@/app/libs/openai/agents/news-agent';
+import { processGeneralQuery } from '@/app/libs/openai/agents/general-agent';
 import { typedRoute } from '../typedRoute';
-import { openai } from '@ai-sdk/openai';
 
-const chatRequestSchema = z.object({
-	messages: z.array(
-		z.object({
-			role: z.enum(['user', 'assistant', 'system']),
-			content: z.string(),
-		})
-	),
-});
+const agents = {
+	linkedin: processLinkedInQuery,
+	news: processNewsQuery,
+	general: processGeneralQuery,
+} as const;
 
-const handler = typedRoute(
-	{
-		input: chatRequestSchema,
-		output: z.any(),
-	},
-	async ({ messages }) => {
-		try {
-			const documents = await searchDocuments(messages[0].content);
-
-			const result = streamText({
-				model: openai('gpt-4o-mini'),
-				maxSteps: 2,
-				toolChoice: 'required',
-				temperature: 0.7,
-				messages: [
-					{
-						role: 'system',
-						content: `You are a LinkedIn post generation expert. Your task is to create engaging LinkedIn posts that match the style and tone of successful examples.
-						Instructions:
-						1. Analyze the example posts provided below for:
-						- Writing style (formal/informal)
-						- Tone of voice
-						- Structure and formatting
-						- Use of emojis, hashtags, or special characters
-						- Length and paragraph breaks
-
-						2. Create a new post that:
-						- Maintains the same writing style and tone
-						- Uses similar structural elements
-						- Matches the level of professionalism
-						- Incorporates similar engagement techniques
-						- Addresses the user's specific request
-
-						User's request:
-						${messages[0].content}
-
-						Example posts to match style and tone:
-						${documents.map((doc) => doc.metadata?.post).join('\n')}
-
-						Create a new post that follows these patterns while addressing the user's request.`,
-					},
-				],
-			});
-
-			return result.toDataStreamResponse({
-				getErrorMessage(error) {
-					console.error({ error });
-
-					return 'An error occurred';
-				},
-			});
-		} catch (error) {
-			console.error({ error });
-			return new Response('Error', { status: 500 });
+export const POST = typedRoute(
+	'/api/stream-chat',
+	async ({ agentQuery, selectedAgent, model }) => {
+		if (!(selectedAgent in agents)) {
+			throw new Error('Invalid agent selected');
 		}
+
+		const response = await agents[selectedAgent](agentQuery, model);
+
+		return response || 'Oops, something went wrong';
 	}
 );
-
-export { handler as POST };

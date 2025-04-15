@@ -2,14 +2,32 @@
 
 import { useState, useRef } from 'react';
 import { Message } from 'ai/react';
+import { useChat } from '@ai-sdk/react';
+import { fetchApiRoute } from '@/app/libs/api/client';
+import { Mic, MicOff, Bot, User, Sparkles } from 'lucide-react';
+import Markdown from 'react-markdown';
+
+const examplePosts = [
+	'Write a LinkedIn post about learning JavaScript',
+	'Create a post about nailing technical interviews',
+	'Write a conservative perspective on tariffs',
+	'Write a liberal perspective on tariffs',
+];
 
 export default function Chat() {
-	const [messages, setMessages] = useState<Message[]>([]);
 	const [isRecording, setIsRecording] = useState(false);
-	const [isLoading, setIsLoading] = useState(false);
 	const [inputText, setInputText] = useState('');
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 	const audioChunksRef = useRef<Blob[]>([]);
+
+	const { append, messages, status } = useChat({
+		api: '/api/stream-chat',
+	});
+
+	const handleExamplePostClick = (content: string) => {
+		setInputText(content);
+		handleTextSubmit({ preventDefault: () => {} } as React.FormEvent);
+	};
 
 	const startRecording = async () => {
 		try {
@@ -51,94 +69,98 @@ export default function Chat() {
 	};
 
 	const sendAudioMessage = async (audioBlob: Blob) => {
-		setIsLoading(true);
-		const formData = new FormData();
-		formData.append('audio', audioBlob);
-
 		try {
-			const response = await fetch('/api/audio-chat', {
-				method: 'POST',
-				body: formData,
+			const { selectedAgent, agentQuery, model } = await fetchApiRoute(
+				'/api/select-agent',
+				{
+					audio: audioBlob,
+				}
+			);
+
+			// Add the transcribed text as a user message
+			await append({
+				content: `Query: ${agentQuery} using ${selectedAgent} agent`,
+				role: 'user',
 			});
 
-			if (!response.ok) {
-				throw new Error('Failed to send audio message');
-			}
+			const agentResponse = await fetchApiRoute('/api/stream-chat', {
+				selectedAgent,
+				agentQuery,
+				model,
+			});
 
-			const data = await response.json();
-
-			// Set the transcribed text in the input
-			setInputText(data.transcription || '🎤 Audio message sent');
-
-			setMessages((prev) => [
-				...prev,
-				{
-					id: Date.now().toString(),
-					role: 'user',
-					content: data.transcription || '🎤 Audio message sent',
-				},
-				{
-					id: (Date.now() + 1).toString(),
-					role: 'assistant',
-					content: data.response,
-				},
-			]);
+			append({
+				content: agentResponse,
+				role: 'assistant',
+			});
 		} catch (error) {
 			console.error('Error sending audio:', error);
-		} finally {
-			setIsLoading(false);
 		}
 	};
 
-	const sendTextMessage = async (e: React.FormEvent) => {
+	const handleTextSubmit = async (e: React.FormEvent) => {
 		e.preventDefault();
 		if (!inputText.trim()) return;
 
-		setIsLoading(true);
 		try {
-			const response = await fetch('/api/audio-chat', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json',
-				},
-				body: JSON.stringify({ text: inputText }),
+			const { selectedAgent, agentQuery, model } = await fetchApiRoute(
+				'/api/select-agent',
+				{
+					userQuery: inputText,
+				}
+			);
+
+			await append({
+				content: `Query: ${agentQuery} using ${selectedAgent} agent`,
+				role: 'user',
 			});
 
-			if (!response.ok) {
-				throw new Error('Failed to send text message');
-			}
-
-			const data = await response.json();
-
-			setMessages((prev) => [
-				...prev,
-				{
-					id: Date.now().toString(),
-					role: 'user',
-					content: inputText,
-				},
-				{
-					id: (Date.now() + 1).toString(),
-					role: 'assistant',
-					content: data.response,
-				},
-			]);
-
 			setInputText('');
+
+			const agentResponse = await fetchApiRoute('/api/stream-chat', {
+				selectedAgent,
+				agentQuery,
+				model,
+			});
+
+			append({
+				content: agentResponse,
+				role: 'assistant',
+			});
 		} catch (error) {
 			console.error('Error sending text:', error);
-		} finally {
-			setIsLoading(false);
 		}
 	};
 
+	const isSubmitting = status === 'submitted';
+
 	return (
-		<div className='flex flex-col w-full max-w-xl py-24 mx-auto stretch gap-4 px-4'>
-			<h1 className='text-3xl text-center font-bold text-gray-400'>
-				Brian Clone
+		<div className='min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 py-12'>
+			<h1 className='text-3xl font-bold text-center text-gray-300 mb-6'>
+				News and Posts AI
 			</h1>
 
-			<div className='flex-1 overflow-y-auto space-y-4'>
+			{!messages?.length && (
+				<div className='w-full max-w-4xl mb-8'>
+					<h2 className='text-xl font-semibold text-gray-300 mb-4 flex items-center gap-2'>
+						<Sparkles className='w-5 h-5' />
+						Example Prompts
+					</h2>
+					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+						{examplePosts.map((post, index) => (
+							<button
+								key={index}
+								onClick={() => handleExamplePostClick(post)}
+								className='p-4 rounded-xl bg-gray-800 hover:bg-gray-700 transition-colors text-left'
+							>
+								<p className='text-gray-200'>{post}</p>
+							</button>
+						))}
+					</div>
+				</div>
+			)}
+
+			<div className='flex-1 w-full max-w-xl overflow-y-auto space-y-4 mb-20'>
 				{messages?.map((m: Message) => (
 					<div
 						key={m.id}
@@ -152,50 +174,41 @@ export default function Chat() {
 							className={`w-8 h-8 rounded-full flex items-center justify-center ${
 								m.role === 'assistant'
 									? 'bg-blue-500 text-white'
-									: 'bg-gray-200 text-gray-600'
+									: 'bg-gray-700 text-white'
 							}`}
 						>
-							{m.role === 'assistant' ? '🤖' : '👤'}
+							{m.role === 'assistant' ? (
+								<Bot className='w-6 h-6' />
+							) : (
+								<User className='w-6 h-6' />
+							)}
 						</div>
 
 						<div
-							className={`flex flex-col gap-1 max-w-[80%] text-gray-800 ${
+							className={`flex flex-col gap-1 max-w-[80%] ${
 								m.role === 'assistant'
-									? 'bg-blue-100 rounded-tr-xl rounded-br-xl rounded-bl-xl'
-									: 'bg-gray-100 rounded-tl-xl rounded-bl-xl rounded-br-xl'
+									? 'bg-[#63a4ff] text-white rounded-2xl shadow-lg'
+									: 'bg-[#1f1f1f] text-gray-200 rounded-2xl'
 							} p-4`}
 						>
-							<p className='whitespace-pre-wrap'>{m.content}</p>
-							{m.toolInvocations?.map((toolInvocation) => (
-								<div
-									key={toolInvocation.toolCallId}
-									className='bg-white/50 rounded-lg p-4 mt-2 text-gray-800'
-								>
-									{toolInvocation.toolName === 'createPost' &&
-										('result' in toolInvocation ? (
-											<div className='flex flex-col gap-2'>
-												<h3 className='font-semibold'>
-													Generated LinkedIn Post:
-												</h3>
-												<div className='whitespace-pre-wrap'>
-													{toolInvocation.result}
-												</div>
-											</div>
-										) : (
-											<div className='text-gray-500'>
-												Generating your LinkedIn post...
-											</div>
-										))}
-								</div>
-							))}
+							<div className='whitespace-pre-wrap text-lg'>
+								<Markdown>{m.content}</Markdown>
+							</div>
 						</div>
 					</div>
 				))}
+				{isSubmitting && (
+					<div className='flex justify-center items-center'>
+						<span className='text-gray-400 animate-pulse'>
+							Thinking...
+						</span>
+					</div>
+				)}
 			</div>
 
-			<div className='fixed bottom-0 left-0 right-0 flex justify-center items-center gap-4 p-4 bg-white/80 backdrop-blur-sm'>
+			<div className='fixed bottom-0 left-0 right-0 flex justify-center items-center gap-4 p-4 bg-white/10 backdrop-blur-md border-t border-white/10'>
 				<form
-					onSubmit={sendTextMessage}
+					onSubmit={handleTextSubmit}
 					className='flex-1 max-w-xl mx-4'
 				>
 					<input
@@ -203,28 +216,23 @@ export default function Chat() {
 						value={inputText}
 						onChange={(e) => setInputText(e.target.value)}
 						placeholder='Type your message...'
-						className='w-full p-4 border border-gray-300 rounded-full shadow-xl text-black'
-						disabled={isRecording || isLoading}
+						className='w-full p-4 rounded-full shadow-xl bg-white/90 text-black placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400'
+						disabled={isRecording || isSubmitting}
 					/>
 				</form>
 
 				<button
 					onClick={isRecording ? stopRecording : startRecording}
-					disabled={isLoading}
 					className={`w-16 h-16 rounded-full shadow-xl flex items-center justify-center transition-all duration-200 ${
 						isRecording
 							? 'bg-red-500 animate-pulse'
-							: isLoading
-							? 'bg-gray-400'
 							: 'bg-blue-500 hover:bg-blue-600'
 					} text-white disabled:opacity-50`}
 				>
-					{isLoading ? (
-						<div className='w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin' />
-					) : isRecording ? (
-						<span className='text-2xl'>⏹️</span>
+					{isRecording ? (
+						<MicOff className='w-6 h-6' />
 					) : (
-						<span className='text-2xl'>🎤</span>
+						<Mic className='w-6 h-6' />
 					)}
 				</button>
 			</div>
