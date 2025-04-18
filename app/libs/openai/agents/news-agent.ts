@@ -23,17 +23,12 @@ async function searchVectors(query: string) {
 		input: query,
 	});
 
-	console.log(
-		'Querying Pinecone with embedding of length:',
-		queryEmbedding.data[0].embedding.length
-	);
 	const searchResults = await index.query({
 		vector: queryEmbedding.data[0].embedding,
 		topK: 5,
 		includeMetadata: true,
 	});
 
-	console.log('Search results:', JSON.stringify(searchResults, null, 2));
 	return (
 		searchResults.matches
 			?.map((match) => (match.metadata as NewsMetadata)?.content)
@@ -43,8 +38,6 @@ async function searchVectors(query: string) {
 
 export async function processNewsQuery(query: string, model: string) {
 	const relevantNews = await searchVectors(query);
-
-	console.log('relevantNews', { relevantNews });
 
 	const response = await openaiClient.chat.completions.create({
 		model: model,

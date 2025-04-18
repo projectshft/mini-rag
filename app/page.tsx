@@ -77,7 +77,6 @@ export default function Chat() {
 				}
 			);
 
-			// Add the transcribed text as a user message
 			await append({
 				content: `Query: ${agentQuery} using ${selectedAgent} agent`,
 				role: 'user',
@@ -199,9 +198,10 @@ export default function Chat() {
 				))}
 				{isSubmitting && (
 					<div className='flex justify-center items-center'>
-						<span className='text-gray-400 animate-pulse'>
-							Thinking...
-						</span>
+						<div className='relative w-8 h-8'>
+							<div className='absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin'></div>
+						</div>
+						<span className='text-gray-400 ml-2'>Thinking...</span>
 					</div>
 				)}
 			</div>
