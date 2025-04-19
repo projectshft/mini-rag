@@ -1,14 +1,17 @@
-# AI-Powered Content Generation
+# AI-Powered Content Generation and Politically Charged News Whisperer
+
+It might look like this ⬇️
+
+<img src="public/home_page.png"/>
 
 A full-stack TypeScript application demonstrating modern AI techniques including RAG (Retrieval Augmented Generation), fine-tuning, agents, and LLM observability.
 
 ## Features
 
--   **Multi-Agent System**: Three specialized agents for different content types:
+-   **Multi-Agent System**: 2 specialized agents for different content types:
 
     -   LinkedIn Agent: Uses a fine-tuned GPT-4 model for professional content
     -   News Agent: Leverages Pinecone vector database for RAG-based news analysis
-    -   General Agent: Handles miscellaneous queries
 
 -   **Training Pipeline**:
 
@@ -31,7 +34,7 @@ A full-stack TypeScript application demonstrating modern AI techniques including
 
 ## Learning Objectives
 
-This repository serves as a practical guide for developers to learn:
+This repository serves as a practical guide for you to learn:
 
 1. **RAG Implementation**
 
@@ -48,8 +51,8 @@ This repository serves as a practical guide for developers to learn:
 3. **Agent Architecture**
 
     - Specialized agent design
-    - Routing logic
     - Response handling
+    - Agent response format
 
 4. **LLM Observability**
     - Performance monitoring
@@ -77,16 +80,20 @@ This repository serves as a practical guide for developers to learn:
     ```env
     OPENAI_API_KEY=your_openai_api_key
     PINECONE_API_KEY=your_pinecone_api_key
-    PINECONE_ENVIRONMENT=your_pinecone_environment
     HELICONE_API_KEY=your_helicone_api_key
     ```
 
-4. **Database Setup**
+4. **Create an Account on OpenAI**
+
+    - You are going to need to add ~$10 USD to an OpenAI account - just do it!
+    - You can swap out the OpenAI api with another (free-er) model if you so choose
+
+5. **Database Setup in Pinecone**
 
     - Create a Pinecone index named 'articles'
     - Configure the index with dimension 1536 (for OpenAI embeddings)
 
-5. **Training Data**
+6. **Training Data**
     - There is training data in `app/scripts/data/linkedin_training.jsonl` based on Brian Jenney's (that's me!) posts on LinkedIn
     - Use the provided scripts to estimate costs and upload training data
 
@@ -128,22 +135,7 @@ mini-rag/
 │   ├── libs/             # Shared utilities
 │   ├── scripts/          # Training and data scripts
 │   └── page.tsx          # Main application
-├── public/               # Static assets
-└── package.json          # Dependencies
 ```
-
-## Contributing
-
-This project is meant for educational purposes. Feel free to:
-
--   Fork the repository
--   Submit issues
--   Create pull requests
--   Share your learnings
-
-## License
-
-MIT License - feel free to use this as a learning resource or base for your own projects.
 
 ## Resources
 
