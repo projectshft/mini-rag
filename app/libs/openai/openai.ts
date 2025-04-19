@@ -1,7 +1,13 @@
 import OpenAI from 'openai';
 import { z } from 'zod';
 
-export const openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+export const openaiClient = new OpenAI({
+	apiKey: process.env.OPENAI_API_KEY,
+	baseURL: 'https://oai.helicone.ai/v1',
+	defaultHeaders: {
+		'Helicone-Auth': `Bearer ${process.env.HELICONE_API_KEY}`,
+	},
+});
 
 export type AgentType = 'linkedin' | 'articles' | 'general';
 

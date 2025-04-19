@@ -3,9 +3,9 @@
 import { useState, useRef } from 'react';
 import { Message } from 'ai/react';
 import { useChat } from '@ai-sdk/react';
-import { fetchApiRoute } from '@/app/libs/api/client';
-import { Mic, MicOff, Bot, User, Sparkles } from 'lucide-react';
-import Markdown from 'react-markdown';
+import { Mic, MicOff, Bot, User, Sparkles, BrainIcon } from 'lucide-react';
+import { MarkdownWithIcons } from './components/MarkdownWithIcons';
+import { handleAgentSelection } from './page/utils/chat';
 
 const examplePosts = [
 	'Write a LinkedIn post about learning JavaScript',
@@ -26,7 +26,9 @@ export default function Chat() {
 
 	const handleExamplePostClick = (content: string) => {
 		setInputText(content);
-		handleTextSubmit({ preventDefault: () => {} } as React.FormEvent);
+		handleAgentSelection(content, append, () => {
+			setInputText('');
+		});
 	};
 
 	const startRecording = async () => {
@@ -70,27 +72,8 @@ export default function Chat() {
 
 	const sendAudioMessage = async (audioBlob: Blob) => {
 		try {
-			const { selectedAgent, agentQuery, model } = await fetchApiRoute(
-				'/api/select-agent',
-				{
-					audio: audioBlob,
-				}
-			);
-
-			await append({
-				content: `Query: ${agentQuery} using ${selectedAgent} agent`,
-				role: 'user',
-			});
-
-			const agentResponse = await fetchApiRoute('/api/stream-chat', {
-				selectedAgent,
-				agentQuery,
-				model,
-			});
-
-			append({
-				content: agentResponse,
-				role: 'assistant',
+			await handleAgentSelection(audioBlob, append, () => {
+				setInputText('');
 			});
 		} catch (error) {
 			console.error('Error sending audio:', error);
@@ -102,29 +85,8 @@ export default function Chat() {
 		if (!inputText.trim()) return;
 
 		try {
-			const { selectedAgent, agentQuery, model } = await fetchApiRoute(
-				'/api/select-agent',
-				{
-					userQuery: inputText,
-				}
-			);
-
-			await append({
-				content: `Query: ${agentQuery} using ${selectedAgent} agent`,
-				role: 'user',
-			});
-
-			setInputText('');
-
-			const agentResponse = await fetchApiRoute('/api/stream-chat', {
-				selectedAgent,
-				agentQuery,
-				model,
-			});
-
-			append({
-				content: agentResponse,
-				role: 'assistant',
+			await handleAgentSelection(inputText, append, () => {
+				setInputText('');
 			});
 		} catch (error) {
 			console.error('Error sending text:', error);
@@ -142,7 +104,7 @@ export default function Chat() {
 			{!messages?.length && (
 				<div className='w-full max-w-4xl mb-8'>
 					<h2 className='text-xl font-semibold text-gray-300 mb-4 flex items-center gap-2'>
-						<Sparkles className='w-5 h-5' />
+						<Sparkles className='w-5 h-5 text-blue-400' />
 						Example Prompts
 					</h2>
 					<div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
@@ -191,22 +153,25 @@ export default function Chat() {
 							} p-4`}
 						>
 							<div className='whitespace-pre-wrap text-lg'>
-								<Markdown>{m.content}</Markdown>
+								<MarkdownWithIcons content={m.content} />
 							</div>
 						</div>
 					</div>
 				))}
 				{isSubmitting && (
-					<div className='flex justify-center items-center'>
-						<div className='relative w-8 h-8'>
-							<div className='absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin'></div>
+					<div className='flex justify-center items-center gap-3 py-4'>
+						<div className='relative w-6 h-6'>
+							<div className='absolute inset-0 rounded-full border-3 border-blue-400 border-t-transparent animate-spin'></div>
 						</div>
-						<span className='text-gray-400 ml-2'>Thinking...</span>
+						<span className='text-gray-400'>
+							<BrainIcon className='w-4 h-4' /> Generating
+							response...
+						</span>
 					</div>
 				)}
 			</div>
 
-			<div className='fixed bottom-0 left-0 right-0 flex justify-center items-center gap-4 p-4 bg-white/10 backdrop-blur-md border-t border-white/10'>
+			<div className='fixed bottom-0 left-0 right-0 flex justify-center items-center gap-4 p-4 bg-black/80 backdrop-blur-md border-t border-white/10'>
 				<form
 					onSubmit={handleTextSubmit}
 					className='flex-1 max-w-xl mx-4'
@@ -216,23 +181,23 @@ export default function Chat() {
 						value={inputText}
 						onChange={(e) => setInputText(e.target.value)}
 						placeholder='Type your message...'
-						className='w-full p-4 rounded-full shadow-xl bg-white/90 text-black placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400'
+						className='w-full p-4 rounded-xl shadow-lg bg-gray-800 text-gray-200 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-400 hover:bg-gray-700 transition-colors'
 						disabled={isRecording || isSubmitting}
 					/>
 				</form>
 
 				<button
 					onClick={isRecording ? stopRecording : startRecording}
-					className={`w-16 h-16 rounded-full shadow-xl flex items-center justify-center transition-all duration-200 ${
+					className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-200 ${
 						isRecording
-							? 'bg-red-500 animate-pulse'
-							: 'bg-blue-500 hover:bg-blue-600'
-					} text-white disabled:opacity-50`}
+							? 'bg-red-500/90 hover:bg-red-500 text-white'
+							: 'bg-gray-800 hover:bg-gray-700 text-gray-200'
+					} shadow-lg disabled:opacity-50 backdrop-blur-sm`}
 				>
 					{isRecording ? (
-						<MicOff className='w-6 h-6' />
+						<MicOff className='w-5 h-5' />
 					) : (
-						<Mic className='w-6 h-6' />
+						<Mic className='w-5 h-5' />
 					)}
 				</button>
 			</div>
