@@ -7,6 +7,7 @@
 		"build": "next build",
 		"start": "next start",
 		"lint": "next lint",
+		"test": "jest",
 		"estimate-costs": "npx ts-node app/scripts/estimate-training-cost.ts",
 		"train": "npx ts-node app/scripts/upload-training-data.ts",
 		"upload-articles": "npx ts-node app/scripts/uploadArticlesToPinecone.ts"
@@ -36,13 +37,17 @@
 	},
 	"devDependencies": {
 		"@eslint/eslintrc": "^3",
+		"@types/jest": "^29.5.14",
 		"@types/node": "^20",
 		"@types/react": "^19",
 		"@types/react-dom": "^19",
 		"eslint": "^9",
 		"eslint-config-next": "15.1.6",
+		"jest": "^29.7.0",
+		"jest-environment-jsdom": "^29.7.0",
 		"postcss": "^8",
 		"tailwindcss": "^3.4.1",
+		"ts-jest": "^29.1.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5"
 	},
