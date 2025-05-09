@@ -10,7 +10,7 @@ const agents = {
 } as const;
 
 export const POST = typedRoute(
-	'/api/stream-chat',
+	'STREAM-CHAT',
 	async ({ agentQuery, selectedAgent, model }) => {
 		if (!(selectedAgent in agents)) {
 			throw new Error('Invalid agent selected');

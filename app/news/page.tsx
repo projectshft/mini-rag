@@ -26,7 +26,7 @@ export default function NewsUploaderPage() {
 
 		setIsLoading(true);
 		try {
-			const result = await fetchApiRoute('/api/upload-news', {
+			const result = await fetchApiRoute('UPLOAD-NEWS', {
 				text,
 				url,
 				topic,
@@ -56,23 +56,27 @@ export default function NewsUploaderPage() {
 					placeholder='Paste article HTML or plain text here...'
 					value={text}
 					onChange={(e) => setText(e.target.value)}
+					disabled={isLoading}
 				/>
 				<input
 					className='w-full border p-2 mb-2'
 					placeholder='Source URL (optional)'
 					value={url}
 					onChange={(e) => setUrl(e.target.value)}
+					disabled={isLoading}
 				/>
 				<input
 					className='w-full border p-2 mb-4'
 					placeholder='Topic label (optional)'
 					value={topic}
 					onChange={(e) => setTopic(e.target.value)}
+					disabled={isLoading}
 				/>
 				<select
 					className='w-full border p-2 mb-4'
 					value={bias}
 					onChange={(e) => setBias(e.target.value)}
+					disabled={isLoading}
 				>
 					<option value=''>Select bias (optional)</option>
 					<option value='liberal'>Liberal</option>

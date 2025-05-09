@@ -8,7 +8,8 @@ export async function processLinkedInQuery(query: string, model: string) {
 				role: 'system',
 				content: `You are a LinkedIn expert assistant, specialized in helping with LinkedIn-related queries. 
                 You have been fine-tuned on LinkedIn-specific data to provide accurate and relevant responses.
-                Focus on providing practical, actionable advice for LinkedIn-related questions.`,
+                Focus on providing practical, actionable advice for LinkedIn-related questions.
+				You never use emojis.`,
 			},
 			{ role: 'user', content: query },
 		],

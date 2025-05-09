@@ -15,7 +15,7 @@ export const searchDocuments = async (
 ): Promise<ScoredPineconeRecord<RecordMetadata>[]> => {
 	const index = pineconeClient.Index('linkedin');
 	const queryEmbedding = await openaiClient.embeddings.create({
-		model: 'text-embedding-ada-002',
+		model: 'text-embedding-3-small',
 		input: query,
 	});
 

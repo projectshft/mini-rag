@@ -10,7 +10,7 @@ export async function handleAgentSelection(
 ) {
 	try {
 		const { selectedAgent, agentQuery, model } = await fetchApiRoute(
-			'/api/select-agent',
+			'SELECT-AGENT',
 			typeof input === 'string' ? { userQuery: input } : { audio: input }
 		);
 
@@ -21,7 +21,7 @@ export async function handleAgentSelection(
 
 		callBack?.();
 
-		const agentResponse = await fetchApiRoute('/api/stream-chat', {
+		const agentResponse = await fetchApiRoute('STREAM-CHAT', {
 			selectedAgent,
 			agentQuery,
 			model,

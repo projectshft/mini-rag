@@ -2,7 +2,8 @@ import { z } from 'zod';
 
 // Define schemas for each API endpoint
 export const apiSchemas = {
-	'/api/upload-news': {
+	'UPLOAD-NEWS': {
+		route: '/api/upload-news',
 		input: z.object({
 			text: z.string(),
 			url: z.string().optional(),
@@ -15,7 +16,8 @@ export const apiSchemas = {
 			success: z.boolean(),
 		}),
 	},
-	'/api/select-agent': {
+	'SELECT-AGENT': {
+		route: '/api/select-agent',
 		input: z.object({
 			userQuery: z.string().optional(),
 			audio: z.instanceof(Blob).optional(),
@@ -29,7 +31,8 @@ export const apiSchemas = {
 			agentQuery: z.string(),
 		}),
 	},
-	'/api/stream-chat': {
+	'STREAM-CHAT': {
+		route: '/api/stream-chat',
 		input: z.object({
 			agentQuery: z.string(),
 			model: z.enum([
