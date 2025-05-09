@@ -1,8 +1,8 @@
 import { Tiktoken } from 'js-tiktoken/lite';
 import o200k_base from 'js-tiktoken/ranks/o200k_base';
-
 import { pineconeClient } from '@/app/libs/pinecone';
 import { openaiClient } from '@/app/libs/openai/openai';
+import { Article } from '../newsScraper';
 
 const pineconeIndex = pineconeClient.Index('articles');
 
@@ -44,17 +44,15 @@ function createSemanticChunks(text: string): string[] {
 	return chunks;
 }
 
-export async function vectorizeArticle(article: {
-	content: string;
-	bias: string;
-	topic?: string;
-}): Promise<void> {
+export async function vectorizeArticle(article: Article): Promise<void> {
 	if (!article.content || article.content.length < 20) {
 		throw new Error('Article content is too short.');
 	}
 
 	const chunks = createSemanticChunks(article.content);
-	console.log(`Created ${chunks.length} chunks for article`);
+	console.log(
+		`Created ${chunks.length} chunks for article: ${article.title}`
+	);
 
 	for (const [index, chunk] of chunks.entries()) {
 		const embeddingResponse = await openaiClient.embeddings.create({
@@ -64,17 +62,23 @@ export async function vectorizeArticle(article: {
 
 		const vector = embeddingResponse.data[0].embedding;
 
+		const metadata = {
+			content: chunk,
+			bias: article.bias,
+			source: article.url,
+			title: article.title,
+			// Only include optional fields if they exist
+			...(article.author && { author: article.author }),
+			...(article.publishDate && { publishDate: article.publishDate }),
+			chunkIndex: index,
+			totalChunks: chunks.length,
+		};
+
 		await pineconeIndex.upsert([
 			{
-				id: `${article.topic}-chunk-${index}`,
+				id: `${article.title}-chunk-${index}`,
 				values: vector,
-				metadata: {
-					content: article.content,
-					topic: article.topic ?? 'general',
-					bias: article.bias,
-					chunkIndex: index,
-					totalChunks: chunks.length,
-				},
+				metadata,
 			},
 		]);
 	}
