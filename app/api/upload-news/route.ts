@@ -1,11 +1,11 @@
 import { typedRoute } from '../typedRoute';
 import { vectorizeArticle } from '@/app/services/vectorize/vectorize-articles';
 
-export const POST = typedRoute('UPLOAD-NEWS', async ({ text, topic, bias }) => {
+export const POST = typedRoute('UPLOAD-NEWS', async ({ text, bias, url }) => {
 	try {
 		const article = {
 			bias,
-			topic,
+			source: url || 'Unknown',
 			content: text,
 		};
 

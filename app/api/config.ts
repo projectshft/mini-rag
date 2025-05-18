@@ -8,7 +8,7 @@ export const apiSchemas = {
 			text: z.string(),
 			url: z.string().optional(),
 			topic: z.string().optional(),
-			bias: z.string(),
+			bias: z.enum(['liberal', 'conservative']),
 		}),
 		output: z.object({
 			message: z.string(),

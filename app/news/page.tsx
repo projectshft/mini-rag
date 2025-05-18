@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { fetchApiRoute } from '@/app/libs/api/client';
+import { fetchApiRoute } from '@/app/api/client';
 import { Loader2 } from 'lucide-react';
 
 export default function NewsUploaderPage() {

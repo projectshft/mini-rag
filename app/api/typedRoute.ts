@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { apiSchemas } from '@/app/libs/api/config';
+import { apiSchemas } from '@/app/api/config';
 
 export function typedRoute<T extends keyof typeof apiSchemas>(
 	route: T,

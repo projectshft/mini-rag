@@ -51,7 +51,7 @@ export async function vectorizeArticle(article: Article): Promise<void> {
 
 	const chunks = createSemanticChunks(article.content);
 	console.log(
-		`Created ${chunks.length} chunks for article: ${article.title}`
+		`Created ${chunks.length} chunks for article: ${article.source}`
 	);
 
 	for (const [index, chunk] of chunks.entries()) {
@@ -63,20 +63,13 @@ export async function vectorizeArticle(article: Article): Promise<void> {
 		const vector = embeddingResponse.data[0].embedding;
 
 		const metadata = {
-			content: chunk,
-			bias: article.bias,
-			source: article.url,
-			title: article.title,
-			// Only include optional fields if they exist
-			...(article.author && { author: article.author }),
-			...(article.publishDate && { publishDate: article.publishDate }),
-			chunkIndex: index,
-			totalChunks: chunks.length,
+			chunk,
+			...article,
 		};
 
 		await pineconeIndex.upsert([
 			{
-				id: `${article.title}-chunk-${index}`,
+				id: `${article.source}-chunk-${index}`,
 				values: vector,
 				metadata,
 			},
