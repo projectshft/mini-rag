@@ -4,14 +4,21 @@ It might look like this ⬇️
 
 <img src="public/home_page.png"/>
 
-A full-stack TypeScript application demonstrating modern AI techniques including RAG (Retrieval Augmented Generation), fine-tuning, agents, and LLM observability.
+A full-stack TypeScript application demonstrating modern AI techniques including RAG (Retrieval Augmented Generation), fine-tuning, agents, and LLM observability with automated web scraping capabilities.
 
 ## Features
 
 -   **Multi-Agent System**: 2 specialized agents for different content types:
 
-    -   LinkedIn Agent: Uses a fine-tuned GPT-4 model for professional content
+    -   LinkedIn Agent: Uses a fine-tuned GPT-4 model for professional content to post on LinkedIn
     -   News Agent: Leverages Pinecone vector database for RAG-based news analysis
+
+-   **Automated Web Scraping**:
+
+    -   Integration with Firecrawl.dev for intelligent web scraping
+    -   Automated extraction of news articles from multiple sources
+    -   Bias detection and content structuring
+    -   Direct vectorization and storage in Pinecone database
 
 -   **Training Pipeline**:
 
@@ -29,6 +36,7 @@ A full-stack TypeScript application demonstrating modern AI techniques including
 -   **Frontend**: Next.js, TypeScript, TailwindCSS
 -   **Backend**: Next.js API Routes
 -   **AI/ML**: OpenAI API, Pinecone Vector Database
+-   **Web Scraping**: Firecrawl.dev for intelligent content extraction
 -   **Monitoring**: Helicone
 -   **Package Manager**: Yarn
 
@@ -38,9 +46,10 @@ This repository serves as a practical guide for you to learn:
 
 1. **RAG Implementation**
 
-    - Vector database integration
-    - Semantic search
-    - Context-aware responses
+    - Vector database integration with Pinecone
+    - Semantic search capabilities
+    - Automated web scraping with Firecrawl.dev
+    - Context-aware responses using retrieved content
 
 2. **Fine-tuning**
 
@@ -54,10 +63,51 @@ This repository serves as a practical guide for you to learn:
     - Response handling
     - Agent response format
 
-4. **LLM Observability**
+4. **Web Scraping & Data Pipeline**
+
+    - Intelligent content extraction using Firecrawl.dev
+    - Automated bias detection
+    - Content vectorization and storage
+    - Batch processing of multiple news sources
+
+5. **LLM Observability**
+
     - Performance monitoring
     - Usage tracking
     - Cost management
+
+6. **News Article Scraping & Vectorization**
+
+    - The application uses Firecrawl.dev to automatically scrape news articles from configured sources
+    - Articles are processed to extract content, detect political bias, and identify sources
+    - Scraped content is automatically vectorized using OpenAI embeddings and stored in Pinecone
+    - News sources are configured in `app/config/newsSources.ts` with both liberal and conservative outlets
+
+7. **Manual Article Upload**
+    - Navigate to `/news` to manually upload articles
+    - Articles can be submitted with bias labels and source URLs
+    - Content is automatically vectorized and added to the Pinecone database
+
+## Mentee Challenges
+
+Ready to take your skills to the next level? We've prepared three progressive challenges that will help you extend this project with advanced features:
+
+### 🚀 [Challenge 1: Dynamic News Scraping Agent](./CHALLENGE_1_DYNAMIC_SCRAPING.md)
+
+**Difficulty: Intermediate**
+Build an intelligent agent that automatically discovers and scrapes new news sources when users ask about topics not covered by existing sources. This challenge involves creating a new agent, enhancing the selector agent, and implementing real-time content discovery.
+
+### ⚖️ [Challenge 2: Balanced Political Perspective Querying](./CHALLENGE_2_BALANCED_SOURCES.md)
+
+**Difficulty: Advanced**
+Refactor the vector database architecture to enable balanced querying that returns both liberal and conservative perspectives on news topics. This is a significant architectural change involving multiple Pinecone indexes and intelligent result merging.
+
+### 💾 [Challenge 3: Chat Persistence with Database Integration](./CHALLENGE_3_CHAT_PERSISTENCE.md)
+
+**Difficulty: Intermediate-Advanced**
+Transform the stateless chat system into a persistent, context-aware conversation platform using Prisma and a database. Enable conversation history, context continuity, and user session management.
+
+Each challenge includes detailed problem descriptions, implementation hints, and success criteria. Choose based on your interests and skill level - they can be tackled independently or in sequence!
 
 ## Setup
 
@@ -81,6 +131,7 @@ This repository serves as a practical guide for you to learn:
     OPENAI_API_KEY=your_openai_api_key
     PINECONE_API_KEY=your_pinecone_api_key
     HELICONE_API_KEY=your_helicone_api_key
+    FIRECRAWL_API_KEY=your_fire_crawl_api_key
     ```
 
 4. **Create an Account on OpenAI**
@@ -115,16 +166,40 @@ This repository serves as a practical guide for you to learn:
     yarn train
     ```
 
-3. **Using the Application**
+3. **Adding Articles to Vector Database**
+
+    ```bash
+    # Upload pre-existing articles from local files
+    yarn upload-articles
+    ```
+
+4. **Using the Application**
     - Navigate to `http://localhost:3000`
     - Choose from example prompts or enter your own
     - The system will route your query to the appropriate agent
+    - News queries will use RAG to search through scraped articles
 
 ## Scripts
 
 -   `upload-training-data.ts`: Handles model fine-tuning
 -   `estimate-training-cost.ts`: Calculates training expenses
--   `vectorize-articles.ts`: Processes news content for RAG
+-   `uploadArticlesToPinecone.ts`: Uploads pre-existing articles to vector database
+-   `vectorize-articles.ts`: Processes and vectorizes news content for RAG
+
+## Web Scraping Architecture
+
+The application uses Firecrawl.dev for intelligent web scraping:
+
+-   **Batch Scraping**: Processes multiple news sources simultaneously
+-   **Structured Extraction**: Uses Zod schemas to ensure consistent data format
+-   **Bias Detection**: Automatically categorizes content as liberal or conservative
+-   **Error Handling**: Robust retry mechanisms and validation
+-   **Vectorization Pipeline**: Seamlessly converts scraped content to embeddings
+
+News sources are configured in `app/config/newsSources.ts` and include major outlets like:
+
+-   Liberal: NYT, Washington Post, The Guardian, NPR, CNN
+-   Conservative: Fox News, WSJ, Daily Wire, Breitbart, The Federalist
 
 ## Project Structure
 
