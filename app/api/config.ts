@@ -26,7 +26,7 @@ export const apiSchemas = {
 			selectedAgent: z.enum(['articles', 'linkedin', 'general']),
 			model: z.enum([
 				'gpt-4o-mini',
-				'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt',
+				'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt', // Make sure you are using the correct model based on the result from upload-training-data.ts
 			]),
 			agentQuery: z.string(),
 		}),
@@ -37,7 +37,7 @@ export const apiSchemas = {
 			agentQuery: z.string(),
 			model: z.enum([
 				'gpt-4o-mini',
-				'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt',
+				'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt', // Make sure you are using the correct model based on the result from upload-training-data.ts
 			]),
 			selectedAgent: z.enum(['articles', 'linkedin', 'general']),
 		}),

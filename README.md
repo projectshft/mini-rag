@@ -68,7 +68,6 @@ This repository serves as a practical guide for you to learn:
     - Intelligent content extraction using Firecrawl.dev
     - Automated bias detection
     - Content vectorization and storage
-    - Batch processing of multiple news sources
 
 5. **LLM Observability**
 
@@ -136,7 +135,7 @@ Each challenge includes detailed problem descriptions, implementation hints, and
 
 4. **Create an Account on OpenAI**
 
-    - You are going to need to add ~$10 USD to an OpenAI account - just do it!
+    - You are going to need to add ~$10 USD to an OpenAI account - do it!
     - You can swap out the OpenAI api with another (free-er) model if you so choose
 
 5. **Database Setup in Pinecone**

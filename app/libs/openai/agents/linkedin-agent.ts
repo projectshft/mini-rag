@@ -39,7 +39,7 @@ import { openaiClient } from '../openai';
  */
 export async function processLinkedInQuery(query: string, model: string) {
 	const response = await openaiClient.chat.completions.create({
-		model: model, // Usually the fine-tuned model: 'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt'
+		model, // Usually the fine-tuned model: 'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt'
 		// TRY ADDING: temperature: 0.8, // Higher = more creative posts (0.0-1.0)
 		// TRY ADDING: max_tokens: 300, // Limit post length for LinkedIn's format
 		// TRY ADDING: top_p: 0.9, // Alternative to temperature for controlling randomness
