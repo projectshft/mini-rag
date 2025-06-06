@@ -6,6 +6,22 @@ It might look like this ⬇️
 
 A full-stack TypeScript application demonstrating modern AI techniques including RAG (Retrieval Augmented Generation), fine-tuning, agents, and LLM observability with automated web scraping capabilities.
 
+## Start Here!
+
+**To understand how this system works**, check out our comprehensive **[Learning Guide](./LEARNING_GUIDE.md)** first! It covers:
+
+-   TypeScript & Modern JS for AI development
+-   Vector databases and linear algebra fundamentals
+-   RAG implementation from scratch
+-   Fine-tuning vs RAG decision making
+-   Building AI agents and multi-agent systems
+-   Testing AI systems effectively
+-   Prompt engineering best practices
+-   Data scraping and ingestion pipelines
+-   Student project ideas and challenges
+
+The learning guide is designed for early career engineers and includes practical examples from this codebase.
+
 ## Features
 
 -   **Multi-Agent System**: 2 specialized agents for different content types:

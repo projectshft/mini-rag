@@ -1,109 +1,18 @@
 # TypeScript RAG System Learning Guide 🎓
 
-_A comprehensive guide for junior engineers to master modern AI development using TypeScript, RAG, and Vector Databases_
+_A comprehensive guide for typescript engineers to master modern AI development using TypeScript, RAG, and Vector Databases_
 
 ## Table of Contents
 
-1. [Core TypeScript & Modern JS Concepts](#core-typescript--modern-js-concepts)
-2. [Understanding Vector Databases & Linear Algebra](#understanding-vector-databases--linear-algebra)
-3. [RAG (Retrieval Augmented Generation) Deep Dive](#rag-retrieval-augmented-generation-deep-dive)
-4. [Fine-Tuning vs RAG: When to Use Each](#fine-tuning-vs-rag-when-to-use-each)
-5. [Building AI Agents](#building-ai-agents)
-6. [Testing AI Systems](#testing-ai-systems)
-7. [Prompt Engineering Fundamentals](#prompt-engineering-fundamentals)
-8. [Data Scraping & Ingestion Pipeline](#data-scraping--ingestion-pipeline)
-9. [Project Architecture & Best Practices](#project-architecture--best-practices)
-10. [Student Project Guidelines](#student-project-guidelines)
-
----
-
-## Core TypeScript & Modern JS Concepts
-
-### Essential TypeScript Skills for AI Development
-
-#### 1. **Type Safety for AI APIs**
-
-```typescript
-// Example from app/libs/pinecone.ts
-type NewsMetadata = {
-	content: string;
-	bias: string;
-	source?: string;
-	publishDate?: string;
-};
-
-// Strong typing prevents runtime errors with AI responses
-interface ChatMessage {
-	role: 'system' | 'user' | 'assistant';
-	content: string;
-}
-```
-
-**Why This Matters**: AI APIs return complex nested objects. TypeScript catches errors before they reach production.
-
-#### 2. **Async/Await Patterns**
-
-```typescript
-// From app/libs/openai/agents/news-agent.ts
-export async function processNewsQuery(query: string, model: string) {
-	// Step 1: Retrieve (vector search)
-	const relevantNews = await searchVectors(query);
-
-	// Step 2: Generate (LLM response)
-	const response = await openaiClient.chat.completions.create({
-		model: model,
-		messages: [
-			/* ... */
-		],
-	});
-
-	return response.choices[0].message.content;
-}
-```
-
-**Why This Matters**: AI operations are inherently asynchronous. Master async patterns to build responsive apps.
-
-#### 3. **Error Handling & Resilience**
-
-```typescript
-// Robust error handling for AI services
-async function searchVectors(query: string) {
-	try {
-		const queryEmbedding = await openaiClient.embeddings.create({
-			model: 'text-embedding-3-small',
-			input: query,
-		});
-
-		return await index.query({
-			vector: queryEmbedding.data[0].embedding,
-			topK: 5,
-			includeMetadata: true,
-		});
-	} catch (error) {
-		console.error('Vector search failed:', error);
-		throw new Error('Failed to search documents');
-	}
-}
-```
-
-#### 4. **Environment Configuration**
-
-```typescript
-// From app/api/config.ts - Type-safe environment handling
-export const config = {
-	openai: {
-		apiKey: process.env.OPENAI_API_KEY as string,
-		models: {
-			general: 'gpt-4o-mini',
-			fineTuned: 'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt',
-		},
-	},
-	pinecone: {
-		apiKey: process.env.PINECONE_API_KEY as string,
-		indexName: 'articles',
-	},
-};
-```
+1. [Understanding Vector Databases & Linear Algebra](#understanding-vector-databases--linear-algebra)
+2. [RAG (Retrieval Augmented Generation) Deep Dive](#rag-retrieval-augmented-generation-deep-dive)
+3. [Fine-Tuning vs RAG: When to Use Each](#fine-tuning-vs-rag-when-to-use-each)
+4. [Building AI Agents](#building-ai-agents)
+5. [Testing AI Systems](#testing-ai-systems)
+6. [Prompt Engineering Fundamentals](#prompt-engineering-fundamentals)
+7. [Data Scraping & Ingestion Pipeline](#data-scraping--ingestion-pipeline)
+8. [Project Architecture & Best Practices](#project-architecture--best-practices)
+9. [Project Guidelines](#student-project-guidelines)
 
 ---
 
