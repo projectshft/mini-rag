@@ -2,9 +2,10 @@ import { Tiktoken } from 'js-tiktoken/lite';
 import o200k_base from 'js-tiktoken/ranks/o200k_base';
 import { pineconeClient } from '@/app/libs/pinecone';
 import { openaiClient } from '@/app/libs/openai/openai';
-import { Article } from '../newsScraper';
+import { ContentItem } from '../contentScraper';
+import { Chunk } from '@/app/libs/chunking';
 
-const pineconeIndex = pineconeClient.Index('articles');
+const pineconeIndex = pineconeClient.Index('knowledge-base');
 
 // OpenAI's recommended chunk size for embeddings
 const MAX_TOKENS = 512;
@@ -44,14 +45,38 @@ function createSemanticChunks(text: string): string[] {
 	return chunks;
 }
 
-export async function vectorizeArticle(article: Article): Promise<void> {
-	if (!article.content || article.content.length < 20) {
-		throw new Error('Article content is too short.');
+export async function vectorizeContent(chunk: Chunk): Promise<void> {
+	if (!chunk.content || chunk.content.length < 20) {
+		throw new Error('Content is too short.');
 	}
 
-	const chunks = createSemanticChunks(article.content);
+	const embeddingResponse = await openaiClient.embeddings.create({
+		model: 'text-embedding-3-small',
+		input: chunk.content,
+	});
+
+	const vector = embeddingResponse.data[0].embedding;
+
+	await pineconeIndex.upsert([
+		{
+			id: chunk.id,
+			values: vector,
+			metadata: {
+				content: chunk.content,
+				...chunk.metadata,
+			},
+		},
+	]);
+}
+
+export async function vectorizeContentItem(item: ContentItem): Promise<void> {
+	if (!item.content || item.content.length < 20) {
+		throw new Error('Content is too short.');
+	}
+
+	const chunks = createSemanticChunks(item.content);
 	console.log(
-		`Created ${chunks.length} chunks for article: ${article.source}`
+		`Created ${chunks.length} chunks for content from: ${item.source}`
 	);
 
 	for (const [index, chunk] of chunks.entries()) {
@@ -64,12 +89,12 @@ export async function vectorizeArticle(article: Article): Promise<void> {
 
 		const metadata = {
 			chunk,
-			...article,
+			...item,
 		};
 
 		await pineconeIndex.upsert([
 			{
-				id: `${article.source}-chunk-${index}`,
+				id: `${item.source}-chunk-${index}`,
 				values: vector,
 				metadata,
 			},

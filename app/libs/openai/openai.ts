@@ -44,7 +44,7 @@ export const openaiClient = new OpenAI({
 	},
 });
 
-export type AgentType = 'linkedin' | 'articles' | 'general';
+export type AgentType = 'knowledgeBase' | 'linkedin' | 'general';
 
 export type AgentConfig = {
 	model: 'gpt-4o-mini' | 'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt';
@@ -69,13 +69,13 @@ export const AGENT_CONFIG: Record<AgentType, AgentConfig> = {
 		description:
 			'Specialized in LinkedIn-related posts about tech using a fine-tuned model',
 	},
-	articles: {
+	knowledgeBase: {
 		// Base model: Good general performance, works with RAG system
 		// TRY CHANGING: 'gpt-4o' for higher quality (costs more), 'gpt-3.5-turbo' for cheaper
 		model: 'gpt-4o-mini',
-		name: 'articles',
+		name: 'knowledgeBase',
 		description:
-			'Handles news-related queries for conservative and liberal news viewpoints using vector search',
+			'Queries the knowledge base for information about coding, software development, and technology.',
 	},
 	general: {
 		// Base model: Handles everything else
@@ -88,6 +88,6 @@ export const AGENT_CONFIG: Record<AgentType, AgentConfig> = {
 
 // Schema for validating agent selection responses
 export const agentResponseSchema = z.object({
-	selectedAgent: z.enum(['articles', 'linkedin', 'general']),
+	selectedAgent: z.enum(['knowledgeBase', 'linkedin', 'general']),
 	agentQuery: z.string(),
 });

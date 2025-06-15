@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { MessageSquare, Upload } from 'lucide-react';
+import { MessageSquare, Globe } from 'lucide-react';
 
 export default function Navigation() {
 	const pathname = usePathname();
@@ -24,15 +24,15 @@ export default function Navigation() {
 							<span>Chat</span>
 						</Link>
 						<Link
-							href='/news'
+							href='/scraper'
 							className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
-								pathname === '/news'
+								pathname === '/scraper'
 									? 'bg-blue-500 text-white'
 									: 'text-gray-300 hover:bg-gray-800'
 							}`}
 						>
-							<Upload className='w-5 h-5' />
-							<span>Data Upload</span>
+							<Globe className='w-5 h-5' />
+							<span>Web Scraper</span>
 						</Link>
 					</div>
 				</div>

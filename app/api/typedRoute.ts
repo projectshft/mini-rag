@@ -27,6 +27,7 @@ export function typedRoute<T extends keyof typeof apiSchemas>(
 			const outputResult = outputSchema.safeParse(response);
 
 			if (!outputResult.success) {
+				console.log(JSON.stringify(outputResult.error.errors, null, 2));
 				return NextResponse.json(
 					{ error: outputResult.error.errors },
 					{ status: 400 }

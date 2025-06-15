@@ -66,7 +66,7 @@ TRY CHANGING THIS PROMPT:
 
 // Zod schema for structured output validation
 export const agentResponseSchema = z.object({
-	selectedAgent: z.enum(['articles', 'linkedin', 'general']),
+	selectedAgent: z.enum(['knowledgeBase', 'linkedin', 'general']),
 	agentQuery: z.string(),
 });
 
@@ -83,7 +83,7 @@ export async function selectAgent(query: string): Promise<{
 	agentQuery: string;
 	model: ModelType;
 }> {
-	const response = await openaiClient.beta.chat.completions.parse({
+	const response = await openaiClient.chat.completions.parse({
 		response_format: zodResponseFormat(
 			agentResponseSchema,
 			'agentResponse'
@@ -110,6 +110,6 @@ export async function selectAgent(query: string): Promise<{
 	return {
 		selectedAgent,
 		agentQuery: parsedResponse.agentQuery,
-		model: AGENT_CONFIG[selectedAgent].model as ModelType,
+		model: AGENT_CONFIG[selectedAgent].model,
 	};
 }

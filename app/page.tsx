@@ -3,20 +3,21 @@
 import { useState, useRef } from 'react';
 import { Message } from 'ai/react';
 import { useChat } from '@ai-sdk/react';
-import { Mic, MicOff, Bot, User, Sparkles, BrainIcon } from 'lucide-react';
+import { Mic, MicOff, Bot, User, Sparkles } from 'lucide-react';
 import { MarkdownWithIcons } from './components/MarkdownWithIcons';
 import { handleAgentSelection } from './page/utils/chat';
 
 const examplePosts = [
 	'Write a LinkedIn post about learning JavaScript',
 	'Create a post about nailing technical interviews',
-	'Write a conservative perspective on tariffs',
-	'Write a liberal perspective on tariffs',
+	'What are the best practices for building a web application?',
+	'Why are enums in TypeScript useful?',
 ];
 
 export default function Chat() {
 	const [isRecording, setIsRecording] = useState(false);
 	const [inputText, setInputText] = useState('');
+	const [isLoading, setIsLoading] = useState(false);
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 	const audioChunksRef = useRef<Blob[]>([]);
 
@@ -24,11 +25,16 @@ export default function Chat() {
 		api: '/api/stream-chat',
 	});
 
-	const handleExamplePostClick = (content: string) => {
+	const handleExamplePostClick = async (content: string) => {
 		setInputText(content);
-		handleAgentSelection(content, append, () => {
-			setInputText('');
-		});
+		setIsLoading(true);
+		try {
+			await handleAgentSelection(content, append, () => {
+				setInputText('');
+			});
+		} finally {
+			setIsLoading(false);
+		}
 	};
 
 	const startRecording = async () => {
@@ -71,12 +77,15 @@ export default function Chat() {
 	};
 
 	const sendAudioMessage = async (audioBlob: Blob) => {
+		setIsLoading(true);
 		try {
 			await handleAgentSelection(audioBlob, append, () => {
 				setInputText('');
 			});
 		} catch (error) {
 			console.error('Error sending audio:', error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -84,21 +93,24 @@ export default function Chat() {
 		e.preventDefault();
 		if (!inputText.trim()) return;
 
+		setIsLoading(true);
 		try {
 			await handleAgentSelection(inputText, append, () => {
 				setInputText('');
 			});
 		} catch (error) {
 			console.error('Error sending text:', error);
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
-	const isSubmitting = status === 'submitted';
+	const isSubmitting = status === 'submitted' || isLoading;
 
 	return (
 		<div className='min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 py-12'>
 			<h1 className='text-3xl font-bold text-center text-gray-300 mb-6'>
-				News and Posts AI
+				Knowledge Base AI
 			</h1>
 
 			{!messages?.length && (
@@ -159,14 +171,20 @@ export default function Chat() {
 					</div>
 				))}
 				{isSubmitting && (
-					<div className='flex justify-center items-center gap-3 py-4'>
-						<div className='relative w-6 h-6'>
-							<div className='absolute inset-0 rounded-full border-3 border-blue-400 border-t-transparent animate-spin'></div>
+					<div className='flex flex-row items-start gap-2 w-full'>
+						<div className='w-8 h-8 rounded-full flex items-center justify-center bg-blue-500 text-white'>
+							<Bot className='w-6 h-6' />
 						</div>
-						<span className='text-gray-400'>
-							<BrainIcon className='w-4 h-4' /> Generating
-							response...
-						</span>
+						<div className='flex flex-col gap-1 max-w-[80%] bg-[#63a4ff] text-white rounded-2xl shadow-lg p-4'>
+							<div className='flex items-center gap-3'>
+								<div className='relative w-5 h-5'>
+									<div className='absolute inset-0 rounded-full border-2 border-white border-t-transparent animate-spin'></div>
+								</div>
+								<span className='text-white'>
+									Generating response...
+								</span>
+							</div>
+						</div>
 					</div>
 				)}
 			</div>
@@ -193,6 +211,7 @@ export default function Chat() {
 							? 'bg-red-500/90 hover:bg-red-500 text-white'
 							: 'bg-gray-800 hover:bg-gray-700 text-gray-200'
 					} shadow-lg disabled:opacity-50 backdrop-blur-sm`}
+					disabled={isSubmitting}
 				>
 					{isRecording ? (
 						<MicOff className='w-5 h-5' />

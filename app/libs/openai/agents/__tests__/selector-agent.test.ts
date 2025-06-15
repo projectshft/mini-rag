@@ -12,8 +12,8 @@ describe('selectAgent', () => {
 		{
 			name: 'should select Articles agent for tariffs-related queries',
 			query: 'What are the latest developments regarding tariffs?',
-			expectedAgent: 'articles',
-			expectedModel: AGENT_CONFIG.articles.model,
+			expectedAgent: 'knowledgeBase',
+			expectedModel: AGENT_CONFIG.knowledgeBase.model,
 		},
 		{
 			name: 'should select general agent for generic news-related queries',

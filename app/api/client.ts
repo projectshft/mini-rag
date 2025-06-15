@@ -13,6 +13,7 @@ export async function fetchApiRoute<T extends ApiRoute>(
 ): Promise<ApiOutput<T>> {
 	const schema = apiSchemas[route].input;
 	const result = schema.safeParse(input);
+	const path = apiSchemas[route].route;
 
 	if (!result.success) {
 		throw new ApiError(400, result.error.errors);
@@ -24,7 +25,7 @@ export async function fetchApiRoute<T extends ApiRoute>(
 		? {}
 		: { 'Content-Type': 'application/json' };
 
-	const response = await fetch(route, {
+	const response = await fetch(path, {
 		method: 'POST',
 		headers,
 		body,

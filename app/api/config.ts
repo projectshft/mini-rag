@@ -2,20 +2,6 @@ import { z } from 'zod';
 
 // Define schemas for each API endpoint
 export const apiSchemas = {
-	'UPLOAD-NEWS': {
-		route: '/api/upload-news',
-		input: z.object({
-			text: z.string(),
-			url: z.string().optional(),
-			topic: z.string().optional(),
-			bias: z.enum(['liberal', 'conservative']),
-		}),
-		output: z.object({
-			message: z.string(),
-			vectorized: z.boolean(),
-			success: z.boolean(),
-		}),
-	},
 	'SELECT-AGENT': {
 		route: '/api/select-agent',
 		input: z.object({
@@ -43,6 +29,60 @@ export const apiSchemas = {
 		}),
 
 		output: z.string(),
+	},
+	'SCRAPE-CONTENT': {
+		route: '/api/scrape-content',
+		input: z.object({}), // No input parameters for GET request
+		output: z.object({
+			success: z.boolean(),
+			message: z.string(),
+			totalItems: z.number(),
+			successfulItems: z.number(),
+			failedItems: z.number(),
+			successRate: z.string(),
+		}),
+	},
+	'SCRAPE-URL': {
+		route: '/api/scrape-url',
+		input: z.object({
+			url: z.string(),
+			useHeadless: z.boolean().optional(),
+		}),
+		output: z.object({
+			success: z.boolean(),
+			message: z.string(),
+			chunks: z.array(
+				z.object({
+					id: z.string(),
+					content: z.string(),
+					metadata: z.record(
+						z.union([z.string(), z.number(), z.boolean()])
+					),
+				})
+			),
+			totalChunks: z.number(),
+		}),
+	},
+	'SCRAPE-URLS': {
+		route: '/api/scrape-urls',
+		input: z.object({
+			urls: z.array(z.string()),
+			useHeadless: z.boolean().optional(),
+		}),
+		output: z.object({
+			success: z.boolean(),
+			message: z.string(),
+			chunks: z.array(
+				z.object({
+					id: z.string(),
+					content: z.string(),
+					metadata: z.record(
+						z.union([z.string(), z.number(), z.boolean()])
+					),
+				})
+			),
+			totalChunks: z.number(),
+		}),
 	},
 } as const;
 

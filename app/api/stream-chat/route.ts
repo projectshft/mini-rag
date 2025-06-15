@@ -1,11 +1,11 @@
 import { processLinkedInQuery } from '@/app/libs/openai/agents/linkedin-agent';
-import { processNewsQuery } from '@/app/libs/openai/agents/news-agent';
+import { processContentQuery } from '@/app/libs/openai/agents/rag-agent';
 import { processGeneralQuery } from '@/app/libs/openai/agents/general-agent';
 import { typedRoute } from '../typedRoute';
 
 const agents = {
 	linkedin: processLinkedInQuery,
-	articles: processNewsQuery,
+	articles: processContentQuery,
 	general: processGeneralQuery,
 } as const;
 
