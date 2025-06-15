@@ -51,26 +51,26 @@ export async function GET() {
 			const item = items[i];
 
 			try {
-				console.log(
-					`Processing item ${i + 1}/${items.length}: ${
-						item.metadata.url
-					}`
-				);
+				// Check if item has metadata and url
+				const url =
+					item.metadata?.url || item.metadata?.source || 'unknown';
+
+				console.log(`Processing item ${i + 1}/${items.length}: ${url}`);
 
 				// Vectorize and store the content
 				await vectorizeContent(item);
 
 				successfulItems++;
-				console.log(
-					`Successfully vectorized content from ${item.metadata.url}`
-				);
+				console.log(`Successfully vectorized content from ${url}`);
 
 				// Small delay to avoid rate limits
 				await new Promise((resolve) => setTimeout(resolve, 100));
 			} catch (error) {
 				failedItems++;
+				const url =
+					item.metadata?.url || item.metadata?.source || 'unknown';
 				console.error(
-					`Failed to vectorize content from ${item.metadata.url}:`,
+					`Failed to vectorize content from ${url}:`,
 					error
 				);
 			}

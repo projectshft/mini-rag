@@ -32,7 +32,7 @@
  */
 
 import { openaiClient } from '../openai';
-import { AGENT_CONFIG, AgentType } from '../openai';
+import { AGENT_CONFIG, AgentType, agentSchema } from './types';
 import { z } from 'zod';
 import { zodResponseFormat } from 'openai/helpers/zod';
 
@@ -66,7 +66,7 @@ TRY CHANGING THIS PROMPT:
 
 // Zod schema for structured output validation
 export const agentResponseSchema = z.object({
-	selectedAgent: z.enum(['knowledgeBase', 'linkedin', 'general']),
+	selectedAgent: agentSchema,
 	agentQuery: z.string(),
 });
 

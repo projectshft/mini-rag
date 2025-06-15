@@ -1,5 +1,5 @@
 import { openaiClient } from '../openai';
-import { AGENT_CONFIG } from '../openai';
+import { AGENT_CONFIG } from './types';
 
 export async function processGeneralQuery(
 	query: string,

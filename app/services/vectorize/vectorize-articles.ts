@@ -1,3 +1,5 @@
+'use server';
+
 import { Tiktoken } from 'js-tiktoken/lite';
 import o200k_base from 'js-tiktoken/ranks/o200k_base';
 import { pineconeClient } from '@/app/libs/pinecone';
@@ -5,7 +7,7 @@ import { openaiClient } from '@/app/libs/openai/openai';
 import { ContentItem } from '../contentScraper';
 import { Chunk } from '@/app/libs/chunking';
 
-const pineconeIndex = pineconeClient.Index('knowledge-base');
+const pineconeIndex = pineconeClient.Index(process.env.PINECONE_INDEX!);
 
 // OpenAI's recommended chunk size for embeddings
 const MAX_TOKENS = 512;

@@ -19,13 +19,8 @@ type ContentMetadata = {
  * based on semantic similarity rather than keyword matching.
  */
 async function searchVectors(query: string) {
-	console.log(
-		'Starting search with API key:',
-		process.env.PINECONE_API_KEY?.slice(0, 5) + '...'
-	);
-
 	// Connect to the knowledge base index in Pinecone
-	const index = pinecone.Index('knowledge-base');
+	const index = pinecone.Index(process.env.PINECONE_INDEX!);
 
 	console.log('Getting embeddings for query:', query);
 
@@ -41,6 +36,8 @@ async function searchVectors(query: string) {
 		topK: 5,
 		includeMetadata: true,
 	});
+
+	//TODO: would re-ranking be a good idea? https://docs.pinecone.io/docs/re-ranking
 
 	// Extract just the content from the search results
 	return (

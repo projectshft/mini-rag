@@ -50,9 +50,9 @@ export const searchDocuments = async (
 	query: string,
 	topK: number = 3 // TRY CHANGING: Increase to 5-10 for more results, decrease to 1-2 for fewer
 ): Promise<ScoredPineconeRecord<RecordMetadata>[]> => {
-	// Connect to the 'linkedin' index (collection of vectors)
+	// Connect to the  index (collection of vectors)
 	// NOTE: This should probably be renamed to 'articles' to match the content!
-	const index = pineconeClient.Index('linkedin');
+	const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
 
 	// Convert the search query into a vector embedding using OpenAI
 	const queryEmbedding = await openaiClient.embeddings.create({

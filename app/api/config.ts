@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { agentSchema } from '../libs/openai/agents/types';
 
 // Define schemas for each API endpoint
 export const apiSchemas = {
@@ -9,7 +10,7 @@ export const apiSchemas = {
 			audio: z.instanceof(Blob).optional(),
 		}),
 		output: z.object({
-			selectedAgent: z.enum(['articles', 'linkedin', 'general']),
+			selectedAgent: agentSchema,
 			model: z.enum([
 				'gpt-4o-mini',
 				'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt', // Make sure you are using the correct model based on the result from upload-training-data.ts
@@ -25,7 +26,7 @@ export const apiSchemas = {
 				'gpt-4o-mini',
 				'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt', // Make sure you are using the correct model based on the result from upload-training-data.ts
 			]),
-			selectedAgent: z.enum(['articles', 'linkedin', 'general']),
+			selectedAgent: agentSchema,
 		}),
 
 		output: z.string(),

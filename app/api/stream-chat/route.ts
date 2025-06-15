@@ -2,12 +2,16 @@ import { processLinkedInQuery } from '@/app/libs/openai/agents/linkedin-agent';
 import { processContentQuery } from '@/app/libs/openai/agents/rag-agent';
 import { processGeneralQuery } from '@/app/libs/openai/agents/general-agent';
 import { typedRoute } from '../typedRoute';
+import { AgentType } from '@/app/libs/openai/agents/types';
 
-const agents = {
+const agents: Record<
+	AgentType,
+	(query: string, model: string) => Promise<string | null>
+> = {
 	linkedin: processLinkedInQuery,
-	articles: processContentQuery,
+	knowledgeBase: processContentQuery,
 	general: processGeneralQuery,
-} as const;
+};
 
 export const POST = typedRoute(
 	'STREAM-CHAT',

@@ -29,6 +29,8 @@ export class DataProcessor {
 							...chunk.metadata,
 							...content.metadata,
 							title: content.title,
+							url: content.url,
+							source: url,
 						};
 					});
 
@@ -78,6 +80,8 @@ export class DataProcessor {
 					...chunk.metadata,
 					...content.metadata,
 					title: content.title,
+					url: content.url,
+					source: url,
 				};
 			});
 
