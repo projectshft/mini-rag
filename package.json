@@ -10,12 +10,10 @@
 		"test": "jest",
 		"estimate-costs": "npx ts-node app/scripts/estimate-training-cost.ts",
 		"train": "npx ts-node app/scripts/upload-training-data.ts",
-		"upload-articles": "npx ts-node app/scripts/uploadArticlesToPinecone.ts",
 		"scrape-content": "curl http://localhost:3000/api/scrape-content",
 		"prepare": "husky",
 		"exercise:vectors": "npx ts-node app/scripts/exercises/vector-similarity.ts",
-		"exercise:vectors:test": "npx ts-node app/scripts/exercises/vector-similarity-test.ts",
-		"exercise:vectors:solution": "SHOW_SOLUTION=true npx ts-node app/scripts/exercises/vector-similarity.ts"
+		"exercise:vectors:test": "npx ts-node app/scripts/exercises/vector-similarity-test.ts"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [
