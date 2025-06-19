@@ -1,4 +1,4 @@
-import { fetchApiRoute } from '../../api/client';
+import { fetchApiRoute } from '../api/client';
 import { Message } from 'ai/react';
 
 export async function handleAgentSelection(

@@ -49,32 +49,31 @@ if (missingVars.length > 0) {
 	process.exit(1);
 }
 
-// Import services AFTER environment variables are loaded
 import { ContentScraper } from '../services/contentScraper';
 import { vectorizeContent } from '../services/vectorize/vectorize-articles';
+import { DataProcessor } from '../libs/dataProcessor';
 
 async function main() {
 	console.log('Starting content scraping and vectorization process...');
 	console.log(`Started at: ${new Date().toISOString()}`);
 
-	let totalItems = 0;
-	let successfulItems = 0;
-	let failedItems = 0;
-
 	try {
-		// Initialize the content scraper
 		const scraper = new ContentScraper();
 
-		// Define URLs to scrape
 		const urls = [
-			'https://example.com/resource1',
-			'https://example.com/resource2',
+			'https://nextjs.org/docs/getting-started',
+			'https://react.dev/learn',
+			'https://www.typescriptlang.org/docs/',
+			'https://www.typescriptlang.org/docs/handbook/2/mapped-types.html',
+			'https://www.typescriptlang.org/docs/handbook/2/keyof-types.html',
+			'https://docs.pinecone.io/docs/overview',
+			'https://docs.pinecone.io/guides/index-data/create-an-index',
+			'https://nextjs.org/docs/app/getting-started/fetching-data',
 		];
 
 		console.log('Scraping content sources...');
 		const items = await scraper.scrapeMultipleUrls(urls);
 
-		totalItems = items.length;
 		console.log(`Successfully scraped ${items.length} content items`);
 
 		if (items.length === 0) {
@@ -85,49 +84,35 @@ async function main() {
 		// Process each content item
 		console.log('Starting vectorization process...');
 
-		for (let i = 0; i < items.length; i++) {
-			const item = items[i];
+		const chunks = await new DataProcessor().processUrls(urls);
 
+		let successfulChunks = 0;
+		let failedChunks = 0;
+
+		for (const chunk of chunks) {
+			console.log(`Vectorizing chunk ${chunk.metadata.url}`);
 			try {
+				await vectorizeContent(chunk);
 				console.log(
-					`Processing item ${i + 1}/${items.length}: ${
-						item.metadata.url
-					}`
+					`Successfully vectorized chunk ${chunk.metadata.url}`
 				);
-
-				// Vectorize and store the content
-				await vectorizeContent(item);
-
-				successfulItems++;
-				console.log(
-					`Successfully vectorized content from ${item.metadata.url}`
-				);
-
-				// Small delay to avoid rate limits
-				await new Promise((resolve) => setTimeout(resolve, 100));
+				successfulChunks++;
 			} catch (error) {
-				failedItems++;
+				failedChunks++;
 				console.error(
-					`Failed to vectorize content from ${item.metadata.url}:`,
+					`Failed to vectorize chunk ${chunk.metadata.url}:`,
 					error
 				);
 			}
 		}
 
-		// Calculate success rate
-		const successRate =
-			totalItems > 0
-				? ((successfulItems / totalItems) * 100).toFixed(1)
-				: '0';
-
 		// Print summary
 		console.log('\nSCRAPING SUMMARY');
 		console.log('==================');
-		console.log(`Total items: ${totalItems}`);
-		console.log(`Successfully processed: ${successfulItems}`);
-		console.log(`Failed: ${failedItems}`);
+		console.log(`Total items: ${chunks.length}`);
+		console.log(`Successful chunks: ${successfulChunks}`);
+		console.log(`Failed chunks: ${failedChunks}`);
 		console.log(`Completed at: ${new Date().toISOString()}`);
-		console.log(`Success rate: ${successRate}%`);
 	} catch (error) {
 		console.error('Critical error during scraping:', error);
 	}

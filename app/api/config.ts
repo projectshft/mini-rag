@@ -43,27 +43,7 @@ export const apiSchemas = {
 			successRate: z.string(),
 		}),
 	},
-	'SCRAPE-URL': {
-		route: '/api/scrape-url',
-		input: z.object({
-			url: z.string(),
-			useHeadless: z.boolean().optional(),
-		}),
-		output: z.object({
-			success: z.boolean(),
-			message: z.string(),
-			chunks: z.array(
-				z.object({
-					id: z.string(),
-					content: z.string(),
-					metadata: z.record(
-						z.union([z.string(), z.number(), z.boolean()])
-					),
-				})
-			),
-			totalChunks: z.number(),
-		}),
-	},
+
 	'SCRAPE-URLS': {
 		route: '/api/scrape-urls',
 		input: z.object({

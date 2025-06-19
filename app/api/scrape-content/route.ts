@@ -27,8 +27,6 @@ export async function GET() {
 
 		const items = await scraper.scrapeMultipleUrls(urls);
 
-		console.log(items);
-
 		totalItems = items.length;
 		console.log(`Successfully scraped ${items.length} content items`);
 

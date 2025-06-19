@@ -5,7 +5,7 @@ import { Message } from 'ai/react';
 import { useChat } from '@ai-sdk/react';
 import { Mic, MicOff, Bot, User, Sparkles } from 'lucide-react';
 import { MarkdownWithIcons } from './components/MarkdownWithIcons';
-import { handleAgentSelection } from './page/utils/chat';
+import { handleAgentSelection } from './utils/chat';
 
 const examplePosts = [
 	'Write a LinkedIn post about learning JavaScript',

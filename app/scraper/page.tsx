@@ -34,8 +34,8 @@ export default function ScraperPage() {
 		setMessage('');
 
 		try {
-			const result = await fetchApiRoute('SCRAPE-URL', {
-				url,
+			const result = await fetchApiRoute('SCRAPE-URLS', {
+				urls: [url],
 				useHeadless,
 			});
 
