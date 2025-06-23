@@ -1,5 +1,5 @@
 import { selectAgent } from '../selector-agent';
-import { AGENT_CONFIG } from '../../openai';
+import { AGENT_CONFIG } from '../types';
 
 describe('selectAgent', () => {
 	const testCases = [
@@ -10,14 +10,14 @@ describe('selectAgent', () => {
 			expectedModel: AGENT_CONFIG.linkedin.model,
 		},
 		{
-			name: 'should select Articles agent for tariffs-related queries',
-			query: 'What are the latest developments regarding tariffs?',
+			name: 'should select Knowledge Base agent for coding queries',
+			query: 'Why are enums in TypeScript useful?',
 			expectedAgent: 'knowledgeBase',
 			expectedModel: AGENT_CONFIG.knowledgeBase.model,
 		},
 		{
-			name: 'should select general agent for generic news-related queries',
-			query: 'What are the latest developments in the tech industry?',
+			name: 'should select general agent for generic queries',
+			query: 'What is a recipe for a good lasagna?',
 			expectedAgent: 'general',
 			expectedModel: AGENT_CONFIG.general.model,
 		},

@@ -20,7 +20,7 @@ export async function fetchApiRoute<T extends ApiRoute>(
 	}
 
 	const isFormData = input instanceof FormData;
-	const body = isFormData ? input : JSON.stringify(input);
+	const body = JSON.stringify(input);
 	const headers: HeadersInit = isFormData
 		? {}
 		: { 'Content-Type': 'application/json' };
