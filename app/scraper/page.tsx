@@ -4,7 +4,6 @@ import { useState } from 'react';
 import { fetchApiRoute } from '@/app/api/client';
 import { Loader2 } from 'lucide-react';
 
-// Define a type that matches the API response structure
 interface ScrapedChunk {
 	id: string;
 	content: string;
