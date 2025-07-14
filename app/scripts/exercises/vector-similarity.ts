@@ -8,11 +8,11 @@
  */
 
 // Document type for our examples
-export interface Document {
+export type Document = {
 	id: string;
 	title: string;
 	embedding: number[];
-}
+};
 
 /**
  * Calculate the dot product between two vectors

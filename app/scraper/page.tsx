@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { fetchApiRoute } from '@/app/api/client';
 import { Loader2 } from 'lucide-react';
 
-interface ScrapedChunk {
+type ScrapedChunk = {
 	id: string;
 	content: string;
 	metadata: {
@@ -13,7 +13,7 @@ interface ScrapedChunk {
 		totalChunks: number;
 		[key: string]: string | number | boolean;
 	};
-}
+};
 
 export default function ScraperPage() {
 	const [url, setUrl] = useState('');

@@ -1,4 +1,4 @@
-export interface Chunk {
+export type Chunk = {
 	id: string;
 	content: string;
 	metadata: {
@@ -9,7 +9,7 @@ export interface Chunk {
 		endChar: number;
 		[key: string]: string | number | boolean;
 	};
-}
+};
 
 /**
  * Splits text into smaller chunks for processing

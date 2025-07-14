@@ -12,12 +12,12 @@ const MAX_TARGET_EXAMPLES = 25000;
 const MIN_DEFAULT_EPOCHS = 1;
 const MAX_DEFAULT_EPOCHS = 25;
 
-interface TrainingExample {
+type TrainingExample = {
 	messages: Array<{
 		role: string;
 		content: string;
 	}>;
-}
+};
 
 function countTokens(text: string): number {
 	const tokens = encodingForModel.encode(text);

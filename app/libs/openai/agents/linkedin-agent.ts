@@ -29,7 +29,8 @@
  * Learn more: https://platform.openai.com/docs/guides/fine-tuning
  */
 
-import { openaiClient } from '../openai';
+import { openai } from '@ai-sdk/openai';
+import { streamText } from 'ai';
 
 /**
  * LINKEDIN CONTENT GENERATION
@@ -38,11 +39,11 @@ import { openaiClient } from '../openai';
  * to generate professional, platform-appropriate content.
  */
 export async function processLinkedInQuery(query: string, model: string) {
-	const response = await openaiClient.chat.completions.create({
-		model, // Usually the fine-tuned model: 'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt'
+	const result = await streamText({
+		model: openai(model), // Usually the fine-tuned model: 'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt'
 		// TRY ADDING: temperature: 0.8, // Higher = more creative posts (0.0-1.0)
-		// TRY ADDING: max_tokens: 300, // Limit post length for LinkedIn's format
-		// TRY ADDING: top_p: 0.9, // Alternative to temperature for controlling randomness
+		// TRY ADDING: maxTokens: 300, // Limit post length for LinkedIn's format
+		// TRY ADDING: topP: 0.9, // Alternative to temperature for controlling randomness
 		messages: [
 			{
 				role: 'system',
@@ -62,5 +63,5 @@ export async function processLinkedInQuery(query: string, model: string) {
 		],
 	});
 
-	return response.choices[0].message.content;
+	return result.toDataStreamResponse();
 }

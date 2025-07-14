@@ -6,7 +6,7 @@ import { AgentType } from '@/app/libs/openai/agents/types';
 
 const agents: Record<
 	AgentType,
-	(query: string, model: string) => Promise<string | null>
+	(query: string, model: string) => Promise<Response | string | null>
 > = {
 	linkedin: processLinkedInQuery,
 	knowledgeBase: processContentQuery,
@@ -21,6 +21,11 @@ export const POST = typedRoute(
 		}
 
 		const response = await agents[selectedAgent](agentQuery, model);
+
+		// If it's a streaming response, return it directly
+		if (response && typeof response.pipe === 'function') {
+			return response;
+		}
 
 		return response || 'Oops, something went wrong';
 	}

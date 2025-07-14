@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import puppeteer from 'puppeteer';
 
-export interface ScrapedContent {
+export type ScrapedContent = {
 	title: string;
 	content: string;
 	url: string;
@@ -12,7 +12,7 @@ export interface ScrapedContent {
 		contentLength: number;
 		[key: string]: string | number | boolean;
 	};
-}
+};
 
 /**
  * Scrapes content from a URL using Cheerio (fast, for static sites)

@@ -1,12 +1,13 @@
-import { openaiClient } from '../openai';
+import { openai } from '@ai-sdk/openai';
+import { streamText } from 'ai';
 import { AGENT_CONFIG } from './types';
 
 export async function processGeneralQuery(
 	query: string,
 	model: string = AGENT_CONFIG.general.model
 ) {
-	const response = await openaiClient.chat.completions.create({
-		model: model,
+	const result = await streamText({
+		model: openai(model),
 		messages: [
 			{
 				role: 'system',
@@ -17,5 +18,5 @@ export async function processGeneralQuery(
 		],
 	});
 
-	return response.choices[0].message.content;
+	return result.toDataStreamResponse();
 }

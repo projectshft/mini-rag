@@ -72,8 +72,11 @@ export async function processContentQuery(query: string, model: string) {
 		.join('\n\n---\n\n');
 
 	// Step 2: Generate response using retrieved content as context
-	const response = await openaiClient.chat.completions.create({
-		model: model,
+	const { openai } = await import('@ai-sdk/openai');
+	const { streamText } = await import('ai');
+	
+	const result = await streamText({
+		model: openai(model),
 		messages: [
 			{
 				role: 'system',
@@ -91,7 +94,7 @@ export async function processContentQuery(query: string, model: string) {
 		],
 	});
 
-	return response.choices[0].message.content;
+	return result.toDataStreamResponse();
 }
 
 // Export the old function name for backward compatibility
