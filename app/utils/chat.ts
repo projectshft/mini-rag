@@ -21,15 +21,15 @@ export async function handleAgentSelection(
 
 		callBack?.();
 
-		const agentResponse = await fetchApiRoute('STREAM-CHAT', {
-			selectedAgent,
-			agentQuery,
-			model,
-		});
-
+		// Let useChat handle the streaming
 		await append({
-			content: agentResponse,
-			role: 'assistant',
+			content: agentQuery,
+			role: 'user',
+			data: {
+				selectedAgent,
+				model,
+				agentQuery
+			}
 		});
 	} catch (error) {
 		console.error('Error in agent selection:', error);

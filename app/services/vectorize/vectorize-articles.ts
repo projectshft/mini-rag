@@ -23,6 +23,11 @@ function splitIntoParagraphs(text: string): string[] {
 	return text.split(/\n+/).filter((p) => p.trim().length > 0);
 }
 
+/**
+ * Create semantic chunks of the text
+ * @param text - The text to create semantic chunks from - try to keep paragraphs rather than random chunks
+ * @returns An array of semantic chunks
+ */
 function createSemanticChunks(text: string): string[] {
 	const paragraphs = splitIntoParagraphs(text);
 	const chunks: string[] = [];

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Message } from 'ai/react';
 import { useChat } from '@ai-sdk/react';
 import { Mic, MicOff, Bot, User, Sparkles } from 'lucide-react';
@@ -20,10 +20,18 @@ export default function Chat() {
 	const [isLoading, setIsLoading] = useState(false);
 	const mediaRecorderRef = useRef<MediaRecorder | null>(null);
 	const audioChunksRef = useRef<Blob[]>([]);
+	const messagesEndRef = useRef<HTMLDivElement>(null);
 
 	const { append, messages, status } = useChat({
 		api: '/api/stream-chat',
+		body: {
+			// These will be overridden by the data passed to append
+		},
 	});
+
+	useEffect(() => {
+		messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+	}, [messages]);
 
 	const handleExamplePostClick = async (content: string) => {
 		setInputText(content);
@@ -187,6 +195,7 @@ export default function Chat() {
 						</div>
 					</div>
 				)}
+				<div ref={messagesEndRef} />
 			</div>
 
 			<div className='fixed bottom-0 left-0 right-0 flex justify-center items-center gap-4 p-4 bg-black/80 backdrop-blur-md border-t border-white/10'>

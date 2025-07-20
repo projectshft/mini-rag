@@ -37,6 +37,11 @@ export async function fetchApiRoute<T extends ApiRoute>(
 		throw new ApiError(response.status, error);
 	}
 
+	// Handle streaming responses
+	if (route === 'STREAM-CHAT' && response.headers.get('content-type')?.includes('text/plain')) {
+		return response.text();
+	}
+
 	const data = await response.json();
 	const outputSchema = apiSchemas[route].output;
 	const outputResult = outputSchema.safeParse(data);

@@ -74,7 +74,7 @@ export async function processContentQuery(query: string, model: string) {
 	// Step 2: Generate response using retrieved content as context
 	const { openai } = await import('@ai-sdk/openai');
 	const { streamText } = await import('ai');
-	
+
 	const result = await streamText({
 		model: openai(model),
 		messages: [
