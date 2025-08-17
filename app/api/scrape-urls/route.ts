@@ -4,9 +4,9 @@ import { vectorizeContent } from '@/app/services/vectorize/vectorize-articles';
 
 export const POST = typedRoute(
 	'SCRAPE-URLS',
-	async ({ urls, useHeadless = false }) => {
+	async ({ urls }) => {
 		const processor = new DataProcessor();
-		const chunks = await processor.processUrls(urls, useHeadless);
+		const chunks = await processor.processUrls(urls);
 
 		for (const chunk of chunks) {
 			await vectorizeContent(chunk);

@@ -48,7 +48,6 @@ export const apiSchemas = {
 		route: '/api/scrape-urls',
 		input: z.object({
 			urls: z.array(z.string()),
-			useHeadless: z.boolean().optional(),
 		}),
 		output: z.object({
 			success: z.boolean(),

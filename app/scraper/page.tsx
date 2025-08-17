@@ -17,7 +17,6 @@ type ScrapedChunk = {
 
 export default function ScraperPage() {
 	const [url, setUrl] = useState('');
-	const [useHeadless, setUseHeadless] = useState(false);
 	const [message, setMessage] = useState('');
 	const [chunks, setChunks] = useState<ScrapedChunk[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
@@ -35,7 +34,6 @@ export default function ScraperPage() {
 		try {
 			const result = await fetchApiRoute('SCRAPE-URLS', {
 				urls: [url],
-				useHeadless,
 			});
 
 			setMessage(result.message);
@@ -67,18 +65,6 @@ export default function ScraperPage() {
 					/>
 				</div>
 
-				<div className='mb-4 flex items-center'>
-					<input
-						id='useHeadless'
-						type='checkbox'
-						checked={useHeadless}
-						onChange={(e) => setUseHeadless(e.target.checked)}
-						className='mr-2'
-					/>
-					<label htmlFor='useHeadless' className='text-gray-300'>
-						Use headless browser (for JavaScript-heavy sites)
-					</label>
-				</div>
 
 				<button
 					onClick={handleSubmit}

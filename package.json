@@ -11,9 +11,11 @@
 		"estimate-costs": "npx ts-node app/scripts/estimate-training-cost.ts",
 		"train": "npx ts-node app/scripts/upload-training-data.ts",
 		"scrape-content": "curl http://localhost:3000/api/scrape-content",
+		"process-csv": "npx ts-node app/scripts/processCsvAndVectorize.ts",
 		"prepare": "husky",
 		"exercise:vectors": "npx ts-node app/scripts/exercises/vector-similarity.ts",
-		"exercise:vectors:test": "npx ts-node app/scripts/exercises/vector-similarity-test.ts"
+		"exercise:vectors:test": "npx ts-node app/scripts/exercises/vector-similarity-test.ts",
+		"exercise:word-math": "npx ts-node app/scripts/exercises/vector-word-arithmetic.ts"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [
@@ -27,7 +29,6 @@
 		"@tailwindcss/postcss": "^4.1.10",
 		"@types/cheerio": "^0.22.35",
 		"@types/node-fetch": "3.0.2",
-		"@types/puppeteer": "5.4.7",
 		"ai": "^4.2.0",
 		"axios": "^1.10.0",
 		"cheerio": "^1.1.0",
@@ -40,7 +41,6 @@
 		"next": "15.1.6",
 		"node-fetch": "^3.3.2",
 		"openai": "5.3.0",
-		"puppeteer": "^24.10.1",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-markdown": "^10.1.0",

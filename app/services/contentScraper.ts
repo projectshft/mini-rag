@@ -15,11 +15,11 @@ export class ContentScraper {
 		this.dataProcessor = new DataProcessor();
 	}
 
-	async scrapeContent(url: string, useHeadless: boolean = false) {
-		return this.dataProcessor.processSingleUrl(url, useHeadless);
+	async scrapeContent(url: string) {
+		return this.dataProcessor.processSingleUrl(url);
 	}
 
-	async scrapeMultipleUrls(urls: string[], useHeadless: boolean = false) {
-		return this.dataProcessor.processUrls(urls, useHeadless);
+	async scrapeMultipleUrls(urls: string[]) {
+		return this.dataProcessor.processUrls(urls);
 	}
 }
