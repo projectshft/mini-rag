@@ -57,7 +57,44 @@ export const apiSchemas = {
 					id: z.string(),
 					content: z.string(),
 					metadata: z.record(
-						z.union([z.string(), z.number(), z.boolean()])
+						z.union([
+							z.string(),
+							z.number(),
+							z.boolean(),
+							z.array(z.string()),
+						])
+					),
+				})
+			),
+			totalChunks: z.number(),
+		}),
+	},
+
+	'UPLOAD-TEXT': {
+		route: '/api/upload-text',
+		input: z.object({
+			content: z.string(),
+			metadata: z.object({
+				title: z.string(),
+				description: z.string().optional(),
+				tags: z.array(z.string()),
+				sourceType: z.literal('text'),
+			}),
+		}),
+		output: z.object({
+			success: z.boolean(),
+			message: z.string(),
+			chunks: z.array(
+				z.object({
+					id: z.string(),
+					content: z.string(),
+					metadata: z.record(
+						z.union([
+							z.string(),
+							z.number(),
+							z.boolean(),
+							z.array(z.string()),
+						])
 					),
 				})
 			),

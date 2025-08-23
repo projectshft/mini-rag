@@ -1,11 +1,10 @@
 import { fetchApiRoute } from '../api/client';
-import { Message } from 'ai/react';
+import { type UIMessage } from '@ai-sdk/react';
+import { generateId } from 'ai';
 
 export async function handleAgentSelection(
 	input: string | Blob,
-	append: (
-		message: Omit<Message, 'id'>
-	) => Promise<string | null | undefined>,
+	sendMessage: (message: UIMessage) => Promise<void>,
 	callBack?: () => void
 ) {
 	try {
@@ -14,23 +13,25 @@ export async function handleAgentSelection(
 			typeof input === 'string' ? { userQuery: input } : { audio: input }
 		);
 
-		await append({
-			content: `**Query:** ${agentQuery}\n**Agent:** ${selectedAgent} agent`,
+		// Send a single message with query info and metadata for streaming
+		await sendMessage({
+			id: generateId(),
 			role: 'user',
+			parts: [
+				{
+					type: 'text',
+					text: `**Query:** ${agentQuery}\n**Agent:** ${selectedAgent} agent`,
+				},
+			],
+			metadata: {
+				selectedAgent,
+				model,
+				agentQuery,
+				isQueryInfo: true, // Flag to identify this as the query info message
+			},
 		});
 
 		callBack?.();
-
-		// Let useChat handle the streaming
-		await append({
-			content: agentQuery,
-			role: 'user',
-			data: {
-				selectedAgent,
-				model,
-				agentQuery
-			}
-		});
 	} catch (error) {
 		console.error('Error in agent selection:', error);
 		throw error;

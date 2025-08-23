@@ -43,39 +43,54 @@ export class DataProcessor {
 	}
 
 	/**
-	 * Processes a single URL and extracts content
-	 * @param url URL to process
-	 * @returns Array of text chunks or null if processing failed
+	 * Processes text content directly
+	 * @param content Text content to process
+	 * @param metadata Additional metadata for the content
+	 * @returns Array of text chunks
 	 */
-	async processSingleUrl(url: string): Promise<Chunk[] | null> {
+	async processText(
+		content: string,
+		metadata: {
+			title: string;
+			description?: string;
+			tags: string[];
+			sourceType: string;
+		}
+	): Promise<Chunk[]> {
 		try {
-			console.log(`Processing URL: ${url}`);
+			console.log(`Processing text content: "${metadata.title}"`);
 
-			const content = await scrapeWithCheerio(url);
+			const chunks = chunkText(
+				content,
+				500,
+				50,
+				`text:${metadata.title}`
+			);
 
-			if (!content) {
-				console.warn(`No content extracted from ${url}`);
-				return null;
-			}
-
-			const chunks = chunkText(content.content, 500, 50, url);
-
-			// Add original metadata to each chunk
-			chunks.forEach((chunk) => {
+			// Add metadata to each chunk
+			chunks.forEach((chunk, index) => {
 				chunk.metadata = {
 					...chunk.metadata,
-					...content.metadata,
-					title: content.title,
-					url: content.url,
-					source: url,
+					title: metadata.title,
+					description: metadata.description || '',
+					tags: metadata.tags,
+					sourceType: metadata.sourceType,
+					source: `text:${metadata.title}`,
+					chunkIndex: index,
+					totalChunks: chunks.length,
 				};
 			});
 
-			console.log(`✅ Processed ${url}: ${chunks.length} chunks`);
+			console.log(
+				`✅ Processed text content "${metadata.title}": ${chunks.length} chunks`
+			);
 			return chunks;
 		} catch (error) {
-			console.error(`❌ Failed to process ${url}:`, error);
-			return null;
+			console.error(
+				`❌ Failed to process text content "${metadata.title}":`,
+				error
+			);
+			return [];
 		}
 	}
 }

@@ -1,5 +1,7 @@
 import { openaiClient } from '../openai';
 import { Pinecone } from '@pinecone-database/pinecone';
+import { openai } from '@ai-sdk/openai';
+import { streamText } from 'ai';
 
 const pinecone = new Pinecone({
 	apiKey: process.env.PINECONE_API_KEY!,
@@ -27,6 +29,7 @@ async function searchVectors(query: string) {
 	// Convert the user's question into a vector embedding
 	const queryEmbedding = await openaiClient.embeddings.create({
 		model: 'text-embedding-3-small',
+		dimensions: 512,
 		input: query,
 	});
 
@@ -72,8 +75,6 @@ export async function processContentQuery(query: string, model: string) {
 		.join('\n\n---\n\n');
 
 	// Step 2: Generate response using retrieved content as context
-	const { openai } = await import('@ai-sdk/openai');
-	const { streamText } = await import('ai');
 
 	const result = await streamText({
 		model: openai(model),
@@ -94,8 +95,5 @@ export async function processContentQuery(query: string, model: string) {
 		],
 	});
 
-	return result.toDataStreamResponse();
+	return result.toUIMessageStreamResponse();
 }
-
-// Export the old function name for backward compatibility
-export const processNewsQuery = processContentQuery;

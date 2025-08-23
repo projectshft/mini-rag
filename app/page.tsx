@@ -1,11 +1,13 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { Message } from 'ai/react';
-import { useChat } from '@ai-sdk/react';
-import { Mic, MicOff, Bot, User, Sparkles } from 'lucide-react';
-import { MarkdownWithIcons } from './components/MarkdownWithIcons';
+import { useChat, UIMessage } from '@ai-sdk/react';
+import { Mic, MicOff, Sparkles } from 'lucide-react';
 import { handleAgentSelection } from './utils/chat';
+import { DefaultChatTransport } from 'ai';
+import { UserMessage } from './components/UserMessage';
+import { AgentMessage } from './components/AgentMessage';
+import { LoadingMessage } from './components/LoadingMessage';
 
 const examplePosts = [
 	'Write a LinkedIn post about learning JavaScript',
@@ -22,11 +24,10 @@ export default function Chat() {
 	const audioChunksRef = useRef<Blob[]>([]);
 	const messagesEndRef = useRef<HTMLDivElement>(null);
 
-	const { append, messages, status } = useChat({
-		api: '/api/stream-chat',
-		body: {
-			// These will be overridden by the data passed to append
-		},
+	const { messages, sendMessage } = useChat({
+		transport: new DefaultChatTransport({
+			api: 'api/stream-chat',
+		}),
 	});
 
 	useEffect(() => {
@@ -37,7 +38,7 @@ export default function Chat() {
 		setInputText(content);
 		setIsLoading(true);
 		try {
-			await handleAgentSelection(content, append, () => {
+			await handleAgentSelection(content, sendMessage, () => {
 				setInputText('');
 			});
 		} finally {
@@ -87,7 +88,7 @@ export default function Chat() {
 	const sendAudioMessage = async (audioBlob: Blob) => {
 		setIsLoading(true);
 		try {
-			await handleAgentSelection(audioBlob, append, () => {
+			await handleAgentSelection(audioBlob, sendMessage, () => {
 				setInputText('');
 			});
 		} catch (error) {
@@ -103,7 +104,7 @@ export default function Chat() {
 
 		setIsLoading(true);
 		try {
-			await handleAgentSelection(inputText, append, () => {
+			await handleAgentSelection(inputText, sendMessage, () => {
 				setInputText('');
 			});
 		} catch (error) {
@@ -113,7 +114,9 @@ export default function Chat() {
 		}
 	};
 
-	const isSubmitting = status === 'submitted' || isLoading;
+	const isSubmitting = isLoading;
+
+	console.log('messages', JSON.stringify(messages, null, 2));
 
 	return (
 		<div className='min-h-screen bg-black text-white flex flex-col items-center justify-center px-4 py-12'>
@@ -142,59 +145,14 @@ export default function Chat() {
 			)}
 
 			<div className='flex-1 w-full max-w-xl overflow-y-auto space-y-4 mb-20'>
-				{messages?.map((m: Message) => (
-					<div
-						key={m.id}
-						className={`flex ${
-							m.role === 'assistant'
-								? 'flex-row'
-								: 'flex-row-reverse'
-						} items-start gap-2 w-full`}
-					>
-						<div
-							className={`w-8 h-8 rounded-full flex items-center justify-center ${
-								m.role === 'assistant'
-									? 'bg-blue-500 text-white'
-									: 'bg-gray-700 text-white'
-							}`}
-						>
-							{m.role === 'assistant' ? (
-								<Bot className='w-6 h-6' />
-							) : (
-								<User className='w-6 h-6' />
-							)}
-						</div>
-
-						<div
-							className={`flex flex-col gap-1 max-w-[80%] ${
-								m.role === 'assistant'
-									? 'bg-[#63a4ff] text-white rounded-2xl shadow-lg'
-									: 'bg-[#1f1f1f] text-gray-200 rounded-2xl'
-							} p-4`}
-						>
-							<div className='whitespace-pre-wrap text-lg'>
-								<MarkdownWithIcons content={m.content} />
-							</div>
-						</div>
-					</div>
-				))}
-				{isSubmitting && (
-					<div className='flex flex-row items-start gap-2 w-full'>
-						<div className='w-8 h-8 rounded-full flex items-center justify-center bg-blue-500 text-white'>
-							<Bot className='w-6 h-6' />
-						</div>
-						<div className='flex flex-col gap-1 max-w-[80%] bg-[#63a4ff] text-white rounded-2xl shadow-lg p-4'>
-							<div className='flex items-center gap-3'>
-								<div className='relative w-5 h-5'>
-									<div className='absolute inset-0 rounded-full border-2 border-white border-t-transparent animate-spin'></div>
-								</div>
-								<span className='text-white'>
-									Generating response...
-								</span>
-							</div>
-						</div>
-					</div>
+				{messages?.map((message: UIMessage) =>
+					message.role === 'assistant' ? (
+						<AgentMessage key={message.id} message={message} />
+					) : (
+						<UserMessage key={message.id} message={message} />
+					)
 				)}
+				{isSubmitting && <LoadingMessage />}
 				<div ref={messagesEndRef} />
 			</div>
 

@@ -18,5 +18,5 @@ export async function processGeneralQuery(
 		],
 	});
 
-	return result.toDataStreamResponse();
+	return result.toUIMessageStreamResponse();
 }

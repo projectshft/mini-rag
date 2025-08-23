@@ -16,26 +16,33 @@ const agents: Record<
 
 export const POST = async (req: NextRequest) => {
 	const body = await req.json();
-	
+
 	// Handle useChat format
 	if (body.messages) {
 		const lastMessage = body.messages[body.messages.length - 1];
-		const { selectedAgent, agentQuery, model } = lastMessage.data || {};
-		
+		const { selectedAgent, agentQuery, model } = lastMessage.metadata || {};
+
 		if (!selectedAgent || !agentQuery || !model) {
-			return NextResponse.json({ error: 'Missing required data' }, { status: 400 });
+			return NextResponse.json(
+				{ error: 'Missing required data' },
+				{ status: 400 }
+			);
 		}
 
 		if (!(selectedAgent in agents)) {
-			return NextResponse.json({ error: 'Invalid agent selected' }, { status: 400 });
+			return NextResponse.json(
+				{ error: 'Invalid agent selected' },
+				{ status: 400 }
+			);
 		}
 
 		return await agents[selectedAgent as AgentType](agentQuery, model);
 	}
 
-	// Handle direct API calls
 	const inputSchema = apiSchemas['STREAM-CHAT'].input;
 	const result = inputSchema.safeParse(body);
+
+	console.log('result', result);
 
 	if (!result.success) {
 		return NextResponse.json(result.error.errors, { status: 400 });
@@ -44,7 +51,10 @@ export const POST = async (req: NextRequest) => {
 	const { agentQuery, selectedAgent, model } = result.data;
 
 	if (!(selectedAgent in agents)) {
-		return NextResponse.json({ error: 'Invalid agent selected' }, { status: 400 });
+		return NextResponse.json(
+			{ error: 'Invalid agent selected' },
+			{ status: 400 }
+		);
 	}
 
 	const response = await agents[selectedAgent](agentQuery, model);
@@ -54,5 +64,6 @@ export const POST = async (req: NextRequest) => {
 		return response;
 	}
 
+	console.log('response', response);
 	return NextResponse.json(response || 'Oops, something went wrong');
 };

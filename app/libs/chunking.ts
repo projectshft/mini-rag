@@ -7,7 +7,7 @@ export type Chunk = {
 		totalChunks: number;
 		startChar: number;
 		endChar: number;
-		[key: string]: string | number | boolean;
+		[key: string]: string | number | boolean | string[];
 	};
 };
 

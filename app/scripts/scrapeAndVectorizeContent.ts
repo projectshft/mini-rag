@@ -34,11 +34,7 @@ if (fs.existsSync(envLocalPath)) {
 }
 
 // Validate required environment variables
-const requiredEnvVars = [
-	'OPENAI_API_KEY',
-	'PINECONE_API_KEY',
-	'FIRECRAWL_API_KEY',
-];
+const requiredEnvVars = ['OPENAI_API_KEY', 'PINECONE_API_KEY'];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {

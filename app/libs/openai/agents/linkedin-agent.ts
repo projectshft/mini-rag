@@ -63,5 +63,5 @@ export async function processLinkedInQuery(query: string, model: string) {
 		],
 	});
 
-	return result.toDataStreamResponse();
+	return result.toUIMessageStreamResponse();
 }

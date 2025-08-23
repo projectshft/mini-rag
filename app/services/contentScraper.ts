@@ -15,10 +15,6 @@ export class ContentScraper {
 		this.dataProcessor = new DataProcessor();
 	}
 
-	async scrapeContent(url: string) {
-		return this.dataProcessor.processSingleUrl(url);
-	}
-
 	async scrapeMultipleUrls(urls: string[]) {
 		return this.dataProcessor.processUrls(urls);
 	}

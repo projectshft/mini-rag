@@ -4,7 +4,6 @@ import { Tiktoken } from 'js-tiktoken/lite';
 import o200k_base from 'js-tiktoken/ranks/o200k_base';
 import { pineconeClient } from '@/app/libs/pinecone';
 import { openaiClient } from '@/app/libs/openai/openai';
-import { ContentItem } from '../contentScraper';
 import { Chunk } from '@/app/libs/chunking';
 
 const pineconeIndex = pineconeClient.Index(process.env.PINECONE_INDEX!);
@@ -57,53 +56,25 @@ export async function vectorizeContent(chunk: Chunk): Promise<void> {
 		throw new Error('Content is too short.');
 	}
 
-	const embeddingResponse = await openaiClient.embeddings.create({
-		model: 'text-embedding-3-small',
-		input: chunk.content,
-	});
+	const chunks = createSemanticChunks(chunk.content);
 
-	const vector = embeddingResponse.data[0].embedding;
-
-	await pineconeIndex.upsert([
-		{
-			id: chunk.id,
-			values: vector,
-			metadata: {
-				content: chunk.content,
-				...chunk.metadata,
-			},
-		},
-	]);
-}
-
-export async function vectorizeContentItem(item: ContentItem): Promise<void> {
-	if (!item.content || item.content.length < 20) {
-		throw new Error('Content is too short.');
-	}
-
-	const chunks = createSemanticChunks(item.content);
-	console.log(
-		`Created ${chunks.length} chunks for content from: ${item.source}`
-	);
-
-	for (const [index, chunk] of chunks.entries()) {
+	for (const chunkContent of chunks) {
 		const embeddingResponse = await openaiClient.embeddings.create({
 			model: 'text-embedding-3-small',
-			input: chunk,
+			dimensions: 512,
+			input: chunkContent,
 		});
 
 		const vector = embeddingResponse.data[0].embedding;
 
-		const metadata = {
-			chunk,
-			...item,
-		};
-
 		await pineconeIndex.upsert([
 			{
-				id: `${item.source}-chunk-${index}`,
+				id: chunk.id,
 				values: vector,
-				metadata,
+				metadata: {
+					content: chunk.content,
+					...chunk.metadata,
+				},
 			},
 		]);
 	}

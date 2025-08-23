@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
-export const agentSchema = z.enum(['knowledgeBase', 'linkedin', 'general']);
+export const agentSchema = z
+	.literal('knowledgeBase')
+	.or(z.literal('linkedin'))
+	.or(z.literal('general'));
 export type AgentType = z.infer<typeof agentSchema>;
 
 export type AgentConfig = {

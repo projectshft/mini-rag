@@ -47,10 +47,10 @@ export default function ScraperPage() {
 	};
 
 	return (
-		<div className='min-h-screen bg-black text-white p-8'>
+		<div className='min-h-screen bg-black text-white flex flex-col items-center justify-center p-8'>
 			<h1 className='text-3xl font-bold mb-6'>Web Scraper</h1>
 
-			<div className='mb-8 max-w-2xl'>
+			<div className='mb-8 max-w-2xl w-full'>
 				<div className='mb-4'>
 					<label htmlFor='url' className='block text-gray-300 mb-2'>
 						URL to Scrape

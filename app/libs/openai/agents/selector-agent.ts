@@ -34,7 +34,7 @@
 import { openaiClient } from '../openai';
 import { AGENT_CONFIG, AgentType, agentSchema } from './types';
 import { z } from 'zod';
-import { zodResponseFormat } from 'openai/helpers/zod';
+import { zodTextFormat } from 'openai/helpers/zod';
 
 // Dynamic system prompt that includes all available agents
 const SYSTEM_PROMPT = `You are a helpful assistant that selects the best agent to answer the user query. You should select the agent that is most likely to answer the user query correctly.
@@ -50,24 +50,12 @@ Your task is to:
 2. Select the most appropriate agent
 3. Refine the query if needed to better suit the selected agent
 4. Return both the selected agent and the refined query
-
-Output format:
-{
-  selectedAgent: 'articles' | 'linkedin' | 'general',
-  agentQuery: string
-}
-
-TRY CHANGING THIS PROMPT:
-- Add confidence scoring for selections
-- Include reasoning for agent choice
-- Add fallback logic for ambiguous queries
-- Request query refinement strategies
-- Include user context or preferences`;
+`;
 
 // Zod schema for structured output validation
 export const agentResponseSchema = z.object({
 	selectedAgent: agentSchema,
-	agentQuery: z.string(),
+	agentQuery: z.string().describe('The refined query for the selected agent'),
 });
 
 type ModelType = 'gpt-4o-mini' | 'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt';
@@ -83,14 +71,13 @@ export async function selectAgent(query: string): Promise<{
 	agentQuery: string;
 	model: ModelType;
 }> {
-	const response = await openaiClient.chat.completions.parse({
-		response_format: zodResponseFormat(
-			agentResponseSchema,
-			'agentResponse'
-		),
+	const response = await openaiClient.responses.parse({
+		text: {
+			format: zodTextFormat(agentResponseSchema, 'agentResponse'),
+		},
 		model: 'gpt-4o-mini', // TRY CHANGING: 'gpt-4o' for better selection accuracy (costs more)
 		// TRY ADDING: temperature: 0.1, // Low temperature for consistent routing decisions
-		messages: [
+		input: [
 			{
 				role: 'system',
 				content: SYSTEM_PROMPT,
@@ -99,7 +86,7 @@ export async function selectAgent(query: string): Promise<{
 		],
 	});
 
-	const parsedResponse = response.choices[0].message.parsed;
+	const parsedResponse = response.output_parsed;
 
 	if (!parsedResponse) {
 		throw new Error('Failed to parse response');
