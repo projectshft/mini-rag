@@ -2,13 +2,12 @@
  * CSV DATA PROCESSING AND VECTORIZATION SCRIPT
  *
  * This script processes Brian's LinkedIn posts from CSV data and uploads them
- * to the vector database with semantic chunking.
+ * to the vector database as whole entries without chunking.
  *
  * Process:
  * 1. Reads brian_posts.csv data
  * 2. Filters out posts without text content
- * 3. Creates semantic chunks for each post
- * 4. Vectorizes and stores in Pinecone
+ * 3. Vectorizes each post as a whole and stores in Pinecone
  *
  * Usage: yarn process-csv
  */
@@ -16,35 +15,11 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import dotenv from 'dotenv';
-
-// Load environment variables from the project root FIRST
-const rootDir = path.resolve(__dirname, '../..');
-const envPath = path.join(rootDir, '.env');
-const envLocalPath = path.join(rootDir, '.env.local');
-
-// Try loading .env files in order of priority
-if (fs.existsSync(envLocalPath)) {
-	dotenv.config({ path: envLocalPath });
-} else if (fs.existsSync(envPath)) {
-	dotenv.config({ path: envPath });
-} else {
-	dotenv.config();
-}
-
-// Validate required environment variables
-const requiredEnvVars = ['OPENAI_API_KEY', 'PINECONE_API_KEY'];
-const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
-
-if (missingVars.length > 0) {
-	console.error('Missing required environment variables:', missingVars);
-	console.error(
-		'Please check your .env or .env.local file in the project root'
-	);
-	process.exit(1);
-}
-
-import { vectorizeContent } from '../services/vectorize/vectorize-articles';
+dotenv.config();
+import { openaiClient } from '../libs/openai/openai';
+import { pineconeClient } from '../libs/pinecone';
 import { Chunk } from '../libs/chunking';
+import csv from 'csv-parser';
 
 interface LinkedinPost {
 	urn: string;
@@ -72,80 +47,124 @@ interface LinkedinPost {
 	};
 }
 
-function createSemanticChunks(text: string, maxTokens: number = 512): string[] {
-	// Simple semantic chunking - split by paragraphs and keep under token limit
-	const paragraphs = text.split(/\n+/).filter((p) => p.trim().length > 0);
-	const chunks: string[] = [];
-	let currentChunk = '';
-
-	for (const paragraph of paragraphs) {
-		// Rough token estimation (1 token ≈ 4 characters)
-		const estimatedTokens = (currentChunk + paragraph).length / 4;
-
-		if (estimatedTokens > maxTokens && currentChunk) {
-			chunks.push(currentChunk.trim());
-			currentChunk = paragraph;
-		} else {
-			currentChunk += (currentChunk ? '\n' : '') + paragraph;
-		}
+// Function to generate embeddings for a chunk of text
+async function generateEmbedding(
+	chunk: Chunk
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+): Promise<{ id: string; values: number[]; metadata: any }> {
+	if (!chunk.content || chunk.content.length < 20) {
+		throw new Error('Content is too short.');
 	}
 
-	if (currentChunk.trim()) {
-		chunks.push(currentChunk.trim());
-	}
+	const embeddingResponse = await openaiClient.embeddings.create({
+		model: 'text-embedding-3-small',
+		dimensions: 512,
+		input: chunk.content,
+	});
 
-	return chunks.length > 0 ? chunks : [text]; // Fallback to original text if no chunks
+	const vector = embeddingResponse.data[0].embedding;
+
+	return {
+		id: chunk.id,
+		values: vector,
+		metadata: {
+			content: chunk.content,
+			...chunk.metadata,
+		},
+	};
 }
 
-function parseCsvLine(line: string): string[] {
-	const result: string[] = [];
-	let current = '';
-	let inQuotes = false;
+// Function to save vectors to a JSON file
+function saveVectorsToFile(
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	vectors: { id: string; values: number[]; metadata: any }[],
+	filename: string
+): void {
+	// Save to app/data folder so students can access pre-generated embeddings
+	const dataDir = path.join(__dirname, './data');
 
-	for (let i = 0; i < line.length; i++) {
-		const char = line[i];
-
-		if (char === '"') {
-			inQuotes = !inQuotes;
-		} else if (char === ',' && !inQuotes) {
-			result.push(current);
-			current = '';
-		} else {
-			current += char;
-		}
+	// Create data directory if it doesn't exist (it should already exist)
+	if (!fs.existsSync(dataDir)) {
+		fs.mkdirSync(dataDir, { recursive: true });
 	}
 
-	result.push(current);
-	return result;
+	const outputPath = path.join(dataDir, filename);
+	fs.writeFileSync(outputPath, JSON.stringify(vectors, null, 2));
+	console.log(`Saved ${vectors.length} vectors to ${outputPath}`);
+	console.log('These vectors are saved in the app/data folder to use');
+}
+
+// Function to upload vectors to Pinecone
+async function uploadToPinecone(vector: {
+	id: string;
+	values: number[];
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	metadata: any;
+}): Promise<void> {
+	const pineconeIndex = pineconeClient.Index(process.env.PINECONE_INDEX!);
+	await pineconeIndex.upsert([vector]);
+}
+
+/**
+ * Process a CSV file and extract structured data
+ * @param filePath - Path to the CSV file
+ * @returns Promise resolving to an array of processed rows
+ */
+async function processCsv(filePath: string): Promise<LinkedinPost[]> {
+	return new Promise((resolve, reject) => {
+		const results: LinkedinPost[] = [];
+
+		fs.createReadStream(filePath)
+			.pipe(csv())
+			.on('data', (data) => {
+				if (data.text && data.text.trim() !== '') {
+					const cleanedText = data.text.replace(/\n/g, ' ').trim();
+
+					results.push({
+						urn: data.urn || `post-${results.length}`,
+						text: cleanedText,
+						type: data.type,
+						firstName: data.firstName,
+						lastName: data.lastName,
+						numImpressions: data.numImpressions || '0',
+						numViews: data.numViews || '0',
+						numReactions: data.numReactions || '0',
+						numComments: data.numComments || '0',
+						numShares: data.numShares || '0',
+						numVotes: data.numVotes || '0',
+						numEngagementRate: data.numEngagementRate || '0',
+						hashtags: data.hashtags || '',
+						'createdAt (TZ=America/Los_Angeles)':
+							data['createdAt (TZ=America/Los_Angeles)'],
+						link: data.link,
+						engagement: {
+							impressions: parseInt(data.numImpressions) || 0,
+							views: parseInt(data.numViews) || 0,
+							reactions: parseInt(data.numReactions) || 0,
+							comments: parseInt(data.numComments) || 0,
+							shares: parseInt(data.numShares) || 0,
+							engagementRate:
+								parseFloat(data.numEngagementRate) || 0,
+						},
+					});
+				}
+			})
+			.on('end', () => {
+				console.log(
+					`Processed ${results.length} non-empty entries from CSV`
+				);
+				resolve(results);
+			})
+			.on('error', (error) => {
+				reject(error);
+			});
+	});
 }
 
 async function readCsvData(): Promise<LinkedinPost[]> {
-	const csvPath = path.join(__dirname, '../data/brian_posts.csv');
-
+	const csvPath = path.join(__dirname, './data/brian_posts.csv');
 	try {
-		const fileContent = fs.readFileSync(csvPath, 'utf-8');
-		const lines = fileContent.split('\n').filter((line) => line.trim());
-
-		if (lines.length === 0) {
-			throw new Error('CSV file is empty');
-		}
-
-		// Parse header
-		const headers = parseCsvLine(lines[0]);
-		const posts: LinkedinPost[] = [];
-
-		// Parse data rows
-		for (let i = 1; i < lines.length; i++) {
-			const values = parseCsvLine(lines[i]);
-			if (values.length === headers.length) {
-				const post: Record<string, string> = {};
-				headers.forEach((header, index) => {
-					post[header] = values[index] || '';
-				});
-				posts.push(post as unknown as LinkedinPost);
-			}
-		}
-
+		const posts = await processCsv(csvPath);
 		console.log(`Loaded ${posts.length} posts from CSV`);
 		return posts;
 	} catch (error) {
@@ -177,9 +196,15 @@ async function main() {
 
 		let successfulChunks = 0;
 		let failedChunks = 0;
-		let totalChunks = 0;
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const allVectors: { id: string; values: number[]; metadata: any }[] =
+			[];
 
-		// Process each post
+		// Batch size for saving vectors periodically
+		const SAVE_BATCH_SIZE = 10;
+		const VECTORS_FILENAME = 'vectors.json';
+
+		// Process each post as a whole (no chunking)
 		for (const [index, post] of postsWithText.entries()) {
 			console.log(
 				`Processing post ${index + 1}/${postsWithText.length}: ${
@@ -188,56 +213,60 @@ async function main() {
 			);
 
 			try {
-				// Create semantic chunks for the post
-				const chunks = createSemanticChunks(post.text);
-				totalChunks += chunks.length;
+				// Create a chunk with the whole post content
+				const chunk: Chunk = {
+					id: `${post.urn}`,
+					content: post.text,
+					metadata: {
+						source: 'brian_linkedin_posts',
+						chunkIndex: 0,
+						totalChunks: 1, // Each post is one chunk
+						startChar: 0,
+						endChar: post.text.length,
+						url: post.link,
+						title: `LinkedIn Post - ${post.type}`,
+						author: `${post.firstName} ${post.lastName}`,
+						createdAt: post['createdAt (TZ=America/Los_Angeles)'],
+						type: post.type,
+						impressions: parseInt(post.numImpressions) || 0,
+						views: parseInt(post.numViews) || 0,
+						reactions: parseInt(post.numReactions) || 0,
+						comments: parseInt(post.numComments) || 0,
+						shares: parseInt(post.numShares) || 0,
+						engagementRate: parseFloat(post.numEngagementRate) || 0,
+						hashtags: post.hashtags || '',
+						originalUrn: post.urn,
+					},
+				};
 
-				console.log(
-					`Created ${chunks.length} chunks for post ${post.urn}`
-				);
+				try {
+					// Generate embedding for the chunk
+					const vector = await generateEmbedding(chunk);
 
-				// Vectorize each chunk
-				for (const [chunkIndex, chunkContent] of chunks.entries()) {
-					const chunk: Chunk = {
-						id: `${post.urn}-chunk-${chunkIndex}`,
-						content: chunkContent,
-						metadata: {
-							source: 'brian_linkedin_posts',
-							chunkIndex,
-							totalChunks: chunks.length,
-							startChar: 0,
-							endChar: chunkContent.length,
-							url: post.link,
-							title: `LinkedIn Post - ${post.type}`,
-							author: `${post.firstName} ${post.lastName}`,
-							createdAt:
-								post['createdAt (TZ=America/Los_Angeles)'],
-							type: post.type,
-							impressions: parseInt(post.numImpressions) || 0,
-							views: parseInt(post.numViews) || 0,
-							reactions: parseInt(post.numReactions) || 0,
-							comments: parseInt(post.numComments) || 0,
-							shares: parseInt(post.numShares) || 0,
-							engagementRate:
-								parseFloat(post.numEngagementRate) || 0,
-							hashtags: post.hashtags || '',
-							originalUrn: post.urn,
-						},
-					};
+					// Add to our collection of vectors
+					allVectors.push(vector);
 
-					try {
-						await vectorizeContent(chunk);
-						console.log(
-							`Successfully vectorized chunk ${chunk.id}`
-						);
-						successfulChunks++;
-					} catch (error) {
-						console.error(
-							`Failed to vectorize chunk ${chunk.id}:`,
-							error
-						);
-						failedChunks++;
+					// Only upload to Pinecone if PINECONE_API_KEY is set
+					if (process.env.PINECONE_API_KEY) {
+						await uploadToPinecone(vector);
 					}
+
+					console.log(`Successfully vectorized post ${chunk.id}`);
+					successfulChunks++;
+
+					// Save vectors periodically to avoid losing progress
+					if (successfulChunks % SAVE_BATCH_SIZE === 0) {
+						saveVectorsToFile(allVectors, VECTORS_FILENAME);
+						console.log(
+							`Saved progress: ${successfulChunks}/${postsWithText.length} posts processed`
+						);
+					}
+				} catch (error) {
+					console.error(
+						`Failed to vectorize post ${chunk.id}:`,
+						error
+					);
+					failedChunks++;
 				}
 			} catch (error) {
 				console.error(`Failed to process post ${post.urn}:`, error);
@@ -245,13 +274,28 @@ async function main() {
 			}
 		}
 
+		// Save all vectors to a JSON file
+		if (allVectors.length > 0) {
+			saveVectorsToFile(allVectors, VECTORS_FILENAME);
+			console.log(`\nSaved ${allVectors.length} vectors to JSON file`);
+			console.log(
+				'Students can now use these pre-generated vectors without having to spend money on embeddings'
+			);
+			if (process.env.PINECONE_API_KEY) {
+				console.log('Vectors have also been uploaded to Pinecone');
+			} else {
+				console.log(
+					'To upload these vectors to Pinecone, set PINECONE_API_KEY and run upload-vectors.ts'
+				);
+			}
+		}
+
 		// Print summary
 		console.log('\nCSV PROCESSING SUMMARY');
 		console.log('=======================');
 		console.log(`Total posts processed: ${postsWithText.length}`);
-		console.log(`Total chunks created: ${totalChunks}`);
-		console.log(`Successful chunks: ${successfulChunks}`);
-		console.log(`Failed chunks: ${failedChunks}`);
+		console.log(`Successful posts: ${successfulChunks}`);
+		console.log(`Failed posts: ${failedChunks}`);
 		console.log(`Completed at: ${new Date().toISOString()}`);
 	} catch (error) {
 		console.error('Critical error during CSV processing:', error);

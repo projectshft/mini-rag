@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { fetchApiRoute } from '@/app/api/client';
-import { Loader2 } from 'lucide-react';
 
 type UploadedChunk = {
 	id: string;
@@ -79,17 +78,19 @@ export default function UploadPage() {
 	};
 
 	return (
-		<div className='min-h-screen bg-black text-white flex flex-col items-center justify-center p-8'>
-			<h1 className='text-3xl font-bold mb-6'>Add Document</h1>
+		<div className='min-h-screen'>
+			<h1 className='text-2xl font-bold mb-4 border-b border-black pb-2'>
+				Add Document
+			</h1>
 
-			<div className='mb-8 max-w-2xl w-full'>
+			<div className='mb-8 w-full'>
 				{/* Content Input */}
 				<div className='mb-4'>
 					<label
 						htmlFor='text-content'
-						className='block text-gray-300 mb-2'
+						className='block font-bold mb-1'
 					>
-						Text Content
+						Text Content:
 					</label>
 					<textarea
 						id='text-content'
@@ -97,145 +98,174 @@ export default function UploadPage() {
 						onChange={(e) => setTextContent(e.target.value)}
 						placeholder='Paste your text content here...'
 						rows={8}
-						className='w-full p-3 bg-gray-800 rounded-lg text-white resize-vertical'
+						className='w-full p-2 border border-black resize-vertical'
 					/>
 				</div>
 
 				{/* Metadata Fields */}
-				<div className='space-y-4 mb-6'>
-					<div>
-						<label
-							htmlFor='title'
-							className='block text-gray-300 mb-2'
+				<div className='mb-6'>
+					<table className='w-full border border-black mb-4'>
+						<tbody>
+							<tr>
+								<td className='border border-black p-2 font-bold'>
+									Title *
+								</td>
+								<td className='border border-black p-2'>
+									<input
+										id='title'
+										type='text'
+										value={title}
+										onChange={(e) =>
+											setTitle(e.target.value)
+										}
+										placeholder='Enter a title for this content'
+										className='w-full p-1 border border-black'
+									/>
+								</td>
+							</tr>
+							<tr>
+								<td className='border border-black p-2 font-bold'>
+									Description
+								</td>
+								<td className='border border-black p-2'>
+									<textarea
+										id='description'
+										value={description}
+										onChange={(e) =>
+											setDescription(e.target.value)
+										}
+										placeholder='Optional description or summary'
+										rows={3}
+										className='w-full p-1 border border-black resize-vertical'
+									/>
+								</td>
+							</tr>
+							<tr>
+								<td className='border border-black p-2 font-bold'>
+									Tags
+								</td>
+								<td className='border border-black p-2'>
+									<input
+										id='tags'
+										type='text'
+										value={tags}
+										onChange={(e) =>
+											setTags(e.target.value)
+										}
+										placeholder='Enter tags separated by commas (e.g., javascript, tutorial, web-dev)'
+										className='w-full p-1 border border-black'
+									/>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+
+					{/* Action Buttons */}
+					<div className='flex gap-4'>
+						<button
+							onClick={handleSubmit}
+							disabled={isLoading}
+							className='border border-black bg-white px-4 py-1 disabled:opacity-50'
 						>
-							Title *
-						</label>
-						<input
-							id='title'
-							type='text'
-							value={title}
-							onChange={(e) => setTitle(e.target.value)}
-							placeholder='Enter a title for this content'
-							className='w-full p-3 bg-gray-800 rounded-lg text-white'
-						/>
-					</div>
+							{isLoading ? (
+								<span className='animate-pulse'>
+									[Processing...]
+								</span>
+							) : (
+								'Add Document'
+							)}
+						</button>
 
-					<div>
-						<label
-							htmlFor='description'
-							className='block text-gray-300 mb-2'
+						<button
+							onClick={resetForm}
+							disabled={isLoading}
+							className='border border-black bg-white px-4 py-1 disabled:opacity-50'
 						>
-							Description
-						</label>
-						<textarea
-							id='description'
-							value={description}
-							onChange={(e) => setDescription(e.target.value)}
-							placeholder='Optional description or summary'
-							rows={3}
-							className='w-full p-3 bg-gray-800 rounded-lg text-white resize-vertical'
-						/>
+							Reset
+						</button>
 					</div>
-
-					<div>
-						<label
-							htmlFor='tags'
-							className='block text-gray-300 mb-2'
-						>
-							Tags
-						</label>
-						<input
-							id='tags'
-							type='text'
-							value={tags}
-							onChange={(e) => setTags(e.target.value)}
-							placeholder='Enter tags separated by commas (e.g., javascript, tutorial, web-dev)'
-							className='w-full p-3 bg-gray-800 rounded-lg text-white'
-						/>
-					</div>
-				</div>
-
-				{/* Action Buttons */}
-				<div className='flex gap-4'>
-					<button
-						onClick={handleSubmit}
-						disabled={isLoading}
-						className='bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg flex items-center disabled:opacity-50'
-					>
-						{isLoading && (
-							<Loader2 className='h-4 w-4 animate-spin mr-2' />
-						)}
-						{isLoading ? 'Processing...' : 'Add Document'}
-					</button>
-
-					<button
-						onClick={resetForm}
-						disabled={isLoading}
-						className='bg-gray-600 hover:bg-gray-700 text-white px-6 py-2 rounded-lg disabled:opacity-50'
-					>
-						Reset
-					</button>
 				</div>
 			</div>
 
 			{/* Status Message */}
 			{message && (
-				<div
-					className={`mb-4 p-4 rounded-lg ${
-						message.includes('error') ||
-						message.includes('required')
-							? 'bg-red-900/50 border border-red-700'
-							: 'bg-gray-800'
-					}`}
-				>
-					<p className='text-gray-300'>{message}</p>
+				<div className='mb-4 p-2 border border-black'>
+					<p className='italic'>{message}</p>
 				</div>
 			)}
 
 			{/* Results */}
 			{chunks.length > 0 && (
 				<div>
-					<h2 className='text-xl font-semibold mb-2'>
+					<h2 className='text-xl font-bold mb-2 border-b border-black pb-1'>
 						Processed Content Chunks ({chunks.length})
 					</h2>
-					<div className='space-y-4'>
+					<div>
 						{chunks.map((chunk, index) => (
 							<div
 								key={index}
-								className='p-4 bg-gray-800 rounded-lg'
+								className='mb-4 border border-black p-2'
 							>
-								<h3 className='font-medium mb-2'>
+								<h3 className='font-bold mb-2 border-b border-black pb-1'>
 									{chunk.metadata.title} - Chunk {index + 1}
 								</h3>
-								<p className='text-gray-300 whitespace-pre-wrap mb-2'>
+								<p className='whitespace-pre-wrap mb-2 pl-2'>
 									{chunk.content}
 								</p>
-								<div className='text-sm text-gray-400 space-y-1'>
-									<p>
-										Source Type: {chunk.metadata.sourceType}
-									</p>
-									{chunk.metadata.filename && (
-										<p>
-											Filename: {chunk.metadata.filename}
-										</p>
-									)}
-									{chunk.metadata.description && (
-										<p>
-											Description:{' '}
-											{chunk.metadata.description}
-										</p>
-									)}
-									{chunk.metadata.tags.length > 0 && (
-										<p>
-											Tags:{' '}
-											{chunk.metadata.tags.join(', ')}
-										</p>
-									)}
-									<p>
-										Chunk {chunk.metadata.chunkIndex + 1} of{' '}
-										{chunk.metadata.totalChunks}
-									</p>
-								</div>
+								<table className='w-full border border-black'>
+									<tbody>
+										<tr>
+											<td className='border border-black p-1 font-bold'>
+												Source Type:
+											</td>
+											<td className='border border-black p-1'>
+												{chunk.metadata.sourceType}
+											</td>
+										</tr>
+										{chunk.metadata.filename && (
+											<tr>
+												<td className='border border-black p-1 font-bold'>
+													Filename:
+												</td>
+												<td className='border border-black p-1'>
+													{chunk.metadata.filename}
+												</td>
+											</tr>
+										)}
+										{chunk.metadata.description && (
+											<tr>
+												<td className='border border-black p-1 font-bold'>
+													Description:
+												</td>
+												<td className='border border-black p-1'>
+													{chunk.metadata.description}
+												</td>
+											</tr>
+										)}
+										{chunk.metadata.tags.length > 0 && (
+											<tr>
+												<td className='border border-black p-1 font-bold'>
+													Tags:
+												</td>
+												<td className='border border-black p-1'>
+													{chunk.metadata.tags.join(
+														', '
+													)}
+												</td>
+											</tr>
+										)}
+										<tr>
+											<td className='border border-black p-1 font-bold'>
+												Chunk Info:
+											</td>
+											<td className='border border-black p-1'>
+												Chunk{' '}
+												{chunk.metadata.chunkIndex + 1}{' '}
+												of {chunk.metadata.totalChunks}
+											</td>
+										</tr>
+									</tbody>
+								</table>
 							</div>
 						))}
 					</div>

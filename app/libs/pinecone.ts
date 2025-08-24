@@ -31,7 +31,7 @@ import {
 	RecordMetadata,
 	ScoredPineconeRecord,
 } from '@pinecone-database/pinecone';
-import { openaiClient } from '@/app/libs/openai/openai';
+import { openaiClient } from '../libs/openai/openai';
 
 // Initialize Pinecone client with your API key
 // Get your free API key at: https://app.pinecone.io/

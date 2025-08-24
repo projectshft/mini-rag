@@ -5,71 +5,21 @@
  * This is useful when you have vectors generated externally and want to bulk upload them.
  */
 
-import { pineconeClient } from '@/app/libs/pinecone';
+import dotenv from 'dotenv';
+dotenv.config();
+import { pineconeClient } from '../libs/pinecone';
 import fs from 'fs';
 import path from 'path';
 
-async function createIndexIfNeeded(
-	indexName: string,
-	dimension: number
-): Promise<boolean> {
-	try {
-		const indexList = await pineconeClient.listIndexes();
-		const existingIndex = indexList.indexes?.find(
-			(idx) => idx.name === indexName
-		);
-
-		if (existingIndex) {
-			console.log(`Index '${indexName}' already exists`);
-			if (existingIndex.dimension !== dimension) {
-				console.warn(
-					`⚠️  Index dimension mismatch: expected ${dimension}, got ${existingIndex.dimension}`
-				);
-				console.log(
-					`You may need to delete the existing index or use a different name`
-				);
-				return false;
-			}
-			return true;
-		}
-
-		console.log(
-			`Creating index '${indexName}' with dimension ${dimension}...`
-		);
-		await pineconeClient.createIndex({
-			name: indexName,
-			dimension: dimension,
-			metric: 'cosine',
-			spec: {
-				serverless: {
-					cloud: 'aws',
-					region: 'us-east-1',
-				},
-			},
-		});
-
-		console.log(`✅ Index '${indexName}' created successfully`);
-
-		// Wait a bit for index to be ready
-		console.log('Waiting for index to be ready...');
-		await new Promise((resolve) => setTimeout(resolve, 5000));
-
-		return true;
-	} catch (error) {
-		console.error('Error managing index:', error);
-		return false;
-	}
-}
-
 async function upsertVectors(
-	indexName: string,
+	indexName: string = 'brian-clone',
 	vectors: {
 		id: string;
 		values: number[];
 		metadata: Record<string, string | number | boolean | string[]>;
 	}[]
 ): Promise<void> {
-	const index = pineconeClient.Index(indexName);
+	const index = pineconeClient.Index(indexName); // CHANGE THIS TO THE INDEX YOU WANT TO UPLOAD TO
 	const batchSize = 100; // Pinecone recommends batches of 100
 
 	for (let i = 0; i < vectors.length; i += batchSize) {
@@ -131,14 +81,6 @@ async function uploadVectorsToPinecone(): Promise<void> {
 		if (!indexName) {
 			throw new Error('PINECONE_INDEX environment variable not set');
 		}
-
-		const indexReady = await createIndexIfNeeded(indexName, dimension);
-
-		if (!indexReady) {
-			throw new Error('Index is not ready for upload');
-		}
-
-		console.log(`Uploading to Pinecone index: ${indexName}`);
 
 		await upsertVectors(indexName, vectors);
 
