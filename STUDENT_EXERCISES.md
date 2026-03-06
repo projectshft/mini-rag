@@ -263,9 +263,8 @@ HELICONE_API_KEY=sk-helicone-...
 
 ## Getting Help
 
-- Check curriculum: `15-applied-ai/`
+- Reference the `student-working-version` branch for complete solutions
 - Review tests for expected behavior
-- Check reference solutions (marked with ⚠️ warnings)
 - Ask questions in course forum
 
 Good luck! 🚀

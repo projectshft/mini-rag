@@ -246,7 +246,7 @@ yarn test
 
 ### Hints:
 
--   The `working_version` branch has the complete solution if you get stuck
+-   The `student-working-version` branch has the complete solution if you get stuck
 -   Use `console.log()` liberally to understand data flow
 -   Check Pinecone dashboard to verify vectors are uploaded
 -   Use Helicone dashboard to debug LLM calls and see cost
