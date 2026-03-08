@@ -29,6 +29,10 @@
 	"dependencies": {
 		"@ai-sdk/openai": "^2.0.19",
 		"@ai-sdk/react": "^2.0.22",
+		"@langchain/core": "^0.3.29",
+		"@langchain/langgraph": "^0.2.41",
+		"@langchain/langgraph-checkpoint-sqlite": "^0.0.3",
+		"@langchain/openai": "^0.3.17",
 		"@pinecone-database/pinecone": "6.1.0",
 		"@tailwindcss/postcss": "^4.1.10",
 		"@types/cheerio": "1.0.0",
@@ -49,6 +53,8 @@
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-markdown": "^10.1.0",
+		"sqlite": "^5.1.1",
+		"sqlite3": "^5.1.7",
 		"uuid": "^13.0.0",
 		"v4": "^0.0.1",
 		"zod": "^3.24.2"

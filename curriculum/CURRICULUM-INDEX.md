@@ -363,6 +363,60 @@ yarn test:selector    # Test selector routing
 
 ---
 
+## Module 10: LangGraph
+
+**📂 Location:** `10-langgraph/`
+
+### Lessons
+1. Introduction to LangGraph
+   - What is LangGraph and why it's useful
+   - Core concepts: graphs, nodes, edges, state
+   - When to use LangGraph vs AI SDK
+   - Key features: checkpointing, human-in-the-loop, memory
+   - Common patterns (ReAct, Reflection, Multi-Agent)
+
+2. Building a LangGraph Agent
+   - **💻 EXERCISE:** Build stateful research agent
+   - Define state schema with Annotation
+   - Create nodes (analyze, search, evaluate, answer)
+   - Add conditional routing
+   - Implement graph-based workflow
+
+### Exercise
+- `app/api/langgraph-agent/route.ts` - Implement LangGraph agent
+
+### Key Concepts
+- Graph-based workflows vs linear workflows
+- Stateful agents with persistent memory
+- Decision-making and conditional routing
+- Production features (fault tolerance, HITL)
+
+**Time:** 3-4 hours
+
+---
+
+## Module 10.5: Tool-Calling Exploration
+
+**📂 Location:** `10.5-tool-calling-exploration/`
+
+### Lessons
+1. Exploring Tool-Calling Patterns
+   - Three approaches to RAG (workflows, tool-calling, LangGraph)
+   - When to use each approach
+   - Cost comparison and trade-offs
+   - **💻 EXPLORATION:** Build tool-calling agent
+   - Implement separate route for experimentation
+
+### Exercise
+- `app/api/tool-calling-agent/route.ts` - Explore tool-calling patterns
+
+### Important Note
+This is an exploratory module. Students will implement tool-calling in a separate file to understand the pattern, but will continue using workflows in the main application. Understanding when to use each approach is valuable for production systems.
+
+**Time:** 2-3 hours
+
+---
+
 ## Module 11: Chat Interface
 
 **📂 Location:** `11-chat-interface/`
@@ -423,9 +477,9 @@ yarn test             # Run all tests
 
 ---
 
-## Module 14: Capstone Project
+## Module 15: Capstone Project
 
-**📂 Location:** `14-capstone-project/`
+**📂 Location:** `15-capstone-project/`
 
 ### Final Project: Multi-Source RAG System
 
@@ -547,13 +601,15 @@ HELICONE_API_KEY=sk-helicone-...
 - Module 8: LinkedIn agent
 - Module 9: RAG agent
 
-**Week 3: Production**
+**Week 3: Advanced Patterns**
+- Module 10: LangGraph
+- Module 10.5: Tool-calling exploration
 - Module 11: Chat interface
 - Module 12: Observability
-- Module 13: Testing
 
-**Week 4: Capstone**
-- Module 14: Final project
+**Week 4: Testing & Capstone**
+- Module 13: Testing
+- Module 15: Final project
 - Deployment
 - Demo & presentation
 
@@ -563,11 +619,11 @@ HELICONE_API_KEY=sk-helicone-...
 
 - **Pre-course homework:** 3-4 hours
 - **Week 0 setup:** 2-3 hours
-- **Modules 1-13 (lessons + exercises):** 25-35 hours
+- **Modules 1-13 (lessons + exercises):** 30-42 hours
 - **Homework assignments (3 videos/reports):** 5-9 hours
 - **Capstone project:** 8-12 hours
 
-**Total:** ~45-65 hours over 4 weeks (including homework)
+**Total:** ~48-70 hours over 4 weeks (including homework)
 
 ---
 
