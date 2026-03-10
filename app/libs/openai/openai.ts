@@ -32,8 +32,19 @@
  * Learn more about Helicone: https://docs.helicone.ai/
  */
 
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
-export const openaiClient = new OpenAI({
-	apiKey: process.env.OPENAI_API_KEY as string,
+let _client: OpenAI | null = null;
+
+function getClient(): OpenAI {
+  if (!_client) {
+    _client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY as string });
+  }
+  return _client;
+}
+
+export const openaiClient = new Proxy({} as OpenAI, {
+  get(_, prop: string | symbol) {
+    return (getClient() as any)[prop];
+  },
 });
