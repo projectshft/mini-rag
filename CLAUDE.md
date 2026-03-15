@@ -38,7 +38,7 @@ Code with implementations removed and detailed TODOs for students to complete.
 -   Hands-on learning exercises
 -   Step-by-step guidance via TODO comments
 -   Students implement features themselves
--   Follows curriculum modules in `curriculum/updates/`
+-   Follows curriculum modules in `curriculum/`
 
 ### Key Files:
 
@@ -51,14 +51,14 @@ Code with implementations removed and detailed TODOs for students to complete.
 ### Use This Branch:
 
 -   For students to work through exercises
--   Pair with curriculum in `curriculum/updates/`
+-   Pair with curriculum in `curriculum/`
 -   Students can compare their work to `student-starter`
 
 ---
 
 ## Curriculum Structure
 
-The curriculum is organized in `curriculum/updates/`:
+The curriculum is organized in `curriculum/`:
 
 1. **Vector Math Basics** (`2-vector-math-basics/`)
 2. **Pinecone Integration** (`4-pinecone-integration/`)
@@ -74,6 +74,7 @@ The curriculum is organized in `curriculum/updates/`:
 8. **RAG Agent** (`9-rag-agent/`)
     - Basic implementation
     - Reranking
+    - Sparse and dense vectors
 9. **Chat Interface** (`11-chat-interface/`)
 10. **Observability** (`12-observability/`)
 11. **Testing Agents** (`13-testing-agents/`)
