@@ -19,7 +19,7 @@ Watch this explanation of vector math and similarity:
 ```bash
 git clone https://github.com/projectshft/mini-rag.git
 cd mini_rag
-git checkout student-starter
+git checkout student-todo-exercises
 ```
 
 ### Install Dependencies

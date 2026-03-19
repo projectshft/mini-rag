@@ -1,0 +1,263 @@
+<h1>Running the Fine-Tuning Process</h1>
+<p>Time to train your own model! This section walks you through creating a fine-tuned model that writes like you.</p>
+<hr>
+<h2>Video Walkthrough</h2>
+<p>Watch this guide to running the fine-tuning process:</p>
+<iframe src="https://share.descript.com/embed/nub6vmvmL3a" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
+<hr>
+<h2>What You&#39;ll Do</h2>
+<ol>
+<li>Examine the training data format</li>
+<li>Run the training script</li>
+<li>Monitor the fine-tuning job</li>
+<li>Get your model ID</li>
+<li>Configure your app</li>
+</ol>
+<hr>
+<h2>Understanding the Training Script</h2>
+<p>Located at: <code>app/scripts/upload-training-data.ts</code></p>
+<p>This script handles the entire fine-tuning workflow:</p>
+<h3>The Process</h3>
+<pre><code>Training Data (JSONL)
+    ↓
+1. Upload to OpenAI
+    ↓
+2. Create fine-tuning job
+    ↓
+3. OpenAI trains model
+    ↓
+4. Get model ID
+    ↓
+5. Use in your app
+</code></pre>
+<h3>What the Script Does</h3>
+<p><strong>Step 1: Upload File</strong></p>
+<pre><code class="language-typescript">const file = await openai.files.create({
+  file: fs.createReadStream(filePath),
+  purpose: &#39;fine-tune&#39;,
+});
+</code></pre>
+<p>Uploads your JSONL file to OpenAI&#39;s servers.</p>
+<p><strong>Step 2: Start Training Job</strong></p>
+<pre><code class="language-typescript">const job = await openai.fineTuning.jobs.create({
+  training_file: fileId,
+  model: &#39;gpt-4o-mini-2024-07-18&#39;,
+});
+</code></pre>
+<p>Kicks off the training process. OpenAI handles everything from here!</p>
+<hr>
+<h2>Examining the Training Data</h2>
+<p>Your training data lives at: <code>app/scripts/data/linkedin_training.jsonl</code></p>
+<h3>The Format</h3>
+<p>Each line is a complete training example:</p>
+<pre><code class="language-jsonl">{&quot;messages&quot;: [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a professional LinkedIn advisor helping with networking and career advice&quot;}, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;How do I write an effective LinkedIn headline?&quot;}, {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Your LinkedIn headline is prime real estate - you have 220 characters to make a strong first impression. Here&#39;s how to make it count:\n\n1. **Go beyond your job title**: Instead of just &#39;Software Engineer&#39;, try &#39;Software Engineer | Building scalable systems | React &amp; Node.js expert&#39;\n\n2. **Include keywords**: Think about what people search for when looking for someone like you\n\n3. **Show value**: What problems do you solve? What makes you different?\n\n4. **Use numbers when possible**: &#39;Helped 50+ startups scale&#39; is more concrete than &#39;Experienced with startups&#39;\n\nYour headline appears everywhere on LinkedIn - in search results, in comments, in connection requests. Make it work hard for you!&quot;}]}
+</code></pre>
+<h3>Breaking It Down</h3>
+<p><strong>System Message (Consistent):</strong></p>
+<pre><code class="language-json">{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a professional LinkedIn advisor...&quot;}
+</code></pre>
+<p>This sets the context - appears in EVERY example with same text.</p>
+<p><strong>User Message (Varies):</strong></p>
+<pre><code class="language-json">{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;How do I write an effective LinkedIn headline?&quot;}
+</code></pre>
+<p>The question/prompt - should cover wide variety of topics.</p>
+<p><strong>Assistant Message (Your Voice):</strong></p>
+<pre><code class="language-json">{&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Your LinkedIn headline is prime real estate...&quot;}
+</code></pre>
+<p>This is what the model learns! Should be in YOUR style, tone, and approach.</p>
+<hr>
+<h2>Running the Training Script</h2>
+<h3>Prerequisites</h3>
+<p><strong>1. OpenAI API Key</strong></p>
+<pre><code class="language-bash"># In your .env.local
+OPENAI_API_KEY=sk-your-key-here
+</code></pre>
+<p><strong>2. Training Data</strong><br>Make sure <code>app/scripts/data/linkedin_training.jsonl</code> exists and has content.</p>
+<h3>Run the Script</h3>
+<pre><code class="language-bash">yarn train
+</code></pre>
+<p>This runs: <code>npx ts-node app/scripts/upload-training-data.ts</code></p>
+<h3>Expected Output</h3>
+<pre><code class="language-bash">Uploading training file...
+File uploaded successfully: file-abc123xyz
+
+Creating fine-tuning job...
+Fine-tuning job created successfully: ftjob-abc123
+
+You can monitor the job status using the OpenAI dashboard or the job ID:
+https://platform.openai.com/finetune/ftjob-abc123?filter=all
+
+🚨 IMPORTANT: Once the fine-tuning job completes, you will receive
+   a new fine-tuned model ID. Update the model ID in .env.local
+   to use your new fine-tuned model.
+</code></pre>
+<p><strong>Key Information:</strong></p>
+<ul>
+<li><strong>File ID</strong>: Confirms upload succeeded</li>
+<li><strong>Job ID</strong>: Use this to track progress</li>
+<li><strong>Dashboard Link</strong>: Click to monitor in real-time</li>
+</ul>
+<hr>
+<h2>Monitoring Your Fine-Tuning Job</h2>
+<h3>Via OpenAI Dashboard</h3>
+<ol>
+<li>Click the link from the script output</li>
+<li>Or go to: <a href="https://platform.openai.com/finetune">https://platform.openai.com/finetune</a></li>
+<li>Find your job in the list</li>
+</ol>
+<p><strong>What You&#39;ll See:</strong></p>
+<pre><code>Status: running
+Progress: 45/100 steps
+Time Remaining: ~8 minutes
+</code></pre>
+<h3>Via API (Optional)</h3>
+<pre><code class="language-bash">curl https://api.openai.com/v1/fine_tuning/jobs/ftjob-abc123 \
+  -H &quot;Authorization: Bearer $OPENAI_API_KEY&quot;
+</code></pre>
+<h3>Status Meanings</h3>
+<p><strong><code>running</code></strong>: Training in progress - be patient!<br><strong><code>succeeded</code></strong>: Complete! You have a model ready.<br><strong><code>failed</code></strong>: Something went wrong (check error message)<br><strong><code>cancelled</code></strong>: Job was stopped</p>
+<hr>
+<h2>When Training Completes</h2>
+<h3>Getting Your Model ID</h3>
+<p><strong>In the Dashboard:</strong></p>
+<pre><code>Status: succeeded
+Fine-tuned model: ft:gpt-4o-mini-2024-07-18:org:model-name:abc123
+</code></pre>
+<p><strong>Copy that full model ID!</strong></p>
+<h3>Add to Your Environment</h3>
+<p>Update your <code>.env.local</code>:</p>
+<pre><code class="language-bash">OPENAI_API_KEY=sk-your-key-here
+OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:org:model-name:abc123
+</code></pre>
+<p><strong>Important:</strong></p>
+<ul>
+<li>Use the FULL model ID (starts with <code>ft:</code>)</li>
+<li>Include the entire string (organization, name, and hash)</li>
+<li>Restart your dev server after updating</li>
+</ul>
+<hr>
+<h2>Understanding What Happened</h2>
+<h3>Before Training</h3>
+<pre><code>Your Question → Base Model → Generic Response
+</code></pre>
+<p>The model uses general training, no knowledge of YOUR style.</p>
+<h3>After Training</h3>
+<pre><code>Your Question → Fine-Tuned Model → Response in YOUR Voice
+</code></pre>
+<p>The model has learned YOUR patterns, tone, and approach from 100+ examples.</p>
+<h3>What Changed Internally</h3>
+<pre><code>Base Model Weights
+    +
+Your Training Examples
+    =
+Adjusted Weights (Fine-Tuned Model)
+</code></pre>
+<p>OpenAI adjusted millions of internal parameters to better match your data. This is a NEW model (yours specifically).</p>
+<hr>
+<h2>Testing Your Model</h2>
+<h3>Quick Test via OpenAI Playground</h3>
+<ol>
+<li>Go to: <a href="https://platform.openai.com/playground">https://platform.openai.com/playground</a></li>
+<li>Select your fine-tuned model from dropdown</li>
+<li>Try a test prompt</li>
+<li>Compare to base model</li>
+</ol>
+<h3>Test in Your App</h3>
+<p>We&#39;ll do this in the next section when implementing the agent!</p>
+<hr>
+<h2>Common Issues &amp; Solutions</h2>
+<h3>&quot;File format invalid&quot;</h3>
+<p><strong>Issue:</strong> JSONL file has formatting errors</p>
+<p><strong>Fix:</strong></p>
+<ul>
+<li>Each line must be valid JSON</li>
+<li>No blank lines</li>
+<li>No trailing commas</li>
+<li>Use a JSONL validator</li>
+</ul>
+<h3>&quot;Training data too small&quot;</h3>
+<p><strong>Issue:</strong> Need minimum 10 examples (recommended 100+)</p>
+<p><strong>Fix:</strong></p>
+<ul>
+<li>Add more training examples</li>
+<li>More data = better results</li>
+</ul>
+<h3>&quot;Job failed&quot;</h3>
+<p><strong>Issue:</strong> Training job encountered an error</p>
+<p><strong>Fix:</strong></p>
+<ul>
+<li>Check OpenAI dashboard for error message</li>
+<li>Common causes:<ul>
+<li>Malformed training data</li>
+<li>Invalid system messages</li>
+<li>Rate limits hit</li>
+</ul>
+</li>
+</ul>
+<h3>&quot;Model not found in app&quot;</h3>
+<p><strong>Issue:</strong> Model ID not configured correctly</p>
+<p><strong>Fix:</strong></p>
+<ul>
+<li>Double-check <code>.env.local</code> has correct model ID</li>
+<li>Restart dev server: <code>yarn dev</code></li>
+<li>Verify no typos in model ID</li>
+</ul>
+<hr>
+<h2>Cost Breakdown</h2>
+<p><strong>Training Cost:</strong></p>
+<ul>
+<li>Based on tokens in training data</li>
+<li>~$0.10-1.00 for typical LinkedIn training set</li>
+<li>One-time cost</li>
+</ul>
+<p><strong>Usage Cost:</strong></p>
+<ul>
+<li>Fine-tuned models cost ~2x base models</li>
+<li>But worth it for quality!</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code>Base model: $0.150 per 1M input tokens
+Fine-tuned:  $0.300 per 1M input tokens
+
+1000 user queries × 500 tokens each = 500k tokens
+Base cost: $0.075
+Fine-tuned cost: $0.150
+
+Extra $0.075 for significantly better quality!
+</code></pre>
+<hr>
+<h2>What You Learned</h2>
+<p>✅ How to prepare training data in JSONL format<br>✅ How to run the fine-tuning script<br>✅ How to monitor training progress<br>✅ How to get and configure your model ID<br>✅ What happens during the training process</p>
+<hr>
+<h2>What&#39;s Next</h2>
+<p>Now that you have a fine-tuned model, time to build the LinkedIn agent that uses it!</p>
+<p><strong>Coming up:</strong></p>
+<ul>
+<li>Implementing the LinkedIn agent</li>
+<li>Integrating your fine-tuned model</li>
+<li>Testing the agent in the full system</li>
+</ul>
+<hr>
+<h2>Quick Reference</h2>
+<h3>Commands</h3>
+<pre><code class="language-bash"># Run training script
+yarn train
+
+# Check environment
+cat .env.local | grep OPENAI
+
+# Restart dev server (after adding model ID)
+yarn dev
+</code></pre>
+<h3>File Locations</h3>
+<pre><code>Training script: app/scripts/upload-training-data.ts
+Training data: app/scripts/data/linkedin_training.jsonl
+Environment: .env.local
+</code></pre>
+<h3>Useful Links</h3>
+<ul>
+<li>OpenAI Fine-Tuning Dashboard: <a href="https://platform.openai.com/finetune">https://platform.openai.com/finetune</a></li>
+<li>OpenAI Playground: <a href="https://platform.openai.com/playground">https://platform.openai.com/playground</a></li>
+<li>Fine-Tuning Docs: <a href="https://platform.openai.com/docs/guides/fine-tuning">https://platform.openai.com/docs/guides/fine-tuning</a></li>
+</ul>

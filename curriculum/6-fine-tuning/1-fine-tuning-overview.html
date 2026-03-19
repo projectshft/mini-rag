@@ -1,0 +1,136 @@
+<h1>Fine-Tuning Overview</h1>
+<p>Understand when to use fine-tuning vs RAG, and what fine-tuning can do for your application.</p>
+<hr>
+<h2>Video Walkthrough</h2>
+<iframe src="https://share.descript.com/embed/n9XnMJvmku2" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
+<hr>
+<h2>What is Fine-Tuning?</h2>
+<p><strong>The Concept:</strong> Train a base AI model on your examples to learn your specific patterns, style, and knowledge.</p>
+<p><strong>Analogy:</strong> Base model = new hire with general knowledge. Fine-tuned model = experienced team member who knows your processes and style.</p>
+<p><strong>How it works:</strong></p>
+<ol>
+<li>Start with base model (GPT-4o-mini)</li>
+<li>Provide 100+ examples of YOUR responses</li>
+<li>OpenAI adjusts model weights to match your patterns</li>
+<li>Get a custom model that writes like you</li>
+</ol>
+<hr>
+<h2>Fine-Tuning vs RAG: When to Use Each</h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Fine-Tuning</th>
+<th>RAG</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Best for</strong></td>
+<td>Consistent style/voice, repeated tasks</td>
+<td>Latest information, large knowledge bases</td>
+</tr>
+<tr>
+<td><strong>Use cases</strong></td>
+<td>Brand voice, classification, customer support</td>
+<td>Documentation Q&amp;A, research, fact lookup</td>
+</tr>
+<tr>
+<td><strong>Data required</strong></td>
+<td>100+ quality examples</td>
+<td>Dynamic document collection</td>
+</tr>
+<tr>
+<td><strong>How to update</strong></td>
+<td>Retrain the model</td>
+<td>Add/remove documents</td>
+</tr>
+<tr>
+<td><strong>Cost</strong></td>
+<td>$0.10-1 training + 2x inference</td>
+<td>Per-query retrieval + inference</td>
+</tr>
+<tr>
+<td><strong>Traceability</strong></td>
+<td>No source citations</td>
+<td>Can cite sources</td>
+</tr>
+<tr>
+<td><strong>Speed</strong></td>
+<td>Fast (no retrieval)</td>
+<td>Slightly slower (retrieval step)</td>
+</tr>
+</tbody></table>
+<p><strong>In this course:</strong></p>
+<ul>
+<li><strong>LinkedIn Agent</strong> uses fine-tuning → Your professional voice and style</li>
+<li><strong>RAG Agent</strong> uses retrieval → Current technical documentation</li>
+</ul>
+<hr>
+<h2>When to Fine-Tune</h2>
+<p>✅ <strong>Use fine-tuning when:</strong></p>
+<ul>
+<li>You need consistent brand voice or writing style</li>
+<li>Task is repetitive (classification, formatting, support)</li>
+<li>You have 100+ quality examples in your style</li>
+<li>Style/tone matters more than latest information</li>
+</ul>
+<p>❌ <strong>Don&#39;t fine-tune when:</strong></p>
+<ul>
+<li>Information changes frequently</li>
+<li>Base model already performs well</li>
+<li>You have limited examples (&lt;50)</li>
+<li>You need source citations</li>
+</ul>
+<hr>
+<h2>Cost Breakdown</h2>
+<p><strong>Training (one-time):</strong></p>
+<ul>
+<li>~$0.10-$1.00 for 100 examples</li>
+<li>Based on token count in training data</li>
+</ul>
+<p><strong>Usage (ongoing):</strong></p>
+<ul>
+<li>Base model: $0.150 per 1M input tokens</li>
+<li>Fine-tuned: $0.300 per 1M input tokens (2x cost)</li>
+</ul>
+<p><strong>Is it worth it?</strong></p>
+<ul>
+<li>✅ Yes: Style consistency critical, high-volume use case</li>
+<li>❌ No: One-off tasks, frequently changing needs</li>
+</ul>
+<p><strong>Example:</strong> 1000 queries/day with 500 tokens each</p>
+<ul>
+<li>Extra cost: ~$0.075/day = $2.25/month</li>
+<li>Worth it if quality improvements matter!</li>
+</ul>
+<hr>
+<h2>Training Data Requirements</h2>
+<p><strong>Format:</strong> JSONL (one JSON object per line)</p>
+<pre><code class="language-jsonl">{&quot;messages&quot;: [{&quot;role&quot;: &quot;system&quot;, &quot;content&quot;: &quot;You are a professional LinkedIn advisor&quot;}, {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;How do I write a good headline?&quot;}, {&quot;role&quot;: &quot;assistant&quot;, &quot;content&quot;: &quot;Your headline is the first thing people see...&quot;}]}
+</code></pre>
+<p><strong>What makes good training data:</strong></p>
+<ul>
+<li>✅ Diverse questions (cover different topics)</li>
+<li>✅ Consistent voice (all responses sound like same person)</li>
+<li>✅ High quality (well-written, accurate)</li>
+<li>✅ 100+ examples minimum (500+ ideal)</li>
+</ul>
+<p><strong>What makes bad training data:</strong></p>
+<ul>
+<li>❌ Repetitive questions (no variety)</li>
+<li>❌ Inconsistent tone (multiple authors)</li>
+<li>❌ Low quality (errors, incomplete)</li>
+</ul>
+<hr>
+<h2>What&#39;s Next?</h2>
+<p>In the next lesson, you&#39;ll:</p>
+<ol>
+<li>Examine the provided training data</li>
+<li>Run the fine-tuning script</li>
+<li>Monitor the training job</li>
+<li>Get your custom model ID</li>
+<li>Configure it in your app</li>
+</ol>
+<p>Then you&#39;ll build the LinkedIn agent that uses this fine-tuned model!</p>
+<p><strong>→ Continue to:</strong> <a href="./2-running-fine-tuning.md">Running the Fine-Tuning Process</a></p>
