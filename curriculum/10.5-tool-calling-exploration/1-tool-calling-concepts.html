@@ -1,0 +1,162 @@
+<h1>Tool-Calling: Giving AI the Ability to Act</h1>
+<p>Tool-calling lets an AI model decide <strong>when</strong> and <strong>how</strong> to use external capabilities. Instead of you writing code that says &quot;search the database, then generate a response,&quot; the AI itself decides whether to search at all.</p>
+<p>Let&#39;s understand this with a simple example that has nothing to do with RAG.</p>
+<hr>
+<h2>A Simple Example: Research Assistant</h2>
+<p>Imagine building an assistant that can answer questions like:</p>
+<blockquote>
+<p>&quot;What&#39;s the population of Tokyo, and what&#39;s that divided by the population of New York?&quot;</p>
+</blockquote>
+<p>The AI can&#39;t do this alone. It needs:</p>
+<ol>
+<li><strong>Web search</strong> - to find current population data</li>
+<li><strong>Calculator</strong> - to do the math</li>
+</ol>
+<p>Here&#39;s how tool-calling works:</p>
+<pre><code class="language-typescript">import { streamText, tool } from &#39;ai&#39;;
+import { openai } from &#39;@ai-sdk/openai&#39;;
+import { z } from &#39;zod&#39;;
+
+const result = await streamText({
+  model: openai(&#39;gpt-4o&#39;),
+  tools: {
+    webSearch: tool({
+      description: &#39;Search the web for current information&#39;,
+      parameters: z.object({
+        query: z.string().describe(&#39;The search query&#39;),
+      }),
+      execute: async ({ query }) =&gt; {
+        // Call a search API
+        const results = await searchWeb(query);
+        return results;
+      },
+    }),
+    calculator: tool({
+      description: &#39;Perform mathematical calculations&#39;,
+      parameters: z.object({
+        expression: z.string().describe(&#39;Math expression like &quot;14000000 / 8300000&quot;&#39;),
+      }),
+      execute: async ({ expression }) =&gt; {
+        // Safely evaluate the expression
+        return eval(expression); // (use a safe math parser in production)
+      },
+    }),
+  },
+  messages: [
+    { role: &#39;user&#39;, content: &#39;What is the population of Tokyo divided by the population of NYC?&#39; }
+  ],
+});
+</code></pre>
+<hr>
+<h2>What Happens Under the Hood</h2>
+<ol>
+<li><strong>User asks the question</strong></li>
+<li><strong>AI reads the available tools</strong> and their descriptions</li>
+<li><strong>AI decides</strong>: &quot;I need to search for Tokyo&#39;s population&quot;</li>
+<li><strong>Tool executes</strong>: <code>webSearch({ query: &quot;Tokyo population 2024&quot; })</code></li>
+<li><strong>AI receives result</strong>: &quot;Tokyo metropolitan area: ~14 million&quot;</li>
+<li><strong>AI decides</strong>: &quot;Now I need NYC&#39;s population&quot;</li>
+<li><strong>Tool executes</strong>: <code>webSearch({ query: &quot;New York City population 2024&quot; })</code></li>
+<li><strong>AI receives result</strong>: &quot;NYC: ~8.3 million&quot;</li>
+<li><strong>AI decides</strong>: &quot;Now I need to divide&quot;</li>
+<li><strong>Tool executes</strong>: <code>calculator({ expression: &quot;14000000 / 8300000&quot; })</code></li>
+<li><strong>AI receives result</strong>: <code>1.687</code></li>
+<li><strong>AI responds</strong>: &quot;Tokyo&#39;s population is about 1.69 times that of NYC&quot;</li>
+</ol>
+<p>The AI orchestrated the entire flow. You just defined the tools.</p>
+<hr>
+<h2>The Key Insight</h2>
+<p>With tool-calling, you define <strong>what</strong> tools exist. The AI decides <strong>when</strong> to use them.</p>
+<pre><code>Traditional Code:    You → decide order → call functions → return result
+Tool-Calling:        You → define tools → AI decides → AI calls → AI responds
+</code></pre>
+<p>This is powerful for <strong>autonomous agents</strong> that need to figure things out on their own.</p>
+<hr>
+<h2>Autonomy vs. Predictability</h2>
+<p>Here&#39;s the trade-off:</p>
+<h3>Tool-Calling (Autonomous)</h3>
+<ul>
+<li>AI decides the workflow</li>
+<li>Flexible, can handle unexpected queries</li>
+<li>Less predictable</li>
+<li>More expensive (AI reasoning about what to do)</li>
+<li>Can make mistakes in orchestration</li>
+</ul>
+<h3>Fixed Workflow (Deterministic)</h3>
+<ul>
+<li>You decide the workflow</li>
+<li>Predictable, same steps every time</li>
+<li>Easier to debug and test</li>
+<li>Cheaper (no decision overhead)</li>
+<li>Can waste resources on simple queries</li>
+</ul>
+<hr>
+<h2>When Workflows Beat Tool-Calling</h2>
+<p><strong>Here&#39;s the thing: most of the time, a fixed workflow is better.</strong></p>
+<p>Why?</p>
+<ol>
+<li><p><strong>You usually know what needs to happen.</strong> If you&#39;re building a RAG app, you know every query needs: embed → search → rerank → generate. Why make the AI figure that out?</p>
+</li>
+<li><p><strong>Workflows are testable.</strong> You can unit test each step. With tool-calling, the AI might take different paths for similar inputs.</p>
+</li>
+<li><p><strong>Workflows are cheaper.</strong> No extra LLM calls to decide what to do.</p>
+</li>
+<li><p><strong>Workflows are debuggable.</strong> When something breaks, you know exactly where.</p>
+</li>
+</ol>
+<p><strong>Tool-calling shines when:</strong></p>
+<ul>
+<li>You genuinely don&#39;t know what sequence of actions is needed</li>
+<li>The agent needs to explore and react dynamically</li>
+<li>You&#39;re building a general-purpose assistant</li>
+</ul>
+<p><strong>Workflows win when:</strong></p>
+<ul>
+<li>The task has a known pattern</li>
+<li>Reliability matters more than flexibility</li>
+<li>You&#39;re building a single-purpose tool</li>
+</ul>
+<hr>
+<h2>Your Challenge: Implement Tool-Calling RAG</h2>
+<p>Now it&#39;s your turn. Take your existing RAG workflow and refactor it to use tool-calling.</p>
+<p><strong>Create:</strong> <code>app/api/tool-calling-agent/route.ts</code></p>
+<p><strong>Resources:</strong></p>
+<ul>
+<li><a href="https://sdk.vercel.ai/docs/ai-sdk-core/tools-and-tool-calling">Vercel AI SDK - Tools and Tool Calling</a></li>
+<li><a href="https://sdk.vercel.ai/docs/ai-sdk-core/agents">Vercel AI SDK - Multi-step Tool Calls</a></li>
+</ul>
+<p><strong>Hints:</strong></p>
+<ul>
+<li>Wrap your RAG logic (embed → search → rerank) inside a tool&#39;s <code>execute</code> function</li>
+<li>Use <code>toolChoice: &#39;auto&#39;</code> so the AI decides when to search</li>
+<li>Add a good <code>description</code> so the AI knows when to use it</li>
+</ul>
+<p><strong>Test it with:</strong></p>
+<ol>
+<li><code>&quot;Thanks for your help!&quot;</code> - Should NOT call the tool</li>
+<li><code>&quot;How do I use useEffect?&quot;</code> - Should call the tool</li>
+<li><code>&quot;Hello, what can you do?&quot;</code> - Should NOT call the tool</li>
+<li><code>&quot;Explain React hooks&quot;</code> - Should call the tool</li>
+</ol>
+<hr>
+<h2>Think About It</h2>
+<p>Before moving to the next lesson, consider these scenarios. For each one, would you use tool-calling or a fixed workflow?</p>
+<ol>
+<li><p><strong>A customer support bot</strong> that answers questions about your product using a knowledge base.</p>
+</li>
+<li><p><strong>A code review assistant</strong> that analyzes PRs, checks for security issues, runs linters, and suggests improvements.</p>
+</li>
+<li><p><strong>A travel planning agent</strong> that needs to search flights, hotels, and activities, then combine them into an itinerary.</p>
+</li>
+<li><p><strong>A documentation Q&amp;A bot</strong> for your company&#39;s internal docs.</p>
+</li>
+<li><p><strong>A research assistant</strong> that needs to search multiple sources, cross-reference information, and synthesize findings.</p>
+</li>
+<li><p><strong>A form-filling assistant</strong> that extracts data from documents and populates a database.</p>
+</li>
+</ol>
+<p>Write down your answers. We&#39;ll discuss in the next lesson.</p>
+<hr>
+<h2>Next Up</h2>
+<p>In the next lesson, we&#39;ll reveal our implementation and discuss when workflows beat tool-calling (spoiler: most of the time).</p>
+<hr>
