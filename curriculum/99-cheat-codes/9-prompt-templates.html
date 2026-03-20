@@ -1,0 +1,185 @@
+<h1>Prompt Templates</h1>
+<p>Copy-paste prompts for common AI patterns.</p>
+<hr>
+<h2>RAG System Prompt</h2>
+<pre><code class="language-typescript">const ragSystemPrompt = `You are a helpful assistant that answers questions based on the provided context.
+
+Context:
+${context}
+
+Instructions:
+- Answer based on the context above
+- If the context doesn&#39;t contain enough information, say so
+- Be concise and accurate
+- Include code examples when relevant`;
+</code></pre>
+<hr>
+<h2>RAG with Sources</h2>
+<pre><code class="language-typescript">const ragWithSourcesPrompt = `You are a helpful assistant. Answer questions using ONLY the provided context.
+
+Context:
+${context}
+
+Instructions:
+- Answer based strictly on the context above
+- Cite your sources using [Source: filename] format
+- If the context doesn&#39;t contain the answer, say &quot;I don&#39;t have enough information to answer this&quot;
+- Never make up information not in the context`;
+</code></pre>
+<hr>
+<h2>Agent Router Prompt</h2>
+<pre><code class="language-typescript">const routerPrompt = `Analyze this query and route to the best agent.
+
+Query: &quot;${query}&quot;
+
+Agents:
+${agents.map(a =&gt; `- ${a.name}: ${a.description}`).join(&#39;\n&#39;)}
+
+Return the agent name and a refined query optimized for that agent.`;
+</code></pre>
+<hr>
+<h2>Query Analysis Prompt</h2>
+<pre><code class="language-typescript">const queryAnalysisPrompt = `Analyze this user query and determine how to handle it.
+
+Query: &quot;${query}&quot;
+
+Determine:
+1. Does this require searching documentation? (technical questions, how-to, API usage)
+2. Is this a simple greeting or casual conversation?
+3. What are the main topics or keywords?
+4. Should the query be rephrased for better search results?`;
+</code></pre>
+<hr>
+<h2>Content Generation Prompt</h2>
+<pre><code class="language-typescript">const contentPrompt = `Generate a LinkedIn post about: ${topic}
+
+Writing samples for style reference:
+${writingSamples}
+
+Guidelines:
+- Match the tone and style of the samples
+- Be authentic and engaging
+- Keep it under 1500 characters
+- No hashtags or emojis unless in samples`;
+</code></pre>
+<hr>
+<h2>Code Explanation Prompt</h2>
+<pre><code class="language-typescript">const codeExplanationPrompt = `Explain this code clearly and concisely.
+
+Code:
+\`\`\`${language}
+${code}
+\`\`\`
+
+Provide:
+1. A brief summary of what it does
+2. Step-by-step breakdown of key parts
+3. Any potential issues or improvements`;
+</code></pre>
+<hr>
+<h2>SQL Generation Prompt</h2>
+<pre><code class="language-typescript">const sqlGenerationPrompt = `Generate a SQL query based on this request.
+
+Database Schema:
+${schema}
+
+User Request: &quot;${request}&quot;
+
+Rules:
+- Use only tables and columns from the schema
+- Prefer JOINs over subqueries when possible
+- Add appropriate WHERE clauses for safety
+- Never generate DELETE or UPDATE without explicit request`;
+</code></pre>
+<hr>
+<h2>Destructive Action Detection</h2>
+<pre><code class="language-typescript">const destructiveDetectionPrompt = `Analyze this query for destructive intent.
+
+Query: &quot;${query}&quot;
+
+Database Operations:
+- SELECT: Reading data (safe)
+- INSERT/CREATE: Adding data (safe)
+- UPDATE: Modifying existing data (DESTRUCTIVE)
+- DELETE: Removing data (DESTRUCTIVE)
+
+Determine if this query would result in data modification or deletion.`;
+</code></pre>
+<hr>
+<h2>Summarization Prompt</h2>
+<pre><code class="language-typescript">const summarizationPrompt = `Summarize the following content.
+
+Content:
+${content}
+
+Requirements:
+- Maximum ${maxLength} words
+- Preserve key facts and figures
+- Use bullet points for multiple items
+- Maintain the original tone`;
+</code></pre>
+<hr>
+<h2>Classification Prompt</h2>
+<pre><code class="language-typescript">const classificationPrompt = `Classify this text into one of the following categories.
+
+Text: &quot;${text}&quot;
+
+Categories:
+${categories.map(c =&gt; `- ${c.name}: ${c.description}`).join(&#39;\n&#39;)}
+
+Return the category name and confidence (0-1).`;
+</code></pre>
+<hr>
+<h2>Extraction Prompt</h2>
+<pre><code class="language-typescript">const extractionPrompt = `Extract structured information from this text.
+
+Text:
+${text}
+
+Extract the following fields:
+- name: Person or company name
+- email: Email address if present
+- phone: Phone number if present
+- topics: Main topics discussed (array)
+- sentiment: Overall sentiment (positive/negative/neutral)
+
+Return null for any fields not found in the text.`;
+</code></pre>
+<hr>
+<h2>Rewrite/Improve Prompt</h2>
+<pre><code class="language-typescript">const rewritePrompt = `Improve this text while preserving its meaning.
+
+Original:
+${original}
+
+Improvements to make:
+- Fix grammar and spelling
+- Improve clarity and flow
+- Make it more ${tone} (professional/casual/technical)
+- Keep the same length (approximately)`;
+</code></pre>
+<hr>
+<h2>Few-Shot Example Prompt</h2>
+<pre><code class="language-typescript">const fewShotPrompt = `Complete the task following these examples.
+
+Examples:
+${examples.map(e =&gt; `Input: ${e.input}\nOutput: ${e.output}`).join(&#39;\n\n&#39;)}
+
+Now complete this:
+Input: ${userInput}
+Output:`;
+</code></pre>
+<hr>
+<h2>Chain of Thought Prompt</h2>
+<pre><code class="language-typescript">const chainOfThoughtPrompt = `Solve this problem step by step.
+
+Problem: ${problem}
+
+Think through this carefully:
+1. First, identify what we know
+2. Then, determine what we need to find
+3. Work through the logic step by step
+4. Verify your answer makes sense
+
+Show your reasoning, then provide the final answer.`;
+</code></pre>

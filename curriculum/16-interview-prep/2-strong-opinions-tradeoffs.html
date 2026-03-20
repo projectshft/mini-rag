@@ -1,0 +1,376 @@
+<h1>Module 2: Strong Opinions &amp; Tradeoffs</h1>
+<p>Most candidates describe. Strong candidates take positions and defend them.</p>
+<hr>
+<h2>Video Walkthrough</h2>
+<p>Watch this guide on developing strong opinions:</p>
+<!-- Video will be added here -->
+<iframe src="PLACEHOLDER_VIDEO_URL" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
+<hr>
+<h2>What You&#39;ll Build</h2>
+<p>By the end of this module, you&#39;ll have:</p>
+<ul>
+<li>Defensible positions on agents vs workflows</li>
+<li>Opinions on LangChain vs LangGraph</li>
+<li>Framework for evaluating any tool or pattern</li>
+<li>A video recording explaining your strongest opinion</li>
+</ul>
+<hr>
+<h2>Why Opinions Matter</h2>
+<p><strong>The problem:</strong></p>
+<p>Interviewers ask: &quot;What do you think about autonomous agents?&quot;</p>
+<p>Weak candidates say:</p>
+<ul>
+<li>&quot;They&#39;re interesting&quot; (says nothing)</li>
+<li>&quot;I&#39;ve heard they&#39;re good&quot; (no opinion)</li>
+<li>&quot;I don&#39;t know much about them&quot; (unprepared)</li>
+</ul>
+<p>Strong candidates say:</p>
+<ul>
+<li>&quot;I prefer structured workflows over autonomous agents for production systems because they&#39;re more predictable and easier to debug. I&#39;d only use autonomous agents for research tasks where the workflow isn&#39;t known upfront.&quot;</li>
+</ul>
+<p><strong>What changed?</strong></p>
+<ul>
+<li>✅ Clear position</li>
+<li>✅ Reasoning</li>
+<li>✅ Specific use cases</li>
+<li>✅ Demonstrates practical experience</li>
+</ul>
+<hr>
+<h2>The Framework</h2>
+<p>For any tool, pattern, or approach, have:</p>
+<ol>
+<li><strong>Your position</strong> - What do you prefer?</li>
+<li><strong>Your reasoning</strong> - Why do you prefer it?</li>
+<li><strong>Tradeoffs</strong> - What are you giving up?</li>
+<li><strong>Use cases</strong> - When would you choose differently?</li>
+</ol>
+<hr>
+<h2>Opinion 1: Agents vs Structured Workflows</h2>
+<p>This is the most common interview question. You must have a clear answer.</p>
+<h3>The Question</h3>
+<p>&quot;Do you prefer autonomous agents or structured workflows?&quot;</p>
+<h3>Strong Answer Template</h3>
+<p>&quot;In most production systems, I prefer [structured workflows / autonomous agents] because [reasoning]. However, I&#39;d use [the other option] when [specific use case].&quot;</p>
+<h3>Example Answer</h3>
+<p>&quot;In most production systems, I prefer structured workflows because they&#39;re predictable, testable, and easier to debug. When an LLM call fails, I know exactly where it happened and can replay it. With autonomous agents, the execution path changes every time, making debugging harder.</p>
+<p>However, I&#39;d use autonomous agents for research tasks or open-ended exploration where I don&#39;t know the workflow upfront. If I&#39;m building a system to research market trends, an autonomous agent makes sense because the information gathering steps aren&#39;t predetermined.&quot;</p>
+<hr>
+<h3>When to Use Each</h3>
+<p><strong>Structured Workflows</strong> - Use when:</p>
+<ul>
+<li>You know the steps ahead of time</li>
+<li>Reliability matters more than flexibility</li>
+<li>You need to debug failures</li>
+<li>You&#39;re building production systems</li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>Customer support (classify → route → respond)</li>
+<li>Email triage (read → categorize → draft reply)</li>
+<li>Document processing (extract → validate → store)</li>
+</ul>
+<p><strong>Autonomous Agents</strong> - Use when:</p>
+<ul>
+<li>The workflow isn&#39;t predetermined</li>
+<li>Exploration is the goal</li>
+<li>Flexibility matters more than predictability</li>
+<li>You&#39;re building research tools</li>
+</ul>
+<p>Examples:</p>
+<ul>
+<li>Market research (where next steps depend on findings)</li>
+<li>Code exploration (following unknown codebases)</li>
+<li>Creative brainstorming (unexpected directions are valuable)</li>
+</ul>
+<hr>
+<h3>Your Turn</h3>
+<p>Write your position:</p>
+<pre><code class="language-markdown">## Agents vs Workflows: My Opinion
+
+In most production systems, I prefer _________________ because:
+
+- [Reason 1]
+- [Reason 2]
+- [Reason 3]
+
+However, I&#39;d use _________________ when:
+
+- [Use case 1]
+- [Use case 2]
+
+The key tradeoff is:
+[What you gain vs what you lose]
+</code></pre>
+<hr>
+<h2>Opinion 2: LangChain vs LangGraph</h2>
+<h3>The Question</h3>
+<p>&quot;What do you think about LangChain and LangGraph?&quot;</p>
+<h3>Strong Answer Template</h3>
+<p>&quot;I think [tool] is better for [use case] because [reasoning]. I&#39;d use [other tool] when [different use case].&quot;</p>
+<h3>Framework Comparison</h3>
+<p><strong>LangChain</strong> - Best for:</p>
+<ul>
+<li>Simple chains and prompt management</li>
+<li>Rapid prototyping</li>
+<li>Sequential operations</li>
+<li>Getting started quickly</li>
+</ul>
+<p>Downsides:</p>
+<ul>
+<li>Can become complex with many steps</li>
+<li>Harder to visualize flow</li>
+<li>More imperative style</li>
+</ul>
+<p><strong>LangGraph</strong> - Best for:</p>
+<ul>
+<li>Complex, branching workflows</li>
+<li>State management across steps</li>
+<li>Conditional logic</li>
+<li>Human-in-the-loop patterns</li>
+</ul>
+<p>Downsides:</p>
+<ul>
+<li>Steeper learning curve</li>
+<li>More boilerplate for simple cases</li>
+<li>Requires graph thinking</li>
+</ul>
+<h3>Example Answer</h3>
+<p>&quot;For simple RAG workflows, I prefer LangChain because it&#39;s straightforward - chain together embeddings, retrieval, and generation in 20 lines of code. No need for the complexity of graphs.</p>
+<p>But for multi-step agent systems with branching logic, I use LangGraph. For example, if I&#39;m building a system that routes to different agents based on user intent, then potentially loops back for clarification, the graph structure makes the flow explicit. With LangChain, that would be buried in nested if statements.&quot;</p>
+<hr>
+<h3>Your Turn</h3>
+<p>Write your position:</p>
+<pre><code class="language-markdown">## LangChain vs LangGraph: My Opinion
+
+For [use case], I prefer _________________ because:
+
+- [Reason 1]
+- [Reason 2]
+
+For [different use case], I prefer _________________ because:
+
+- [Reason 1]
+- [Reason 2]
+
+The key difference is:
+[When complexity justifies switching]
+</code></pre>
+<hr>
+<h2>Opinion 3: RAG Patterns</h2>
+<h3>Chunking Strategy</h3>
+<p><strong>The Question:</strong> &quot;How do you chunk documents for RAG?&quot;</p>
+<p><strong>Weak answer:</strong> &quot;I use 500-token chunks with 50-token overlap.&quot;</p>
+<p><strong>Strong answer:</strong> &quot;It depends on the content type. For structured documents like API docs, I chunk by semantic boundaries - sections, function definitions, or paragraphs. For unstructured content like transcripts, I use fixed-size chunks with overlap. The key is aligning chunks with meaningful units, not arbitrary sizes.&quot;</p>
+<hr>
+<h3>Re-Ranking</h3>
+<p><strong>The Question:</strong> &quot;Do you use re-ranking in your RAG systems?&quot;</p>
+<p><strong>Weak answer:</strong> &quot;Yes, it improves results.&quot;</p>
+<p><strong>Strong answer:</strong> &quot;Yes, for anything beyond a prototype. Initial vector search casts a wide net - it&#39;s recall-focused. Re-ranking with a cross-encoder significantly improves precision by understanding the relationship between query and context. It adds latency, but the quality improvement is worth it for production systems.&quot;</p>
+<hr>
+<h3>Your Turn</h3>
+<p>Write your position on two RAG patterns:</p>
+<pre><code class="language-markdown">## Chunking Strategy: My Opinion
+
+For [content type], I use _________________ because:
+
+- [Reason 1]
+- [Reason 2]
+
+For [different content type], I use _________________ because:
+
+- [Reason 1]
+
+## Re-Ranking: My Opinion
+
+I [do / don&#39;t] use re-ranking in production because:
+
+- [Reason 1]
+- [Reason 2]
+
+The tradeoff is:
+[What you gain vs what you lose]
+</code></pre>
+<hr>
+<h2>Opinion 4: Model Selection</h2>
+<h3>The Question</h3>
+<p>&quot;How do you choose which model to use?&quot;</p>
+<h3>Strong Answer Template</h3>
+<p>&quot;I design systems so I can swap models easily. For [task type], I use [model] because [reasoning]. For [different task], I use [different model].&quot;</p>
+<h3>Example Answer</h3>
+<p>&quot;I design systems so models are configurable, not hardcoded. For complex reasoning tasks like analyzing user intent or generating creative content, I use GPT-4 or Claude Opus because accuracy matters more than cost. For simple classification or structured extraction, I use GPT-4o-mini because it&#39;s 20x cheaper and fast enough for those tasks. I&#39;ve seen projects blow their budget using GPT-4 for tasks that GPT-3.5 could handle.&quot;</p>
+<hr>
+<h3>When to Use Each Model Size</h3>
+<p><strong>Large models (GPT-4, Claude Opus):</strong></p>
+<ul>
+<li>Complex reasoning</li>
+<li>Open-ended generation</li>
+<li>When quality matters more than cost</li>
+<li>Low request volume</li>
+</ul>
+<p><strong>Small models (GPT-4o-mini, Claude Haiku):</strong></p>
+<ul>
+<li>Classification tasks</li>
+<li>Structured extraction</li>
+<li>High request volume</li>
+<li>When cost matters</li>
+</ul>
+<p><strong>Fine-tuned models:</strong></p>
+<ul>
+<li>Consistent formatting</li>
+<li>Domain-specific knowledge</li>
+<li>Predictable outputs</li>
+<li>Cost optimization for high volume</li>
+</ul>
+<hr>
+<h3>Your Turn</h3>
+<p>Write your position:</p>
+<pre><code class="language-markdown">## Model Selection: My Opinion
+
+For [task type], I use _________________ because:
+
+- [Reason 1]
+- [Reason 2]
+
+For [different task], I use _________________ because:
+
+- [Reason 1]
+
+I [do / don&#39;t] fine-tune models because:
+
+- [Reason 1]
+- [Reason 2]
+</code></pre>
+<hr>
+<h2>Opinion 5: Observability</h2>
+<h3>The Question</h3>
+<p>&quot;How do you debug LLM failures?&quot;</p>
+<h3>Strong Answer</h3>
+<p>&quot;I include observability from day one because LLM systems fail silently. I use tools like Helicone or LangSmith to track every request - inputs, outputs, latency, and costs. When a user reports a bad answer, I can replay the exact prompt and context that generated it. Without observability, debugging LLMs is guesswork.&quot;</p>
+<h3>What to Monitor</h3>
+<p><strong>Must track:</strong></p>
+<ul>
+<li>Inputs and outputs</li>
+<li>Token usage and cost</li>
+<li>Latency</li>
+<li>Error rates</li>
+<li>Tool calls (for agents)</li>
+</ul>
+<p><strong>Why it matters:</strong></p>
+<ul>
+<li>LLMs are non-deterministic</li>
+<li>Context matters (you need to see exact inputs)</li>
+<li>Failures are often subtle (bad answer, not error)</li>
+<li>Cost can spiral without monitoring</li>
+</ul>
+<hr>
+<h3>Your Turn</h3>
+<p>Write your position:</p>
+<pre><code class="language-markdown">## Observability: My Opinion
+
+I [do / don&#39;t] include observability because:
+
+- [Reason 1]
+- [Reason 2]
+
+The tools I use are:
+
+- [Tool 1] for [purpose]
+- [Tool 2] for [purpose]
+
+Without observability, the problem is:
+[Specific debugging challenge]
+</code></pre>
+<hr>
+<h2>Written Assignment</h2>
+<p>Complete all five opinion sections above:</p>
+<ol>
+<li>Agents vs Workflows</li>
+<li>LangChain vs LangGraph</li>
+<li>RAG Patterns (Chunking + Re-Ranking)</li>
+<li>Model Selection</li>
+<li>Observability</li>
+</ol>
+<p><strong>Instructions:</strong></p>
+<ul>
+<li>Write in complete sentences</li>
+<li>Include specific reasoning</li>
+<li>Mention tradeoffs explicitly</li>
+<li>Use examples from your experience</li>
+</ul>
+<p><strong>Submission format:</strong></p>
+<p>A single markdown document with all five opinions clearly labeled.</p>
+<hr>
+<h2>Video Assignment</h2>
+<p>Record yourself explaining your strongest opinion and submit for feedback.</p>
+<p><strong>Instructions:</strong></p>
+<ol>
+<li>Choose ONE opinion from above (pick your strongest)</li>
+<li>Keep it concise - aim for 1-5 minutes</li>
+<li>Structure: Position → Reasoning → Tradeoffs → Use Cases</li>
+<li>Don&#39;t read from notes</li>
+<li>Sound confident (even if you&#39;re not 100% sure)</li>
+<li><strong>Submit your video</strong> - you&#39;ll receive feedback on your reasoning and delivery</li>
+</ol>
+<p><strong>Example structure:</strong></p>
+<p>&quot;The question I&#39;m answering is: Do you prefer agents or workflows?</p>
+<p>In most production systems, I prefer structured workflows...<br>[Explain your reasoning]</p>
+<p>However, I&#39;d use agents for...<br>[Describe use cases]</p>
+<p>The key tradeoff is...<br>[What you gain vs what you lose]</p>
+<p>So my position is: start with workflows, add agents only when needed.&quot;</p>
+<p><strong>Submission:</strong></p>
+<p>Submit your video link (Loom, Google Drive, etc.) for instructor feedback.</p>
+<p><strong>What you&#39;ll receive feedback on:</strong></p>
+<ul>
+<li>Strength of your position</li>
+<li>Quality of reasoning</li>
+<li>Tradeoff awareness</li>
+<li>Use case appropriateness</li>
+<li>Confidence and clarity</li>
+</ul>
+<hr>
+<h2>Practice Tips</h2>
+<h3>Tip 1: Pick a Side</h3>
+<p>Don&#39;t say &quot;it depends&quot; without then picking a default position.</p>
+<p>❌ &quot;It depends on the use case&quot; (cop-out)<br>✅ &quot;It depends, but I default to structured workflows unless I have a specific reason to use agents&quot; (takes position)</p>
+<h3>Tip 2: Use &quot;I Prefer&quot; Language</h3>
+<p>Sound opinionated:</p>
+<ul>
+<li>&quot;I prefer...&quot;</li>
+<li>&quot;In my experience...&quot;</li>
+<li>&quot;I&#39;ve found that...&quot;</li>
+<li>&quot;My approach is...&quot;</li>
+</ul>
+<h3>Tip 3: Cite Tradeoffs</h3>
+<p>Every decision has tradeoffs. Mention them:</p>
+<ul>
+<li>&quot;The downside is...&quot;</li>
+<li>&quot;What you lose is...&quot;</li>
+<li>&quot;The tradeoff is...&quot;</li>
+<li>&quot;I&#39;m willing to sacrifice X for Y because...&quot;</li>
+</ul>
+<h3>Tip 4: Be Willing to Change Your Mind</h3>
+<p>&quot;I prefer workflows, but if you&#39;re building a research tool, I&#39;d absolutely use agents.&quot;</p>
+<p>Shows:</p>
+<ul>
+<li>Flexibility</li>
+<li>Practical thinking</li>
+<li>Not dogmatic</li>
+</ul>
+<hr>
+<h2>Common Mistakes</h2>
+<h3>Mistake 1: No Position</h3>
+<p>❌ &quot;Both are good, depends on the use case&quot;<br>✅ &quot;I default to X, but use Y when Z&quot;</p>
+<h3>Mistake 2: No Reasoning</h3>
+<p>❌ &quot;I prefer LangGraph because it&#39;s better&quot;<br>✅ &quot;I prefer LangGraph for complex flows because the graph structure makes branching logic explicit&quot;</p>
+<h3>Mistake 3: Ignoring Tradeoffs</h3>
+<p>❌ &quot;Agents are great because they&#39;re autonomous&quot;<br>✅ &quot;Agents give you autonomy but you lose predictability and debuggability&quot;</p>
+<h3>Mistake 4: Sounding Uncertain</h3>
+<p>❌ &quot;I think maybe workflows might be better sometimes?&quot;<br>✅ &quot;I prefer workflows for production systems&quot;</p>
+<p>Even if you&#39;re not 100% confident, sound like you have a position.</p>
+<hr>
+<h2>What You Learned</h2>
+<p>✅ How to take and defend technical positions<br>✅ Framework for evaluating tools and patterns<br>✅ When to use agents vs workflows<br>✅ How to explain tradeoffs clearly</p>
+<hr>
+<h2>What&#39;s Next?</h2>
+<p>In Module 3, you&#39;ll design RAG systems for specific scenarios - the most common technical interview question.</p>

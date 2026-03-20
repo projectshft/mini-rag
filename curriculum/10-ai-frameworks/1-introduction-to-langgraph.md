@@ -513,5 +513,3 @@ You'll see firsthand how LangGraph differs from your current AI SDK agents.
 ✅ Best for branching logic, loops, and long-running workflows
 ✅ AI SDK is better for simple, UI-first applications
 ✅ Learning curve is steeper but worth it for production systems
-
-**Next:** Build your first LangGraph agent with an API route implementation.

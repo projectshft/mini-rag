@@ -1,0 +1,489 @@
+<h1>Exploring Tool-Calling Patterns</h1>
+<p>Let&#39;s explore <strong>tool-calling</strong> - where the AI decides when and how to use tools.</p>
+<p><strong>Important:</strong> This module is exploratory. You&#39;ll implement tool-calling in a separate file to experiment without modifying your existing agents. We&#39;ll switch back to the workflow approach afterward, but understanding tool-calling is valuable for your toolkit.</p>
+<hr>
+<h2>What You&#39;ll Learn</h2>
+<p>This module covers:</p>
+<ul>
+<li>How tool-calling differs from workflows</li>
+<li>When to use each approach</li>
+<li>Implementing tools with the AI SDK</li>
+<li>Building an agent that decides when to retrieve context</li>
+<li>Trade-offs between patterns</li>
+</ul>
+<hr>
+<h2>Two Approaches to RAG</h2>
+<p>Let&#39;s compare two ways to build RAG agents:</p>
+<h3>Approach 1: Fixed Workflow (Your Current RAG Agent)</h3>
+<pre><code class="language-typescript">export async function ragAgent(request: AgentRequest) {
+	// Always executes these steps for every query
+	const embedding = await generateEmbedding(request.query);
+	const results = await searchVectorDB(embedding);
+	const reranked = await rerank(results);
+	return streamText({ context: reranked });
+}
+</code></pre>
+<p><strong>Flow:</strong></p>
+<pre><code>Query → Embed → Search → Rerank → Generate → Done
+(Always runs, every time)
+</code></pre>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Simple and predictable</li>
+<li>✅ Fast (no decision overhead)</li>
+<li>✅ Lower cost per request</li>
+<li>❌ Wastes resources on simple queries (&quot;Thanks!&quot; still searches)</li>
+<li>❌ Can&#39;t skip or branch logic</li>
+</ul>
+<hr>
+<h3>Approach 2: Tool-Calling (This Module)</h3>
+<pre><code class="language-typescript">export async function ragAgent(request: AgentRequest) {
+	return streamText({
+		model: openai(&#39;gpt-4o&#39;),
+		tools: {
+			search_documentation: tool({
+				execute: async ({ query }) =&gt; {
+					// RAG workflow only runs when AI calls this tool
+					const embedding = await generateEmbedding(query);
+					const results = await searchVectorDB(embedding);
+					return rerank(results);
+				},
+			}),
+		},
+	});
+}
+</code></pre>
+<p><strong>Flow:</strong></p>
+<pre><code>Query → AI Decides
+         ↓
+    Need Context? ──Yes──→ Call Tool → Generate
+         ↓
+        No → Generate Directly
+(AI decides whether to search)
+</code></pre>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ AI decides when to retrieve context</li>
+<li>✅ Can skip search for simple queries</li>
+<li>✅ More intelligent routing</li>
+<li>⚠️ Extra LLM call for decision (higher cost)</li>
+<li>⚠️ Less predictable</li>
+</ul>
+<hr>
+<h2>When to Use Each Approach</h2>
+<h3>Use Fixed Workflow When:</h3>
+<p>✅ <strong>Every query needs the same process</strong></p>
+<ul>
+<li>Customer support (always search knowledge base)</li>
+<li>Documentation Q&amp;A (always retrieve docs)</li>
+<li>FAQ chatbot (always match against FAQs)</li>
+</ul>
+<p>✅ <strong>Cost-sensitive applications</strong></p>
+<ul>
+<li>Avoid extra LLM calls to decide</li>
+<li>Predictable pricing</li>
+</ul>
+<p>✅ <strong>Deterministic behavior required</strong></p>
+<ul>
+<li>Regulatory compliance</li>
+<li>Audit requirements</li>
+</ul>
+<p><strong>Example:</strong> Medical Q&amp;A where every answer must be grounded in documentation.</p>
+<hr>
+<h3>Use Tool-Calling When:</h3>
+<p>✅ <strong>Query-dependent logic</strong></p>
+<ul>
+<li>Some queries need context, others don&#39;t</li>
+<li>Multi-capability agents</li>
+</ul>
+<p>✅ <strong>Interactive conversations</strong></p>
+<ul>
+<li>Mix of casual chat and technical questions</li>
+<li>AI needs to decide when to look things up</li>
+</ul>
+<p>✅ <strong>Cost optimization</strong></p>
+<ul>
+<li>Skip expensive searches for simple queries</li>
+<li>Intelligent resource allocation</li>
+</ul>
+<p><strong>Example:</strong> Conversational assistant that chats casually but can search docs when needed.</p>
+<hr>
+<h2>Cost Comparison</h2>
+<p>Let&#39;s compare costs for 100 queries:</p>
+<ul>
+<li>50 queries need context (&quot;How do I use hooks?&quot;)</li>
+<li>50 queries don&#39;t need context (&quot;Thanks!&quot;, &quot;Hello&quot;)</li>
+</ul>
+<h3>Fixed Workflow</h3>
+<pre><code>100 queries × (embedding + search + rerank + generation)
+= 100 × $0.025
+= $2.50
+
+Waste: 50 unnecessary retrievals = $1.25 wasted
+</code></pre>
+<h3>Tool-Calling</h3>
+<pre><code>100 queries × decision = 100 × $0.002 = $0.20
+50 queries × (embedding + search + rerank + generation) = 50 × $0.025 = $1.25
+Total = $1.45
+
+Savings: $1.05 (42% cheaper)
+</code></pre>
+<hr>
+<h2>Real-World Scenarios</h2>
+<h3>Scenario 1: &quot;How do I use useState?&quot;</h3>
+<p><strong>Fixed Workflow:</strong></p>
+<pre><code>✅ Embeds query
+✅ Searches docs (NEEDED)
+✅ Reranks results
+✅ Generates with context
+Cost: $0.025
+Quality: Excellent
+</code></pre>
+<p><strong>Tool-Calling:</strong></p>
+<pre><code>✅ AI decides to call search tool
+✅ Embeds query
+✅ Searches docs (NEEDED)
+✅ Reranks results
+✅ Generates with context
+Cost: $0.027 (+$0.002 for decision)
+Quality: Excellent
+</code></pre>
+<p><strong>Winner:</strong> Fixed workflow (slightly cheaper, same quality)</p>
+<hr>
+<h3>Scenario 2: &quot;Thanks for the help!&quot;</h3>
+<p><strong>Fixed Workflow:</strong></p>
+<pre><code>❌ Embeds query (WASTED)
+❌ Searches docs for &quot;thanks help&quot; (WASTED)
+❌ Reranks irrelevant results (WASTED)
+⚠️ Generates with confusing context
+Cost: $0.025 (all wasted)
+Quality: Poor (context pollutes response)
+</code></pre>
+<p><strong>Tool-Calling:</strong></p>
+<pre><code>✅ AI decides NOT to call tool
+✅ Generates friendly response directly
+Cost: $0.005 (just generation)
+Quality: Excellent
+</code></pre>
+<p><strong>Winner:</strong> Tool-calling (80% cheaper, better quality)</p>
+<hr>
+<h2>Implementation: Tool-Calling RAG</h2>
+<p>You&#39;ll create a separate route: <code>app/api/tool-calling-agent/route.ts</code></p>
+<p>This keeps your existing RAG agent intact while letting you explore tool-calling patterns.</p>
+<hr>
+<h2>Step 1: Understanding the Tool Definition</h2>
+<p>The AI SDK provides a <code>tool</code> function to define callable tools:</p>
+<pre><code class="language-typescript">import { tool } from &#39;ai&#39;;
+import { z } from &#39;zod&#39;;
+
+const myTool = tool({
+	// Description helps AI decide when to use this tool
+	description: &#39;Search React documentation for relevant information&#39;,
+
+	// Schema validates inputs using Zod
+	parameters: z.object({
+		query: z.string().describe(&#39;The search query&#39;),
+	}),
+
+	// Execute function runs when AI calls the tool
+	execute: async ({ query }) =&gt; {
+		const results = await searchDocs(query);
+		return results;
+	},
+});
+</code></pre>
+<p><strong>Key Components:</strong></p>
+<ul>
+<li><code>description</code>: Tell the AI when to use this tool</li>
+<li><code>parameters</code>: Define and validate inputs with Zod</li>
+<li><code>execute</code>: The function that runs when called</li>
+</ul>
+<hr>
+<h2>Step 2: Implementing search_documentation Tool</h2>
+<p>Your RAG workflow becomes a tool:</p>
+<pre><code class="language-typescript">import { streamText, tool } from &#39;ai&#39;;
+import { openai } from &#39;@ai-sdk/openai&#39;;
+import { z } from &#39;zod&#39;;
+import { pineconeClient } from &#39;@/app/libs/pinecone&#39;;
+import { openaiClient } from &#39;@/app/libs/openai/openai&#39;;
+
+const searchDocsTool = tool({
+	description:
+		&#39;Search React documentation for technical information about hooks, components, and APIs. Use when users ask programming questions.&#39;,
+
+	parameters: z.object({
+		query: z.string().describe(&#39;The technical query to search for&#39;),
+	}),
+
+	execute: async ({ query }) =&gt; {
+		console.log(&#39;🔧 Tool called for:&#39;, query);
+
+		// Step 1: Generate embedding
+		const embeddingResponse = await openaiClient.embeddings.create({
+			model: &#39;text-embedding-3-small&#39;,
+			input: query,
+		});
+		const embedding = embeddingResponse.data[0].embedding;
+
+		// Step 2: Search Pinecone
+		const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
+		const queryResponse = await index.query({
+			vector: embedding,
+			topK: 10,
+			includeMetadata: true,
+		});
+
+		// Step 3: Extract documents
+		const documents = queryResponse.matches
+			.map((match) =&gt; match.metadata?.text)
+			.filter(Boolean) as string[];
+
+		// Step 4: Rerank
+		const reranked = await pineconeClient.inference.rerank({
+			model: &#39;bge-reranker-v2-m3&#39;,
+			query: query,
+			documents: documents,
+			topK: 5,
+			returnDocuments: true,
+		});
+
+		// Step 5: Return context
+		const context = reranked.data
+			.map((result) =&gt; result.document?.text)
+			.filter(Boolean)
+			.join(&#39;\n\n&#39;);
+
+		console.log(&#39;📊 Retrieved&#39;, reranked.data.length, &#39;documents&#39;);
+
+		return context;
+	},
+});
+</code></pre>
+<hr>
+<h2>Step 3: Building the Agent with Tools</h2>
+<pre><code class="language-typescript">export async function POST(request: NextRequest) {
+	const { messages } = await request.json();
+
+	const result = streamText({
+		model: openai(&#39;gpt-4o&#39;),
+		tools: {
+			search_documentation: searchDocsTool,
+		},
+		toolChoice: &#39;auto&#39;, // Let AI decide
+		maxSteps: 5, // Prevent infinite loops
+		system: `You are a helpful assistant that answers questions about React.
+
+When users ask technical questions about React (hooks, components, APIs), use the search_documentation tool to find relevant information.
+
+For general conversation (greetings, thanks, clarifications), respond directly without using tools.`,
+		messages,
+	});
+
+	return result.toDataStreamResponse();
+}
+</code></pre>
+<p><strong>Key Parameters:</strong></p>
+<ul>
+<li><code>toolChoice: &#39;auto&#39;</code>: AI decides when to use tools</li>
+<li><code>maxSteps: 5</code>: Prevents infinite tool-calling loops</li>
+<li>System prompt: Guides when to use tools</li>
+</ul>
+<hr>
+<h2>Step 4: Understanding Tool Choice Options</h2>
+<pre><code class="language-typescript">toolChoice: &#39;auto&#39;    // AI decides (recommended)
+toolChoice: &#39;required&#39; // Must use a tool
+toolChoice: &#39;none&#39;     // Cannot use tools
+toolChoice: { type: &#39;tool&#39;, toolName: &#39;search_documentation&#39; } // Force specific tool
+</code></pre>
+<p><strong>When to use each:</strong></p>
+<ul>
+<li><code>&#39;auto&#39;</code>: Most common - let AI decide</li>
+<li><code>&#39;required&#39;</code>: Ensure tool is always called (similar to fixed workflow)</li>
+<li><code>&#39;none&#39;</code>: Disable tools for specific requests</li>
+<li>Specific tool: Force a particular tool (rarely needed)</li>
+</ul>
+<hr>
+<h2>Step 5: Testing Your Implementation</h2>
+<h3>Test 1: Simple Query (Should NOT Call Tool)</h3>
+<pre><code class="language-bash">curl -X POST http://localhost:3000/api/tool-calling-agent \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{
+    &quot;messages&quot;: [
+      {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Thanks for your help!&quot;}
+    ]
+  }&#39;
+</code></pre>
+<p><strong>Expected Console Output:</strong></p>
+<pre><code>(No tool logs - AI responds directly)
+</code></pre>
+<hr>
+<h3>Test 2: Technical Query (Should Call Tool)</h3>
+<pre><code class="language-bash">curl -X POST http://localhost:3000/api/tool-calling-agent \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{
+    &quot;messages&quot;: [
+      {&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;How do I use the useEffect hook?&quot;}
+    ]
+  }&#39;
+</code></pre>
+<p><strong>Expected Console Output:</strong></p>
+<pre><code>🔧 Tool called for: How do I use the useEffect hook?
+📊 Retrieved 5 documents
+</code></pre>
+<hr>
+<h2>Step 6: Observing Tool Execution</h2>
+<p>Add detailed logging to understand tool behavior:</p>
+<pre><code class="language-typescript">execute: async ({ query }) =&gt; {
+	console.log(&#39;\n=== TOOL EXECUTION START ===&#39;);
+	console.log(&#39;Query:&#39;, query);
+
+	const startTime = Date.now();
+
+	// Your RAG workflow...
+	const context = await performRAG(query);
+
+	const duration = Date.now() - startTime;
+
+	console.log(&#39;Duration:&#39;, duration, &#39;ms&#39;);
+	console.log(&#39;Context length:&#39;, context.length, &#39;chars&#39;);
+	console.log(&#39;=== TOOL EXECUTION END ===\n&#39;);
+
+	return context;
+};
+</code></pre>
+<p>This helps you understand:</p>
+<ul>
+<li>When tools are called</li>
+<li>What queries trigger them</li>
+<li>How long they take</li>
+<li>How much context they return</li>
+</ul>
+<hr>
+<h2>Advanced: Multiple Tools</h2>
+<p>Give your agent multiple capabilities:</p>
+<pre><code class="language-typescript">const result = streamText({
+	model: openai(&#39;gpt-4o&#39;),
+	tools: {
+		search_documentation: tool({
+			description: &#39;Search technical documentation&#39;,
+			execute: async ({ query }) =&gt; {
+				return await searchDocs(query);
+			},
+		}),
+		search_examples: tool({
+			description: &#39;Search code examples and tutorials&#39;,
+			execute: async ({ query }) =&gt; {
+				return await searchExamples(query);
+			},
+		}),
+		get_package_info: tool({
+			description: &#39;Get information about npm packages&#39;,
+			execute: async ({ packageName }) =&gt; {
+				return await fetchPackageInfo(packageName);
+			},
+		}),
+	},
+});
+</code></pre>
+<p><strong>The AI will:</strong></p>
+<ul>
+<li>Choose the most appropriate tool</li>
+<li>Call multiple tools if needed</li>
+<li>Combine results intelligently</li>
+</ul>
+<hr>
+<h2>Comparing Implementations</h2>
+<h3>Your Original RAG Agent</h3>
+<pre><code class="language-typescript">// app/agents/rag.ts
+export async function ragAgent(request: AgentRequest) {
+	// Workflow always executes
+	const embedding = await generateEmbedding(request.query);
+	const results = await searchPinecone(embedding);
+	const reranked = await rerank(results);
+
+	return streamText({
+		model: openai(&#39;gpt-4o&#39;),
+		system: `Context: ${reranked}`,
+		messages: request.messages,
+	});
+}
+</code></pre>
+<p><strong>Characteristics:</strong> Always searches, predictable, simple</p>
+<hr>
+<h3>Tool-Calling Agent</h3>
+<pre><code class="language-typescript">// app/api/tool-calling-agent/route.ts
+export async function POST(request: NextRequest) {
+	const { messages } = await request.json();
+
+	return streamText({
+		model: openai(&#39;gpt-4o&#39;),
+		tools: {
+			search_documentation: tool({
+				execute: async ({ query }) =&gt; {
+					// Workflow only runs when AI calls it
+					const embedding = await generateEmbedding(query);
+					const results = await searchPinecone(embedding);
+					return rerank(results);
+				},
+			}),
+		},
+		messages,
+	}).toDataStreamResponse();
+}
+</code></pre>
+<p><strong>Characteristics:</strong> AI decides when to search, intelligent, flexible</p>
+<hr>
+<h2>Why We&#39;re Not Using This Going Forward</h2>
+<p>Tool-calling is powerful, but for this curriculum we&#39;re sticking with workflows because:</p>
+<ol>
+<li><strong>Simpler to understand:</strong> Fixed workflows are more predictable</li>
+<li><strong>Easier to debug:</strong> You know exactly what runs when</li>
+<li><strong>Cost-effective for learning:</strong> Not spending on decision overhead</li>
+<li><strong>Curriculum focus:</strong> Teaching RAG fundamentals, not tool orchestration</li>
+</ol>
+<p><strong>However, in production:</strong></p>
+<ul>
+<li>Tool-calling is often better for conversational agents</li>
+<li>Fixed workflows are better for single-purpose agents</li>
+</ul>
+<hr>
+<h2>Your Challenge</h2>
+<p>Create <code>app/api/tool-calling-agent/route.ts</code> implementing:</p>
+<ol>
+<li>A <code>search_documentation</code> tool with your RAG workflow</li>
+<li>A <code>toolChoice: &#39;auto&#39;</code> configuration</li>
+<li>A system prompt instructing when to use tools</li>
+<li>Proper error handling</li>
+</ol>
+<p>Test with:</p>
+<ul>
+<li>Simple queries (shouldn&#39;t call tool)</li>
+<li>Technical queries (should call tool)</li>
+<li>Mixed conversations</li>
+</ul>
+<p>Compare behavior and costs to your original RAG agent.</p>
+<hr>
+<h2>What You Learned</h2>
+<p>✅ Two approaches to RAG: workflows and tool-calling<br>✅ When to use each approach<br>✅ How to implement tools with the AI SDK<br>✅ Tool choice strategies and their trade-offs<br>✅ Cost implications of different patterns<br>✅ Debugging and observing tool execution</p>
+<hr>
+<h2>What&#39;s Next</h2>
+<p>After exploring tool-calling:</p>
+<ul>
+<li><strong>Return to your original RAG agent</strong> (we won&#39;t use tool-calling in the main app)</li>
+<li><strong>Chat Interface:</strong> Connect your agents to the UI</li>
+<li><strong>Observability:</strong> Track agent performance</li>
+<li><strong>Testing:</strong> Write tests for your agents</li>
+</ul>
+<p>Understanding these patterns prepares you for:</p>
+<ul>
+<li>Building production agents</li>
+<li>Choosing the right architecture</li>
+<li>Optimizing costs and performance</li>
+</ul>
+<hr>
+<h2>Additional Resources</h2>
+<ul>
+<li><a href="https://sdk.vercel.ai/docs/ai-sdk-core/tools-and-tool-calling">AI SDK Tools Documentation</a></li>
+<li><a href="https://www.anthropic.com/engineering/building-effective-agents">Tool-calling vs Workflows (Anthropic)</a></li>
+<li><a href="https://sdk.vercel.ai/docs/guides/multi-step-tools">Production Tool-calling Patterns</a></li>
+</ul>

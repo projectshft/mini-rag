@@ -1,0 +1,133 @@
+<h1>Human-in-the-Loop</h1>
+<p>Require approval before destructive operations.</p>
+<hr>
+<h2>Store Pending Actions</h2>
+<pre><code class="language-typescript">const pendingApprovals = new Map&lt;string, PendingAction&gt;();
+
+type PendingAction = {
+  id: string;
+  operation: &#39;DELETE&#39; | &#39;UPDATE&#39;;
+  query: string;
+  affectedIds: string[];
+  affectedCount: number;
+  preview: any[];
+  expiresAt: Date;
+};
+</code></pre>
+<hr>
+<h2>Request Approval</h2>
+<pre><code class="language-typescript">if (isDestructive) {
+  const approvalId = crypto.randomUUID();
+
+  pendingApprovals.set(approvalId, {
+    id: approvalId,
+    operation: &#39;DELETE&#39;,
+    query: originalQuery,
+    affectedIds: records.map(r =&gt; r.id),
+    affectedCount: records.length,
+    preview: records.slice(0, 5),
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 min expiry
+  });
+
+  return {
+    type: &#39;AWAITING_APPROVAL&#39;,
+    approvalId,
+    message: `This will delete ${records.length} records.`,
+    preview: records.slice(0, 5),
+  };
+}
+</code></pre>
+<hr>
+<h2>Handle Approval Response</h2>
+<pre><code class="language-typescript">export async function handleApproval(approvalId: string, approved: boolean) {
+  const pending = pendingApprovals.get(approvalId);
+
+  if (!pending || new Date() &gt; pending.expiresAt) {
+    return { error: &#39;Approval expired&#39; };
+  }
+
+  pendingApprovals.delete(approvalId);
+
+  if (!approved) {
+    return { message: &#39;Operation cancelled&#39; };
+  }
+
+  // Execute the operation
+  const result = await db.deleteMany({
+    where: { id: { in: pending.affectedIds } },
+  });
+
+  return { message: `Deleted ${result.count} records` };
+}
+</code></pre>
+<hr>
+<h2>Detect Destructive Intent</h2>
+<p>Use structured outputs to detect if a query is destructive:</p>
+<pre><code class="language-typescript">const analysisSchema = z.object({
+  isDestructive: z.boolean().describe(&#39;True if DELETE or UPDATE&#39;),
+  operation: z.enum([&#39;SELECT&#39;, &#39;DELETE&#39;, &#39;UPDATE&#39;, &#39;CREATE&#39;]),
+  affectedTable: z.string().optional(),
+});
+
+const analysis = await generateObject({
+  model: openai(&#39;gpt-4o-mini&#39;),
+  schema: analysisSchema,
+  prompt: `Analyze this query: &quot;${userQuery}&quot;`,
+});
+
+if (analysis.object.isDestructive) {
+  // Trigger approval flow
+}
+</code></pre>
+<hr>
+<h2>Client-Side Approval UI</h2>
+<pre><code class="language-typescript">function ApprovalDialog({ approval, onRespond }) {
+  return (
+    &lt;div className=&quot;approval-dialog&quot;&gt;
+      &lt;h3&gt;Confirm Action&lt;/h3&gt;
+      &lt;p&gt;{approval.message}&lt;/p&gt;
+
+      &lt;h4&gt;Preview:&lt;/h4&gt;
+      &lt;ul&gt;
+        {approval.preview.map(item =&gt; (
+          &lt;li key={item.id}&gt;{item.name}&lt;/li&gt;
+        ))}
+      &lt;/ul&gt;
+
+      &lt;div className=&quot;actions&quot;&gt;
+        &lt;button onClick={() =&gt; onRespond(approval.approvalId, true)}&gt;
+          Approve
+        &lt;/button&gt;
+        &lt;button onClick={() =&gt; onRespond(approval.approvalId, false)}&gt;
+          Cancel
+        &lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<hr>
+<h2>Full Flow Example</h2>
+<pre><code class="language-typescript">// 1. User sends request
+const response = await fetch(&#39;/api/agent&#39;, {
+  method: &#39;POST&#39;,
+  body: JSON.stringify({ query: &#39;Delete all inactive users&#39; }),
+});
+
+const result = await response.json();
+
+// 2. Check if approval needed
+if (result.type === &#39;AWAITING_APPROVAL&#39;) {
+  // Show approval UI
+  const userApproved = await showApprovalDialog(result);
+
+  // 3. Send approval response
+  const finalResult = await fetch(&#39;/api/approve&#39;, {
+    method: &#39;POST&#39;,
+    body: JSON.stringify({
+      approvalId: result.approvalId,
+      approved: userApproved,
+    }),
+  });
+}
+</code></pre>

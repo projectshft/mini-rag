@@ -1,0 +1,420 @@
+<h1>Introduction to LangGraph</h1>
+<p>You&#39;ve built RAG agents and explored tool-calling patterns. Now let&#39;s level up to <strong>LangGraph</strong> - a framework for building production-grade, stateful AI agents with complex workflows.</p>
+<hr>
+<h2>What You&#39;ll Learn</h2>
+<p>This module covers:</p>
+<ul>
+<li>What LangGraph is and why it&#39;s useful</li>
+<li>Core concepts: graphs, nodes, edges, and state</li>
+<li>When to use LangGraph vs AI SDK</li>
+<li>Building a stateful agent with LangGraph</li>
+<li>Practical patterns for production agents</li>
+</ul>
+<hr>
+<h2>What is LangGraph?</h2>
+<p><strong>LangGraph</strong> is a low-level orchestration framework for building long-running, stateful AI agents with complex workflows.</p>
+<h3>Think of It This Way</h3>
+<p><strong>Your current agents (AI SDK):</strong></p>
+<pre><code>User Query → Process → Stream Response → Done
+</code></pre>
+<p><strong>LangGraph agents:</strong></p>
+<pre><code>User Query → Agent → [Decision Tree]
+                ↓
+            Tool Call? → Yes → Execute Tool → Loop Back
+                ↓
+            Need More Info? → Yes → Ask Question → Wait → Resume
+                ↓
+            Ready to Answer? → Yes → Stream Response
+                ↓
+            Save State → Can Resume Later
+</code></pre>
+<hr>
+<h2>Why LangGraph Exists</h2>
+<h3>The Problem with Simple Workflows</h3>
+<p>Your current RAG agent follows a fixed path:</p>
+<pre><code class="language-typescript">export async function ragAgent(request: AgentRequest) {
+  // Always does these steps in order
+  const embedding = await generateEmbedding(request.query);
+  const results = await searchVectorDB(embedding);
+  const reranked = await rerank(results);
+  return streamText({ context: reranked });
+}
+</code></pre>
+<p><strong>Limitations:</strong></p>
+<ul>
+<li>❌ No branching logic (can&#39;t make decisions)</li>
+<li>❌ No loops (can&#39;t retry or refine)</li>
+<li>❌ No persistence (loses state between requests)</li>
+<li>❌ No human-in-the-loop (can&#39;t pause for approval)</li>
+<li>❌ Can&#39;t handle multi-step tasks that span hours or days</li>
+</ul>
+<h3>The LangGraph Solution</h3>
+<pre><code class="language-typescript">// LangGraph agent with decision-making
+const graph = new StateGraph(StateAnnotation)
+  .addNode(&quot;analyze_query&quot;, analyzeNode)
+  .addNode(&quot;search_docs&quot;, searchNode)
+  .addNode(&quot;call_api&quot;, apiNode)
+  .addNode(&quot;generate_answer&quot;, generateNode)
+  .addConditionalEdges(&quot;analyze_query&quot;, decideNextStep)
+  .compile({ checkpointer });
+
+// Can pause, resume, branch, loop, and persist state
+</code></pre>
+<hr>
+<h2>Core Concepts</h2>
+<h3>1. Graph-Based Structure</h3>
+<p>Your agent is a <strong>directed graph</strong> where:</p>
+<ul>
+<li><strong>Nodes</strong> = Actions your AI performs</li>
+<li><strong>Edges</strong> = Connections defining the flow</li>
+<li><strong>State</strong> = Shared memory accessible to all nodes</li>
+</ul>
+<pre><code>         ┌─────────┐
+    ┌───→│ Node A  │───┐
+    │    └─────────┘   │
+    │                  ↓
+┌───┴────┐      ┌─────────┐
+│ Start  │      │ Node B  │──→ End
+└───┬────┘      └─────────┘
+    │                  ↑
+    │    ┌─────────┐   │
+    └───→│ Node C  │───┘
+         └─────────┘
+</code></pre>
+<h3>2. Nodes</h3>
+<p><strong>Nodes are functions</strong> that:</p>
+<ul>
+<li>Receive the current state</li>
+<li>Perform an action (LLM call, tool execution, computation)</li>
+<li>Return updates to the state</li>
+</ul>
+<pre><code class="language-typescript">async function searchNode(state: AgentState) {
+  console.log(&#39;🔍 Searching for:&#39;, state.query);
+
+  const results = await searchDocs(state.query);
+
+  return {
+    searchResults: results,
+    stepCount: state.stepCount + 1
+  };
+}
+</code></pre>
+<h3>3. Edges</h3>
+<p><strong>Edges connect nodes</strong> and define flow:</p>
+<p><strong>Regular Edges</strong> (deterministic):</p>
+<pre><code class="language-typescript">graph
+  .addEdge(&quot;start&quot;, &quot;search&quot;)
+  .addEdge(&quot;search&quot;, &quot;generate&quot;)
+</code></pre>
+<p><strong>Conditional Edges</strong> (decision points):</p>
+<pre><code class="language-typescript">function decideNext(state: AgentState) {
+  if (state.searchResults.length === 0) {
+    return &quot;ask_clarification&quot;;
+  }
+  if (state.confidence &lt; 0.7) {
+    return &quot;search_again&quot;;
+  }
+  return &quot;generate_answer&quot;;
+}
+
+graph.addConditionalEdges(&quot;search&quot;, decideNext);
+</code></pre>
+<h3>4. State Management</h3>
+<p><strong>State is shared memory</strong> that persists throughout the workflow:</p>
+<pre><code class="language-typescript">const StateAnnotation = Annotation.Root({
+  messages: Annotation&lt;BaseMessage[]&gt;({
+    reducer: (left, right) =&gt; left.concat(right) // Merge strategy
+  }),
+  query: Annotation&lt;string&gt;(),
+  searchResults: Annotation&lt;string[]&gt;(),
+  confidence: Annotation&lt;number&gt;(),
+  stepCount: Annotation&lt;number&gt;()
+});
+</code></pre>
+<p><strong>Key Features:</strong></p>
+<ul>
+<li>Typed and validated</li>
+<li>Accessible to all nodes</li>
+<li>Can persist across sessions</li>
+<li>Supports custom merge logic (reducers)</li>
+</ul>
+<hr>
+<h2>LangGraph vs AI SDK: When to Use Each</h2>
+<h3>Use AI SDK When You Need:</h3>
+<p>✅ <strong>UI-first applications</strong></p>
+<ul>
+<li>React/Next.js integration</li>
+<li>Real-time streaming to frontend</li>
+<li>Simple agent interactions</li>
+</ul>
+<p>✅ <strong>Rapid prototyping</strong></p>
+<ul>
+<li>Quick experiments</li>
+<li>Proof of concepts</li>
+<li>Simple workflows</li>
+</ul>
+<p>✅ <strong>Linear workflows</strong></p>
+<ul>
+<li>No branching or loops</li>
+<li>Single-turn interactions</li>
+<li>Stateless operations</li>
+</ul>
+<p><strong>Example Use Cases:</strong></p>
+<ul>
+<li>Chat interfaces with basic RAG</li>
+<li>Simple Q&amp;A bots</li>
+<li>Content generation tools</li>
+<li>MVP/prototype applications</li>
+</ul>
+<hr>
+<h3>Use LangGraph When You Need:</h3>
+<p>✅ <strong>Complex orchestration</strong></p>
+<ul>
+<li>Branching logic and decision points</li>
+<li>Cyclical workflows (loops, reflection)</li>
+<li>Multi-agent collaboration</li>
+</ul>
+<p>✅ <strong>Stateful, long-running processes</strong></p>
+<ul>
+<li>Workflows spanning hours or days</li>
+<li>Pause and resume capability</li>
+<li>Persistent memory across sessions</li>
+</ul>
+<p>✅ <strong>Production-grade reliability</strong></p>
+<ul>
+<li>Fault tolerance and recovery</li>
+<li>Human oversight and approvals</li>
+<li>Audit trails and observability</li>
+</ul>
+<p>✅ <strong>Advanced agent patterns</strong></p>
+<ul>
+<li>Reflection (self-correction)</li>
+<li>Research and analysis workflows</li>
+<li>Multi-step automation</li>
+</ul>
+<p><strong>Example Use Cases:</strong></p>
+<ul>
+<li>Customer support with escalation</li>
+<li>Research assistants gathering info over time</li>
+<li>Code generation with validation loops</li>
+<li>Travel booking with multi-step workflows</li>
+<li>Enterprise automation systems</li>
+</ul>
+<hr>
+<h2>Real-World Comparison</h2>
+<h3>Scenario: Customer Support Bot</h3>
+<p><strong>With AI SDK (Simple):</strong></p>
+<pre><code class="language-typescript">// Works for basic Q&amp;A
+export async function supportAgent(request: AgentRequest) {
+  const context = await searchFAQ(request.query);
+  return streamText({
+    model: openai(&#39;gpt-4o&#39;),
+    system: `Answer using this context: ${context}`,
+    messages: request.messages
+  });
+}
+</code></pre>
+<p><strong>Limitations:</strong></p>
+<ul>
+<li>Can&#39;t escalate to human agent</li>
+<li>No memory of previous sessions</li>
+<li>Can&#39;t handle multi-turn problem solving</li>
+<li>No way to pause for manager approval</li>
+</ul>
+<p><strong>With LangGraph (Production):</strong></p>
+<pre><code class="language-typescript">const graph = new StateGraph(SupportState)
+  .addNode(&quot;classify_issue&quot;, classifyNode)
+  .addNode(&quot;search_kb&quot;, searchNode)
+  .addNode(&quot;attempt_resolution&quot;, resolveNode)
+  .addNode(&quot;escalate_to_human&quot;, escalateNode)
+  .addNode(&quot;request_approval&quot;, approvalNode)
+  .addConditionalEdges(&quot;classify_issue&quot;, routeByComplexity)
+  .addConditionalEdges(&quot;attempt_resolution&quot;, checkIfResolved)
+  .compile({ checkpointer });
+
+// Can:
+// ✅ Remember previous interactions
+// ✅ Escalate to human agent when stuck
+// ✅ Pause for manager approval on refunds
+// ✅ Resume from where it left off
+// ✅ Loop through different resolution strategies
+</code></pre>
+<hr>
+<h2>Key LangGraph Features</h2>
+<h3>1. Checkpointing (Persistence)</h3>
+<p>Save agent state at every step:</p>
+<pre><code class="language-typescript">import { SqliteSaver } from &quot;@langchain/langgraph-checkpoint-sqlite&quot;;
+
+const checkpointer = SqliteSaver.fromConnString(&quot;:memory:&quot;);
+const app = workflow.compile({ checkpointer });
+
+// Every invocation auto-saves progress
+const config = { configurable: { thread_id: &quot;user_123&quot; } };
+await app.invoke(input, config);
+
+// Later... resume from where it left off
+await app.invoke(newInput, config);
+</code></pre>
+<p><strong>Benefits:</strong></p>
+<ul>
+<li>Fault tolerance (recover from crashes)</li>
+<li>Pause/resume workflows</li>
+<li>Maintain conversation history</li>
+<li>Support long-running processes</li>
+</ul>
+<h3>2. Human-in-the-Loop</h3>
+<p>Pause execution for human approval:</p>
+<pre><code class="language-typescript">import { interrupt } from &quot;@langchain/langgraph&quot;;
+
+async function approvalNode(state: State) {
+  const decision = interrupt({
+    action: state.proposedAction,
+    prompt: &quot;Approve this refund? (yes/no)&quot;
+  });
+
+  return { approved: decision === &quot;yes&quot; };
+}
+
+// First call pauses at interrupt
+const result = await app.invoke(input, config);
+
+// Resume with decision
+await app.invoke(Command.resume(&quot;yes&quot;), config);
+</code></pre>
+<p><strong>Use Cases:</strong></p>
+<ul>
+<li>Manager approval workflows</li>
+<li>Safety checks before sensitive actions</li>
+<li>Manual review of AI decisions</li>
+<li>Interactive debugging</li>
+</ul>
+<h3>3. Built-in Memory</h3>
+<p>Store context across sessions:</p>
+<pre><code class="language-typescript">const StateAnnotation = Annotation.Root({
+  messages: Annotation&lt;BaseMessage[]&gt;({
+    reducer: (left, right) =&gt; left.concat(right)
+  }),
+  userPreferences: Annotation&lt;Record&lt;string, any&gt;&gt;(),
+  conversationSummary: Annotation&lt;string&gt;()
+});
+
+// Messages automatically accumulate
+// Preferences persist across sessions
+// Summary tracks conversation context
+</code></pre>
+<h3>4. Streaming Support</h3>
+<p>Stream tokens and state updates in real-time:</p>
+<pre><code class="language-typescript">// Stream LLM tokens
+for await (const chunk of app.stream(input, config)) {
+  console.log(chunk);
+}
+
+// Stream state updates
+for await (const update of app.stream(input, {
+  ...config,
+  streamMode: &quot;updates&quot;
+})) {
+  console.log(&quot;State changed:&quot;, update);
+}
+</code></pre>
+<hr>
+<h2>Common LangGraph Patterns</h2>
+<h3>Pattern 1: ReAct (Reason + Act)</h3>
+<p>Agent that reasons about tools and uses them:</p>
+<pre><code>Query → Agent Thinks → Call Tool?
+           ↓              ↓
+        Answer      Execute Tool → Loop Back
+</code></pre>
+<p><strong>Use Case:</strong> Research assistant that searches when needed</p>
+<h3>Pattern 2: Reflection (Self-Correction)</h3>
+<p>Agent that critiques and improves its output:</p>
+<pre><code>Generate → Critique → Good Enough?
+    ↑          ↓            ↓
+    └──── Revise ←──── No  Yes → Done
+</code></pre>
+<p><strong>Use Case:</strong> Code generation with validation</p>
+<h3>Pattern 3: Multi-Agent Collaboration</h3>
+<p>Specialized agents work together:</p>
+<pre><code>Query → Triage Agent → Routes to Specialist
+                ↓
+        ┌───────┼───────┐
+        ↓       ↓       ↓
+      Agent   Agent   Agent
+       A       B       C
+</code></pre>
+<p><strong>Use Case:</strong> Customer support with specialists</p>
+<h3>Pattern 4: Supervisor Pattern</h3>
+<p>Supervisor coordinates worker agents:</p>
+<pre><code>Supervisor → Assigns Task → Worker 1
+    ↑                           ↓
+    └──────── Reports ──────────┘
+</code></pre>
+<p><strong>Use Case:</strong> Complex project management</p>
+<hr>
+<h2>When NOT to Use LangGraph</h2>
+<h3>Skip LangGraph If:</h3>
+<p>❌ <strong>Simple, single-turn LLM calls</strong></p>
+<pre><code class="language-typescript">// Just use AI SDK
+const response = await streamText({
+  model: openai(&#39;gpt-4o&#39;),
+  messages: [{ role: &#39;user&#39;, content: query }]
+});
+</code></pre>
+<p>❌ <strong>Linear workflows without branching</strong></p>
+<pre><code class="language-typescript">// Your current RAG agent is fine
+embed → search → rerank → generate
+</code></pre>
+<p>❌ <strong>Prototype applications without state</strong></p>
+<ul>
+<li>Building an MVP</li>
+<li>Testing ideas quickly</li>
+<li>No need for persistence</li>
+</ul>
+<p>❌ <strong>UI-heavy applications</strong></p>
+<ul>
+<li>AI SDK has better React integration</li>
+<li>Simpler streaming to UI</li>
+<li>Less complexity</li>
+</ul>
+<hr>
+<h2>Learning Curve</h2>
+<p><strong>Time to Proficiency:</strong></p>
+<ul>
+<li>AI SDK: Hours to days</li>
+<li>LangGraph: 1-2 weeks</li>
+</ul>
+<p><strong>Why the difference?</strong></p>
+<ul>
+<li>New mental model (graph-based thinking)</li>
+<li>More concepts to learn (nodes, edges, state, checkpointing)</li>
+<li>Production features add complexity</li>
+</ul>
+<p><strong>Is it worth it?</strong></p>
+<ul>
+<li>For production agents: <strong>Yes</strong></li>
+<li>For simple tools: <strong>No</strong></li>
+<li>For learning: <strong>Absolutely</strong> (understand how production systems work)</li>
+</ul>
+<hr>
+<h2>What You&#39;ll Build Next</h2>
+<p>In the next lesson, you&#39;ll implement a <strong>LangGraph API route</strong> that demonstrates:</p>
+<p>✅ Stateful agent with decision-making<br>✅ Conditional routing based on query analysis<br>✅ Checkpointing for persistence<br>✅ Tool calling with loops<br>✅ State management across steps</p>
+<p>You&#39;ll see firsthand how LangGraph differs from your current AI SDK agents.</p>
+<hr>
+<h2>Additional Reading</h2>
+<h3>Official Documentation</h3>
+<ul>
+<li><a href="https://docs.langchain.com/oss/python/langgraph/overview">LangGraph Overview</a> - Core concepts</li>
+<li><a href="https://github.com/langchain-ai/langgraphjs">LangGraph.js GitHub</a> - TypeScript examples</li>
+<li><a href="https://academy.langchain.com/">LangChain Academy</a> - Free structured course</li>
+</ul>
+<h3>Deep Dives</h3>
+<ul>
+<li><a href="https://www.anthropic.com/engineering/building-effective-agents">Building Effective Agents (Anthropic)</a> - Production patterns</li>
+<li><a href="https://particula.tech/blog/langgraph-vs-crewai-vs-openai-agents-sdk-2026">LangGraph vs OpenAI Agents SDK</a> - Framework comparison</li>
+<li><a href="https://www.sitepoint.com/the-definitive-guide-to-agentic-design-patterns-in-2026/">Agent Orchestration in 2026</a> - Design patterns</li>
+</ul>
+<p><strong>Time:</strong> ~30 minutes of reading to reinforce concepts</p>
+<hr>
+<h2>Key Takeaways</h2>
+<p>✅ LangGraph is for complex, stateful, production-grade agents<br>✅ Uses graph-based architecture (nodes, edges, state)<br>✅ Provides checkpointing, human-in-the-loop, and memory<br>✅ Best for branching logic, loops, and long-running workflows<br>✅ AI SDK is better for simple, UI-first applications<br>✅ Learning curve is steeper but worth it for production systems</p>

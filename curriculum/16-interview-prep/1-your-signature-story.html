@@ -1,0 +1,328 @@
+<h1>Module 1: Your Signature Story</h1>
+<p>This is the most important skill in AI interviews. You need one clear, compelling story about a project you&#39;ve built.</p>
+<hr>
+<h2>Video Walkthrough</h2>
+<p>Watch this guide on crafting your signature story:</p>
+<!-- Video will be added here -->
+<iframe src="PLACEHOLDER_VIDEO_URL" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
+<hr>
+<h2>What You&#39;ll Build</h2>
+<p>By the end of this module, you&#39;ll have:</p>
+<ul>
+<li>A clear 2-minute story about your RAG project</li>
+<li>A framework for explaining any technical project</li>
+<li>A video recording you can review and iterate on</li>
+</ul>
+<hr>
+<h2>Why This Matters</h2>
+<p><strong>The problem:</strong></p>
+<p>Most engineers ramble when asked &quot;Tell me about a project you built&quot;:</p>
+<ul>
+<li>Start with implementation details</li>
+<li>Forget to explain the problem</li>
+<li>Don&#39;t explain why they made certain choices</li>
+<li>Run out of time before explaining outcomes</li>
+</ul>
+<p><strong>The solution:</strong></p>
+<p>Use the <strong>Problem → Agitate → Solve → Reflect</strong> framework.</p>
+<hr>
+<h2>The Framework</h2>
+<h3>1. What Did You Build?</h3>
+<p>Start simple and clear.</p>
+<p><strong>Template:</strong></p>
+<p>&quot;I built a system that [does X] for [user type], so they can [outcome].&quot;</p>
+<p><strong>Example:</strong></p>
+<p>&quot;I built a RAG system that helps software engineers query React documentation so they can get answers faster than searching manually.&quot;</p>
+<p><strong>Your turn:</strong></p>
+<p>Write your one-sentence description:</p>
+<pre><code>I built a system that _________________ for _________________,
+so they can _________________.
+</code></pre>
+<hr>
+<h3>2. The Problem</h3>
+<p>Make the problem feel real and non-trivial.</p>
+<p><strong>Template:</strong></p>
+<p>&quot;The challenge here was [technical problem]. Why this is difficult is [core difficulty].&quot;</p>
+<p><strong>Good examples:</strong></p>
+<pre><code>❌ &quot;The problem was we needed to search documents.&quot;
+   (Too vague, not compelling)
+
+✅ &quot;The challenge was that naive keyword search returned irrelevant results.
+   When a user asked &#39;How do hooks work?&#39;, keyword search would return
+   every mention of the word &#39;hooks&#39; across thousands of docs - most
+   were useless. We needed semantic understanding, not keyword matching.&quot;
+   (Specific, shows technical depth)
+</code></pre>
+<p><strong>Your turn:</strong></p>
+<p>Write your problem statement:</p>
+<pre><code>The challenge here was:
+[Write 2-3 sentences]
+</code></pre>
+<hr>
+<h3>3. Your Approach</h3>
+<p>This is the most important part. Show your thinking.</p>
+<p><strong>Template:</strong></p>
+<p>&quot;I considered a few approaches...&quot;</p>
+<p>Then:</p>
+<ul>
+<li>List 2-3 options</li>
+<li>Explain your choice</li>
+<li>Explain tradeoffs</li>
+</ul>
+<p><strong>Example:</strong></p>
+<pre><code>I considered three approaches:
+
+1. Fine-tuning a model on all documentation
+   - Pro: Very accurate for known content
+   - Con: Expensive to train, can&#39;t handle new docs
+
+2. Simple RAG with one index for everything
+   - Pro: Easy to implement
+   - Con: Mixes different frameworks, reduces relevance
+
+3. RAG with metadata filtering per framework
+   - Pro: Better relevance, scalable
+   - Con: More complex query logic
+
+I chose option 3 because scalability and relevance mattered more
+than initial simplicity. I could add new frameworks without
+retraining, and users got more relevant results.
+</code></pre>
+<p><strong>Why this works:</strong></p>
+<ul>
+<li>Shows you considered alternatives</li>
+<li>Demonstrates tradeoff thinking</li>
+<li>Proves you made conscious decisions (not just following tutorials)</li>
+</ul>
+<p><strong>Your turn:</strong></p>
+<p>Write your approach section:</p>
+<pre><code>I considered [number] approaches:
+
+1. [Approach 1]
+   - Pro:
+   - Con:
+
+2. [Approach 2]
+   - Pro:
+   - Con:
+
+3. [Approach 3] (if applicable)
+   - Pro:
+   - Con:
+
+I chose [approach] because [reasoning about tradeoffs].
+</code></pre>
+<hr>
+<h3>4. System Design</h3>
+<p>Walk through your architecture at a high level.</p>
+<p><strong>Template:</strong></p>
+<p>&quot;The system works like this: [step 1] → [step 2] → [step 3] → [result]&quot;</p>
+<p><strong>Example:</strong></p>
+<p>&quot;The system works like this: Users submit a query through a chat interface, I generate embeddings using OpenAI, query Pinecone to retrieve the top 5 most relevant chunks, then feed that context to GPT-4 which generates a grounded answer. Everything streams back to the user in real-time.&quot;</p>
+<p><strong>Your turn:</strong></p>
+<p>Write your system flow:</p>
+<pre><code>The system works like this:
+[Step 1] → [Step 2] → [Step 3] → [Result]
+</code></pre>
+<hr>
+<h3>5. Challenges / Failures</h3>
+<p>Show iteration and debugging ability.</p>
+<p><strong>Template:</strong></p>
+<p>&quot;One issue I ran into was [problem]. I debugged it by [approach] and discovered [insight].&quot;</p>
+<p><strong>Example:</strong></p>
+<p>&quot;One issue I ran into was poor retrieval quality - users would ask about &#39;state management&#39; and get chunks about &#39;state machines&#39;. I added re-ranking with Cohere to filter results after initial retrieval, which improved relevance by 40%.&quot;</p>
+<p><strong>Why this matters:</strong></p>
+<p>Shows you:</p>
+<ul>
+<li>Encountered real problems (not just following a tutorial)</li>
+<li>Can debug and iterate</li>
+<li>Measure improvements</li>
+</ul>
+<p><strong>Your turn:</strong></p>
+<p>Write about one challenge:</p>
+<pre><code>One issue I ran into was:
+[Problem]
+
+I [solved/debugged/improved] it by:
+[Approach]
+
+The result was:
+[Outcome or learning]
+</code></pre>
+<hr>
+<h3>6. What You Learned</h3>
+<p>Have an opinion about what you&#39;d do differently.</p>
+<p><strong>Template:</strong></p>
+<p>&quot;If I did this again, I would [change] because [reason].&quot;</p>
+<p><strong>Example:</strong></p>
+<p>&quot;If I did this again, I would implement structured outputs earlier. I spent a lot of time parsing text responses when I should have used JSON mode from the start. It&#39;s more reliable and easier to test.&quot;</p>
+<p><strong>Your turn:</strong></p>
+<pre><code>If I did this again, I would:
+[What you&#39;d change]
+
+Because:
+[Why this matters]
+</code></pre>
+<hr>
+<h2>Putting It All Together</h2>
+<p>Your complete story should flow naturally through these sections:</p>
+<p><strong>Structure:</strong></p>
+<ol>
+<li>What I built</li>
+<li>The problem</li>
+<li>My approach</li>
+<li>System design</li>
+<li>Challenges</li>
+<li>What I learned</li>
+</ol>
+<hr>
+<h2>Written Assignment</h2>
+<p>Write your complete signature story using the framework above.</p>
+<p><strong>Instructions:</strong></p>
+<ol>
+<li>Use the template provided in each section</li>
+<li>Write in complete sentences (not bullet points)</li>
+<li>Iterate until it flows naturally</li>
+</ol>
+<p><strong>Submission format:</strong></p>
+<pre><code class="language-markdown">## My Signature Story
+
+### What I Built
+[Your answer]
+
+### The Problem
+[Your answer]
+
+### My Approach
+[Your answer]
+
+### System Design
+[Your answer]
+
+### Challenges
+[Your answer]
+
+### What I Learned
+[Your answer]
+</code></pre>
+<hr>
+<h2>Video Assignment</h2>
+<p>Record yourself telling your signature story and submit for feedback.</p>
+<p><strong>Instructions:</strong></p>
+<ol>
+<li><strong>Don&#39;t read from notes</strong> - use your written version to practice, but record without reading</li>
+<li><strong>Keep it focused</strong> - aim for 1-5 minutes covering all six framework sections</li>
+<li><strong>Record in one take</strong> - don&#39;t edit, this simulates real interviews</li>
+<li><strong>Watch it back</strong> - notice where you stumbled, what sounded unclear</li>
+<li><strong>Submit your video</strong> - you&#39;ll receive feedback on structure, delivery, and content</li>
+</ol>
+<p><strong>Setup:</strong></p>
+<ul>
+<li>Use Loom, Zoom, or your phone&#39;s camera</li>
+<li>Face the camera (simulates video interviews)</li>
+<li>Use a quiet space</li>
+<li>Smile (sounds cheesy, but makes a difference)</li>
+</ul>
+<p><strong>What to watch for when reviewing:</strong></p>
+<p>❌ Red flags:</p>
+<ul>
+<li>Reading from notes</li>
+<li>Too many &quot;um&quot; or &quot;like&quot; filler words</li>
+<li>Losing track of structure</li>
+<li>Rambling without focus</li>
+<li>Forgetting to explain tradeoffs</li>
+</ul>
+<p>✅ Good signs:</p>
+<ul>
+<li>Clear structure (you can hear the sections)</li>
+<li>Natural pacing</li>
+<li>Explaining &quot;why&quot; not just &quot;what&quot;</li>
+<li>Confident delivery</li>
+<li>Concise and focused</li>
+</ul>
+<p><strong>Submission:</strong></p>
+<p>Submit your video link (Loom, Google Drive, Dropbox, etc.) for instructor feedback.</p>
+<p><strong>What you&#39;ll receive feedback on:</strong></p>
+<ul>
+<li>Structure and framework adherence</li>
+<li>Clarity of explanations</li>
+<li>Tradeoff discussion</li>
+<li>Delivery and confidence</li>
+<li>Areas to improve for interviews</li>
+</ul>
+<hr>
+<h2>Practice Tips</h2>
+<h3>Tip 1: Practice the Transitions</h3>
+<p>The hardest part is transitioning between sections. Practice these phrases:</p>
+<ul>
+<li>&quot;The challenge here was...&quot;</li>
+<li>&quot;I considered a few approaches...&quot;</li>
+<li>&quot;I chose [option] because...&quot;</li>
+<li>&quot;The system works like this...&quot;</li>
+<li>&quot;One issue I ran into...&quot;</li>
+<li>&quot;If I did this again...&quot;</li>
+</ul>
+<h3>Tip 2: Use Your Hands</h3>
+<p>When recording, gesture naturally. It helps:</p>
+<ul>
+<li>You think more clearly</li>
+<li>You sound more conversational</li>
+<li>Explains complex ideas better</li>
+</ul>
+<h3>Tip 3: Record Multiple Takes</h3>
+<p>Your first take will probably be rough. That&#39;s normal.</p>
+<ul>
+<li><strong>Take 1:</strong> Will be awkward, you&#39;ll stumble</li>
+<li><strong>Take 2:</strong> Better, but you&#39;ll read too much from notes</li>
+<li><strong>Take 3:</strong> Starting to flow naturally</li>
+<li><strong>Take 4:</strong> Usually the best - confident and natural</li>
+</ul>
+<p>Don&#39;t submit take 1. Do at least 3 takes.</p>
+<h3>Tip 4: Stay Focused</h3>
+<p>If your explanation is getting long, you&#39;re probably:</p>
+<ul>
+<li>Including too much technical detail</li>
+<li>Explaining implementation instead of decisions</li>
+<li>Rambling without structure</li>
+</ul>
+<p>Cut ruthlessly. Focus on the framework.</p>
+<hr>
+<h2>Common Mistakes</h2>
+<h3>Mistake 1: Starting with Implementation</h3>
+<p>❌ &quot;So I used TypeScript and Next.js and I installed Pinecone and...&quot;</p>
+<p>✅ &quot;I built a RAG system for querying documentation. The challenge was...&quot;</p>
+<p><strong>Start with the problem, not the tech stack.</strong></p>
+<h3>Mistake 2: No Tradeoffs</h3>
+<p>❌ &quot;I used vector search because it&#39;s better.&quot;</p>
+<p>✅ &quot;I chose vector search over keyword search because I needed semantic understanding. The tradeoff was cost - embeddings are expensive - but relevance mattered more.&quot;</p>
+<p><strong>Always explain why you chose one option over another.</strong></p>
+<h3>Mistake 3: Vague Problems</h3>
+<p>❌ &quot;The problem was we needed to search data.&quot;</p>
+<p>✅ &quot;The problem was that with 10,000 documents, keyword search returned 500 results for common terms. Users couldn&#39;t find what they needed.&quot;</p>
+<p><strong>Make the problem specific and real.</strong></p>
+<h3>Mistake 4: No Reflection</h3>
+<p>❌ &quot;And that&#39;s my project.&quot;</p>
+<p>✅ &quot;If I did this again, I&#39;d implement observability earlier. Debugging LLM failures without logs was painful.&quot;</p>
+<p><strong>End with what you learned or would change.</strong></p>
+<hr>
+<h2>Example Story</h2>
+<p>Here&#39;s a complete example following the framework:</p>
+<h3>What I Built</h3>
+<p>&quot;I built a RAG system that helps YouTube content creators query their transcript data so they can repurpose content without re-watching hours of videos.&quot;</p>
+<h3>The Problem</h3>
+<p>&quot;The challenge was that each creator has hundreds of transcripts, and naive search would mix content across different topics. If a creator asked &#39;What did I say about React hooks?&#39;, we&#39;d return every mention of &#39;hooks&#39; from videos about fishing, grappling hooks, and React - most totally irrelevant.&quot;</p>
+<h3>My Approach</h3>
+<p>&quot;I considered three approaches: one shared index with metadata filtering, separate indexes per creator, or fine-tuning a model per creator. I chose metadata filtering because it scaled to thousands of creators without managing thousands of indexes, and I could add creators instantly without retraining models. The tradeoff was more complex query logic, but that was worth the scalability.&quot;</p>
+<h3>System Design</h3>
+<p>&quot;The system works like this: when a user uploads transcripts, I chunk them by timestamp, generate embeddings with OpenAI, and store them in Pinecone with metadata like creator ID and video title. When they query, I filter to just their creator ID, retrieve the top 5 chunks, re-rank them with Cohere, then pass the context to GPT-4 which generates an answer with source citations.&quot;</p>
+<h3>Challenges</h3>
+<p>&quot;One issue I ran into was chunking by fixed size caused sentences to split mid-thought, leading to incoherent context. I switched to chunking by timestamp with overlap, which preserved semantic meaning and improved relevance.&quot;</p>
+<h3>What I Learned</h3>
+<p>&quot;If I did this again, I&#39;d implement structured outputs for citations from day one. I initially had GPT return freeform text, then had to parse out timestamps and video titles, which was error-prone. JSON mode would have saved me a week of debugging.&quot;</p>
+<hr>
+<h2>What You Learned</h2>
+<p>✅ How to structure a compelling project story<br>✅ The Problem → Agitate → Solve → Reflect framework<br>✅ How to explain tradeoffs and decisions<br>✅ How to practice speaking out loud</p>
+<hr>
+<h2>What&#39;s Next?</h2>
+<p>In Module 2, you&#39;ll develop strong opinions on agents vs workflows, frameworks, and RAG patterns - the second most common interview topic.</p>

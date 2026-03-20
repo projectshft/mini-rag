@@ -229,6 +229,8 @@ console.log(&#39;Context length:&#39;, retrievedContext.length);
 		.filter(Boolean);
 
 	// topN: Number of top results to return after reranking
+	// - Lower values (3-5) = more focused, highest relevance only
+	// - Higher values (10+) = more context, but may include less relevant docs
 	// returnDocuments: true means we get the actual text back, not just scores
 	const reranked = await pineconeClient.inference.rerank(
 		&#39;bge-reranker-v2-m3&#39;,
@@ -330,5 +332,3 @@ After re-ranking:
 </ul>
 <p><strong>Time:</strong> ~15 minutes</p>
 <p><strong>Note:</strong> This article uses Qdrant examples, but the concepts apply directly to Pinecone (which we use). The re-ranking principles are universal across vector databases.</p>
-<hr>
-<p><strong>Next:</strong> Learn about tool-calling vs workflow patterns in <a href="./3-tool-calling.md">Module 9.3: Tool-Calling</a></p>

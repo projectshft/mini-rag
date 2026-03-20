@@ -1,0 +1,125 @@
+<h1>Tool Calling</h1>
+<p>Let the LLM decide when to use tools.</p>
+<hr>
+<h2>Basic Tool Definition</h2>
+<pre><code class="language-typescript">import { streamText, tool } from &#39;ai&#39;;
+import { openai } from &#39;@ai-sdk/openai&#39;;
+import { z } from &#39;zod&#39;;
+
+const result = await streamText({
+  model: openai(&#39;gpt-4o&#39;),
+  toolChoice: &#39;auto&#39;,
+  maxSteps: 5,
+  tools: {
+    searchDocs: tool({
+      description: &#39;Search documentation for technical questions&#39;,
+      parameters: z.object({
+        query: z.string().describe(&#39;Search query&#39;),
+      }),
+      execute: async ({ query }) =&gt; {
+        const results = await searchPinecone(query);
+        return results;
+      },
+    }),
+  },
+  messages,
+});
+</code></pre>
+<hr>
+<h2>Multiple Tools</h2>
+<pre><code class="language-typescript">tools: {
+  searchDocs: tool({
+    description: &#39;Search technical documentation&#39;,
+    parameters: z.object({
+      query: z.string(),
+    }),
+    execute: async ({ query }) =&gt; await searchDocs(query),
+  }),
+
+  searchExamples: tool({
+    description: &#39;Search code examples and tutorials&#39;,
+    parameters: z.object({
+      query: z.string(),
+      language: z.enum([&#39;typescript&#39;, &#39;python&#39;, &#39;go&#39;]).optional(),
+    }),
+    execute: async ({ query, language }) =&gt; await searchExamples(query, language),
+  }),
+
+  getWeather: tool({
+    description: &#39;Get current weather for a location&#39;,
+    parameters: z.object({
+      city: z.string(),
+    }),
+    execute: async ({ city }) =&gt; await fetchWeather(city),
+  }),
+}
+</code></pre>
+<hr>
+<h2>Tool Choice Options</h2>
+<pre><code class="language-typescript">// Let AI decide (recommended)
+toolChoice: &#39;auto&#39;
+
+// Must use a tool
+toolChoice: &#39;required&#39;
+
+// Cannot use tools
+toolChoice: &#39;none&#39;
+
+// Force specific tool
+toolChoice: { type: &#39;tool&#39;, toolName: &#39;searchDocs&#39; }
+</code></pre>
+<hr>
+<h2>RAG as a Tool</h2>
+<pre><code class="language-typescript">tools: {
+  search_documentation: tool({
+    description: &#39;Search React docs for technical questions. Use when users ask about hooks, components, or APIs.&#39;,
+    parameters: z.object({
+      query: z.string().describe(&#39;The search query&#39;),
+    }),
+    execute: async ({ query }) =&gt; {
+      // 1. Embed
+      const embedding = await getEmbedding(query);
+
+      // 2. Search
+      const results = await index.query({
+        vector: embedding,
+        topK: 10,
+        includeMetadata: true,
+      });
+
+      // 3. Extract
+      const docs = results.matches
+        .map(m =&gt; m.metadata?.text)
+        .filter(Boolean) as string[];
+
+      // 4. Rerank
+      const reranked = await pinecone.inference.rerank({
+        model: &#39;bge-reranker-v2-m3&#39;,
+        query,
+        documents: docs,
+        topK: 5,
+        returnDocuments: true,
+      });
+
+      // 5. Return context
+      return reranked.data
+        .map(r =&gt; r.document?.text)
+        .join(&#39;\n\n&#39;);
+    },
+  }),
+}
+</code></pre>
+<hr>
+<h2>Prevent Infinite Loops</h2>
+<pre><code class="language-typescript">streamText({
+  maxSteps: 5, // Stop after 5 tool calls
+  // ...
+});
+</code></pre>
+<pre><code class="language-typescript">import { stepCountIs } from &#39;ai&#39;;
+
+streamText({
+  stopWhen: stepCountIs(10),
+  // ...
+});
+</code></pre>

@@ -1,0 +1,133 @@
+<h1>Router Agent</h1>
+<p>Route queries to specialized agents.</p>
+<hr>
+<h2>Basic Router</h2>
+<pre><code class="language-typescript">import { generateObject } from &#39;ai&#39;;
+import { openai } from &#39;@ai-sdk/openai&#39;;
+import { z } from &#39;zod&#39;;
+
+const routingSchema = z.object({
+  agent: z.enum([&#39;rag&#39;, &#39;linkedin&#39;, &#39;general&#39;]),
+  refinedQuery: z.string(),
+  reasoning: z.string(),
+});
+
+async function routeQuery(query: string) {
+  const result = await generateObject({
+    model: openai(&#39;gpt-4o-mini&#39;),
+    schema: routingSchema,
+    prompt: `Route this query to the best agent:
+
+Query: &quot;${query}&quot;
+
+Agents:
+- rag: Technical questions about documentation
+- linkedin: Content creation for LinkedIn
+- general: General questions and chat
+
+Select the best agent and optionally refine the query.`,
+  });
+
+  return result.object;
+}
+</code></pre>
+<hr>
+<h2>Execute Routed Query</h2>
+<pre><code class="language-typescript">const routing = await routeQuery(userQuery);
+
+switch (routing.agent) {
+  case &#39;rag&#39;:
+    return ragAgent(routing.refinedQuery);
+  case &#39;linkedin&#39;:
+    return linkedinAgent(routing.refinedQuery);
+  default:
+    return generalAgent(routing.refinedQuery);
+}
+</code></pre>
+<hr>
+<h2>Router with Confidence</h2>
+<pre><code class="language-typescript">const routingSchema = z.object({
+  agent: z.enum([&#39;rag&#39;, &#39;linkedin&#39;, &#39;general&#39;]),
+  confidence: z.number().min(0).max(1),
+  refinedQuery: z.string(),
+});
+
+const routing = await routeQuery(query);
+
+// Fall back to general if low confidence
+if (routing.confidence &lt; 0.7) {
+  return generalAgent(query);
+}
+</code></pre>
+<hr>
+<h2>Dynamic Agent Registry</h2>
+<pre><code class="language-typescript">type Agent = {
+  name: string;
+  description: string;
+  handler: (query: string) =&gt; Promise&lt;string&gt;;
+};
+
+const agents: Agent[] = [
+  {
+    name: &#39;rag&#39;,
+    description: &#39;Search technical documentation and code examples&#39;,
+    handler: ragAgent,
+  },
+  {
+    name: &#39;linkedin&#39;,
+    description: &#39;Generate LinkedIn posts matching your writing style&#39;,
+    handler: linkedinAgent,
+  },
+  {
+    name: &#39;general&#39;,
+    description: &#39;Answer general questions and have conversations&#39;,
+    handler: generalAgent,
+  },
+];
+
+async function routeWithRegistry(query: string) {
+  const agentEnum = z.enum(agents.map(a =&gt; a.name) as [string, ...string[]]);
+
+  const result = await generateObject({
+    model: openai(&#39;gpt-4o-mini&#39;),
+    schema: z.object({
+      agent: agentEnum,
+      refinedQuery: z.string(),
+    }),
+    prompt: `Route this query:
+
+Query: &quot;${query}&quot;
+
+Agents:
+${agents.map(a =&gt; `- ${a.name}: ${a.description}`).join(&#39;\n&#39;)}`,
+  });
+
+  const agent = agents.find(a =&gt; a.name === result.object.agent);
+  return agent!.handler(result.object.refinedQuery);
+}
+</code></pre>
+<hr>
+<h2>Multi-Agent Routing</h2>
+<p>Route to multiple agents when needed:</p>
+<pre><code class="language-typescript">const multiRouteSchema = z.object({
+  agents: z.array(z.enum([&#39;rag&#39;, &#39;linkedin&#39;, &#39;general&#39;])),
+  queries: z.record(z.string()), // { agentName: refinedQuery }
+});
+
+const routing = await generateObject({
+  model: openai(&#39;gpt-4o-mini&#39;),
+  schema: multiRouteSchema,
+  prompt: `This query may need multiple agents:
+
+Query: &quot;${query}&quot;
+
+Select all relevant agents and provide refined queries for each.`,
+});
+
+// Execute in parallel
+const results = await Promise.all(
+  routing.object.agents.map(agent =&gt;
+    executeAgent(agent, routing.object.queries[agent])
+  )
+);
+</code></pre>

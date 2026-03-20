@@ -1,0 +1,108 @@
+<h1>Structured Outputs</h1>
+<p>Force LLM to return valid JSON matching your schema.</p>
+<hr>
+<h2>AI SDK (Vercel)</h2>
+<pre><code class="language-typescript">import { generateObject } from &#39;ai&#39;;
+import { openai } from &#39;@ai-sdk/openai&#39;;
+import { z } from &#39;zod&#39;;
+
+const schema = z.object({
+  sentiment: z.enum([&#39;positive&#39;, &#39;negative&#39;, &#39;neutral&#39;]),
+  confidence: z.number().min(0).max(1),
+  summary: z.string(),
+});
+
+const result = await generateObject({
+  model: openai(&#39;gpt-4o&#39;),
+  schema,
+  prompt: `Analyze this review: &quot;${userInput}&quot;`,
+});
+
+// result.object is typed and validated
+console.log(result.object.sentiment);
+</code></pre>
+<hr>
+<h2>OpenAI SDK</h2>
+<pre><code class="language-typescript">import OpenAI from &#39;openai&#39;;
+import { zodTextFormat } from &#39;openai/helpers/zod&#39;;
+import { z } from &#39;zod&#39;;
+
+const openai = new OpenAI();
+
+const schema = z.object({
+  selectedAgent: z.enum([&#39;rag&#39;, &#39;linkedin&#39;, &#39;general&#39;]),
+  query: z.string(),
+});
+
+const response = await openai.responses.parse({
+  model: &#39;gpt-4o-mini&#39;,
+  text: { format: zodTextFormat(schema, &#39;routing&#39;) },
+  input: [
+    { role: &#39;system&#39;, content: &#39;Route this query to the right agent.&#39; },
+    { role: &#39;user&#39;, content: userQuery },
+  ],
+});
+
+const result = response.output_parsed;
+</code></pre>
+<hr>
+<h2>Gemini</h2>
+<pre><code class="language-typescript">import { GoogleGenAI } from &#39;@google/genai&#39;;
+import { zodToJsonSchema } from &#39;zod-to-json-schema&#39;;
+import { z } from &#39;zod&#39;;
+
+const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+
+const schema = z.object({
+  price: z.number().optional(),
+  category: z.string().optional(),
+  isDestructive: z.boolean(),
+});
+
+const response = await ai.models.generateContent({
+  model: &#39;gemini-2.5-flash&#39;,
+  contents: prompt,
+  config: {
+    responseMimeType: &#39;application/json&#39;,
+    responseJsonSchema: zodToJsonSchema(schema),
+  },
+});
+
+const result = JSON.parse(response.text);
+</code></pre>
+<hr>
+<h2>Common Schemas</h2>
+<h3>Agent Routing</h3>
+<pre><code class="language-typescript">const routingSchema = z.object({
+  selectedAgent: z.enum([&#39;rag&#39;, &#39;linkedin&#39;, &#39;general&#39;]),
+  refinedQuery: z.string().describe(&#39;Query optimized for the selected agent&#39;),
+  confidence: z.number().min(0).max(1),
+});
+</code></pre>
+<h3>Query Analysis</h3>
+<pre><code class="language-typescript">const analysisSchema = z.object({
+  needsResearch: z.boolean().describe(&#39;Whether this needs document lookup&#39;),
+  queryType: z.enum([&#39;simple&#39;, &#39;technical&#39;, &#39;complex&#39;]),
+  topics: z.array(z.string()).describe(&#39;Main topics in the query&#39;),
+});
+</code></pre>
+<h3>Content Extraction</h3>
+<pre><code class="language-typescript">const extractionSchema = z.object({
+  title: z.string(),
+  summary: z.string().max(200),
+  keyPoints: z.array(z.string()).max(5),
+  sentiment: z.enum([&#39;positive&#39;, &#39;negative&#39;, &#39;neutral&#39;]),
+});
+</code></pre>
+<h3>Database Query Parameters</h3>
+<pre><code class="language-typescript">const queryParamsSchema = z.object({
+  filters: z.object({
+    category: z.string().optional(),
+    minPrice: z.number().optional(),
+    maxPrice: z.number().optional(),
+  }),
+  sortBy: z.enum([&#39;relevance&#39;, &#39;price&#39;, &#39;date&#39;]).optional(),
+  limit: z.number().max(100).default(10),
+  isDestructive: z.boolean().describe(&#39;True if DELETE or UPDATE&#39;),
+});
+</code></pre>

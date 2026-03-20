@@ -1,0 +1,581 @@
+<h1>Building a LangGraph Agent</h1>
+<p>Now let&#39;s build a practical LangGraph agent. You&#39;ll create an API route that demonstrates stateful workflows, decision-making, and tool calling.</p>
+<hr>
+<h2>What You&#39;ll Build</h2>
+<p>A <strong>Research Assistant Agent</strong> that:</p>
+<ul>
+<li>Analyzes queries to determine if research is needed</li>
+<li>Searches documentation when necessary</li>
+<li>Refines results through multiple iterations</li>
+<li>Maintains conversation state</li>
+<li>Can pause and resume workflows</li>
+</ul>
+<p><strong>Key Difference from Your Current Agents:</strong></p>
+<ul>
+<li>Your RAG agent: Always searches, fixed workflow</li>
+<li>This LangGraph agent: Decides when to search, can loop and refine</li>
+</ul>
+<hr>
+<h2>The Agent Architecture</h2>
+<pre><code>User Query
+    ↓
+┌─────────────┐
+│  Analyze    │ ← Determines intent
+│  Query      │   and next action
+└─────────────┘
+    ↓
+    ├──→ Simple question? → Generate Answer → End
+    ├──→ Needs research? → Search Docs → Evaluate Results
+    │                           ↓
+    │                    Good enough? ──No──→ Refine &amp; Search Again
+    │                           ↓
+    │                         Yes
+    │                           ↓
+    └─────────────────────→ Generate Answer → End
+</code></pre>
+<hr>
+<h2>Implementation Overview</h2>
+<p>We&#39;ll create: <code>app/api/langgraph-agent/route.ts</code></p>
+<p><strong>Why a separate route?</strong></p>
+<ul>
+<li>Demonstrates LangGraph patterns without modifying existing code</li>
+<li>Students can compare approaches side-by-side</li>
+<li>No UI needed - focus on agent logic</li>
+</ul>
+<hr>
+<h2>Step 1: Install Dependencies</h2>
+<p>LangGraph is already in your project, but let&#39;s verify:</p>
+<pre><code class="language-bash">yarn add @langchain/langgraph @langchain/langgraph-checkpoint-sqlite
+</code></pre>
+<hr>
+<h2>Step 2: Define the State</h2>
+<p>Create the agent&#39;s state schema with all data it needs to track:</p>
+<pre><code class="language-typescript">import { Annotation } from &quot;@langchain/langgraph&quot;;
+import { BaseMessage } from &quot;@langchain/core/messages&quot;;
+
+// Define what data flows through the graph
+const AgentState = Annotation.Root({
+  // Conversation history
+  messages: Annotation&lt;BaseMessage[]&gt;({
+    reducer: (left, right) =&gt; left.concat(right), // Append new messages
+  }),
+
+  // User&#39;s original query
+  query: Annotation&lt;string&gt;(),
+
+  // Analysis results
+  needsResearch: Annotation&lt;boolean&gt;(),
+  queryType: Annotation&lt;&quot;simple&quot; | &quot;technical&quot; | &quot;complex&quot;&gt;(),
+
+  // Research results
+  searchResults: Annotation&lt;string[]&gt;(),
+  searchIterations: Annotation&lt;number&gt;(),
+
+  // Quality tracking
+  confidence: Annotation&lt;number&gt;(),
+
+  // Final output
+  answer: Annotation&lt;string&gt;(),
+});
+
+type StateType = typeof AgentState.State;
+</code></pre>
+<p><strong>Key Concepts:</strong></p>
+<ul>
+<li><code>Annotation</code>: Defines state fields with types</li>
+<li><code>reducer</code>: Defines how to merge updates (e.g., append vs replace)</li>
+<li>State flows through every node</li>
+</ul>
+<hr>
+<h2>Step 3: Create the Analysis Node</h2>
+<p>This node analyzes the query and decides what to do:</p>
+<pre><code class="language-typescript">import { openai } from &quot;@ai-sdk/openai&quot;;
+import { generateObject } from &quot;ai&quot;;
+import { z } from &quot;zod&quot;;
+
+async function analyzeQueryNode(state: StateType) {
+  console.log(&#39;📊 Analyzing query:&#39;, state.query);
+
+  // Use structured outputs to analyze intent
+  const analysis = await generateObject({
+    model: openai(&#39;gpt-4o&#39;),
+    schema: z.object({
+      needsResearch: z.boolean(),
+      queryType: z.enum([&quot;simple&quot;, &quot;technical&quot;, &quot;complex&quot;]),
+      confidence: z.number().min(0).max(1),
+      reasoning: z.string()
+    }),
+    prompt: `Analyze this query and determine if it needs research:
+
+Query: &quot;${state.query}&quot;
+
+Consider:
+- Simple questions (greetings, thanks) don&#39;t need research
+- Technical questions need documentation lookup
+- Complex questions might need multiple searches
+
+Provide your analysis.`
+  });
+
+  console.log(&#39;✅ Analysis:&#39;, analysis.object);
+
+  return {
+    needsResearch: analysis.object.needsResearch,
+    queryType: analysis.object.queryType,
+    confidence: analysis.object.confidence,
+    searchIterations: 0
+  };
+}
+</code></pre>
+<hr>
+<h2>Step 4: Create the Search Node</h2>
+<p>This node retrieves context from your vector database:</p>
+<pre><code class="language-typescript">import { pineconeClient } from &quot;@/app/libs/pinecone&quot;;
+import { openaiClient } from &quot;@/app/libs/openai/openai&quot;;
+
+async function searchDocumentsNode(state: StateType) {
+  console.log(&#39;🔍 Searching documents (iteration&#39;, state.searchIterations + 1, &#39;)&#39;);
+
+  // Generate embedding
+  const embeddingResponse = await openaiClient.embeddings.create({
+    model: &#39;text-embedding-3-small&#39;,
+    input: state.query,
+  });
+  const embedding = embeddingResponse.data[0].embedding;
+
+  // Search Pinecone
+  const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
+  const queryResponse = await index.query({
+    vector: embedding,
+    topK: 10,
+    includeMetadata: true,
+  });
+
+  // Extract documents
+  const documents = queryResponse.matches
+    .map((match) =&gt; match.metadata?.text)
+    .filter(Boolean) as string[];
+
+  // Optional: Rerank with Pinecone inference
+  const reranked = await pineconeClient.inference.rerank({
+    model: &#39;bge-reranker-v2-m3&#39;,
+    query: state.query,
+    documents: documents,
+    topK: 5,
+    returnDocuments: true,
+  });
+
+  const results = reranked.data
+    .map((result) =&gt; result.document?.text)
+    .filter(Boolean) as string[];
+
+  console.log(&#39;📊 Found&#39;, results.length, &#39;documents&#39;);
+
+  return {
+    searchResults: results,
+    searchIterations: state.searchIterations + 1
+  };
+}
+</code></pre>
+<hr>
+<h2>Step 5: Create the Evaluation Node</h2>
+<p>This node evaluates search quality and decides if more research is needed:</p>
+<pre><code class="language-typescript">async function evaluateResultsNode(state: StateType) {
+  console.log(&#39;🎯 Evaluating search results&#39;);
+
+  if (state.searchResults.length === 0) {
+    return {
+      confidence: 0,
+      needsResearch: false // Give up after no results
+    };
+  }
+
+  // Analyze if results are sufficient
+  const evaluation = await generateObject({
+    model: openai(&#39;gpt-4o&#39;),
+    schema: z.object({
+      sufficient: z.boolean(),
+      confidence: z.number().min(0).max(1),
+      reasoning: z.string()
+    }),
+    prompt: `Evaluate if these search results are sufficient to answer the query:
+
+Query: &quot;${state.query}&quot;
+
+Results:
+${state.searchResults.slice(0, 3).join(&#39;\n\n&#39;)}
+
+Are these results sufficient and relevant?`
+  });
+
+  console.log(&#39;📈 Evaluation:&#39;, evaluation.object);
+
+  return {
+    confidence: evaluation.object.confidence
+  };
+}
+</code></pre>
+<hr>
+<h2>Step 6: Create the Answer Node</h2>
+<p>This node generates the final response:</p>
+<pre><code class="language-typescript">import { HumanMessage, AIMessage } from &quot;@langchain/core/messages&quot;;
+
+async function generateAnswerNode(state: StateType) {
+  console.log(&#39;💬 Generating answer&#39;);
+
+  const context = state.searchResults?.join(&#39;\n\n&#39;) || &#39;No context available&#39;;
+
+  const systemPrompt = `You are a helpful assistant. Answer the user&#39;s question using the provided context.
+
+Context:
+${context}
+
+If the context is insufficient, say so clearly.`;
+
+  // Add message to history
+  const messages = [
+    ...state.messages,
+    new HumanMessage(state.query)
+  ];
+
+  // Generate response using ChatOpenAI
+  const { ChatOpenAI } = await import(&quot;@langchain/openai&quot;);
+  const model = new ChatOpenAI({
+    model: &quot;gpt-4o&quot;,
+    temperature: 0.7
+  });
+
+  const response = await model.invoke([
+    { role: &quot;system&quot;, content: systemPrompt },
+    ...messages.map(m =&gt; ({
+      role: m._getType() === &quot;human&quot; ? &quot;user&quot; : &quot;assistant&quot;,
+      content: m.content
+    }))
+  ]);
+
+  return {
+    messages: [new AIMessage(response.content)],
+    answer: response.content as string
+  };
+}
+</code></pre>
+<hr>
+<h2>Step 7: Create Router Functions</h2>
+<p>These functions decide which node to execute next:</p>
+<pre><code class="language-typescript">// After analysis, route based on research need
+function routeAfterAnalysis(state: StateType) {
+  if (state.needsResearch) {
+    console.log(&#39;→ Routing to search&#39;);
+    return &quot;search&quot;;
+  }
+
+  console.log(&#39;→ Routing to answer (no research needed)&#39;);
+  return &quot;answer&quot;;
+}
+
+// After search, decide if we need more iterations
+function routeAfterSearch(state: StateType) {
+  const MAX_ITERATIONS = 2;
+
+  if (state.searchIterations &gt;= MAX_ITERATIONS) {
+    console.log(&#39;→ Max iterations reached, generating answer&#39;);
+    return &quot;answer&quot;;
+  }
+
+  return &quot;evaluate&quot;;
+}
+
+// After evaluation, decide if results are good enough
+function routeAfterEvaluation(state: StateType) {
+  const CONFIDENCE_THRESHOLD = 0.7;
+
+  if (state.confidence &gt;= CONFIDENCE_THRESHOLD) {
+    console.log(&#39;→ Confidence good, generating answer&#39;);
+    return &quot;answer&quot;;
+  }
+
+  console.log(&#39;→ Confidence low, searching again&#39;);
+  return &quot;search&quot;;
+}
+</code></pre>
+<hr>
+<h2>Step 8: Build the Graph</h2>
+<p>Assemble all nodes and edges into a workflow:</p>
+<pre><code class="language-typescript">import { StateGraph } from &quot;@langchain/langgraph&quot;;
+
+function createResearchAgent() {
+  const workflow = new StateGraph(AgentState)
+    // Add all nodes
+    .addNode(&quot;analyze&quot;, analyzeQueryNode)
+    .addNode(&quot;search&quot;, searchDocumentsNode)
+    .addNode(&quot;evaluate&quot;, evaluateResultsNode)
+    .addNode(&quot;answer&quot;, generateAnswerNode)
+
+    // Define the flow
+    .addEdge(&quot;__start__&quot;, &quot;analyze&quot;)
+
+    // After analysis, route based on research need
+    .addConditionalEdges(&quot;analyze&quot;, routeAfterAnalysis, {
+      &quot;search&quot;: &quot;search&quot;,
+      &quot;answer&quot;: &quot;answer&quot;
+    })
+
+    // After search, evaluate results
+    .addConditionalEdges(&quot;search&quot;, routeAfterSearch, {
+      &quot;evaluate&quot;: &quot;evaluate&quot;,
+      &quot;answer&quot;: &quot;answer&quot;
+    })
+
+    // After evaluation, decide next step
+    .addConditionalEdges(&quot;evaluate&quot;, routeAfterEvaluation, {
+      &quot;search&quot;: &quot;search&quot;,
+      &quot;answer&quot;: &quot;answer&quot;
+    })
+
+    // Answer is terminal
+    .addEdge(&quot;answer&quot;, &quot;__end__&quot;);
+
+  return workflow;
+}
+</code></pre>
+<hr>
+<h2>Step 9: Add Persistence (Optional)</h2>
+<p>Enable checkpointing for stateful conversations:</p>
+<pre><code class="language-typescript">import { SqliteSaver } from &quot;@langchain/langgraph-checkpoint-sqlite&quot;;
+import sqlite3 from &quot;sqlite3&quot;;
+import { open } from &quot;sqlite&quot;;
+
+async function createCheckpointer() {
+  const db = await open({
+    filename: &quot;:memory:&quot;, // Use &quot;:memory:&quot; for demo, or &quot;./agent.db&quot; for persistence
+    driver: sqlite3.Database
+  });
+
+  return SqliteSaver.fromDb(db);
+}
+
+// Compile with checkpointer
+const checkpointer = await createCheckpointer();
+const app = workflow.compile({ checkpointer });
+</code></pre>
+<hr>
+<h2>Step 10: Create the API Route</h2>
+<p>Create the route handler that uses the graph:</p>
+<pre><code class="language-typescript">// app/api/langgraph-agent/route.ts
+import { NextRequest, NextResponse } from &#39;next/server&#39;;
+
+export async function POST(request: NextRequest) {
+  try {
+    const { query, threadId } = await request.json();
+
+    if (!query) {
+      return NextResponse.json(
+        { error: &#39;Query is required&#39; },
+        { status: 400 }
+      );
+    }
+
+    console.log(&#39;\n🚀 Starting LangGraph agent for query:&#39;, query);
+
+    // Create the graph
+    const workflow = createResearchAgent();
+    const app = workflow.compile();
+
+    // Optional: Use thread ID for conversation persistence
+    const config = threadId
+      ? { configurable: { thread_id: threadId } }
+      : undefined;
+
+    // Execute the graph
+    const result = await app.invoke(
+      {
+        query,
+        messages: [],
+        searchIterations: 0
+      },
+      config
+    );
+
+    console.log(&#39;✅ Agent completed\n&#39;);
+
+    return NextResponse.json({
+      success: true,
+      answer: result.answer,
+      queryType: result.queryType,
+      confidence: result.confidence,
+      searchIterations: result.searchIterations,
+      needsResearch: result.needsResearch
+    });
+
+  } catch (error) {
+    console.error(&#39;❌ Error:&#39;, error);
+    return NextResponse.json(
+      { error: &#39;Failed to process query&#39; },
+      { status: 500 }
+    );
+  }
+}
+</code></pre>
+<hr>
+<h2>Step 11: Test Your Implementation</h2>
+<h3>Test 1: Simple Question (No Research)</h3>
+<pre><code class="language-bash">curl -X POST http://localhost:3000/api/langgraph-agent \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;query&quot;: &quot;Hello, how are you?&quot;}&#39;
+</code></pre>
+<p><strong>Expected Flow:</strong></p>
+<pre><code>📊 Analyzing query
+✅ Analysis: needsResearch=false, queryType=simple
+→ Routing to answer (no research needed)
+💬 Generating answer
+</code></pre>
+<hr>
+<h3>Test 2: Technical Question (With Research)</h3>
+<pre><code class="language-bash">curl -X POST http://localhost:3000/api/langgraph-agent \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;query&quot;: &quot;How do I use React hooks?&quot;}&#39;
+</code></pre>
+<p><strong>Expected Flow:</strong></p>
+<pre><code>📊 Analyzing query
+✅ Analysis: needsResearch=true, queryType=technical
+→ Routing to search
+🔍 Searching documents (iteration 1)
+📊 Found 5 documents
+🎯 Evaluating search results
+📈 Evaluation: sufficient=true, confidence=0.9
+→ Confidence good, generating answer
+💬 Generating answer
+</code></pre>
+<hr>
+<h3>Test 3: Complex Question (Multiple Iterations)</h3>
+<pre><code class="language-bash">curl -X POST http://localhost:3000/api/langgraph-agent \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;query&quot;: &quot;What are the performance implications of different state management patterns?&quot;}&#39;
+</code></pre>
+<p><strong>Expected Flow:</strong></p>
+<pre><code>📊 Analyzing query
+→ Routing to search
+🔍 Searching documents (iteration 1)
+🎯 Evaluating search results
+📈 Evaluation: confidence=0.5 (low)
+→ Confidence low, searching again
+🔍 Searching documents (iteration 2)
+→ Max iterations reached, generating answer
+💬 Generating answer
+</code></pre>
+<hr>
+<h2>Comparing to Your RAG Agent</h2>
+<h3>Your Current RAG Agent (<code>app/agents/rag.ts</code>)</h3>
+<pre><code class="language-typescript">// Always executes these steps in order
+export async function ragAgent(request: AgentRequest) {
+  const embedding = await generateEmbedding(request.query);
+  const results = await searchPinecone(embedding);
+  const reranked = await rerank(results);
+  return streamText({ context: reranked });
+}
+</code></pre>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Simple and predictable</li>
+<li>✅ Fast (no decision overhead)</li>
+<li>❌ Always searches (even for &quot;hello&quot;)</li>
+<li>❌ Can&#39;t refine or iterate</li>
+<li>❌ No conversation memory</li>
+<li>❌ Can&#39;t pause/resume</li>
+</ul>
+<hr>
+<h3>Your New LangGraph Agent</h3>
+<pre><code class="language-typescript">// Decides what to do based on query
+const graph = new StateGraph(AgentState)
+  .addNode(&quot;analyze&quot;, analyzeQueryNode)
+  .addConditionalEdges(&quot;analyze&quot;, routeAfterAnalysis)
+  // ... more nodes and conditional logic
+</code></pre>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Intelligent routing (only searches when needed)</li>
+<li>✅ Can iterate and refine</li>
+<li>✅ Maintains state across steps</li>
+<li>✅ Can pause/resume with checkpointing</li>
+<li>⚠️ More complex</li>
+<li>⚠️ Slightly slower (decision overhead)</li>
+</ul>
+<hr>
+<h2>When to Use Each</h2>
+<h3>Use Your RAG Agent (AI SDK) For:</h3>
+<p>✅ Simple Q&amp;A where context is always needed<br>✅ Predictable, single-purpose workflows<br>✅ Cost-sensitive applications (no decision overhead)<br>✅ MVP/prototype development</p>
+<h3>Use LangGraph Agent For:</h3>
+<p>✅ Multi-step research and analysis<br>✅ Workflows with branching logic<br>✅ Long-running or resumable processes<br>✅ Production systems needing reliability<br>✅ Agents that need to &quot;think&quot; before acting</p>
+<hr>
+<h2>Challenge: Add a Tool Node</h2>
+<p>Extend your graph with a tool-calling node:</p>
+<pre><code class="language-typescript">import { TavilySearchResults } from &quot;@langchain/community/tools/tavily_search&quot;;
+import { ToolNode } from &quot;@langchain/langgraph/prebuilt&quot;;
+
+// Create tool node
+const tools = [new TavilySearchResults({ maxResults: 3 })];
+const toolNode = new ToolNode(tools);
+
+// Add to graph
+workflow
+  .addNode(&quot;tools&quot;, toolNode)
+  .addConditionalEdges(&quot;analyze&quot;, (state) =&gt; {
+    if (state.queryType === &quot;realtime&quot;) {
+      return &quot;tools&quot;; // Use web search for real-time info
+    }
+    return &quot;search&quot;; // Use vector DB for docs
+  })
+  .addEdge(&quot;tools&quot;, &quot;evaluate&quot;);
+</code></pre>
+<p><strong>This enables:</strong></p>
+<ul>
+<li>Web search for current events</li>
+<li>API calls for external data</li>
+<li>Multiple tool types in one agent</li>
+</ul>
+<hr>
+<h2>Debugging Tips</h2>
+<h3>Visualize Your Graph</h3>
+<pre><code class="language-typescript">// Add to your route for debugging
+console.log(app.getGraph().drawMermaid());
+</code></pre>
+<h3>Add Detailed Logging</h3>
+<pre><code class="language-typescript">async function searchDocumentsNode(state: StateType) {
+  console.log(&#39;\n=== SEARCH NODE ===&#39;);
+  console.log(&#39;Query:&#39;, state.query);
+  console.log(&#39;Iteration:&#39;, state.searchIterations);
+
+  // ... node logic
+
+  console.log(&#39;Results count:&#39;, results.length);
+  console.log(&#39;=== END SEARCH NODE ===\n&#39;);
+
+  return { searchResults: results };
+}
+</code></pre>
+<h3>Stream Events</h3>
+<pre><code class="language-typescript">// Stream intermediate results
+for await (const event of app.stream(input, config)) {
+  console.log(&#39;Event:&#39;, event);
+}
+</code></pre>
+<hr>
+<h2>What You Learned</h2>
+<p>✅ How to define stateful workflows with LangGraph<br>✅ Building graphs with nodes, edges, and conditional routing<br>✅ Implementing decision-making and iteration loops<br>✅ Comparing LangGraph vs AI SDK approaches<br>✅ When to use each framework<br>✅ Debugging and testing graph-based agents</p>
+<hr>
+<h2>What&#39;s Next</h2>
+<p>Now that you understand LangGraph fundamentals, explore:</p>
+<ul>
+<li><strong>Tool Calling Module</strong>: Alternative patterns for tool use (next module)</li>
+<li><strong>Chat Interface</strong>: Connect your agents to the UI</li>
+<li><strong>Observability</strong>: Track agent performance with Helicone</li>
+<li><strong>Testing</strong>: Write tests for your LangGraph agents</li>
+</ul>
+<hr>
+<h2>Additional Resources</h2>
+<ul>
+<li><a href="https://docs.langchain.com/oss/python/langgraph/tutorials">LangGraph Tutorials</a></li>
+<li><a href="https://github.com/langchain-ai/langgraph-reflection">Reflection Pattern Example</a></li>
+<li><a href="https://github.com/langchain-ai/langgraph-swarm-py">Multi-Agent Patterns</a></li>
+<li><a href="https://www.swarnendu.de/blog/langgraph-best-practices/">Production Best Practices</a></li>
+</ul>

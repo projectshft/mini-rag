@@ -1,0 +1,577 @@
+<h1>Module 3: RAG System Design</h1>
+<p>Design RAG systems for different scenarios with clear reasoning about architecture, chunking, and retrieval.</p>
+<hr>
+<h2>Video Walkthrough</h2>
+<p>Watch this guide on RAG system design:</p>
+<!-- Video will be added here -->
+<iframe src="PLACEHOLDER_VIDEO_URL" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
+<hr>
+<h2>What You&#39;ll Build</h2>
+<p>By the end of this module, you&#39;ll have:</p>
+<ul>
+<li>Three complete system designs for different scenarios</li>
+<li>A framework for designing any RAG system</li>
+<li>A video walkthrough of one design</li>
+</ul>
+<hr>
+<h2>Why System Design Matters</h2>
+<p><strong>Common interview question:</strong></p>
+<p>&quot;Design a RAG system for [legal documents / customer support / code documentation].&quot;</p>
+<p><strong>What they&#39;re testing:</strong></p>
+<ul>
+<li>Can you think through architecture end-to-end?</li>
+<li>Do you consider different content types?</li>
+<li>Can you explain chunking strategies?</li>
+<li>Do you think about tradeoffs?</li>
+</ul>
+<p>This isn&#39;t about perfect answers - it&#39;s about demonstrating structured thinking.</p>
+<hr>
+<h2>The Design Framework</h2>
+<p>For any RAG system, address these six areas:</p>
+<h3>1. Content Type &amp; Characteristics</h3>
+<ul>
+<li>What kind of data? (structured, unstructured, semi-structured)</li>
+<li>How large? (pages, tokens, documents)</li>
+<li>How often updated? (static, daily, real-time)</li>
+<li>What structure exists? (headings, sections, metadata)</li>
+</ul>
+<h3>2. Chunking Strategy</h3>
+<ul>
+<li>Chunk by what? (size, semantic boundaries, structure)</li>
+<li>Overlap? (yes/no, how much)</li>
+<li>Metadata? (what to preserve)</li>
+</ul>
+<h3>3. Embedding &amp; Storage</h3>
+<ul>
+<li>Which embedding model?</li>
+<li>Index structure (single, multiple, namespaces)</li>
+<li>Metadata filtering strategy</li>
+</ul>
+<h3>4. Retrieval Strategy</h3>
+<ul>
+<li>Search type (vector, hybrid, with metadata)</li>
+<li>How many results (topK)?</li>
+<li>Re-ranking? (yes/no, which model)</li>
+</ul>
+<h3>5. Generation</h3>
+<ul>
+<li>Which LLM?</li>
+<li>Prompt structure</li>
+<li>Context handling</li>
+</ul>
+<h3>6. Updates &amp; Maintenance</h3>
+<ul>
+<li>How to handle new content?</li>
+<li>Deduplication strategy</li>
+<li>Timestamp tracking</li>
+</ul>
+<hr>
+<h2>Scenario 1: Legal Document RAG</h2>
+<h3>The Prompt</h3>
+<p>&quot;Design a RAG system for a law firm to query contracts, case law, and legal memos.&quot;</p>
+<h3>Your Design</h3>
+<h4>1. Content Characteristics</h4>
+<p>Legal documents are:</p>
+<ul>
+<li><strong>Highly structured</strong> (sections, clauses, numbered paragraphs)</li>
+<li><strong>Precise</strong> (exact wording matters)</li>
+<li><strong>Long</strong> (contracts can be 50+ pages)</li>
+<li><strong>Metadata-rich</strong> (dates, parties, document type, jurisdiction)</li>
+</ul>
+<h4>2. Chunking Strategy</h4>
+<p><strong>Approach: Chunk by semantic boundaries</strong></p>
+<pre><code class="language-typescript">// ✅ Good chunking for legal docs
+Chunk by:
+- Sections (numbered headings like &quot;3.2 Indemnification&quot;)
+- Clauses (complete legal statements)
+- Paragraphs (within sections)
+
+Preserve:
+- Section numbers
+- Heading text
+- Document metadata (date, parties, type)
+</code></pre>
+<p><strong>Why not fixed-size chunks?</strong></p>
+<p>❌ Fixed chunks split clauses mid-sentence<br>❌ Loses structural context<br>❌ Makes citations unclear (&quot;found in chunk 47&quot; is useless)</p>
+<p><strong>Example:</strong></p>
+<pre><code>Document: employment-agreement-acme-2024.pdf
+Section: 5.2 Non-Compete Clause
+
+Chunk:
+&quot;5.2 Non-Compete Clause: Employee agrees not to engage in
+competing business activities within 50 miles of Employer&#39;s
+offices for a period of 12 months following termination...&quot;
+
+Metadata:
+- document_id: &quot;ea-acme-2024&quot;
+- section: &quot;5.2&quot;
+- section_title: &quot;Non-Compete Clause&quot;
+- doc_type: &quot;employment_agreement&quot;
+- date: &quot;2024-01-15&quot;
+- parties: [&quot;Acme Corp&quot;, &quot;John Doe&quot;]
+</code></pre>
+<h4>3. Embedding &amp; Storage</h4>
+<p><strong>Single index with metadata filtering:</strong></p>
+<ul>
+<li>One Pinecone index for all legal docs</li>
+<li>Filter by: <code>doc_type</code>, <code>date</code>, <code>parties</code>, <code>jurisdiction</code></li>
+<li>Use namespaces for different clients (client isolation)</li>
+</ul>
+<p><strong>Why?</strong></p>
+<p>✅ Scales to thousands of documents<br>✅ Can query across document types<br>✅ Easy to filter to specific cases<br>✅ Client data isolation</p>
+<h4>4. Retrieval Strategy</h4>
+<p><strong>Hybrid search with re-ranking:</strong></p>
+<pre><code class="language-typescript">// Step 1: Initial retrieval
+const results = await index.query({
+  vector: embedding,
+  topK: 20,  // Cast wide net
+  filter: {
+    doc_type: { $in: [&quot;contract&quot;, &quot;memo&quot;] },
+    date: { $gte: &quot;2020-01-01&quot; }  // Recent docs only
+  }
+});
+
+// Step 2: Re-rank with cross-encoder
+const reranked = await cohere.rerank({
+  query: userQuery,
+  documents: results,
+  topN: 5
+});
+</code></pre>
+<p><strong>Why re-ranking?</strong></p>
+<p>Legal queries are precise - &quot;indemnification clauses in employment contracts&quot; needs exact matches, not just &quot;employment&quot; OR &quot;indemnification&quot;.</p>
+<h4>5. Generation</h4>
+<p><strong>GPT-4 or Claude Opus:</strong></p>
+<ul>
+<li>Complex reasoning required</li>
+<li>Accuracy matters more than cost</li>
+<li>Need to quote exact text</li>
+</ul>
+<p><strong>Prompt structure:</strong></p>
+<pre><code class="language-typescript">const systemPrompt = `You are a legal research assistant.
+Answer based ONLY on the provided context.
+Quote relevant sections verbatim with citations.
+If the context doesn&#39;t contain the answer, say so clearly.
+
+Context:
+${retrievedChunks}
+
+User query: ${query}
+
+Respond with:
+1. Direct answer
+2. Relevant quotes (with section numbers)
+3. Source documents`;
+</code></pre>
+<h4>6. Updates &amp; Maintenance</h4>
+<p><strong>Challenges:</strong></p>
+<ul>
+<li>New contracts added daily</li>
+<li>Amendments modify existing docs</li>
+<li>Old contracts still relevant</li>
+</ul>
+<p><strong>Strategy:</strong></p>
+<ul>
+<li>Track <code>document_id</code> + <code>version</code></li>
+<li>Store <code>last_updated</code> timestamp</li>
+<li>Don&#39;t delete old versions (legal needs history)</li>
+<li>Use metadata to mark latest version</li>
+</ul>
+<hr>
+<h3>Your Turn: Scenario 1</h3>
+<p>Design a RAG system for legal documents using the framework.</p>
+<pre><code class="language-markdown">## Legal Document RAG: My Design
+
+### 1. Content Characteristics
+[Describe the content]
+
+### 2. Chunking Strategy
+[How you&#39;ll chunk and why]
+
+### 3. Embedding &amp; Storage
+[Index structure and metadata]
+
+### 4. Retrieval Strategy
+[Search approach and re-ranking]
+
+### 5. Generation
+[Model choice and prompt structure]
+
+### 6. Updates &amp; Maintenance
+[How you&#39;ll handle changes]
+</code></pre>
+<hr>
+<h2>Scenario 2: Customer Support Knowledge Base</h2>
+<h3>The Prompt</h3>
+<p>&quot;Design a RAG system for customer support agents to query internal documentation, FAQs, and troubleshooting guides.&quot;</p>
+<h3>Your Design</h3>
+<h4>1. Content Characteristics</h4>
+<p>Support docs are:</p>
+<ul>
+<li><strong>Semi-structured</strong> (mix of FAQs, guides, screenshots)</li>
+<li><strong>Updated frequently</strong> (product changes weekly)</li>
+<li><strong>Varied length</strong> (FAQs are short, guides are long)</li>
+<li><strong>Action-oriented</strong> (&quot;How to reset password&quot;, not theory)</li>
+</ul>
+<h4>2. Chunking Strategy</h4>
+<p><strong>Approach: Chunk by question-answer pairs for FAQs, by steps for guides</strong></p>
+<pre><code class="language-typescript">// For FAQs:
+Chunk = one Q&amp;A pair
+
+// For guides:
+Chunk = one complete step (with substeps)
+
+Preserve:
+- Source type (FAQ vs guide)
+- Category (billing, technical, account)
+- Last updated date
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code>FAQ Chunk:
+Q: How do I reset my password?
+A: Click &quot;Forgot Password&quot; on the login page, enter your email,
+and follow the link sent to your inbox. Links expire in 24 hours.
+
+Metadata:
+- doc_type: &quot;faq&quot;
+- category: &quot;account_management&quot;
+- last_updated: &quot;2024-03-01&quot;
+- page_url: &quot;/help/account/password-reset&quot;
+</code></pre>
+<h4>3. Embedding &amp; Storage</h4>
+<p><strong>Single index with aggressive metadata:</strong></p>
+<ul>
+<li>One index for all support content</li>
+<li>Metadata: <code>category</code>, <code>product_version</code>, <code>last_updated</code></li>
+<li>Boost recent content (weight by recency)</li>
+</ul>
+<h4>4. Retrieval Strategy</h4>
+<p><strong>Hybrid search with recency bias:</strong></p>
+<pre><code class="language-typescript">// Retrieve
+const results = await index.query({
+  vector: embedding,
+  topK: 10,
+  filter: {
+    last_updated: { $gte: cutoffDate },  // Prefer recent
+    category: inferredCategory  // From query
+  }
+});
+
+// Re-rank with recency weight
+const scored = results.map(r =&gt; ({
+  ...r,
+  adjustedScore: r.score * (1 + recencyBoost(r.last_updated))
+}));
+</code></pre>
+<p><strong>Why?</strong></p>
+<p>Support docs change frequently - outdated answers are worse than no answer.</p>
+<h4>5. Generation</h4>
+<p><strong>GPT-4o-mini:</strong></p>
+<ul>
+<li>Support queries are straightforward</li>
+<li>High volume (cost matters)</li>
+<li>Speed matters (agents waiting)</li>
+</ul>
+<p><strong>Prompt structure:</strong></p>
+<pre><code class="language-typescript">const systemPrompt = `You are a helpful support assistant.
+Provide clear, step-by-step instructions based on the context.
+Include relevant links when available.
+If information is outdated, mention the date.
+
+Context:
+${retrievedChunks}
+
+User query: ${query}
+
+Respond with:
+1. Direct answer (2-3 sentences)
+2. Step-by-step instructions (if applicable)
+3. Links to full documentation`;
+</code></pre>
+<h4>6. Updates &amp; Maintenance</h4>
+<p><strong>Challenges:</strong></p>
+<ul>
+<li>Docs updated daily</li>
+<li>Old content becomes obsolete</li>
+<li>Need to expire outdated info</li>
+</ul>
+<p><strong>Strategy:</strong></p>
+<ul>
+<li>Re-scrape and re-embed weekly</li>
+<li>Mark old chunks with <code>deprecated: true</code></li>
+<li>Filter out deprecated unless explicitly requested</li>
+<li>Track <code>product_version</code> to handle multiple versions</li>
+</ul>
+<hr>
+<h3>Your Turn: Scenario 2</h3>
+<p>Design a RAG system for customer support using the framework.</p>
+<pre><code class="language-markdown">## Customer Support RAG: My Design
+
+### 1. Content Characteristics
+[Describe the content]
+
+### 2. Chunking Strategy
+[How you&#39;ll chunk and why]
+
+### 3. Embedding &amp; Storage
+[Index structure and metadata]
+
+### 4. Retrieval Strategy
+[Search approach and filters]
+
+### 5. Generation
+[Model choice and prompt structure]
+
+### 6. Updates &amp; Maintenance
+[How you&#39;ll handle frequent changes]
+</code></pre>
+<hr>
+<h2>Scenario 3: Code Documentation</h2>
+<h3>The Prompt</h3>
+<p>&quot;Design a RAG system for querying documentation for React, Vue, and Angular.&quot;</p>
+<h3>Your Design</h3>
+<h4>1. Content Characteristics</h4>
+<p>Code docs are:</p>
+<ul>
+<li><strong>Highly structured</strong> (API refs, guides, examples)</li>
+<li><strong>Framework-specific</strong> (mixing frameworks reduces relevance)</li>
+<li><strong>Code-heavy</strong> (examples are critical)</li>
+<li><strong>Versioned</strong> (React 18 vs 19 are different)</li>
+</ul>
+<h4>2. Chunking Strategy</h4>
+<p><strong>Approach: Chunk by API reference entries and guide sections</strong></p>
+<pre><code class="language-typescript">// For API references:
+Chunk = one function/hook/component
+Include: signature, parameters, return type, examples
+
+// For guides:
+Chunk = one complete concept
+Include: explanation + code examples
+
+Preserve:
+- Framework (react, vue, angular)
+- Version (18, 19, etc)
+- Doc type (api, guide, tutorial)
+</code></pre>
+<p><strong>Example:</strong></p>
+<pre><code>API Chunk: useState Hook
+
+## useState
+
+`const [state, setState] = useState(initialState)`
+
+Parameters:
+- initialState: The initial state value
+
+Returns:
+- Array with current state and setter function
+
+Example:
+```javascript
+const [count, setCount] = useState(0);
+</code></pre>
+<p>Metadata:</p>
+<ul>
+<li>framework: &quot;react&quot;</li>
+<li>version: &quot;18.0.0&quot;</li>
+<li>doc_type: &quot;api&quot;</li>
+<li>api_name: &quot;useState&quot;</li>
+<li>category: &quot;hooks&quot;</li>
+</ul>
+<pre><code>
+#### 3. Embedding &amp; Storage
+
+**Separate namespaces per framework:**
+
+```typescript
+// In Pinecone:
+namespaces: {
+  &quot;react-18&quot;: [...],
+  &quot;react-19&quot;: [...],
+  &quot;vue-3&quot;: [...],
+  &quot;angular-17&quot;: [...]
+}
+
+// Query specific namespace
+const results = await index.namespace(&quot;react-18&quot;).query({...});
+</code></pre>
+<p><strong>Why namespaces instead of one index?</strong></p>
+<p>✅ Prevents mixing React and Vue results<br>✅ Easy to update one framework independently<br>✅ Can query across frameworks when needed</p>
+<h4>4. Retrieval Strategy</h4>
+<p><strong>Namespace-filtered search:</strong></p>
+<pre><code class="language-typescript">// Step 1: Detect framework from query
+const framework = detectFramework(query);  // &quot;react&quot;, &quot;vue&quot;, etc.
+
+// Step 2: Query that namespace
+const results = await index
+  .namespace(`${framework}-${version}`)
+  .query({
+    vector: embedding,
+    topK: 5,
+    filter: {
+      doc_type: { $in: [&quot;api&quot;, &quot;guide&quot;] }  // Prefer official docs
+    }
+  });
+</code></pre>
+<p><strong>Why not re-rank?</strong></p>
+<p>Code docs are already well-structured - initial retrieval is usually good enough.</p>
+<h4>5. Generation</h4>
+<p><strong>GPT-4o:</strong></p>
+<ul>
+<li>Balance of quality and cost</li>
+<li>Good at code examples</li>
+<li>Fast enough for chat</li>
+</ul>
+<p><strong>Prompt structure:</strong></p>
+<pre><code class="language-typescript">const systemPrompt = `You are a technical documentation assistant.
+Provide accurate answers with code examples.
+Always specify which framework and version you&#39;re referencing.
+
+Context from ${framework} ${version} docs:
+${retrievedChunks}
+
+User query: ${query}
+
+Respond with:
+1. Direct answer (2-3 sentences)
+2. Code example
+3. Link to full documentation`;
+</code></pre>
+<h4>6. Updates &amp; Maintenance</h4>
+<p><strong>Challenges:</strong></p>
+<ul>
+<li>Frameworks release new versions</li>
+<li>Need to maintain multiple versions</li>
+<li>Deprecated APIs still queried</li>
+</ul>
+<p><strong>Strategy:</strong></p>
+<ul>
+<li>Scrape docs per version</li>
+<li>Keep last 2-3 versions active</li>
+<li>Mark older versions as <code>archived: true</code></li>
+<li>Default to latest, allow version selection</li>
+</ul>
+<hr>
+<h3>Your Turn: Scenario 3</h3>
+<p>Design a RAG system for code documentation using the framework.</p>
+<pre><code class="language-markdown">## Code Documentation RAG: My Design
+
+### 1. Content Characteristics
+[Describe the content]
+
+### 2. Chunking Strategy
+[How you&#39;ll chunk and why]
+
+### 3. Embedding &amp; Storage
+[Index structure and namespaces]
+
+### 4. Retrieval Strategy
+[Framework detection and search]
+
+### 5. Generation
+[Model choice and prompt structure]
+
+### 6. Updates &amp; Maintenance
+[How you&#39;ll handle version updates]
+</code></pre>
+<hr>
+<h2>Written Assignment</h2>
+<p>Complete all three system designs using the framework:</p>
+<ol>
+<li>Legal Document RAG</li>
+<li>Customer Support RAG</li>
+<li>Code Documentation RAG</li>
+</ol>
+<p><strong>Instructions:</strong></p>
+<ul>
+<li>Address all six areas in the framework</li>
+<li>Explain your reasoning (don&#39;t just list choices)</li>
+<li>Mention tradeoffs</li>
+<li>Be specific (not &quot;I&#39;d use chunking&quot; but &quot;I&#39;d chunk by semantic boundaries because...&quot;)</li>
+</ul>
+<p><strong>Submission format:</strong></p>
+<p>Three separate system designs in one markdown document.</p>
+<hr>
+<h2>Video Assignment</h2>
+<p>Record yourself walking through ONE of your system designs and submit for feedback.</p>
+<p><strong>Instructions:</strong></p>
+<ol>
+<li>Choose your strongest design</li>
+<li>Walk through all six areas (aim for 1-5 minutes total)</li>
+<li>Use the &quot;interviewer asks, you answer&quot; format:</li>
+</ol>
+<p><strong>Example script:</strong></p>
+<p>&quot;The question is: Design a RAG system for legal documents.</p>
+<p>First, let me think about the content characteristics...<br>[Explain content characteristics]</p>
+<p>For chunking, I would...<br>[Explain chunking strategy]</p>
+<p>For embedding and storage...<br>[Explain embedding approach]</p>
+<p>[Continue through all six areas]</p>
+<p>So to summarize, the key decisions are...<br>[Summarize key choices]&quot;</p>
+<p><strong>Don&#39;t:</strong></p>
+<ul>
+<li>Read from notes</li>
+<li>Rush through (take your time)</li>
+<li>Skip the reasoning (&quot;I&#39;d use X because Y&quot;)</li>
+</ul>
+<p><strong>Submission:</strong></p>
+<p>Submit your video link (Loom, Google Drive, etc.) for instructor feedback.</p>
+<p><strong>What you&#39;ll receive feedback on:</strong></p>
+<ul>
+<li>Completeness of system design</li>
+<li>Quality of reasoning for each decision</li>
+<li>Tradeoff discussion</li>
+<li>Clarity of architecture explanation</li>
+<li>Interview readiness</li>
+</ul>
+<hr>
+<h2>Practice Tips</h2>
+<h3>Tip 1: Draw the Architecture</h3>
+<p>While explaining, draw boxes and arrows:</p>
+<ul>
+<li>Data flow</li>
+<li>Components</li>
+<li>Decisions points</li>
+</ul>
+<p>Helps you think clearly and shows structured thinking.</p>
+<h3>Tip 2: Explain the &quot;Why&quot;</h3>
+<p>For every choice, say why:</p>
+<p>❌ &quot;I&#39;d use GPT-4&quot;<br>✅ &quot;I&#39;d use GPT-4 because legal queries need complex reasoning and accuracy matters more than cost&quot;</p>
+<h3>Tip 3: Mention What You&#39;re NOT Doing</h3>
+<p>Shows you considered alternatives:</p>
+<p>&quot;I&#39;m not using fixed-size chunks because legal clauses would split mid-sentence.&quot;</p>
+<h3>Tip 4: Stay Focused</h3>
+<p>Keep your explanation tight:</p>
+<ul>
+<li>Too brief = missing critical details</li>
+<li>Too long = losing focus on key decisions</li>
+</ul>
+<hr>
+<h2>Common Mistakes</h2>
+<h3>Mistake 1: Too Generic</h3>
+<p>❌ &quot;I&#39;d use RAG with chunking and retrieval&quot;<br>✅ &quot;I&#39;d chunk by semantic boundaries - specifically by numbered sections - because legal docs have explicit structure&quot;</p>
+<h3>Mistake 2: No Reasoning</h3>
+<p>❌ &quot;I&#39;d use re-ranking&quot;<br>✅ &quot;I&#39;d use re-ranking because legal queries are precise and initial retrieval often returns related but not exact matches&quot;</p>
+<h3>Mistake 3: Forgetting Updates</h3>
+<p>Many designs forget ongoing maintenance. Always address:</p>
+<ul>
+<li>How do you handle new content?</li>
+<li>How do you update existing content?</li>
+<li>How do you prevent stale data?</li>
+</ul>
+<h3>Mistake 4: One-Size-Fits-All</h3>
+<p>Don&#39;t use the same design for every scenario.</p>
+<p>Legal docs ≠ Support docs ≠ Code docs</p>
+<p>Each has different:</p>
+<ul>
+<li>Chunking needs</li>
+<li>Update frequency</li>
+<li>Accuracy requirements</li>
+<li>Cost constraints</li>
+</ul>
+<hr>
+<h2>What You Learned</h2>
+<p>✅ Framework for designing any RAG system<br>✅ How to match chunking strategy to content type<br>✅ When to use namespaces vs filtering vs separate indexes<br>✅ How to explain system architecture clearly</p>
+<hr>
+<h2>What&#39;s Next?</h2>
+<p>In Module 4, you&#39;ll practice answering common interview questions out loud - the final skill before real interviews.</p>

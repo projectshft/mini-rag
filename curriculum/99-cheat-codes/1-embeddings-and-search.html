@@ -1,0 +1,140 @@
+<h1>Embeddings &amp; Vector Search</h1>
+<hr>
+<h2>Embeddings</h2>
+<p>Convert text to vectors for semantic search.</p>
+<h3>OpenAI Embeddings</h3>
+<pre><code class="language-typescript">import OpenAI from &#39;openai&#39;;
+
+const openai = new OpenAI();
+
+// Single text
+const response = await openai.embeddings.create({
+  model: &#39;text-embedding-3-small&#39;,
+  input: &#39;How do I use React hooks?&#39;,
+  dimensions: 512,
+});
+
+const embedding = response.data[0].embedding;
+</code></pre>
+<h3>Batch Embeddings</h3>
+<pre><code class="language-typescript">const texts = [&#39;doc 1&#39;, &#39;doc 2&#39;, &#39;doc 3&#39;];
+
+const response = await openai.embeddings.create({
+  model: &#39;text-embedding-3-small&#39;,
+  input: texts,
+  dimensions: 512,
+});
+
+const embeddings = response.data.map(d =&gt; d.embedding);
+</code></pre>
+<hr>
+<h2>Vector Search (Pinecone)</h2>
+<h3>Setup</h3>
+<pre><code class="language-typescript">import { Pinecone } from &#39;@pinecone-database/pinecone&#39;;
+
+const pinecone = new Pinecone({
+  apiKey: process.env.PINECONE_API_KEY!,
+});
+
+const index = pinecone.Index(process.env.PINECONE_INDEX!);
+</code></pre>
+<h3>Upsert</h3>
+<pre><code class="language-typescript">await index.upsert([
+  {
+    id: &#39;doc-1&#39;,
+    values: embedding,
+    metadata: {
+      text: &#39;Document content here...&#39;,
+      source: &#39;react-docs&#39;,
+    },
+  },
+]);
+</code></pre>
+<h3>Query</h3>
+<pre><code class="language-typescript">const results = await index.query({
+  vector: queryEmbedding,
+  topK: 10,
+  includeMetadata: true,
+});
+
+const documents = results.matches
+  .map(match =&gt; match.metadata?.text)
+  .filter(Boolean) as string[];
+</code></pre>
+<h3>With Namespace</h3>
+<pre><code class="language-typescript">// Upsert to namespace
+await index.namespace(&#39;linkedin-posts&#39;).upsert(vectors);
+
+// Query namespace
+const results = await index.namespace(&#39;linkedin-posts&#39;).query({
+  vector: embedding,
+  topK: 5,
+});
+</code></pre>
+<hr>
+<h2>Reranking</h2>
+<p>Re-order search results by relevance.</p>
+<h3>Pinecone Reranking</h3>
+<pre><code class="language-typescript">const reranked = await pinecone.inference.rerank({
+  model: &#39;bge-reranker-v2-m3&#39;,
+  query: userQuery,
+  documents: documents,
+  topK: 5,
+  returnDocuments: true,
+});
+
+const topDocs = reranked.data
+  .map(result =&gt; result.document?.text)
+  .filter(Boolean);
+</code></pre>
+<h3>Cohere Reranking</h3>
+<pre><code class="language-typescript">import { CohereClient } from &#39;cohere-ai&#39;;
+
+const cohere = new CohereClient({ token: process.env.COHERE_API_KEY });
+
+const reranked = await cohere.rerank({
+  model: &#39;rerank-english-v3.0&#39;,
+  query: userQuery,
+  documents: documents,
+  topN: 5,
+  returnDocuments: true,
+});
+
+const topDocs = reranked.results.map(r =&gt; r.document?.text);
+</code></pre>
+<hr>
+<h2>Full RAG Pipeline</h2>
+<pre><code class="language-typescript">// 1. Embed query
+const embeddingResponse = await openai.embeddings.create({
+  model: &#39;text-embedding-3-small&#39;,
+  input: query,
+  dimensions: 512,
+});
+const embedding = embeddingResponse.data[0].embedding;
+
+// 2. Search (over-fetch for reranking)
+const results = await index.query({
+  vector: embedding,
+  topK: 20,
+  includeMetadata: true,
+});
+
+// 3. Extract documents
+const docs = results.matches
+  .map(m =&gt; m.metadata?.text)
+  .filter(Boolean) as string[];
+
+// 4. Rerank
+const reranked = await pinecone.inference.rerank({
+  model: &#39;bge-reranker-v2-m3&#39;,
+  query,
+  documents: docs,
+  topK: 5,
+  returnDocuments: true,
+});
+
+// 5. Build context
+const context = reranked.data
+  .map(r =&gt; r.document?.text)
+  .join(&#39;\n\n&#39;);
+</code></pre>

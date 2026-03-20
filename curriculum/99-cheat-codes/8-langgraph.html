@@ -1,0 +1,134 @@
+<h1>LangGraph Basics</h1>
+<p>Build stateful agent workflows.</p>
+<hr>
+<h2>Define State</h2>
+<pre><code class="language-typescript">import { Annotation, StateGraph } from &#39;@langchain/langgraph&#39;;
+import { BaseMessage } from &#39;@langchain/core/messages&#39;;
+
+const AgentState = Annotation.Root({
+  messages: Annotation&lt;BaseMessage[]&gt;({
+    reducer: (left, right) =&gt; left.concat(right),
+  }),
+  query: Annotation&lt;string&gt;(),
+  needsResearch: Annotation&lt;boolean&gt;(),
+  searchResults: Annotation&lt;string[]&gt;(),
+  answer: Annotation&lt;string&gt;(),
+});
+</code></pre>
+<hr>
+<h2>Create Nodes</h2>
+<pre><code class="language-typescript">async function analyzeNode(state: typeof AgentState.State) {
+  const analysis = await analyzeQuery(state.query);
+  return {
+    needsResearch: analysis.needsResearch,
+  };
+}
+
+async function searchNode(state: typeof AgentState.State) {
+  const results = await searchDocs(state.query);
+  return {
+    searchResults: results,
+  };
+}
+
+async function answerNode(state: typeof AgentState.State) {
+  const answer = await generateAnswer(state.query, state.searchResults);
+  return {
+    answer,
+  };
+}
+</code></pre>
+<hr>
+<h2>Conditional Routing</h2>
+<pre><code class="language-typescript">function routeAfterAnalysis(state: typeof AgentState.State) {
+  return state.needsResearch ? &#39;search&#39; : &#39;answer&#39;;
+}
+</code></pre>
+<hr>
+<h2>Build Graph</h2>
+<pre><code class="language-typescript">const workflow = new StateGraph(AgentState)
+  .addNode(&#39;analyze&#39;, analyzeNode)
+  .addNode(&#39;search&#39;, searchNode)
+  .addNode(&#39;answer&#39;, answerNode)
+  .addEdge(&#39;__start__&#39;, &#39;analyze&#39;)
+  .addConditionalEdges(&#39;analyze&#39;, routeAfterAnalysis, {
+    search: &#39;search&#39;,
+    answer: &#39;answer&#39;,
+  })
+  .addEdge(&#39;search&#39;, &#39;answer&#39;)
+  .addEdge(&#39;answer&#39;, &#39;__end__&#39;);
+
+const app = workflow.compile();
+</code></pre>
+<hr>
+<h2>Execute Graph</h2>
+<pre><code class="language-typescript">const result = await app.invoke({
+  query: userQuery,
+  messages: [],
+  searchResults: [],
+});
+
+console.log(result.answer);
+</code></pre>
+<hr>
+<h2>Stream Graph Execution</h2>
+<pre><code class="language-typescript">const stream = await app.stream({
+  query: userQuery,
+  messages: [],
+  searchResults: [],
+});
+
+for await (const event of stream) {
+  console.log(&#39;Node:&#39;, Object.keys(event)[0]);
+  console.log(&#39;State update:&#39;, event);
+}
+</code></pre>
+<hr>
+<h2>Add Memory (Checkpointing)</h2>
+<pre><code class="language-typescript">import { MemorySaver } from &#39;@langchain/langgraph&#39;;
+
+const memory = new MemorySaver();
+
+const app = workflow.compile({
+  checkpointer: memory,
+});
+
+// Execute with thread ID for persistence
+const result = await app.invoke(
+  { query: userQuery },
+  { configurable: { thread_id: &#39;user-123&#39; } }
+);
+
+// Continue conversation in same thread
+const result2 = await app.invoke(
+  { query: followUpQuery },
+  { configurable: { thread_id: &#39;user-123&#39; } }
+);
+</code></pre>
+<hr>
+<h2>Human-in-the-Loop with LangGraph</h2>
+<pre><code class="language-typescript">import { interrupt } from &#39;@langchain/langgraph&#39;;
+
+async function deleteNode(state: typeof AgentState.State) {
+  // Pause for human approval
+  const approved = interrupt({
+    message: `Delete ${state.affectedCount} records?`,
+    preview: state.preview,
+  });
+
+  if (!approved) {
+    return { status: &#39;cancelled&#39; };
+  }
+
+  await performDelete(state.affectedIds);
+  return { status: &#39;completed&#39; };
+}
+</code></pre>
+<hr>
+<h2>Graph Visualization</h2>
+<pre><code class="language-typescript">// Get graph structure for visualization
+const graphData = app.getGraph();
+
+// Or export as Mermaid diagram
+console.log(app.getGraph().drawMermaid());
+</code></pre>

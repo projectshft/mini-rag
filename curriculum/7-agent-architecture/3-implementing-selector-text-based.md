@@ -474,9 +474,3 @@ Now you understand:
 Great work! Your selector now routes requests using text parsing.
 
 In the next module, you'll learn how to upgrade this to use **structured outputs** with Zod schemas for guaranteed valid JSON responses every time.
-
-**Coming up:**
-
--   **Module 7.3:** Upgrading to Structured Outputs (more reliable, type-safe)
--   **Module 8:** Building the LinkedIn Agent with fine-tuned models
--   **Module 9:** Building the RAG Agent with retrieval and context

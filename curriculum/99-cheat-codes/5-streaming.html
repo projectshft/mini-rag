@@ -1,0 +1,92 @@
+<h1>Streaming</h1>
+<p>Stream LLM responses to the client in real-time.</p>
+<hr>
+<h2>Server: Create Stream</h2>
+<pre><code class="language-typescript">import { streamText } from &#39;ai&#39;;
+import { openai } from &#39;@ai-sdk/openai&#39;;
+
+export async function POST(request: Request) {
+  const { messages } = await request.json();
+
+  const result = streamText({
+    model: openai(&#39;gpt-4o&#39;),
+    system: &#39;You are a helpful assistant.&#39;,
+    messages,
+  });
+
+  return result.toDataStreamResponse();
+}
+</code></pre>
+<hr>
+<h2>Client: Consume Stream (React)</h2>
+<pre><code class="language-typescript">import { useChat } from &#39;@ai-sdk/react&#39;;
+
+export function Chat() {
+  const { messages, input, handleInputChange, handleSubmit, isLoading } =
+    useChat({
+      api: &#39;/api/chat&#39;,
+    });
+
+  return (
+    &lt;div&gt;
+      {messages.map(m =&gt; (
+        &lt;div key={m.id}&gt;{m.content}&lt;/div&gt;
+      ))}
+      &lt;form onSubmit={handleSubmit}&gt;
+        &lt;input value={input} onChange={handleInputChange} /&gt;
+        &lt;button disabled={isLoading}&gt;Send&lt;/button&gt;
+      &lt;/form&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<hr>
+<h2>Stream with Tools</h2>
+<pre><code class="language-typescript">const result = streamText({
+  model: openai(&#39;gpt-4o&#39;),
+  tools: {
+    searchDocs: tool({
+      description: &#39;Search documentation&#39;,
+      parameters: z.object({ query: z.string() }),
+      execute: async ({ query }) =&gt; await search(query),
+    }),
+  },
+  toolChoice: &#39;auto&#39;,
+  maxSteps: 5,
+  messages,
+});
+
+return result.toDataStreamResponse();
+</code></pre>
+<hr>
+<h2>Manual Stream Consumption</h2>
+<pre><code class="language-typescript">const result = await streamText({
+  model: openai(&#39;gpt-4o&#39;),
+  prompt: &#39;Write a story&#39;,
+});
+
+// Iterate over text chunks
+for await (const chunk of result.textStream) {
+  process.stdout.write(chunk);
+}
+</code></pre>
+<hr>
+<h2>Stream Object Generation</h2>
+<pre><code class="language-typescript">import { streamObject } from &#39;ai&#39;;
+
+const result = await streamObject({
+  model: openai(&#39;gpt-4o&#39;),
+  schema: z.object({
+    title: z.string(),
+    sections: z.array(z.object({
+      heading: z.string(),
+      content: z.string(),
+    })),
+  }),
+  prompt: &#39;Generate an article about...&#39;,
+});
+
+for await (const partialObject of result.partialObjectStream) {
+  console.log(partialObject);
+}
+</code></pre>

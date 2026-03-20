@@ -1,0 +1,135 @@
+<h1>AI Agent Cheat Codes</h1>
+<p>Copy-paste snippets for common AI patterns. No fluff, just code.</p>
+<hr>
+<h2>Quick Navigation</h2>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>File</th>
+<th>What&#39;s Inside</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Embeddings &amp; Search</td>
+<td><a href="./1-embeddings-and-search.md">1-embeddings-and-search.md</a></td>
+<td>OpenAI embeddings, Pinecone setup, vector queries, reranking</td>
+</tr>
+<tr>
+<td>Structured Outputs</td>
+<td><a href="./2-structured-outputs.md">2-structured-outputs.md</a></td>
+<td>AI SDK, OpenAI SDK, Gemini, common schemas</td>
+</tr>
+<tr>
+<td>Tool Calling</td>
+<td><a href="./3-tool-calling.md">3-tool-calling.md</a></td>
+<td>Tool definitions, RAG as a tool, preventing loops</td>
+</tr>
+<tr>
+<td>Chunking</td>
+<td><a href="./4-chunking.md">4-chunking.md</a></td>
+<td>Sentence chunking, metadata, markdown-aware</td>
+</tr>
+<tr>
+<td>Streaming</td>
+<td><a href="./5-streaming.md">5-streaming.md</a></td>
+<td>Server streams, React client, streaming objects</td>
+</tr>
+<tr>
+<td>Human-in-the-Loop</td>
+<td><a href="./6-human-in-the-loop.md">6-human-in-the-loop.md</a></td>
+<td>Approval flows, pending actions, destructive ops</td>
+</tr>
+<tr>
+<td>Router Agent</td>
+<td><a href="./7-router-agent.md">7-router-agent.md</a></td>
+<td>Query routing, agent registry, multi-agent</td>
+</tr>
+<tr>
+<td>LangGraph</td>
+<td><a href="./8-langgraph.md">8-langgraph.md</a></td>
+<td>State, nodes, conditional edges, memory</td>
+</tr>
+<tr>
+<td>Prompt Templates</td>
+<td><a href="./9-prompt-templates.md">9-prompt-templates.md</a></td>
+<td>RAG, routing, classification, extraction</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Common Gotchas</h2>
+<h3>1. Always filter null from vector search</h3>
+<pre><code class="language-typescript">// Bad
+const docs = results.matches.map(m =&gt; m.metadata?.text);
+
+// Good
+const docs = results.matches
+  .map(m =&gt; m.metadata?.text)
+  .filter(Boolean) as string[];
+</code></pre>
+<h3>2. Handle empty search results</h3>
+<pre><code class="language-typescript">if (documents.length === 0) {
+  return &quot;I couldn&#39;t find relevant information. Could you rephrase?&quot;;
+}
+</code></pre>
+<h3>3. Set tool call limits</h3>
+<pre><code class="language-typescript">streamText({
+  maxSteps: 5, // Prevent infinite tool loops
+  // ...
+});
+</code></pre>
+<h3>4. Validate structured outputs</h3>
+<pre><code class="language-typescript">try {
+  const result = schema.parse(response);
+} catch (error) {
+  return fallbackBehavior();
+}
+</code></pre>
+<h3>5. Use appropriate chunk sizes</h3>
+<pre><code class="language-typescript">// Too small = lost context
+// Too large = irrelevant noise
+const CHUNK_SIZE = 500; // Good starting point
+const OVERLAP = 50; // Prevent cut-off sentences
+</code></pre>
+<hr>
+<h2>Full RAG Pipeline (Quick Copy)</h2>
+<pre><code class="language-typescript">// 1. Embed query
+const embedding = await openai.embeddings.create({
+  model: &#39;text-embedding-3-small&#39;,
+  input: query,
+  dimensions: 512,
+});
+
+// 2. Search (over-fetch for reranking)
+const results = await index.query({
+  vector: embedding.data[0].embedding,
+  topK: 20,
+  includeMetadata: true,
+});
+
+// 3. Extract documents
+const docs = results.matches
+  .map(m =&gt; m.metadata?.text)
+  .filter(Boolean) as string[];
+
+// 4. Rerank
+const reranked = await pinecone.inference.rerank({
+  model: &#39;bge-reranker-v2-m3&#39;,
+  query,
+  documents: docs,
+  topK: 5,
+  returnDocuments: true,
+});
+
+// 5. Build context
+const context = reranked.data
+  .map(r =&gt; r.document?.text)
+  .join(&#39;\n\n&#39;);
+
+// 6. Generate response
+const response = await streamText({
+  model: openai(&#39;gpt-4o&#39;),
+  system: `Answer based on this context:\n\n${context}`,
+  messages,
+});
+</code></pre>

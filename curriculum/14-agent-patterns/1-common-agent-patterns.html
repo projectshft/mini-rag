@@ -1,0 +1,280 @@
+<h1>Common Agent Patterns</h1>
+<p>As you build AI agents, you&#39;ll encounter recurring challenges and solutions. Understanding these patterns helps you choose the right approach for your use case.</p>
+<hr>
+<h2>Pattern 1: Workflow Agents</h2>
+<p><strong>What it is:</strong><br>A fixed sequence of steps that always executes in the same order.</p>
+<p><strong>Example:</strong></p>
+<pre><code>Query → Embed → Search → Rerank → Generate
+</code></pre>
+<p><strong>You&#39;ve built this:</strong> Your RAG agent</p>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Every query needs the same process</li>
+<li>Predictable, deterministic behavior required</li>
+<li>Cost-sensitive (no decision overhead)</li>
+<li>Single-purpose agents</li>
+</ul>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Simple and predictable</li>
+<li>✅ Fast execution</li>
+<li>✅ Lower cost per request</li>
+<li>❌ No branching logic</li>
+<li>❌ Can&#39;t skip unnecessary steps</li>
+</ul>
+<hr>
+<h2>Pattern 2: Router Agents</h2>
+<p><strong>What it is:</strong><br>An agent that routes requests to specialized sub-agents based on intent.</p>
+<p><strong>Example:</strong></p>
+<pre><code>Query → Analyze Intent → Route to:
+  - RAG Agent (technical questions)
+  - LinkedIn Agent (content creation)
+  - General Agent (casual chat)
+</code></pre>
+<p><strong>You&#39;ve built this:</strong> Your selector agent</p>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Multiple capabilities in one system</li>
+<li>Different queries need different handling</li>
+<li>Want specialized agents for specific tasks</li>
+</ul>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Modular and maintainable</li>
+<li>✅ Each agent can be optimized independently</li>
+<li>✅ Clear separation of concerns</li>
+<li>⚠️ Requires good routing logic</li>
+<li>⚠️ Extra latency from routing step</li>
+</ul>
+<hr>
+<h2>Pattern 3: Human-in-the-Loop (HITL)</h2>
+<p><strong>What it is:</strong><br>Agent pauses execution to request human approval or input before proceeding.</p>
+<p><strong>Example:</strong></p>
+<pre><code>Query → Plan Action → Request Approval → Execute (if approved)
+</code></pre>
+<p><strong>Common use cases:</strong></p>
+<ul>
+<li>Destructive operations (delete, update database)</li>
+<li>High-stakes decisions (financial transactions)</li>
+<li>Content moderation (publish/reject)</li>
+<li>Compliance requirements (legal review)</li>
+</ul>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Actions are irreversible</li>
+<li>Mistakes are costly</li>
+<li>Human judgment is required</li>
+<li>Regulatory compliance needed</li>
+</ul>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Safety for critical operations</li>
+<li>✅ Human oversight on important decisions</li>
+<li>✅ Audit trail of approvals</li>
+<li>❌ Slower (requires human response)</li>
+<li>❌ Can&#39;t run fully automated</li>
+</ul>
+<hr>
+<h2>Pattern 4: Tool-Calling Agents</h2>
+<p><strong>What it is:</strong><br>AI decides when and which tools to use based on the query.</p>
+<p><strong>Example:</strong></p>
+<pre><code>Query → AI Decides:
+  - Need docs? → Call search_documentation tool
+  - Need calculation? → Call calculator tool
+  - Simple question? → Answer directly
+</code></pre>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Query-dependent logic</li>
+<li>Multiple tools available</li>
+<li>Want intelligent resource allocation</li>
+<li>Cost optimization (skip unnecessary calls)</li>
+</ul>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ AI makes decisions dynamically</li>
+<li>✅ Can skip expensive operations</li>
+<li>✅ Flexible and intelligent</li>
+<li>⚠️ Extra LLM call for decision</li>
+<li>⚠️ Less predictable behavior</li>
+</ul>
+<hr>
+<h2>Pattern 5: Iterative Refinement</h2>
+<p><strong>What it is:</strong><br>Agent evaluates its own output and refines until quality threshold is met.</p>
+<p><strong>Example:</strong></p>
+<pre><code>Query → Generate → Evaluate Quality:
+  - Good enough? → Return result
+  - Not good enough? → Search more context → Generate again
+</code></pre>
+<p><strong>You&#39;ve seen this:</strong> Your LangGraph agent from Module 10 (optional)</p>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Quality is more important than speed</li>
+<li>Results need validation</li>
+<li>Research or analysis tasks</li>
+<li>Complex problems requiring iteration</li>
+</ul>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Higher quality results</li>
+<li>✅ Self-correcting</li>
+<li>✅ Can handle complex queries</li>
+<li>❌ Slower execution</li>
+<li>❌ Higher cost (multiple LLM calls)</li>
+<li>❌ Need max iteration limits</li>
+</ul>
+<hr>
+<h2>Pattern 6: Multi-Step Orchestration</h2>
+<p><strong>What it is:</strong><br>Agent breaks complex tasks into steps, executing them sequentially or in parallel.</p>
+<p><strong>Example:</strong></p>
+<pre><code>&quot;Write a blog post about React hooks&quot;
+  ↓
+Step 1: Research hooks (search docs)
+Step 2: Find code examples (search GitHub)
+Step 3: Draft outline
+Step 4: Write introduction
+Step 5: Write examples section
+Step 6: Write conclusion
+</code></pre>
+<p><strong>When to use:</strong></p>
+<ul>
+<li>Complex, multi-part tasks</li>
+<li>Need intermediate results</li>
+<li>Tasks can be decomposed</li>
+<li>Want transparency into progress</li>
+</ul>
+<p><strong>Characteristics:</strong></p>
+<ul>
+<li>✅ Handles complex workflows</li>
+<li>✅ Can run steps in parallel</li>
+<li>✅ Clear progress tracking</li>
+<li>❌ More complex to build</li>
+<li>❌ Requires careful orchestration</li>
+</ul>
+<hr>
+<h2>Comparing Patterns</h2>
+<table>
+<thead>
+<tr>
+<th>Pattern</th>
+<th>Speed</th>
+<th>Cost</th>
+<th>Complexity</th>
+<th>Control</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Workflow</strong></td>
+<td>Fast</td>
+<td>Low</td>
+<td>Simple</td>
+<td>Fixed</td>
+<td>Single-purpose, predictable</td>
+</tr>
+<tr>
+<td><strong>Router</strong></td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Medium</td>
+<td>Branching</td>
+<td>Multi-capability systems</td>
+</tr>
+<tr>
+<td><strong>HITL</strong></td>
+<td>Slow*</td>
+<td>Low</td>
+<td>Medium</td>
+<td>Human approval</td>
+<td>Critical/destructive actions</td>
+</tr>
+<tr>
+<td><strong>Tool-Calling</strong></td>
+<td>Medium</td>
+<td>Medium+</td>
+<td>Medium</td>
+<td>AI decides</td>
+<td>Query-dependent logic</td>
+</tr>
+<tr>
+<td><strong>Iterative</strong></td>
+<td>Slow</td>
+<td>High</td>
+<td>High</td>
+<td>Self-correcting</td>
+<td>Quality-critical tasks</td>
+</tr>
+<tr>
+<td><strong>Multi-Step</strong></td>
+<td>Slow</td>
+<td>High</td>
+<td>High</td>
+<td>Full orchestration</td>
+<td>Complex workflows</td>
+</tr>
+</tbody></table>
+<p>*HITL is slow because it waits for human response</p>
+<hr>
+<h2>Combining Patterns</h2>
+<p>Real-world agents often combine multiple patterns:</p>
+<p><strong>Example: Content Publishing System</strong></p>
+<pre><code>Router (route by intent)
+  ↓
+Tool-Calling (decide if research needed)
+  ↓
+Workflow (generate content)
+  ↓
+HITL (human approval before publishing)
+</code></pre>
+<p><strong>Example: Research Assistant</strong></p>
+<pre><code>Router (route to research vs chat)
+  ↓
+Iterative Refinement (search → evaluate → search again)
+  ↓
+Multi-Step (break research into subtopics)
+  ↓
+Workflow (generate final report)
+</code></pre>
+<hr>
+<h2>Choosing the Right Pattern</h2>
+<p>Ask yourself:</p>
+<ol>
+<li><p><strong>Is every query handled the same way?</strong></p>
+<ul>
+<li>Yes → Workflow</li>
+<li>No → Router or Tool-Calling</li>
+</ul>
+</li>
+<li><p><strong>Are actions reversible?</strong></p>
+<ul>
+<li>No → HITL</li>
+<li>Yes → Proceed without approval</li>
+</ul>
+</li>
+<li><p><strong>Is quality more important than speed?</strong></p>
+<ul>
+<li>Yes → Iterative Refinement</li>
+<li>No → Workflow</li>
+</ul>
+</li>
+<li><p><strong>Is the task complex and multi-part?</strong></p>
+<ul>
+<li>Yes → Multi-Step Orchestration</li>
+<li>No → Simpler pattern</li>
+</ul>
+</li>
+<li><p><strong>Do you need AI to decide when to act?</strong></p>
+<ul>
+<li>Yes → Tool-Calling</li>
+<li>No → Fixed Workflow</li>
+</ul>
+</li>
+</ol>
+<hr>
+<h2>What&#39;s Next?</h2>
+<p>In the next lesson, we&#39;ll compare:</p>
+<ul>
+<li><strong>Workflow agents</strong> (what you&#39;ve already built)</li>
+<li><strong>Human-in-the-loop agents</strong> (what you&#39;ll build next)</li>
+</ul>
+<p>Understanding the tradeoffs will help you choose the right pattern for your use case.</p>

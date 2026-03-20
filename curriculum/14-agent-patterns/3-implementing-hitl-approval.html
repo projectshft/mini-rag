@@ -1,0 +1,420 @@
+<h1>Implementing Human-in-the-Loop Approval</h1>
+<p>In this lesson, you&#39;ll see why human-in-the-loop is critical for destructive operations - and implement approval workflows for an influencer database agent.</p>
+<hr>
+<h2>Video Walkthrough</h2>
+<p>Watch the full implementation and demonstration:</p>
+<p><strong>🎥 Video:</strong> <a href="#">Human-in-the-Loop Implementation</a></p>
+<hr>
+<h2>The Repository</h2>
+<p>We&#39;ll use a separate repository for this implementation:</p>
+<p><strong>📁 Repository:</strong> <a href="https://github.com/projectshft/killer_agents">killer_agents</a></p>
+<pre><code class="language-bash">git clone https://github.com/projectshft/killer_agents.git
+cd killer_agents
+yarn install
+</code></pre>
+<p>This repo contains an influencer marketing database with a natural language search agent.</p>
+<hr>
+<h2>The Problem</h2>
+<p>The <code>killer_agents</code> repo has an agent that searches an influencer database. Users can ask questions like:</p>
+<pre><code>&quot;Show me fitness influencers in LA&quot;
+&quot;Find creators with less than 10k followers&quot;
+&quot;Delete inactive accounts&quot;
+</code></pre>
+<h3>Current Implementation</h3>
+<p>Let&#39;s look at how the agent currently works:</p>
+<pre><code class="language-typescript">// app/agents/databaseSearchAgent.ts
+export const databaseSearchAgent = async (agentAction: AgentAction) =&gt; {
+  // 1. AI extracts search parameters with structured output
+  const response = await ai.models.generateContent({
+    model: &#39;gemini-2.5-flash&#39;,
+    contents: prompt,
+    config: {
+      responseMimeType: &#39;application/json&#39;,
+      responseJsonSchema: zodToJsonSchema(sqlSchema),
+    },
+  });
+
+  // 2. Build query from extracted parameters
+  const whereClause = constructWhereClause(sqlProps);
+  const influencers = await prisma.influencer.findMany({ where: whereClause });
+
+  // 3. If destructive, DELETE IMMEDIATELY! 😱
+  if (sqlProps?.isDestructive) {
+    await prisma.influencer.deleteMany({
+      where: { id: { in: influencers.map(inf =&gt; inf.id) } },
+    });
+
+    return {
+      message: `Deleted ${influencers.length} influencers.`,
+      isDestructive: true,
+    };
+  }
+
+  return { message: formatResults(influencers), isDestructive: false };
+};
+</code></pre>
+<h3>The Danger</h3>
+<p><strong>Do you see the problem?</strong></p>
+<p>When a user says &quot;Delete inactive accounts&quot;, the AI:</p>
+<ol>
+<li>Parses the request</li>
+<li>Finds matching influencers</li>
+<li><strong>Immediately deletes them</strong> - no confirmation!</li>
+</ol>
+<p>What could go wrong?</p>
+<ul>
+<li><strong>Misinterpretation:</strong> &quot;Remove duplicates&quot; → AI deletes records it thinks are duplicates</li>
+<li><strong>Ambiguity:</strong> &quot;Clean up the database&quot; → AI deletes... something?</li>
+<li><strong>Accidents:</strong> User meant to type &quot;Show&quot; but typed &quot;Delete&quot;</li>
+<li><strong>Scale:</strong> One bad command could wipe hundreds of records</li>
+</ul>
+<p><strong>There&#39;s no undo button.</strong></p>
+<hr>
+<h2>A Real Scenario</h2>
+<p>Imagine this conversation:</p>
+<p><strong>User:</strong> &quot;Delete all influencers who haven&#39;t posted in 6 months&quot;</p>
+<p><strong>What the AI does:</strong></p>
+<ol>
+<li>Interprets &quot;6 months&quot; as <code>last_active &lt; &#39;2024-09-17&#39;</code></li>
+<li>Finds 247 influencers matching this criteria</li>
+<li>Deletes all 247 records</li>
+<li>Returns: &quot;Deleted 247 influencers.&quot;</li>
+</ol>
+<p><strong>What if the user meant:</strong></p>
+<ul>
+<li>&quot;Show me&quot; influencers who haven&#39;t posted (typo)</li>
+<li>&quot;Mark as inactive&quot; not delete</li>
+<li>3 months, not 6 months</li>
+<li>Only from a specific campaign</li>
+</ul>
+<p><strong>The damage is done. The data is gone.</strong></p>
+<hr>
+<h2>The Solution: Human-in-the-Loop</h2>
+<p>Instead of executing destructive operations immediately, we:</p>
+<ol>
+<li><strong>Plan</strong> the operation</li>
+<li><strong>Preview</strong> what will be affected</li>
+<li><strong>Wait</strong> for human approval</li>
+<li><strong>Execute</strong> only if approved</li>
+</ol>
+<h3>New Flow</h3>
+<pre><code>User: &quot;Delete inactive influencers&quot;
+     ↓
+AI parses request
+     ↓
+AI finds 247 matching records
+     ↓
+⏸️ PAUSE - Show preview to user:
+   &quot;This will delete 247 influencers.
+    Sample: @fitness_jane, @travel_mike, @food_sarah...
+    [Approve] [Reject]&quot;
+     ↓
+User clicks [Approve] or [Reject]
+     ↓
+If approved → Execute deletion
+If rejected → Cancel, no changes
+</code></pre>
+<hr>
+<h2>Implementation Overview</h2>
+<p>We need to add three things:</p>
+<h3>1. Pending Actions Store</h3>
+<p>Store operations waiting for approval:</p>
+<pre><code class="language-typescript">// In-memory for demo, use database in production
+const pendingApprovals = new Map&lt;string, PendingAction&gt;();
+
+type PendingAction = {
+  id: string;
+  query: string;
+  operation: &#39;DELETE&#39; | &#39;UPDATE&#39;;
+  affectedIds: string[];
+  affectedCount: number;
+  preview: Influencer[];
+  createdAt: Date;
+  expiresAt: Date;
+};
+</code></pre>
+<h3>2. Modified Agent Response</h3>
+<p>Return approval request instead of executing:</p>
+<pre><code class="language-typescript">if (sqlProps?.isDestructive) {
+  // DON&#39;T execute - create pending approval
+  const approvalId = crypto.randomUUID();
+
+  pendingApprovals.set(approvalId, {
+    id: approvalId,
+    query: agentAction.originalQuery,
+    operation: &#39;DELETE&#39;,
+    affectedIds: influencers.map(inf =&gt; inf.id),
+    affectedCount: influencers.length,
+    preview: influencers.slice(0, 5), // Show first 5
+    createdAt: new Date(),
+    expiresAt: new Date(Date.now() + 5 * 60 * 1000), // 5 min expiry
+  });
+
+  return {
+    type: &#39;AWAITING_APPROVAL&#39;,
+    approvalId,
+    message: `This will delete ${influencers.length} influencers.`,
+    preview: influencers.slice(0, 5),
+    isDestructive: true,
+  };
+}
+</code></pre>
+<h3>3. Approval Endpoint</h3>
+<p>Handle user&#39;s decision:</p>
+<pre><code class="language-typescript">// app/actions/approveAction.ts
+export async function approveAction(
+  approvalId: string,
+  approved: boolean
+): Promise&lt;{ success: boolean; message: string }&gt; {
+  const pending = pendingApprovals.get(approvalId);
+
+  if (!pending) {
+    return { success: false, message: &#39;Approval expired or not found&#39; };
+  }
+
+  if (new Date() &gt; pending.expiresAt) {
+    pendingApprovals.delete(approvalId);
+    return { success: false, message: &#39;Approval expired&#39; };
+  }
+
+  if (!approved) {
+    pendingApprovals.delete(approvalId);
+    return { success: true, message: &#39;Operation cancelled&#39; };
+  }
+
+  // Execute the deletion
+  const result = await prisma.influencer.deleteMany({
+    where: { id: { in: pending.affectedIds } },
+  });
+
+  pendingApprovals.delete(approvalId);
+
+  return {
+    success: true,
+    message: `Deleted ${result.count} influencers`
+  };
+}
+</code></pre>
+<hr>
+<h2>UI Changes</h2>
+<p>Update the frontend to handle approval state:</p>
+<pre><code class="language-typescript">// app/page.tsx
+export default function Home() {
+  const [pendingApproval, setPendingApproval] = useState&lt;PendingApproval | null&gt;(null);
+
+  const handleSubmit = async () =&gt; {
+    const result = await executeAgent(query);
+
+    if (result.type === &#39;AWAITING_APPROVAL&#39;) {
+      // Show approval UI instead of results
+      setPendingApproval({
+        id: result.approvalId,
+        message: result.message,
+        preview: result.preview,
+      });
+    } else {
+      setAgentResult(result);
+    }
+  };
+
+  const handleApproval = async (approved: boolean) =&gt; {
+    const result = await approveAction(pendingApproval.id, approved);
+    setPendingApproval(null);
+    setAgentResult({ message: result.message });
+  };
+
+  // Render approval modal when pendingApproval exists
+  if (pendingApproval) {
+    return (
+      &lt;ApprovalModal
+        approval={pendingApproval}
+        onApprove={() =&gt; handleApproval(true)}
+        onReject={() =&gt; handleApproval(false)}
+      /&gt;
+    );
+  }
+
+  // ... normal UI
+}
+</code></pre>
+<hr>
+<h2>Approval Modal Component</h2>
+<pre><code class="language-typescript">// app/components/ApprovalModal.tsx
+export function ApprovalModal({ approval, onApprove, onReject }) {
+  return (
+    &lt;div className=&quot;modal-overlay&quot;&gt;
+      &lt;div className=&quot;modal&quot;&gt;
+        &lt;h2&gt;⚠️ Confirm Destructive Operation&lt;/h2&gt;
+
+        &lt;p className=&quot;warning&quot;&gt;{approval.message}&lt;/p&gt;
+
+        &lt;div className=&quot;preview&quot;&gt;
+          &lt;h3&gt;Records that will be affected:&lt;/h3&gt;
+          &lt;ul&gt;
+            {approval.preview.map(inf =&gt; (
+              &lt;li key={inf.id}&gt;
+                {inf.name} - {inf.metadata?.tier?.name || &#39;Unknown tier&#39;}
+              &lt;/li&gt;
+            ))}
+          &lt;/ul&gt;
+          {approval.totalCount &gt; approval.preview.length &amp;&amp; (
+            &lt;p&gt;...and {approval.totalCount - approval.preview.length} more&lt;/p&gt;
+          )}
+        &lt;/div&gt;
+
+        &lt;div className=&quot;actions&quot;&gt;
+          &lt;button onClick={onReject} className=&quot;btn-cancel&quot;&gt;
+            ❌ Cancel
+          &lt;/button&gt;
+          &lt;button onClick={onApprove} className=&quot;btn-danger&quot;&gt;
+            ⚠️ Yes, Delete
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+}
+</code></pre>
+<hr>
+<h2>Safety Features</h2>
+<h3>1. Expiration</h3>
+<p>Approvals expire after 5 minutes:</p>
+<pre><code class="language-typescript">if (new Date() &gt; pending.expiresAt) {
+  pendingApprovals.delete(approvalId);
+  return { success: false, message: &#39;Approval expired - please try again&#39; };
+}
+</code></pre>
+<h3>2. Preview Affected Records</h3>
+<p>Show users exactly what will be deleted:</p>
+<pre><code class="language-typescript">preview: influencers.slice(0, 10).map(inf =&gt; ({
+  id: inf.id,
+  name: inf.name,
+  tier: inf.metadata?.tier?.name,
+  followers: inf.followerCount,
+}))
+</code></pre>
+<h3>3. Audit Log</h3>
+<p>Track all approvals and rejections:</p>
+<pre><code class="language-typescript">await prisma.auditLog.create({
+  data: {
+    action: approved ? &#39;APPROVED&#39; : &#39;REJECTED&#39;,
+    operation: pending.operation,
+    affectedCount: pending.affectedCount,
+    query: pending.query,
+    userId: session?.user?.id,
+    timestamp: new Date(),
+  }
+});
+</code></pre>
+<h3>4. Require Re-authentication</h3>
+<p>For high-stakes operations, require password:</p>
+<pre><code class="language-typescript">if (pending.affectedCount &gt; 100) {
+  // Require password confirmation for large deletions
+  const verified = await verifyPassword(userId, password);
+  if (!verified) {
+    return { success: false, message: &#39;Invalid password&#39; };
+  }
+}
+</code></pre>
+<hr>
+<h2>Before vs After</h2>
+<h3>Before (Dangerous)</h3>
+<pre><code>User: &quot;Delete inactive influencers&quot;
+↓
+AI: &quot;Deleted 247 influencers.&quot;
+↓
+User: &quot;Wait, I meant...&quot;
+↓
+Too late. Data is gone.
+</code></pre>
+<h3>After (Safe)</h3>
+<pre><code>User: &quot;Delete inactive influencers&quot;
+↓
+AI: &quot;This will delete 247 influencers.
+     Preview: @jane, @mike, @sarah...
+     [Approve] [Cancel]&quot;
+↓
+User reviews → Clicks [Cancel]
+↓
+AI: &quot;Operation cancelled. No changes made.&quot;
+↓
+Data is safe. User can refine their query.
+</code></pre>
+<hr>
+<h2>Testing</h2>
+<h3>Test 1: Safe Query (No Approval Needed)</h3>
+<pre><code>&quot;Show me fitness influencers&quot;
+</code></pre>
+<p><strong>Expected:</strong> Returns results immediately, no approval modal.</p>
+<h3>Test 2: Destructive Query (Requires Approval)</h3>
+<pre><code>&quot;Delete influencers with less than 1000 followers&quot;
+</code></pre>
+<p><strong>Expected:</strong> Shows approval modal with preview. Click [Cancel] → no deletion.</p>
+<h3>Test 3: Approve Deletion</h3>
+<pre><code>&quot;Delete test account @test_user&quot;
+</code></pre>
+<p><strong>Expected:</strong> Shows approval → Click [Approve] → Account deleted.</p>
+<h3>Test 4: Expired Approval</h3>
+<pre><code>&quot;Delete old accounts&quot;
+</code></pre>
+<p><strong>Expected:</strong> Wait 5+ minutes → Try to approve → &quot;Approval expired&quot;.</p>
+<hr>
+<h2>Key Takeaways</h2>
+<p>✅ <strong>Never execute destructive operations without confirmation</strong></p>
+<p>✅ <strong>Show users exactly what will be affected</strong></p>
+<p>✅ <strong>Add expiration to prevent stale approvals</strong></p>
+<p>✅ <strong>Log all approvals for audit trail</strong></p>
+<p>✅ <strong>Consider additional verification for large operations</strong></p>
+<hr>
+<h2>When to Use HITL</h2>
+<table>
+<thead>
+<tr>
+<th>Operation</th>
+<th>HITL Required?</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>SELECT (read)</td>
+<td>❌ No</td>
+</tr>
+<tr>
+<td>INSERT (create)</td>
+<td>⚠️ Sometimes</td>
+</tr>
+<tr>
+<td>UPDATE (modify)</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>DELETE (remove)</td>
+<td>✅ Yes</td>
+</tr>
+<tr>
+<td>DROP TABLE</td>
+<td>✅ Absolutely</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Exercise</h2>
+<ol>
+<li>Clone the <code>killer_agents</code> repository</li>
+<li>Run the current version - try &quot;Delete inactive accounts&quot;</li>
+<li>Implement the HITL approval flow</li>
+<li>Add the approval modal UI</li>
+<li>Test both safe and destructive queries</li>
+</ol>
+<p><strong>Bonus challenges:</strong></p>
+<ul>
+<li>Add audit logging</li>
+<li>Add expiration cleanup (cron job)</li>
+<li>Add Slack notifications for approvals</li>
+<li>Add bulk approval for admins</li>
+</ul>
+<hr>
+<h2>What You Learned</h2>
+<p>✅ Why immediate execution of destructive operations is dangerous</p>
+<p>✅ How to implement pending approval state</p>
+<p>✅ Building approval UI with preview</p>
+<p>✅ Safety features: expiration, audit logs, re-authentication</p>
+<p>✅ Testing HITL workflows</p>
