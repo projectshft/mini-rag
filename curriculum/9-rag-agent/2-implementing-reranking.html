@@ -229,7 +229,6 @@ console.log(&#39;Context length:&#39;, retrievedContext.length);
 		.filter(Boolean);
 
 	// topN: Number of top results to return after reranking
-	// - Lower values (3-5) = more focused, highest relevance only
 	// returnDocuments: true means we get the actual text back, not just scores
 	const reranked = await pineconeClient.inference.rerank(
 		&#39;bge-reranker-v2-m3&#39;,

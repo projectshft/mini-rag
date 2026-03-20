@@ -11,76 +11,77 @@ import { pineconeClient } from &#39;@/app/libs/pinecone&#39;;
 import { openaiClient } from &#39;@/app/libs/openai/openai&#39;;
 
 const searchDocsTool = tool({
-  description: `Search the documentation for technical information about React,
+	description: `Search the documentation for technical information about React,
 hooks, components, and web development. Use this when users ask programming
 questions that require looking up documentation.`,
 
-  parameters: z.object({
-    query: z.string().describe(&#39;The technical query to search for&#39;),
-  }),
+	parameters: z.object({
+		query: z.string().describe(&#39;The technical query to search for&#39;),
+	}),
 
-  execute: async ({ query }) =&gt; {
-    console.log(&#39;🔧 Tool called:&#39;, query);
+	execute: async ({ query }) =&gt; {
+		console.log(&#39;🔧 Tool called:&#39;, query);
 
-    // Step 1: Generate embedding
-    const embeddingResponse = await openaiClient.embeddings.create({
-      model: &#39;text-embedding-3-small&#39;,
-      input: query,
-    });
-    const embedding = embeddingResponse.data[0].embedding;
+		// Step 1: Generate embedding
+		const embeddingResponse = await openaiClient.embeddings.create({
+			model: &#39;text-embedding-3-small&#39;,
+			input: query,
+			dimensions: 512,
+		});
+		const embedding = embeddingResponse.data[0].embedding;
 
-    // Step 2: Search Pinecone
-    const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
-    const results = await index.query({
-      vector: embedding,
-      topK: 10,
-      includeMetadata: true,
-    });
+		// Step 2: Search Pinecone
+		const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
+		const results = await index.query({
+			vector: embedding,
+			topK: 10,
+			includeMetadata: true,
+		});
 
-    // Step 3: Extract documents
-    const documents = results.matches
-      .map((match) =&gt; match.metadata?.text)
-      .filter(Boolean) as string[];
+		// Step 3: Extract documents
+		const documents = results.matches
+			.map((match) =&gt; match.metadata?.text)
+			.filter(Boolean) as string[];
 
-    // Step 4: Rerank
-    const reranked = await pineconeClient.inference.rerank({
-      model: &#39;bge-reranker-v2-m3&#39;,
-      query,
-      documents,
-      topK: 5,
-      returnDocuments: true,
-    });
+		// Step 4: Rerank
+		const reranked = await pineconeClient.inference.rerank({
+			model: &#39;bge-reranker-v2-m3&#39;,
+			query,
+			documents,
+			topK: 5,
+			returnDocuments: true,
+		});
 
-    // Step 5: Return context
-    const context = reranked.data
-      .map((r) =&gt; r.document?.text)
-      .filter(Boolean)
-      .join(&#39;\n\n&#39;);
+		// Step 5: Return context
+		const context = reranked.data
+			.map((r) =&gt; r.document?.text)
+			.filter(Boolean)
+			.join(&#39;\n\n&#39;);
 
-    console.log(&#39;📊 Retrieved&#39;, reranked.data.length, &#39;docs&#39;);
-    return context;
-  },
+		console.log(&#39;📊 Retrieved&#39;, reranked.data.length, &#39;docs&#39;);
+		return context;
+	},
 });
 
 export async function POST(request: NextRequest) {
-  const { messages } = await request.json();
+	const { messages } = await request.json();
 
-  const result = streamText({
-    model: openai(&#39;gpt-4o&#39;),
-    tools: {
-      search_documentation: searchDocsTool,
-    },
-    toolChoice: &#39;auto&#39;,
-    maxSteps: 3,
-    system: `You are a helpful assistant that answers questions about React and web development.
+	const result = streamText({
+		model: openai(&#39;gpt-4o&#39;),
+		tools: {
+			search_documentation: searchDocsTool,
+		},
+		toolChoice: &#39;auto&#39;,
+		maxSteps: 3,
+		system: `You are a helpful assistant that answers questions about React and web development.
 
 For technical questions about React, hooks, components, or programming concepts, use the search_documentation tool to find accurate information.
 
 For general conversation, greetings, or simple clarifications, respond directly without using tools.`,
-    messages,
-  });
+		messages,
+	});
 
-  return result.toDataStreamResponse();
+	return result.toDataStreamResponse();
 }
 </code></pre>
 <hr>
@@ -88,7 +89,7 @@ For general conversation, greetings, or simple clarifications, respond directly 
 <h3>1. Tool Description Matters</h3>
 <pre><code class="language-typescript">description: `Search the documentation for technical information about React,
 hooks, components, and web development. Use this when users ask programming
-questions that require looking up documentation.`
+questions that require looking up documentation.`;
 </code></pre>
 <p>The description tells the AI <strong>when</strong> to use this tool. Be specific. Vague descriptions lead to unpredictable behavior.</p>
 <h3>2. maxSteps Prevents Infinite Loops</h3>
@@ -97,7 +98,7 @@ questions that require looking up documentation.`
 <p>Without this, the AI could theoretically keep calling tools forever. Set a reasonable limit.</p>
 <h3>3. System Prompt Guides Behavior</h3>
 <pre><code class="language-typescript">system: `...For general conversation, greetings, or simple clarifications,
-respond directly without using tools.`
+respond directly without using tools.`;
 </code></pre>
 <p>Explicitly tell the AI when NOT to use tools. Otherwise, it might search for &quot;thanks for your help.&quot;</p>
 <hr>
@@ -193,16 +194,16 @@ respond directly without using tools.`
 <p>For our RAG application, we&#39;re sticking with the workflow approach:</p>
 <pre><code class="language-typescript">// Our actual implementation
 export async function ragAgent(request: AgentRequest) {
-  // Always: embed → search → rerank → generate
-  const embedding = await generateEmbedding(request.query);
-  const results = await searchPinecone(embedding);
-  const reranked = await rerank(results);
+	// Always: embed → search → rerank → generate
+	const embedding = await generateEmbedding(request.query);
+	const results = await searchPinecone(embedding);
+	const reranked = await rerank(results);
 
-  return streamText({
-    model: openai(&#39;gpt-4o&#39;),
-    system: `Context: ${reranked}`,
-    messages: request.messages,
-  });
+	return streamText({
+		model: openai(&#39;gpt-4o&#39;),
+		system: `Context: ${reranked}`,
+		messages: request.messages,
+	});
 }
 </code></pre>
 <p>Every documentation question needs context. There&#39;s no decision to make. Workflow it is.</p>
