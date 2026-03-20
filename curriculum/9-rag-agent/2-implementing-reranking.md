@@ -46,9 +46,9 @@ Pinecone (Vector Search)     Re-ranking Model           Final Context
 
 **Why this works:**
 
--   **Pinecone**: Fast semantic search with good recall (casts a wide net)
--   **Re-ranker**: Deep comparison using cross-attention for precision
--   **Together**: Fast retrieval + accurate ranking = best results
+- **Pinecone**: Fast semantic search with good recall (casts a wide net)
+- **Re-ranker**: Deep comparison using cross-attention for precision
+- **Together**: Fast retrieval + accurate ranking = best results
 
 ---
 
@@ -58,13 +58,13 @@ Before implementing, review these docs:
 
 **Pinecone Inference API (Re-ranking):**
 
--   [Re-ranking Guide](https://docs.pinecone.io/guides/inference/rerank) - Complete guide
--   [API Reference](https://docs.pinecone.io/reference/api/inference/rerank) - Re-rank endpoint
+- [Re-ranking Guide](https://docs.pinecone.io/guides/inference/rerank) - Complete guide
+- [API Reference](https://docs.pinecone.io/reference/api/inference/rerank) - Re-rank endpoint
 
 **Cohere Re-ranking:**
 
--   [Cohere Rerank Documentation](https://docs.cohere.com/docs/reranking) - How re-rank models work
--   [Rerank Best Practices](https://docs.cohere.com/docs/reranking-best-practices) - Optimization tips
+- [Cohere Rerank Documentation](https://docs.cohere.com/docs/reranking) - How re-rank models work
+- [Rerank Best Practices](https://docs.cohere.com/docs/reranking-best-practices) - Optimization tips
 
 ---
 
@@ -94,10 +94,15 @@ const documents = queryResponse.matches
 	.map((match) => match.metadata?.text ?? match.metadata?.content)
 	.filter(Boolean);
 
+// topN: Number of top results to return after reranking
+// - Lower values (3-5) = more focused, highest relevance only
+// - Higher values (10+) = more context, but may include less relevant docs
+// returnDocuments: true means we get the actual text back, not just scores
 const reranked = await pineconeClient.inference.rerank(
 	'bge-reranker-v2-m3',
 	request.query,
-	documents
+	documents,
+	{ topN: 5, returnDocuments: true },
 );
 ```
 
@@ -158,17 +163,17 @@ Step 2 - Cohere Re-rank:
 
 ### ✅ Use Re-ranking When:
 
--   Queries are specific and nuanced
--   Your corpus has many similar documents
--   Precision matters more than speed
--   Production applications where quality is critical
+- Queries are specific and nuanced
+- Your corpus has many similar documents
+- Precision matters more than speed
+- Production applications where quality is critical
 
 ### ❌ Skip Re-ranking When:
 
--   Queries are broad and simple
--   Small corpus (< 100 documents)
--   Latency is critical (re-ranking adds ~100-200ms)
--   Budget is very limited
+- Queries are broad and simple
+- Small corpus (< 100 documents)
+- Latency is critical (re-ranking adds ~100-200ms)
+- Budget is very limited
 
 ---
 
@@ -196,11 +201,11 @@ Add logging to compare results:
 ```typescript
 console.log(
 	'Pinecone scores:',
-	queryResponse.matches.map((m) => m.score)
+	queryResponse.matches.map((m) => m.score),
 );
 console.log(
 	'Re-ranked scores:',
-	reranked.data.map((r) => r.score)
+	reranked.data.map((r) => r.score),
 );
 console.log('Context length:', retrievedContext.length);
 ```
@@ -238,10 +243,15 @@ export async function ragAgent(request: AgentRequest): Promise<AgentResponse> {
 		.map((match) => match.metadata?.text ?? match.metadata?.content)
 		.filter(Boolean);
 
+	// topN: Number of top results to return after reranking
+	// - Lower values (3-5) = more focused, highest relevance only
+	// - Higher values (10+) = more context, but may include less relevant docs
+	// returnDocuments: true means we get the actual text back, not just scores
 	const reranked = await pineconeClient.inference.rerank(
 		'bge-reranker-v2-m3',
 		request.query,
-		documents
+		documents,
+		{ topN: 5, returnDocuments: true },
 	);
 
 	// Step 3: Extract the text content from re-ranked results
@@ -292,18 +302,19 @@ Use the context above to answer the user's question. If the context doesn't cont
 **Requirements:**
 
 1. **Explain the problem:**
-   - Why doesn't basic semantic search always return the best results?
-   - Give a specific example where initial retrieval fails
+    - Why doesn't basic semantic search always return the best results?
+    - Give a specific example where initial retrieval fails
 
 2. **Explain re-ranking:**
-   - What is the "over-fetch and re-rank" strategy?
-   - Why does looking at query + document together help?
+    - What is the "over-fetch and re-rank" strategy?
+    - Why does looking at query + document together help?
 
 3. **Show a use case:**
-   - Describe a real scenario where re-ranking improves results
-   - Reference your implementation from this module
+    - Describe a real scenario where re-ranking improves results
+    - Reference your implementation from this module
 
 **Example to discuss:**
+
 ```
 Query: "How do I secure my Python code?"
 
@@ -317,6 +328,7 @@ After re-ranking:
 ```
 
 **Submit Your Work:**
+
 - [Video Submission - Week 3](https://form.typeform.com/to/pwjkAruL)
 - [Code Submission - Week 3](https://form.typeform.com/to/q3mEuSmX) (include link to `app/agents/rag.ts`)
 
@@ -329,15 +341,18 @@ After re-ranking:
 ## Additional Reading
 
 ### Re-Ranking Semantic Search (Qdrant) ⭐ HIGHLY RECOMMENDED
+
 **Link:** https://qdrant.tech/documentation/search-precision/reranking-semantic-search/
 
 **Why Read This:**
+
 - Deep technical explanation of re-ranking algorithms
 - Comparison of different re-ranking models
 - When to use re-ranking vs embedding search alone
 - Performance benchmarks and trade-offs
 
 **Key Concepts:**
+
 - Two-stage retrieval: Fast semantic search → Precise re-ranking
 - Cross-encoder vs bi-encoder models
 - Latency vs accuracy trade-offs

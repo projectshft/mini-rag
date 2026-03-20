@@ -83,7 +83,11 @@ export async function POST(request: NextRequest) {
 								return 'No relevant documentation found.';
 							}
 
-							// Rerank
+							// Rerank results using Pinecone's inference API
+							// topN: Number of top results to return after reranking
+							// - Lower values (3-5) = more focused, highest relevance only
+							// - Higher values (10+) = more context, but may include less relevant docs
+							// returnDocuments: true means we get the actual text back, not just scores
 							const reranked =
 								await pineconeClient.inference.rerank(
 									'bge-reranker-v2-m3',
