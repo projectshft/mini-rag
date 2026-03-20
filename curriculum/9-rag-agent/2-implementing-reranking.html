@@ -67,10 +67,15 @@ const documents = queryResponse.matches
 	.map((match) =&gt; match.metadata?.text ?? match.metadata?.content)
 	.filter(Boolean);
 
+// topN: Number of top results to return after reranking
+// - Lower values (3-5) = more focused, highest relevance only
+// - Higher values (10+) = more context, but may include less relevant docs
+// returnDocuments: true means we get the actual text back, not just scores
 const reranked = await pineconeClient.inference.rerank(
 	&#39;bge-reranker-v2-m3&#39;,
 	request.query,
-	documents
+	documents,
+	{ topN: 5, returnDocuments: true },
 );
 </code></pre>
 <h3>Step 3: Use Re-Ranked Context</h3>
@@ -186,11 +191,11 @@ Step 2 - Cohere Re-rank:
 <p>Add logging to compare results:</p>
 <pre><code class="language-typescript">console.log(
 	&#39;Pinecone scores:&#39;,
-	queryResponse.matches.map((m) =&gt; m.score)
+	queryResponse.matches.map((m) =&gt; m.score),
 );
 console.log(
 	&#39;Re-ranked scores:&#39;,
-	reranked.data.map((r) =&gt; r.score)
+	reranked.data.map((r) =&gt; r.score),
 );
 console.log(&#39;Context length:&#39;, retrievedContext.length);
 </code></pre>
@@ -223,10 +228,14 @@ console.log(&#39;Context length:&#39;, retrievedContext.length);
 		.map((match) =&gt; match.metadata?.text ?? match.metadata?.content)
 		.filter(Boolean);
 
+	// topN: Number of top results to return after reranking
+	// - Lower values (3-5) = more focused, highest relevance only
+	// returnDocuments: true means we get the actual text back, not just scores
 	const reranked = await pineconeClient.inference.rerank(
 		&#39;bge-reranker-v2-m3&#39;,
 		request.query,
-		documents
+		documents,
+		{ topN: 5, returnDocuments: true },
 	);
 
 	// Step 3: Extract the text content from re-ranked results
