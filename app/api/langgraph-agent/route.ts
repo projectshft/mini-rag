@@ -161,11 +161,14 @@ async function searchDocumentsNode(state: StateType) {
 		}
 
 		// Rerank using Pinecone inference for better quality
+		// topK: Number of top results to return after reranking
+		// - Lower values (3-5) = more focused, highest relevance only
+		// - Higher values (10+) = more context, but may include less relevant docs
 		const reranked = await pineconeClient.inference.rerank({
 			model: 'bge-reranker-v2-m3',
 			query: state.query,
 			documents: documents,
-			topK: 5, // Keep top 5 after reranking
+			topK: 5,
 			returnDocuments: true,
 		});
 
