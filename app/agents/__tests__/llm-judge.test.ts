@@ -83,7 +83,7 @@ async function judgeResponse(
 	actualResponse: string,
 	goldenResponse: string
 ): Promise<JudgeResult> {
-	const response = await openaiClient.chat.completions.create({
+	const completion = await openaiClient.chat.completions.create({
 		model: 'gpt-4o-mini',
 		temperature: 0,
 		messages: [
@@ -104,7 +104,7 @@ Score the actual response against the reference.`,
 		response_format: zodResponseFormat(JudgeResultSchema, 'judge_result'),
 	});
 
-	const content = response.choices[0]?.message?.content;
+	const content = completion.choices[0]?.message?.content;
 	if (!content) {
 		return { score: 0, reason: 'No response from judge' };
 	}
