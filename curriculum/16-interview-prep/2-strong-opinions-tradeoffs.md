@@ -4,15 +4,6 @@ Most candidates describe. Strong candidates take positions and defend them.
 
 ---
 
-## Video Walkthrough
-
-Watch this guide on developing strong opinions:
-
-<!-- Video will be added here -->
-<iframe src="PLACEHOLDER_VIDEO_URL" width="640" height="360" frameborder="0" allowfullscreen></iframe>
-
----
-
 ## What You'll Build
 
 By the end of this module, you'll have:
@@ -405,10 +396,6 @@ The key tradeoff is...
 [What you gain vs what you lose]
 
 So my position is: start with workflows, add agents only when needed."
-
-**Submission:**
-
-Submit your video link (Loom, Google Drive, etc.) for instructor feedback.
 
 **What you'll receive feedback on:**
 - Strength of your position

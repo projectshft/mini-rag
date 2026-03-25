@@ -4,15 +4,6 @@ Practice makes permanent. Time to practice answering common questions out loud.
 
 ---
 
-## Video Walkthrough
-
-Watch this guide on effective practice:
-
-<!-- Video will be added here -->
-<iframe src="PLACEHOLDER_VIDEO_URL" width="640" height="360" frameborder="0" allowfullscreen></iframe>
-
----
-
 ## What You'll Build
 
 By the end of this module, you'll have:
@@ -101,10 +92,6 @@ Record yourself answering this question:
 5. Challenges
 6. What you learned
 
-**Submission:**
-
-Submit video link with the title: "Assignment 1 - Project Question"
-
 ---
 
 ### Practice Script
@@ -152,10 +139,6 @@ Record yourself answering ONE of these questions (your choice):
 3. Mention tradeoffs
 4. Provide counter-examples
 
-**Submission:**
-
-Submit video link with the title: "Assignment 2 - Opinion Question - [A/B/C]"
-
 ---
 
 ### Practice Script
@@ -199,10 +182,6 @@ Record yourself answering ONE of these questions (your choice):
 4. Retrieval strategy
 5. Generation
 6. Updates & maintenance
-
-**Submission:**
-
-Submit video link with the title: "Assignment 3 - Design Question - [A/B/C]"
 
 ---
 

@@ -147,18 +147,13 @@ They ARE looking for:
 
 ---
 
-## Submission Guidelines
+## Video Assignment Guidelines
 
-**Written Assignments:**
-- Submit as markdown files with clear section headings
-
-**Video Assignments:**
 - **Length:** 1-5 minutes per video
 - **Format:** Loom, Zoom, or phone camera recording
 - **Setup:** Face the camera, quiet space, good lighting
 - **Delivery:** Don't read from notes - speak naturally
-- **Submit:** Share video link for instructor feedback
-- **Feedback:** You'll receive personalized feedback on each video submission
+- **Feedback:** You'll receive personalized feedback on each submission
 
 ---
 

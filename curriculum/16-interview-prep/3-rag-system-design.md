@@ -4,15 +4,6 @@ Design RAG systems for different scenarios with clear reasoning about architectu
 
 ---
 
-## Video Walkthrough
-
-Watch this guide on RAG system design:
-
-<!-- Video will be added here -->
-<iframe src="PLACEHOLDER_VIDEO_URL" width="640" height="360" frameborder="0" allowfullscreen></iframe>
-
----
-
 ## What You'll Build
 
 By the end of this module, you'll have:
@@ -635,10 +626,6 @@ So to summarize, the key decisions are...
 - Read from notes
 - Rush through (take your time)
 - Skip the reasoning ("I'd use X because Y")
-
-**Submission:**
-
-Submit your video link (Loom, Google Drive, etc.) for instructor feedback.
 
 **What you'll receive feedback on:**
 - Completeness of system design

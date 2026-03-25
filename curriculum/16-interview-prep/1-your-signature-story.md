@@ -4,15 +4,6 @@ This is the most important skill in AI interviews. You need one clear, compellin
 
 ---
 
-## Video Walkthrough
-
-Watch this guide on crafting your signature story:
-
-<!-- Video will be added here -->
-<iframe src="PLACEHOLDER_VIDEO_URL" width="640" height="360" frameborder="0" allowfullscreen></iframe>
-
----
-
 ## What You'll Build
 
 By the end of this module, you'll have:
@@ -328,10 +319,6 @@ Record yourself telling your signature story and submit for feedback.
 - Explaining "why" not just "what"
 - Confident delivery
 - Concise and focused
-
-**Submission:**
-
-Submit your video link (Loom, Google Drive, Dropbox, etc.) for instructor feedback.
 
 **What you'll receive feedback on:**
 - Structure and framework adherence
