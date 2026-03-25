@@ -1,0 +1,635 @@
+<h1>LLM-as-Judge Testing</h1>
+<p>Beyond testing routing decisions and structure, we can use an LLM to evaluate the <strong>quality</strong> of responses. This technique catches regressions when models update, prompts change, or retrieval drifts.</p>
+<hr>
+<h2>What You&#39;ll Learn</h2>
+<ul>
+<li>What LLM-as-judge testing is and when to use it</li>
+<li>How to create &quot;golden&quot; reference responses</li>
+<li>Building a scoring system with an LLM evaluator</li>
+<li>Setting appropriate pass/fail thresholds</li>
+</ul>
+<hr>
+<h2>The Problem: Testing Response Quality</h2>
+<p>Routing tests tell us the right agent was selected, but they don&#39;t tell us if the response is actually good:</p>
+<pre><code class="language-typescript">// This passes, but is the response helpful?
+expect(result.agent).toBe(&#39;rag&#39;);
+expect(result.query).toBeTruthy();
+
+// We have no idea if the actual answer was:
+// ✅ &quot;React hooks let you use state in functional components...&quot;
+// ❌ &quot;I don&#39;t know anything about hooks&quot;
+// ❌ &quot;Here&#39;s some random unrelated text...&quot;
+</code></pre>
+<p><strong>LLM-as-judge</strong> solves this by using another LLM call to evaluate response quality.</p>
+<hr>
+<h2>How It Works</h2>
+<ol>
+<li><strong>Define a golden response</strong> - A high-quality reference answer for a specific question</li>
+<li><strong>Get the actual response</strong> - Run your system and capture the output</li>
+<li><strong>Ask an LLM to score it</strong> - Compare actual vs golden on a 1-10 scale</li>
+<li><strong>Pass/fail based on threshold</strong> - If score &lt; 8, the test fails</li>
+</ol>
+<pre><code>┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Question  │────▶│  Your RAG   │────▶│   Actual    │
+│             │     │   System    │     │  Response   │
+└─────────────┘     └─────────────┘     └──────┬──────┘
+                                               │
+┌─────────────┐                                │
+│   Golden    │────────────────────────────────┼──────┐
+│  Response   │                                │      │
+└─────────────┘                                ▼      ▼
+                                        ┌─────────────────┐
+                                        │   LLM Judge     │
+                                        │  Compare &amp; Score│
+                                        │    (1-10)       │
+                                        └────────┬────────┘
+                                                 │
+                                                 ▼
+                                        ┌─────────────────┐
+                                        │  Score &gt;= 8?    │
+                                        │  PASS : FAIL    │
+                                        └─────────────────┘
+</code></pre>
+<hr>
+<h2>When to Use LLM-as-Judge</h2>
+<p><strong>Good use cases:</strong></p>
+<ul>
+<li>Catching quality regressions after model updates</li>
+<li>Validating prompt changes don&#39;t degrade responses</li>
+<li>Ensuring RAG retrieval changes don&#39;t hurt answer quality</li>
+<li>Smoke testing critical user journeys</li>
+</ul>
+<p><strong>Not ideal for:</strong></p>
+<ul>
+<li>Testing exact output (use string matching)</li>
+<li>Testing routing logic (use existing selector tests)</li>
+<li>High-frequency CI runs (expensive and slow)</li>
+</ul>
+<hr>
+<h2>Creating Golden Responses</h2>
+<p>The key to good LLM-as-judge tests is high-quality reference responses.</p>
+<h3>Where to Get Golden Responses</h3>
+<ol>
+<li><strong>Copy from the chat interface</strong> - Use your best real responses</li>
+<li><strong>Write them manually</strong> - Craft ideal responses for key questions</li>
+<li><strong>Curate from production</strong> - Save highly-rated user interactions</li>
+</ol>
+<h3>What Makes a Good Golden Response</h3>
+<pre><code class="language-typescript">// ❌ Too vague - hard to score against
+const badGolden = &#39;React hooks are useful for state management.&#39;;
+
+// ✅ Specific and comprehensive
+const goodGolden = `React hooks let you use state and lifecycle features
+in functional components. The most common hooks are:
+
+1. useState - for managing local state
+2. useEffect - for side effects like API calls
+3. useContext - for accessing context values
+4. useRef - for mutable references that persist across renders
+
+Hooks must be called at the top level of your component, not inside
+loops or conditions.`;
+</code></pre>
+<hr>
+<h2>The Scoring Prompt</h2>
+<p>The LLM judge needs clear instructions on how to evaluate:</p>
+<pre><code class="language-typescript">const JUDGE_SYSTEM_PROMPT = `You are an expert evaluator assessing AI response quality.
+
+Compare the ACTUAL response against the REFERENCE response and score from 1-10:
+
+SCORING CRITERIA:
+- 10: Perfect - covers all key points, equally or more helpful
+- 8-9: Excellent - covers most key points, minor omissions
+- 6-7: Good - covers main idea but missing important details
+- 4-5: Fair - partially correct but significant gaps
+- 2-3: Poor - mostly incorrect or unhelpful
+- 1: Failed - completely wrong or off-topic
+
+IMPORTANT:
+- Focus on factual accuracy and completeness
+- The actual response doesn&#39;t need identical wording
+- It CAN be better than the reference (still scores 10)
+- Penalize incorrect information heavily`;
+</code></pre>
+<p>We use <strong>structured outputs</strong> with a Zod schema to guarantee valid responses - no JSON parsing needed!</p>
+<hr>
+<h2>Implementation</h2>
+<p>Add a file here: <code>app/agents/__tests__/llm-judge.test.ts</code></p>
+<h3>The Judge Function (Using Structured Outputs)</h3>
+<p>We use OpenAI&#39;s structured outputs with a Zod schema to guarantee valid responses:</p>
+<pre><code class="language-typescript">import { z } from &#39;zod&#39;;
+import { zodResponseFormat } from &#39;openai/helpers/zod&#39;;
+import { openaiClient } from &#39;@/app/libs/openai/openai&#39;;
+
+// Define the schema for judge responses
+const JudgeResultSchema = z.object({
+	score: z.number().min(1).max(10),
+	reason: z.string(),
+});
+
+type JudgeResult = z.infer&lt;typeof JudgeResultSchema&gt;;
+
+async function judgeResponse(
+	question: string,
+	actualResponse: string,
+	goldenResponse: string,
+): Promise&lt;JudgeResult&gt; {
+	const response = await openaiClient.chat.completions.create({
+		model: &#39;gpt-4o-mini&#39;,
+		temperature: 0,
+		messages: [
+			{ role: &#39;system&#39;, content: JUDGE_SYSTEM_PROMPT },
+			{
+				role: &#39;user&#39;,
+				content: `QUESTION: ${question}
+
+REFERENCE RESPONSE:
+${goldenResponse}
+
+ACTUAL RESPONSE:
+${actualResponse}
+
+Score the actual response against the reference.`,
+			},
+		],
+		response_format: zodResponseFormat(JudgeResultSchema, &#39;judge_result&#39;),
+	});
+
+	const content = response.choices[0]?.message?.content;
+	if (!content) {
+		return { score: 0, reason: &#39;No response from judge&#39; };
+	}
+
+	return JSON.parse(content) as JudgeResult;
+}
+</code></pre>
+<p><strong>Why structured outputs?</strong></p>
+<ul>
+<li>Guaranteed valid JSON structure from the model</li>
+<li>Type safety with Zod schema</li>
+<li>The model is constrained to return exactly what we expect</li>
+</ul>
+<h3>Test Cases with Golden Responses</h3>
+<pre><code class="language-typescript">const TEST_CASES = [
+	{
+		name: &#39;React hooks explanation&#39;,
+		question: &#39;How do React hooks work?&#39;,
+		goldenResponse: `React hooks are functions that let you use state and
+lifecycle features in functional components. Key hooks include:
+
+- useState: Manages local component state
+- useEffect: Handles side effects like data fetching
+- useContext: Accesses React context
+- useRef: Creates mutable references
+
+Rules: Call hooks at the top level only, not in loops or conditions.`,
+	},
+	{
+		name: &#39;Async/await explanation&#39;,
+		question: &#39;Explain async/await in JavaScript&#39;,
+		goldenResponse: `Async/await is syntax for handling asynchronous operations:
+
+- async functions always return a Promise
+- await pauses execution until a Promise resolves
+- Makes async code read like synchronous code
+- Use try/catch for error handling
+
+Example:
+async function fetchData() {
+  try {
+    const response = await fetch(&#39;/api/data&#39;);
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error(&#39;Failed:&#39;, error);
+  }
+}`,
+	},
+];
+</code></pre>
+<h3>The Test Suite</h3>
+<pre><code class="language-typescript">describe(&#39;LLM-as-Judge Response Quality&#39;, () =&gt; {
+	jest.setTimeout(30000); // LLM calls take time
+
+	const PASSING_SCORE = 8;
+
+	test.each(TEST_CASES)(
+		&#39;should produce quality response for: $name&#39;,
+		async ({ question, goldenResponse }) =&gt; {
+			// 1. Get actual response from your system
+			const actualResponse = await getRAGResponse(question);
+
+			// 2. Judge the response
+			const { score, reason } = await judgeResponse(
+				question,
+				actualResponse,
+				goldenResponse,
+			);
+
+			// 3. Log for debugging
+			console.log(`\n📊 ${question}`);
+			console.log(`   Score: ${score}/10`);
+			console.log(`   Reason: ${reason}`);
+
+			// 4. Assert quality threshold
+			expect(score).toBeGreaterThanOrEqual(PASSING_SCORE);
+		},
+	);
+});
+</code></pre>
+<hr>
+<h2>Running the Tests</h2>
+<pre><code class="language-bash"># Run LLM-as-judge tests
+yarn test:judge
+
+# Run with verbose output
+yarn test:judge --verbose
+</code></pre>
+<p><strong>Expected output:</strong></p>
+<pre><code>PASS app/agents/__tests__/llm-judge.test.ts
+  LLM-as-Judge Response Quality
+    ✓ should produce quality response for: React hooks explanation (4521ms)
+      📊 How do React hooks work?
+         Score: 9/10
+         Reason: Covers all key hooks and rules, adds helpful examples
+    ✓ should produce quality response for: Async/await explanation (3892ms)
+      📊 Explain async/await in JavaScript
+         Score: 8/10
+         Reason: Accurate explanation, missing try/catch detail
+
+Test Suites: 1 passed, 1 total
+Tests:       2 passed, 2 total
+</code></pre>
+<hr>
+<h2>Choosing the Right Threshold</h2>
+<p>Why 8 as the passing score?</p>
+<table>
+<thead>
+<tr>
+<th>Score</th>
+<th>Meaning</th>
+<th>Test Result</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>10</td>
+<td>Perfect match or better</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>9</td>
+<td>Excellent, minor differences</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>8</td>
+<td>Good, covers key points</td>
+<td>✅ Pass</td>
+</tr>
+<tr>
+<td>7</td>
+<td>Decent but missing details</td>
+<td>❌ Fail</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Acceptable but concerning</td>
+<td>❌ Fail</td>
+</tr>
+<tr>
+<td>&lt;6</td>
+<td>Quality problem</td>
+<td>❌ Fail</td>
+</tr>
+</tbody></table>
+<p><strong>Adjust based on your needs:</strong></p>
+<ul>
+<li>Critical production tests: threshold = 9</li>
+<li>General quality checks: threshold = 8</li>
+<li>Loose smoke tests: threshold = 7</li>
+</ul>
+<hr>
+<h2>Catching Regressions</h2>
+<p>LLM-as-judge excels at catching subtle regressions:</p>
+<h3>Model Update Regression</h3>
+<pre><code>Before (GPT-4): Score 9/10 ✅
+After (GPT-4-turbo): Score 6/10 ❌
+
+Reason: New model is more concise but missing key details
+about hook rules and common pitfalls.
+</code></pre>
+<h3>Prompt Change Regression</h3>
+<pre><code>Before: Score 9/10 ✅
+After prompt edit: Score 5/10 ❌
+
+Reason: Response now includes incorrect information about
+hooks working inside loops.
+</code></pre>
+<h3>Retrieval Drift</h3>
+<pre><code>Before: Score 9/10 ✅
+After re-indexing: Score 4/10 ❌
+
+Reason: RAG is now retrieving outdated documentation,
+response references deprecated APIs.
+</code></pre>
+<hr>
+<h2>Exercise: Create Your Own LLM-as-Judge Tests</h2>
+<h3>Step 1: Add the Test Script to package.json</h3>
+<p>Add this script to your <code>package.json</code>:</p>
+<pre><code class="language-json">{
+	&quot;scripts&quot;: {
+		&quot;test:judge&quot;: &quot;jest llm-judge&quot;
+	}
+}
+</code></pre>
+<h3>Step 2: Create the Test File</h3>
+<p>Create <code>app/agents/__tests__/llm-judge.test.ts</code>:</p>
+<pre><code class="language-typescript">/**
+ * LLM-AS-JUDGE TESTS
+ *
+ * These tests evaluate response QUALITY using another LLM as a judge.
+ * Useful for catching regressions when:
+ * - Model versions change
+ * - Prompts are modified
+ * - RAG retrieval drifts
+ */
+
+import { z } from &#39;zod&#39;;
+import { zodResponseFormat } from &#39;openai/helpers/zod&#39;;
+import { POST as chatPOST } from &#39;@/app/api/chat/route&#39;;
+import { openaiClient } from &#39;@/app/libs/openai/openai&#39;;
+
+// ============================================================================
+// JUDGE CONFIGURATION
+// ============================================================================
+
+const PASSING_SCORE = 8;
+
+const JUDGE_SYSTEM_PROMPT = `You are an expert evaluator assessing AI response quality.
+
+Compare the ACTUAL response against the REFERENCE response and score from 1-10:
+
+SCORING CRITERIA:
+- 10: Perfect - covers all key points, equally or more helpful than reference
+- 8-9: Excellent - covers most key points, only minor omissions
+- 6-7: Good - covers main idea but missing important details
+- 4-5: Fair - partially correct but has significant gaps
+- 2-3: Poor - mostly incorrect or unhelpful
+- 1: Failed - completely wrong or off-topic
+
+IMPORTANT:
+- Focus on factual accuracy and completeness
+- The actual response doesn&#39;t need identical wording
+- It CAN be better than the reference (still scores 10)
+- Penalize incorrect information heavily
+- Consider if a user would find the response helpful`;
+
+// Schema for structured output
+const JudgeResultSchema = z.object({
+	score: z.number().min(1).max(10),
+	reason: z.string(),
+});
+
+type JudgeResult = z.infer&lt;typeof JudgeResultSchema&gt;;
+
+// ============================================================================
+// TEST CASES - Add your golden responses here!
+// ============================================================================
+
+interface TestCase {
+	name: string;
+	question: string;
+	goldenResponse: string;
+}
+
+/**
+ * TODO: Add your own test cases!
+ *
+ * How to get golden responses:
+ * 1. Run `yarn dev` and open the chat interface
+ * 2. Ask questions and find responses you&#39;re happy with
+ * 3. Copy those responses here as golden references
+ */
+const TEST_CASES: TestCase[] = [
+	{
+		name: &#39;React hooks explanation&#39;,
+		question: &#39;How do React hooks work?&#39;,
+		goldenResponse: `React hooks are functions that let you use state and lifecycle features in functional components. The most common hooks include:
+
+- useState: Manages local component state
+- useEffect: Handles side effects like data fetching and subscriptions
+- useContext: Accesses React context values
+- useRef: Creates mutable references that persist across renders
+
+Important rules for hooks:
+1. Only call hooks at the top level of your component
+2. Don&#39;t call hooks inside loops, conditions, or nested functions
+3. Only call hooks from React function components or custom hooks`,
+	},
+	// TODO: Add more test cases for your specific use case
+	// {
+	//   name: &#39;Your test name&#39;,
+	//   question: &#39;Your question here&#39;,
+	//   goldenResponse: &#39;Your golden response here&#39;,
+	// },
+];
+
+// ============================================================================
+// JUDGE IMPLEMENTATION
+// ============================================================================
+
+async function judgeResponse(
+	question: string,
+	actualResponse: string,
+	goldenResponse: string,
+): Promise&lt;JudgeResult&gt; {
+	const response = await openaiClient.chat.completions.create({
+		model: &#39;gpt-4o-mini&#39;,
+		temperature: 0,
+		messages: [
+			{ role: &#39;system&#39;, content: JUDGE_SYSTEM_PROMPT },
+			{
+				role: &#39;user&#39;,
+				content: `QUESTION: ${question}
+
+REFERENCE RESPONSE:
+${goldenResponse}
+
+ACTUAL RESPONSE:
+${actualResponse}
+
+Score the actual response against the reference.`,
+			},
+		],
+		response_format: zodResponseFormat(JudgeResultSchema, &#39;judge_result&#39;),
+	});
+
+	const content = response.choices[0]?.message?.content;
+	if (!content) {
+		return { score: 0, reason: &#39;No response from judge&#39; };
+	}
+
+	return JSON.parse(content) as JudgeResult;
+}
+
+// ============================================================================
+// HELPER: Get response from RAG system
+// ============================================================================
+
+async function getRAGResponse(question: string): Promise&lt;string&gt; {
+	const request = {
+		json: async () =&gt; ({
+			messages: [{ role: &#39;user&#39;, content: question }],
+			agent: &#39;rag&#39;,
+			query: question,
+		}),
+	} as Request;
+
+	const response = await chatPOST(request);
+
+	const reader = response.body?.getReader();
+	if (!reader) {
+		throw new Error(&#39;No response body&#39;);
+	}
+
+	const decoder = new TextDecoder();
+	let fullResponse = &#39;&#39;;
+
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		fullResponse += decoder.decode(value, { stream: true });
+	}
+
+	return fullResponse;
+}
+
+// ============================================================================
+// TEST SUITE
+// ============================================================================
+
+describe(&#39;LLM-as-Judge Response Quality&#39;, () =&gt; {
+	jest.setTimeout(30000);
+
+	test.each(TEST_CASES)(
+		&#39;should produce quality response for: $name&#39;,
+		async ({ question, goldenResponse }) =&gt; {
+			// 1. Get actual response from your RAG system
+			const actualResponse = await getRAGResponse(question);
+
+			// 2. Have the LLM judge score it
+			const { score, reason } = await judgeResponse(
+				question,
+				actualResponse,
+				goldenResponse,
+			);
+
+			// 3. Log results for visibility
+			console.log(`\n📊 Test: ${question}`);
+			console.log(`   Score: ${score}/10`);
+			console.log(`   Reason: ${reason}`);
+			console.log(`   Threshold: ${PASSING_SCORE}`);
+
+			// 4. Assert quality meets threshold
+			expect(score).toBeGreaterThanOrEqual(PASSING_SCORE);
+		},
+	);
+});
+</code></pre>
+<h3>Step 3: Get Golden Responses</h3>
+<ol>
+<li>Open your chat interface (<code>yarn dev</code>)</li>
+<li>Ask questions you want to test</li>
+<li>Copy the best responses as your golden references</li>
+</ol>
+<h3>Step 4: Run and Iterate</h3>
+<pre><code class="language-bash">yarn test:judge
+</code></pre>
+<p>If tests fail, check:</p>
+<ul>
+<li>Is your golden response too strict?</li>
+<li>Is the actual response actually bad?</li>
+<li>Does your judge prompt need adjustment?</li>
+</ul>
+<hr>
+<h2>Tips for Effective LLM-as-Judge Tests</h2>
+<h3>Keep Test Cases Focused</h3>
+<pre><code class="language-typescript">// ❌ Too broad - hard to evaluate
+{
+  question: &#39;Tell me everything about React&#39;,
+  goldenResponse: &#39;...(500 lines)...&#39;
+}
+
+// ✅ Focused - clear evaluation criteria
+{
+  question: &#39;What are the rules for using React hooks?&#39;,
+  goldenResponse: &#39;...(key rules only)...&#39;
+}
+</code></pre>
+<h3>Use Consistent Golden Response Style</h3>
+<pre><code class="language-typescript">// Pick a style and stick with it
+// Option A: Bullet points
+goldenResponse: `Key points:
+- Point 1
+- Point 2
+- Point 3`;
+
+// Option B: Paragraphs
+goldenResponse: `First paragraph explaining concept.
+
+Second paragraph with details.`;
+</code></pre>
+<h3>Don&#39;t Over-Test</h3>
+<pre><code class="language-typescript">// ❌ Testing every possible question
+const TEST_CASES = [
+  /* 50 test cases */
+];
+
+// ✅ Testing critical user journeys
+const TEST_CASES = [
+  { name: &#39;Core concept 1&#39;, ... },
+  { name: &#39;Core concept 2&#39;, ... },
+  { name: &#39;Common edge case&#39;, ... },
+];
+</code></pre>
+<hr>
+<h2>Cost Considerations</h2>
+<p>Each test makes 2 LLM calls:</p>
+<ol>
+<li>Your RAG system response</li>
+<li>The judge evaluation</li>
+</ol>
+<p><strong>Cost estimate per test run:</strong></p>
+<ul>
+<li>~$0.01-0.02 with GPT-4o-mini</li>
+<li>~$0.05-0.10 with GPT-4o</li>
+</ul>
+<p><strong>Recommendations:</strong></p>
+<ul>
+<li>Run on PR merges, not every commit</li>
+<li>Use GPT-4o-mini for judging (accurate enough, much cheaper)</li>
+<li>Keep test suite small and focused (5-10 critical cases)</li>
+</ul>
+<hr>
+<h2>What&#39;s Next?</h2>
+<p>You now have:</p>
+<ul>
+<li>✅ Routing tests (selector tests)</li>
+<li>✅ Quality tests (LLM-as-judge)</li>
+<li>✅ Regression detection for model/prompt changes</li>
+</ul>
+<p>Next up: <strong>Capstone Project</strong> where you&#39;ll build and deploy your own RAG system!</p>
+<hr>
+<h2>Quick Reference</h2>
+<pre><code class="language-bash"># Run LLM-as-judge tests
+yarn test:judge
+
+# Run all agent tests
+yarn test
+</code></pre>
+<h3>Test File Location</h3>
+<pre><code>app/agents/__tests__/llm-judge.test.ts
+</code></pre>
+<h3>Passing Threshold</h3>
+<pre><code class="language-typescript">const PASSING_SCORE = 8; // Adjust based on needs
+</code></pre>

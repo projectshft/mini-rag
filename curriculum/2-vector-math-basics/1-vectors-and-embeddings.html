@@ -1,35 +1,26 @@
 <h1>Vectors and Embeddings: Words to Numbers</h1>
-<p>
-	Understanding vectors is crucial for RAG systems. Don&#39;t worry -
-	we&#39;ll keep it practical and visual!
-</p>
-<hr />
+<p>Understanding vectors is crucial for RAG systems. Don&#39;t worry - we&#39;ll keep it practical and visual!</p>
+<hr>
 <h2>Video Walkthrough</h2>
 <p>Watch these introductions to vectors and embeddings:</p>
 <p><strong>Vectors and Embeddings Explained:</strong></p>
-<iframe
-	src="https://share.descript.com/embed/zz3e0kMLiO6"
-	width="640"
-	height="360"
-	frameborder="0"
-	allowfullscreen
-></iframe>
+<iframe src="https://share.descript.com/embed/zz3e0kMLiO6" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
-<hr />
+<hr>
 <h2>What You&#39;ll Learn</h2>
 <ul>
-	<li>What vectors are and why they matter</li>
-	<li>How text becomes numbers (embeddings)</li>
-	<li>Why cosine similarity works</li>
-	<li>Basic vector operations</li>
+<li>What vectors are and why they matter</li>
+<li>How text becomes numbers (embeddings)</li>
+<li>Why cosine similarity works</li>
+<li>Basic vector operations</li>
 </ul>
-<hr />
+<hr>
 <h2>Why Vector Math for RAG?</h2>
 <p>RAG systems need to find similar content. To do that:</p>
 <pre><code>Text → Vectors → Measure Similarity → Find Matches
 </code></pre>
 <p>The math makes similarity measurable!</p>
-<hr />
+<hr>
 <h2>What is a Vector?</h2>
 <p>A vector is just a list of numbers:</p>
 <pre><code class="language-typescript">// 2D vector (x, y coordinates)
@@ -41,11 +32,8 @@ const vector3D = [1, 2, 3];
 // Text embedding (512 dimensions!)
 const embedding = [0.1, -0.3, 0.8, 0.2, ...];
 </code></pre>
-<p>
-	<strong>Think of it as:</strong> A point in space, or a direction from the
-	origin.
-</p>
-<hr />
+<p><strong>Think of it as:</strong> A point in space, or a direction from the origin.</p>
+<hr>
 <h2>From Text to Vectors</h2>
 <h3>How Embeddings Work</h3>
 <pre><code>&quot;artificial intelligence&quot;
@@ -68,7 +56,7 @@ Embedding Model
 const embedding = response.data[0].embedding;
 // [0.1, -0.3, 0.8, ..., 0.2] (512 numbers)
 </code></pre>
-<hr />
+<hr>
 <h2>Measuring Similarity</h2>
 <h3>The Dot Product</h3>
 <p>Multiply corresponding numbers, add them up:</p>
@@ -82,9 +70,9 @@ dotProduct(v1, v2); // (1×4) + (2×5) + (3×6) = 32
 </code></pre>
 <p><strong>Interpretation:</strong></p>
 <ul>
-	<li>Higher value = more similar</li>
-	<li>Zero = unrelated</li>
-	<li>Negative = opposite</li>
+<li>Higher value = more similar</li>
+<li>Zero = unrelated</li>
+<li>Negative = opposite</li>
 </ul>
 <h3>Cosine Similarity (The Standard)</h3>
 <p>Normalize the dot product to get a score from -1 to 1:</p>
@@ -99,11 +87,11 @@ function cosineSimilarity(a: number[], b: number[]): number {
 </code></pre>
 <p><strong>Scale:</strong></p>
 <ul>
-	<li><code>1.0</code> = Identical direction</li>
-	<li><code>0.0</code> = Unrelated (perpendicular)</li>
-	<li><code>-1.0</code> = Opposite direction</li>
+<li><code>1.0</code> = Identical direction</li>
+<li><code>0.0</code> = Unrelated (perpendicular)</li>
+<li><code>-1.0</code> = Opposite direction</li>
 </ul>
-<hr />
+<hr>
 <h2>Visual Intuition</h2>
 <pre><code>     Vector A
         /
@@ -115,31 +103,29 @@ Large angle = Low similarity
 </code></pre>
 <p>Cosine similarity measures the angle between vectors:</p>
 <ul>
-	<li>Same direction → angle 0° → similarity = 1</li>
-	<li>Perpendicular → angle 90° → similarity = 0</li>
-	<li>Opposite → angle 180° → similarity = -1</li>
+<li>Same direction → angle 0° → similarity = 1</li>
+<li>Perpendicular → angle 90° → similarity = 0</li>
+<li>Opposite → angle 180° → similarity = -1</li>
 </ul>
-<hr />
+<hr>
 <h2>Why 512 Dimensions?</h2>
 <p>Embeddings have many dimensions (512, 1536, 3072):</p>
 <ul>
-	<li><strong>More dimensions = richer meaning</strong></li>
-	<li>
-		<strong>Each dimension captures a concept:</strong>
-		<ul>
-			<li>Dim 1: &quot;How technical?&quot;</li>
-			<li>Dim 2: &quot;How positive?&quot;</li>
-			<li>Dim 50: &quot;Related to animals?&quot;</li>
-			<li>...</li>
-		</ul>
-	</li>
+<li><strong>More dimensions = richer meaning</strong></li>
+<li><strong>Each dimension captures a concept:</strong><ul>
+<li>Dim 1: &quot;How technical?&quot;</li>
+<li>Dim 2: &quot;How positive?&quot;</li>
+<li>Dim 50: &quot;Related to animals?&quot;</li>
+<li>...</li>
+</ul>
+</li>
 </ul>
 <p>It&#39;s a balance:</p>
 <ul>
-	<li>More = better quality</li>
-	<li>Fewer = faster computation</li>
+<li>More = better quality</li>
+<li>Fewer = faster computation</li>
 </ul>
-<hr />
+<hr>
 <h2>Finding Similar Documents</h2>
 <pre><code class="language-typescript">// Documents
 const docs = [
@@ -164,95 +150,47 @@ const similarities = docEmbeddings.map((docEmbed) =&gt;
 // Results: [0.8, 0.7, 0.3, 0.1]
 // &quot;Python is a programming language&quot; wins!
 </code></pre>
-<hr />
+<hr>
 <h2>Essential Watching</h2>
 <p>For beautiful visual explanations:</p>
 <p><strong>AI Accelerator Compendium (Interactive Guides):</strong></p>
 <ul>
-	<li>
-		<a
-			href="https://projectshft.github.io/ai-accelerator-compendium/vectors/index.html"
-			>Vectors</a
-		>
-		- Interactive visualization of vectors and their properties
-	</li>
-	<li>
-		<a
-			href="https://projectshft.github.io/ai-accelerator-compendium/dot-products/index.html"
-			>Dot Products</a
-		>
-		- Visual explanation of dot products and similarity
-	</li>
+<li><a href="https://projectshft.github.io/ai-accelerator-compendium/vectors.html">Vectors</a> - Interactive visualization of vectors and their properties</li>
+<li><a href="https://projectshft.github.io/ai-accelerator-compendium/dot-products.html">Dot Products</a> - Visual explanation of dot products and similarity</li>
 </ul>
 <p><strong>Bonus - Dive Deeper:</strong></p>
 <ul>
-	<li>
-		<a
-			href="https://projectshft.github.io/ai-accelerator-compendium/llms/index.html"
-			>LLMs</a
-		>
-		- How large language models work
-	</li>
-	<li>
-		<a
-			href="https://projectshft.github.io/ai-accelerator-compendium/transformers/index.html"
-			>Transformers</a
-		>
-		- The architecture behind modern AI
-	</li>
-	<li>
-		<a
-			href="https://projectshft.github.io/ai-accelerator-compendium/attention/index.html"
-			>Attention</a
-		>
-		- Understanding attention mechanisms
-	</li>
+<li><a href="https://projectshft.github.io/ai-accelerator-compendium/llms.html">LLMs</a> - How large language models work</li>
+<li><a href="https://projectshft.github.io/ai-accelerator-compendium/transformers.html">Transformers</a> - The architecture behind modern AI</li>
+<li><a href="https://projectshft.github.io/ai-accelerator-compendium/attention.html">Attention</a> - Understanding attention mechanisms</li>
 </ul>
 <p><strong>3Blue1Brown&#39;s Linear Algebra Series:</strong></p>
 <ol>
-	<li>
-		<a href="https://www.youtube.com/watch?v=fNk_zzaMoSs"
-			>Vectors, what even are they?</a
-		>
-	</li>
-	<li>
-		<a href="https://www.youtube.com/watch?v=LyGKycYT2v0"
-			>Dot products and duality</a
-		>
-	</li>
+<li><a href="https://www.youtube.com/watch?v=fNk_zzaMoSs">Vectors, what even are they?</a></li>
+<li><a href="https://www.youtube.com/watch?v=LyGKycYT2v0">Dot products and duality</a></li>
 </ol>
 <p>These resources make the concepts crystal clear!</p>
-<hr />
+<hr>
 <h2>Quick Quiz</h2>
 <p>Which pairs would have high cosine similarity?</p>
 <ol>
-	<li>&quot;I love pizza&quot; vs &quot;Pizza is delicious&quot;</li>
-	<li>
-		&quot;Machine learning algorithms&quot; vs &quot;AI and neural
-		networks&quot;
-	</li>
-	<li>
-		&quot;The weather is sunny&quot; vs &quot;Database optimization&quot;
-	</li>
+<li>&quot;I love pizza&quot; vs &quot;Pizza is delicious&quot;</li>
+<li>&quot;Machine learning algorithms&quot; vs &quot;AI and neural networks&quot;</li>
+<li>&quot;The weather is sunny&quot; vs &quot;Database optimization&quot;</li>
 </ol>
 <details>
-	<summary>Answers</summary>
+<summary>Answers</summary>
 
-	<ol>
-		<li>✅ <strong>High</strong> - Both about pizza, positive sentiment</li>
-		<li>✅ <strong>High</strong> - Both about AI/ML concepts</li>
-		<li>❌ <strong>Low</strong> - Completely different topics</li>
-	</ol>
+<ol>
+<li>✅ <strong>High</strong> - Both about pizza, positive sentiment</li>
+<li>✅ <strong>High</strong> - Both about AI/ML concepts</li>
+<li>❌ <strong>Low</strong> - Completely different topics</li>
+</ol>
 </details>
 
-<hr />
+<hr>
 <h2>What You Learned</h2>
-<p>
-	✅ Vectors are lists of numbers<br />✅ Embeddings convert text to
-	vectors<br />✅ Similar text → similar vectors<br />✅ Cosine similarity
-	measures angle between vectors<br />✅ This is how RAG finds relevant
-	documents
-</p>
-<hr />
+<p>✅ Vectors are lists of numbers<br>✅ Embeddings convert text to vectors<br>✅ Similar text → similar vectors<br>✅ Cosine similarity measures angle between vectors<br>✅ This is how RAG finds relevant documents</p>
+<hr>
 <h2>What&#39;s Next</h2>
 <p>Now let&#39;s implement similarity calculations and do some word math!</p>
