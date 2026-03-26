@@ -18,7 +18,7 @@ Before getting started, you'll need to set up the following services:
     - Free tier available
     - Used for vector database storage and similarity search
 
-3. **Helicone API Key** (https://www.helicone.ai/)
+3. **LangSmith API Key** (https://smith.langchain.com/)
     - Free tier available
     - Used for LLM observability and monitoring
 
@@ -27,7 +27,8 @@ Create a `.env` file in the root directory with these keys:
 ```
 OPENAI_API_KEY=your_openai_key_here
 PINECONE_API_KEY=your_pinecone_key_here
-HELICONE_API_KEY=your_helicone_key_here
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=your_langsmith_key_here
 PINECONE_INDEX=your_index_name
 OPENAI_FINETUNED_MODEL=your_finetuned_model_id (optional)
 ```
@@ -60,7 +61,7 @@ Before diving into the code, we highly recommend watching 3Blue1Brown's series o
     -   Training job management
 
 -   **Observability**:
-    -   Integration with Helicone for LLM monitoring
+    -   Integration with LangSmith for LLM monitoring
     -   Performance tracking
     -   Usage analytics
 
@@ -70,7 +71,7 @@ Before diving into the code, we highly recommend watching 3Blue1Brown's series o
 -   **Backend**: Next.js API Routes
 -   **AI/ML**: OpenAI API, Pinecone Vector Database
 -   **Web Scraping**: Puppeteer
--   **Monitoring**: Helicone
+-   **Monitoring**: LangSmith
 -   **Package Manager**: Yarn
 
 ## Learning Objectives
@@ -249,7 +250,7 @@ yarn test
 -   The `working_version` branch has the complete solution if you get stuck
 -   Use `console.log()` liberally to understand data flow
 -   Check Pinecone dashboard to verify vectors are uploaded
--   Use Helicone dashboard to debug LLM calls and see cost
+-   Use LangSmith dashboard to debug LLM calls and see cost
 -   Read the inline comments in TODO sections - they guide you step-by-step
 
 **Good luck! Figure it out. 🚀**
@@ -268,6 +269,6 @@ This repo is a preview of the full hands-on program where we build AI applicatio
 
 -   [OpenAI Documentation](https://platform.openai.com/docs)
 -   [Pinecone Documentation](https://docs.pinecone.io)
--   [Helicone Documentation](https://docs.helicone.ai)
+-   [LangSmith Documentation](https://docs.langchain.com/langsmith)
 -   [Vercel AI SDK](https://sdk.vercel.ai/docs)
 -   [Next.js Documentation](https://nextjs.org/docs)
