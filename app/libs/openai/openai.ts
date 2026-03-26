@@ -17,7 +17,7 @@
  *    - News agent: Uses RAG (vector search) for current events
  *    - General agent: Fallback for everything else
  *
- * 3. HELICONE INTEGRATION:
+ * 3. LANGSMITH INTEGRATION:
  *    - Observability platform for monitoring AI usage
  *    - Tracks costs, performance, and usage patterns
  *    - Essential for production AI applications
@@ -29,11 +29,14 @@
  * - Add system prompts to agent configurations
  *
  * Learn more about fine-tuning: https://platform.openai.com/docs/guides/fine-tuning
- * Learn more about Helicone: https://docs.helicone.ai/
+ * Learn more about LangSmith: https://docs.langchain.com/langsmith
  */
 
 import OpenAI from 'openai';
+import { wrapOpenAI } from 'langsmith/wrappers';
 
-export const openaiClient = new OpenAI({
+const baseClient = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY as string,
 });
+
+export const openaiClient = wrapOpenAI(baseClient);
