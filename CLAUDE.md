@@ -148,8 +148,9 @@ OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:...  # Optional
 PINECONE_API_KEY=...
 PINECONE_INDEX=your-index-name
 
-# Helicone (Observability)
-HELICONE_API_KEY=sk-helicone-...
+# LangSmith (Observability)
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=lsv2_pt_...
 ```
 
 ---
