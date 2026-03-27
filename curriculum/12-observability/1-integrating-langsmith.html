@@ -4,13 +4,11 @@
 <h2>What You&#39;ll Learn</h2>
 <ul>
 <li>Why observability matters for AI applications</li>
-<li>How LangSmith tracks OpenAI API usage</li>
-<li>Setting up LangSmith with minimal code changes</li>
-<li>Monitoring costs, performance, and usage patterns</li>
+<li>How to set up LangSmith in 3 steps</li>
+<li>Viewing traces in the dashboard</li>
 </ul>
 <hr>
 <h2>Why Observability Matters</h2>
-<h3>The Problem with &quot;Black Box&quot; AI</h3>
 <p>Without observability, you&#39;re flying blind:</p>
 <ul>
 <li><strong>Cost surprises</strong>: Suddenly $500 bill, no idea why</li>
@@ -18,59 +16,29 @@
 <li><strong>Quality problems</strong>: Bad outputs, no data to improve</li>
 <li><strong>Usage patterns</strong>: Don&#39;t know what users are asking</li>
 </ul>
-<h3>What Good Observability Provides</h3>
+<p>With observability you get:</p>
 <ul>
-<li><strong>Cost tracking</strong>: Per-user, per-agent, per-request costs</li>
-<li><strong>Performance monitoring</strong>: Latency, throughput, errors</li>
-<li><strong>Quality metrics</strong>: Token usage, model performance</li>
-<li><strong>Usage insights</strong>: Popular queries, failure patterns</li>
-<li><strong>Debugging</strong>: Full request/response logs</li>
-</ul>
-<hr>
-<h2>Introducing LangSmith</h2>
-<p><strong>LangSmith</strong> is an observability platform by LangChain for LLM applications.</p>
-<p><strong>Key Features:</strong></p>
-<ul>
-<li>Request/response logging</li>
+<li>Full request/response logs</li>
 <li>Cost tracking per request</li>
 <li>Latency monitoring</li>
-<li>Custom metadata for filtering</li>
-<li>Usage analytics and dashboards</li>
-<li>Trace visualization for debugging</li>
-<li>Evaluation tools built-in</li>
-</ul>
-<p><strong>Why LangSmith?</strong></p>
-<ul>
-<li>Simple integration (wrap your client)</li>
-<li>Works with any LLM provider</li>
-<li>Free tier available</li>
-<li>Built-in evaluation and testing tools</li>
-<li>Excellent trace visualization</li>
-</ul>
-<p><strong>Learn more:</strong></p>
-<ul>
-<li><a href="https://docs.langchain.com/langsmith">LangSmith Documentation</a></li>
-<li><a href="https://github.com/langchain-ai/langsmith-sdk">LangSmith GitHub</a></li>
+<li>Error tracking and debugging</li>
 </ul>
 <hr>
 <h2>Setting Up LangSmith</h2>
-<h3>Step 1: Create LangSmith Account</h3>
+<h3>Step 1: Create Account &amp; Get API Key</h3>
 <ol>
 <li>Go to <a href="https://smith.langchain.com/">smith.langchain.com</a></li>
 <li>Sign up for free account</li>
 <li>Navigate to Settings → API Keys</li>
-<li>Create and copy your LangSmith API key</li>
+<li>Create and copy your API key</li>
 </ol>
-<h3>Step 2: Install the SDK</h3>
-<pre><code class="language-bash">yarn add langsmith
-</code></pre>
-<h3>Step 3: Add Environment Variables</h3>
-<p>Add to your <code>.env</code> or <code>.env.local</code>:</p>
+<h3>Step 2: Add Environment Variables</h3>
+<p>Add to your <code>.env.local</code>:</p>
 <pre><code class="language-bash">LANGSMITH_TRACING=true
 LANGSMITH_API_KEY=lsv2_pt_xxxxxxxxxxxxxxxxxxxxxxxx
 </code></pre>
-<h3>Step 4: Update OpenAI Client</h3>
-<p>The integration is straightforward. Update <code>app/libs/openai/openai.ts</code>:</p>
+<h3>Step 3: Update OpenAI Client</h3>
+<p>Update <code>app/libs/openai/openai.ts</code>:</p>
 <p><strong>Before:</strong></p>
 <pre><code class="language-typescript">import OpenAI from &#39;openai&#39;;
 
@@ -88,93 +56,53 @@ const baseClient = new OpenAI({
 
 export const openaiClient = wrapOpenAI(baseClient);
 </code></pre>
-<p><strong>That&#39;s it!</strong> All OpenAI API calls are now automatically traced in LangSmith.</p>
+<p><strong>That&#39;s it!</strong> All OpenAI API calls are now automatically traced.</p>
 <hr>
 <h2>How It Works</h2>
-<h3>The Wrapper Pattern</h3>
 <pre><code>Your App → wrapOpenAI wrapper → OpenAI API
                 ↓
-           Logs trace data
+           Logs trace data (async)
                 ↓
          LangSmith Dashboard
 </code></pre>
-<p>The <code>wrapOpenAI</code> wrapper intercepts your API calls:</p>
-<ol>
-<li>Captures request details (model, messages, parameters)</li>
-<li>Forwards request to OpenAI</li>
-<li>Captures response and timing</li>
-<li>Sends trace data to LangSmith asynchronously</li>
-</ol>
-<p><strong>Performance impact:</strong> Minimal - tracing happens asynchronously</p>
+<p>The wrapper intercepts your API calls, forwards them to OpenAI, and sends trace data asynchronously. Performance impact is minimal.</p>
 <hr>
 <h2>Viewing Your Data</h2>
-<h3>LangSmith Dashboard</h3>
-<p>Once integrated, visit your LangSmith dashboard to see:</p>
-<p><strong>1. Traces</strong></p>
+<p>Visit your LangSmith dashboard to see:</p>
 <ul>
-<li>Every API call with full request/response</li>
-<li>Timestamps, latency, tokens used</li>
-<li>Nested traces for complex pipelines</li>
+<li><strong>Traces</strong>: Every API call with full request/response</li>
+<li><strong>Latency</strong>: How long each call took</li>
+<li><strong>Tokens</strong>: Input/output token counts</li>
+<li><strong>Cost</strong>: Estimated cost per request</li>
 </ul>
-<p><strong>2. Cost Analytics</strong></p>
-<ul>
-<li>Total spend over time</li>
-<li>Cost per model/trace</li>
-<li>Token usage trends</li>
-</ul>
-<p><strong>3. Performance Metrics</strong></p>
-<ul>
-<li>Average latency</li>
-<li>Error rates</li>
-<li>Request volume</li>
-</ul>
-<p><strong>4. Debugging Tools</strong></p>
-<ul>
-<li>Click any trace to see full details</li>
-<li>Compare inputs/outputs across runs</li>
-<li>Filter by metadata</li>
-</ul>
+<p>Click any trace to see the full conversation, including system prompts and responses.</p>
 <hr>
-<h2>Advanced: Tracing Custom Functions</h2>
-<p>Use <code>traceable</code> to trace your entire pipeline:</p>
-<pre><code class="language-typescript">import OpenAI from &#39;openai&#39;;
-import { wrapOpenAI } from &#39;langsmith/wrappers&#39;;
-import { traceable } from &#39;langsmith/traceable&#39;;
-
-const openaiClient = wrapOpenAI(
-	new OpenAI({
-		apiKey: process.env.OPENAI_API_KEY as string,
-	})
-);
-
-// Wrap your RAG function to trace the entire pipeline
-const ragQuery = traceable(
-	async function ragQuery(question: string) {
-		// 1. Retrieve documents
-		const docs = await retrieveDocuments(question);
-
-		// 2. Generate response
-		const response = await openaiClient.chat.completions.create({
-			model: &#39;gpt-4o-mini&#39;,
-			messages: [
-				{ role: &#39;system&#39;, content: &#39;Answer based on context: &#39; + docs },
-				{ role: &#39;user&#39;, content: question },
-			],
-		});
-
-		return response.choices[0]?.message?.content;
-	},
-	{ name: &#39;rag-query&#39; }
-);
-</code></pre>
-<p>This creates a hierarchical trace showing:</p>
-<ul>
-<li>Parent: <code>rag-query</code> function</li>
-<li>Child: OpenAI API call</li>
-</ul>
+<h2>Your Task</h2>
+<ol>
+<li>Sign up for LangSmith at <a href="https://smith.langchain.com/">smith.langchain.com</a></li>
+<li>Add environment variables to <code>.env.local</code></li>
+<li>Update <code>app/libs/openai/openai.ts</code> with the wrapper</li>
+<li>Run your app and ask a few questions</li>
+<li>Check the LangSmith dashboard to see your traces</li>
+</ol>
 <hr>
-<h2>Adding Metadata</h2>
-<p>Add custom metadata to traces for filtering:</p>
+<h2>Common Issues</h2>
+<p><strong>&quot;Traces not appearing&quot;</strong><br>→ Check <code>LANGSMITH_TRACING=true</code> in your <code>.env</code></p>
+<p><strong>&quot;Unauthorized&quot; error</strong><br>→ Verify your <code>LANGSMITH_API_KEY</code> is correct</p>
+<p><strong>&quot;Module not found: langsmith&quot;</strong><br>→ Run <code>yarn add langsmith</code></p>
+<hr>
+<h2>Challenge: Add Custom Metadata</h2>
+<p>Once basic tracing works, try adding metadata to your traces. This helps you filter and analyze data in the dashboard.</p>
+<h3>Why Metadata Matters</h3>
+<p>Imagine your app has multiple agents (LinkedIn, RAG, General). Without metadata, all traces look the same in the dashboard. With metadata, you can:</p>
+<ul>
+<li>Filter traces by agent type</li>
+<li>Track costs per agent</li>
+<li>See which agents are slowest</li>
+<li>Debug specific user sessions</li>
+</ul>
+<h3>How to Add Metadata</h3>
+<p>Pass a second argument with <code>langsmithExtra</code>:</p>
 <pre><code class="language-typescript">const response = await openaiClient.chat.completions.create(
 	{
 		model: &#39;gpt-4o-mini&#39;,
@@ -184,128 +112,19 @@ const ragQuery = traceable(
 		langsmithExtra: {
 			metadata: {
 				agent: &#39;linkedin&#39;,
-				userId: userId,
-				environment: &#39;production&#39;,
+				userId: &#39;user-123&#39;,
 			},
 		},
 	}
 );
 </code></pre>
-<p>Now you can filter and analyze by agent, user, or environment in the dashboard!</p>
-<hr>
-<h2>Real-World Example: Cost Tracking</h2>
-<p><strong>Scenario:</strong> Your RAG system has two agents:</p>
-<ul>
-<li>LinkedIn agent (fine-tuned model, expensive)</li>
-<li>Knowledge Base agent (gpt-4o-mini, cheap)</li>
-</ul>
-<p><strong>Without LangSmith:</strong></p>
-<ul>
-<li>Total OpenAI bill: $250/month</li>
-<li>No idea which agent costs what</li>
-<li>Can&#39;t optimize spend</li>
-</ul>
-<p><strong>With LangSmith:</strong></p>
-<pre><code>LinkedIn agent:     $200/month (80% of cost)
-  - 10,000 requests
-  - Avg: $0.02/request
-
-Knowledge Base:     $50/month (20% of cost)
-  - 50,000 requests
-  - Avg: $0.001/request
-</code></pre>
-<p><strong>Action:</strong> You discover LinkedIn agent is too expensive. Options:</p>
+<h3>Challenge Tasks</h3>
 <ol>
-<li>Cache common requests</li>
-<li>Switch to cheaper base model</li>
-<li>Add rate limiting</li>
-<li>Optimize prompts to use fewer tokens</li>
+<li>Add an <code>agent</code> metadata field to each of your agents (linkedin, rag, general)</li>
+<li>Make a few requests to each agent</li>
+<li>In the LangSmith dashboard, filter by agent to see the breakdown</li>
+<li>Compare latency and cost between agents</li>
 </ol>
-<hr>
-<h2>Your Challenge</h2>
-<h3>Task 1: Integrate LangSmith</h3>
-<ol>
-<li>Sign up for LangSmith account at <a href="https://smith.langchain.com/">smith.langchain.com</a></li>
-<li>Get API key</li>
-<li>Add environment variables to <code>.env.local</code></li>
-<li>Update <code>app/libs/openai/openai.ts</code> with the wrapper</li>
-</ol>
-<h3>Task 2: Generate Some Traffic</h3>
-<p>Make a few requests to your RAG system:</p>
-<pre><code class="language-bash">yarn dev
-# Open http://localhost:3000
-# Ask some questions
-</code></pre>
-<h3>Task 3: Explore Dashboard</h3>
-<p>Visit LangSmith dashboard and find:</p>
-<ul>
-<li>Total requests made</li>
-<li>Cost per request</li>
-<li>Average latency</li>
-<li>Request/response traces</li>
-</ul>
-<h3>Task 4: Add Custom Metadata (Optional)</h3>
-<p>Update your agent implementations to include custom metadata:</p>
-<ul>
-<li>Agent name</li>
-<li>User identifier</li>
-<li>Query type</li>
-</ul>
-<hr>
-<h2>Common Issues</h2>
-<p><strong>&quot;Traces not appearing&quot;</strong><br>→ Check <code>LANGSMITH_TRACING=true</code> in your <code>.env</code></p>
-<p><strong>&quot;Unauthorized&quot; error</strong><br>→ Verify your <code>LANGSMITH_API_KEY</code> is correct</p>
-<p><strong>&quot;Module not found: langsmith&quot;</strong><br>→ Run <code>yarn add langsmith</code></p>
-<p><strong>Traces appearing but no cost data</strong><br>→ Cost calculation may take a few minutes to populate</p>
-<hr>
-<h2>When to Use LangSmith</h2>
-<p><strong>Always use in production</strong></p>
-<ul>
-<li>Essential for debugging</li>
-<li>Critical for cost management</li>
-<li>Required for optimization</li>
-</ul>
-<p><strong>Use in development/staging</strong></p>
-<ul>
-<li>Catch issues before production</li>
-<li>Understand usage patterns early</li>
-<li>Test trace visualization</li>
-</ul>
-<p><strong>Maybe skip in local dev</strong></p>
-<ul>
-<li>Can add slight overhead</li>
-<li>Less important for rapid iteration</li>
-<li>Enable when debugging specific issues</li>
-</ul>
-<hr>
-<h2>Alternatives to LangSmith</h2>
-<p>Other observability tools for LLMs:</p>
-<p><strong>Helicone</strong></p>
-<ul>
-<li>Proxy-based approach</li>
-<li>Simple setup</li>
-<li>Good for OpenAI-only projects</li>
-</ul>
-<p><strong>Weights &amp; Biases</strong></p>
-<ul>
-<li>ML experiment tracking</li>
-<li>Heavier weight</li>
-<li>Good for research/experimentation</li>
-</ul>
-<p><strong>Custom Logging</strong></p>
-<ul>
-<li>Full control</li>
-<li>More work to build</li>
-<li>Good for specific needs</li>
-</ul>
-<p><strong>Why we chose LangSmith:</strong></p>
-<ul>
-<li>Works with any LLM provider</li>
-<li>Excellent trace visualization</li>
-<li>Built-in evaluation tools</li>
-<li>Active development</li>
-</ul>
 <hr>
 <h2>What&#39;s Next?</h2>
-<p>You now have full observability into your RAG system!</p>
-<p>In the next section, we&#39;ll test our selector agent to ensure it routes queries correctly to the right agents.</p>
+<p>You now have observability into your RAG system. In the next section, we&#39;ll test our selector agent to ensure it routes queries correctly.</p>
