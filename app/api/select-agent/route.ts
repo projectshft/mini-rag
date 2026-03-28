@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { openaiClient } from '@/app/libs/openai/openai';
-import { zodResponseFormat } from 'openai/helpers/zod';
+import { zodTextFormat } from 'openai/helpers/zod';
 import { z } from 'zod';
 import { agentTypeSchema, messageSchema } from '@/app/agents/types';
 import { agentConfigs } from '@/app/agents/config';
@@ -28,40 +28,33 @@ export async function POST(req: NextRequest) {
 			.map(([key, config]) => `- "${key}": ${config.description}`)
 			.join('\n');
 
-		// Step 1: Call OpenAI with structured output
-		const completion = await openaiClient.chat.completions.create({
+		// Use structured outputs with responses.parse
+		const result = await openaiClient.responses.parse({
 			model: 'gpt-4o-mini',
-			messages: [
+			input: [
 				{
 					role: 'system',
-					content: `You are an agent router that analyzes conversations and selects the appropriate agent.
+					content: `You are an agent router. Based on the conversation history, determine which agent should handle the request and create a focused query.
 
 Available agents:
 ${agentDescriptions}
 
-Your task:
-1. Analyze the conversation context
-2. Identify the user's intent
-3. Select the most appropriate agent
-4. Refine the query to be clear and specific
-
-Respond with the agent name and a refined query.`,
+The query should be a refined, clear version of what the user wants, removing conversational fluff.`,
 				},
-				...recentMessages,
+				...recentMessages.map((msg) => ({
+					role: msg.role as 'user' | 'assistant',
+					content: msg.content,
+				})),
 			],
-			response_format: zodResponseFormat(agentSelectionSchema, 'agentSelection'),
+			text: {
+				format: zodTextFormat(agentSelectionSchema, 'agent_selection'),
+			},
 		});
 
-		// Step 2: Extract and parse the output
-		const content = completion.choices[0]?.message?.content;
-		if (!content) {
-			throw new Error('No response from OpenAI');
-		}
+		// Access parsed result directly - no JSON.parse needed
+		const output = result.output_parsed;
 
-		const output = JSON.parse(content) as z.infer<typeof agentSelectionSchema>;
-
-		// Step 3: Return the result
-		if (output && output.agent && output.query) {
+		if (output) {
 			return NextResponse.json({
 				agent: output.agent,
 				query: output.query,
