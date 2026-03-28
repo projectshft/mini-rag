@@ -5,22 +5,27 @@ import { streamText } from 'ai';
 export async function linkedInAgent(
 	request: AgentRequest
 ): Promise<AgentResponse> {
-	// TODO: Step 1 - Get the fine-tuned model ID
-	// Access process.env.OPENAI_FINETUNED_MODEL
-	// If not configured, you might want to throw an error or use a fallback
+	// Step 1: Get the fine-tuned model ID
+	const fineTunedModel = process.env.OPENAI_FINETUNED_MODEL;
 
-	// TODO: Step 2 - Build the system prompt
-	// Include instructions for the LinkedIn agent
-	// Add context about the original and refined queries:
-	//   - request.originalQuery - what the user originally asked
-	//   - request.query - the refined/improved version
-	// Tell the model to create engaging LinkedIn posts
+	if (!fineTunedModel) {
+		throw new Error(
+			'OPENAI_FINETUNED_MODEL environment variable is not set. Please configure your fine-tuned model ID.'
+		);
+	}
 
-	// TODO: Step 3 - Stream the response
-	// Use streamText() from the 'ai' package
-	// Pass the model using openai()
-	// Include system prompt and messages from request.messages
-	// Return the stream
+	// Step 2: Build the system prompt
+	const systemPrompt = `You are a professional LinkedIn copywriter who creates high-engagement posts.
 
-	throw new Error('LinkedIn agent not implemented yet!');
+Original user request: "${request.originalQuery}"
+Refined query: "${request.query}"
+
+Use the refined query to understand the user's intent and create an engaging LinkedIn post.`;
+
+	// Step 3: Stream the response using the fine-tuned model
+	return streamText({
+		model: openai(fineTunedModel),
+		system: systemPrompt,
+		messages: request.messages,
+	});
 }
