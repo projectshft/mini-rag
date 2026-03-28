@@ -141,8 +141,8 @@ Now it's your turn. Take your existing RAG workflow and refactor it to use tool-
 **Create:** `app/api/tool-calling-agent/route.ts`
 
 **Resources:**
-- [Vercel AI SDK - Tools and Tool Calling](https://sdk.vercel.ai/docs/ai-sdk-core/tools-and-tool-calling)
-- [Vercel AI SDK - Multi-step Tool Calls](https://sdk.vercel.ai/docs/ai-sdk-core/agents)
+- [Vercel AI SDK - Tools and Tool Calling](https://sdk.vercel.ai/docs/concepts/tools)
+- [Vercel AI SDK - Multi-step Tool Calls](https://sdk.vercel.ai/docs/foundations/agents)
 
 **Hints:**
 - Wrap your RAG logic (embed → search → rerank) inside a tool's `execute` function

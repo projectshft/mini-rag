@@ -96,7 +96,7 @@ The OpenAI API is pay-per-use. You'll need to add a payment method:
 **⚠️ CRITICAL**: Your Pinecone index dimensions MUST match your OpenAI embedding dimensions. We're using `512` dimensions for `text-embedding-3-small`.
 
 **Learn more:**
-- [Pinecone Documentation](https://docs.pinecone.io/docs/overview)
+- [Pinecone Documentation](https://docs.pinecone.io/guides/get-started/overview)
 - [Pinecone Node.js SDK](https://www.npmjs.com/package/@pinecone-database/pinecone) (version `6.1.0` used in this project)
 
 ---
@@ -333,8 +333,8 @@ Calculate the storage difference between dimensions:
 
 **Helpful Resources:**
 - [OpenAI Embeddings Dimensions Guide](https://platform.openai.com/docs/guides/embeddings/embedding-models)
-- [Pinecone Performance Guide](https://docs.pinecone.io/guides/performance-tuning)
-- [CLIP Model for Images](https://openai.com/research/clip)
+- [Pinecone Performance Guide](https://docs.pinecone.io/guides/operations/performance-tuning)
+- [CLIP Model for Images](https://openai.com/index/clip/)
 
 ### Submission
 
@@ -370,9 +370,9 @@ Excellent! You now have:
 - [Chat Completions API Reference](https://platform.openai.com/docs/api-reference/chat)
 
 **Pinecone SDK Documentation:**
-- [Pinecone Node.js SDK](https://docs.pinecone.io/reference/node-sdk)
-- [Query API Reference](https://docs.pinecone.io/reference/query)
-- [Best Practices](https://docs.pinecone.io/guides/best-practices)
+- [Pinecone Node.js SDK](https://docs.pinecone.io/reference/sdks/node/overview)
+- [Query API Reference](https://docs.pinecone.io/reference/api/data-plane/query)
+- [Best Practices](https://docs.pinecone.io/troubleshooting/best-practices)
 
 ---
 

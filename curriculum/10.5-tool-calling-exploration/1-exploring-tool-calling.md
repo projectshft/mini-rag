@@ -612,6 +612,6 @@ Understanding these patterns prepares you for:
 
 ## Additional Resources
 
-- [AI SDK Tools Documentation](https://sdk.vercel.ai/docs/ai-sdk-core/tools-and-tool-calling)
+- [AI SDK Tools Documentation](https://sdk.vercel.ai/docs/concepts/tools)
 - [Tool-calling vs Workflows (Anthropic)](https://www.anthropic.com/engineering/building-effective-agents)
-- [Production Tool-calling Patterns](https://sdk.vercel.ai/docs/guides/multi-step-tools)
+- [Production Tool-calling Patterns](https://sdk.vercel.ai/docs/ai-sdk-ui/chatbot-with-tool-calling)
