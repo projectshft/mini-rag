@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
 		// TODO: Implement the selector agent
 		// Follow the curriculum instructions to complete this implementation
 
-		throw new Error('Selector not implemented yet!');
+		throw/ new Error('Selector not implemented yet!');
 	} catch (error) {
 		console.error('Error selecting agent:', error);
 		return NextResponse.json(
