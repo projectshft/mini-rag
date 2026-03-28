@@ -695,7 +695,7 @@ Now that you understand LangGraph fundamentals, explore:
 
 ## Additional Resources
 
-- [LangGraph Tutorials](https://docs.langchain.com/oss/python/langgraph/tutorials)
+- [LangGraph Tutorials](https://docs.langchain.com/oss/python/learn)
 - [Reflection Pattern Example](https://github.com/langchain-ai/langgraph-reflection)
 - [Multi-Agent Patterns](https://github.com/langchain-ai/langgraph-swarm-py)
 - [Production Best Practices](https://www.swarnendu.de/blog/langgraph-best-practices/)

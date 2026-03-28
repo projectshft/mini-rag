@@ -59,11 +59,11 @@ Before implementing, review these docs:
 **Pinecone Inference API (Re-ranking):**
 
 - [Re-ranking Guide](https://docs.pinecone.io/guides/inference/rerank) - Complete guide
-- [API Reference](https://docs.pinecone.io/reference/api/inference/rerank) - Re-rank endpoint
+- [API Reference](https://docs.pinecone.io/reference/api/2025-04/inference/rerank) - Re-rank endpoint
 
 **Cohere Re-ranking:**
 
-- [Cohere Rerank Documentation](https://docs.cohere.com/docs/reranking) - How re-rank models work
+- [Cohere Rerank Documentation](https://docs.cohere.com/docs/reranking-with-cohere) - How re-rank models work
 - [Rerank Best Practices](https://docs.cohere.com/docs/reranking-best-practices) - Optimization tips
 
 ---

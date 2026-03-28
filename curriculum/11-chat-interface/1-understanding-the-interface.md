@@ -63,7 +63,7 @@ By the end of this module, you'll understand:
 
 **Alternative Approaches:**
 
--   [Vercel AI SDK - useChat](https://sdk.vercel.ai/docs/ai-sdk-ui/chatbot) - Higher-level chat hook
+-   [Vercel AI SDK - useChat](https://sdk.vercel.ai/docs/api-reference/use-chat) - Higher-level chat hook
 -   [Server-Sent Events](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) - SSE alternative to streams
 
 ---

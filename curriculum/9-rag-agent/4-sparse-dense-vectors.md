@@ -108,5 +108,5 @@ const results = await index.query({
 ## Further Reading
 
 - [Pinecone: Understanding Hybrid Search](https://docs.pinecone.io/guides/data/understanding-hybrid-search)
-- [Pinecone: Hybrid Search Quickstart](https://docs.pinecone.io/guides/data/hybrid-search-quickstart)
+- [Pinecone: Hybrid Search Quickstart](https://docs.pinecone.io/guides/search/hybrid-search)
 - [BM25 Algorithm](https://en.wikipedia.org/wiki/Okapi_BM25) - Common sparse vector approach
