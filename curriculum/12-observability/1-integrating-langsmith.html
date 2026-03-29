@@ -1,59 +1,32 @@
 <h1>Integrating LangSmith for AI Observability</h1>
-<p>Production AI applications need visibility into API calls, costs, latency, and errors. This is where <strong>LangSmith</strong> comes in - an observability platform specifically built for LLM applications.</p>
-<hr>
-<h2>What You&#39;ll Learn</h2>
-<ul>
-<li>Why observability matters for AI applications</li>
-<li>How to set up LangSmith in 3 steps</li>
-<li>Viewing traces in the dashboard</li>
-</ul>
-<hr>
-<h2>Why Observability Matters</h2>
-<p>Without observability, you&#39;re flying blind:</p>
-<ul>
-<li><strong>Cost surprises</strong>: Suddenly $500 bill, no idea why</li>
-<li><strong>Performance issues</strong>: Slow responses, can&#39;t debug</li>
-<li><strong>Quality problems</strong>: Bad outputs, no data to improve</li>
-<li><strong>Usage patterns</strong>: Don&#39;t know what users are asking</li>
-</ul>
-<p>With observability you get:</p>
-<ul>
-<li>Full request/response logs</li>
-<li>Cost tracking per request</li>
-<li>Latency monitoring</li>
-<li>Error tracking and debugging</li>
-</ul>
+<p>Observability isn&#39;t something new or specific to AI. It&#39;s standard software development practice. You have observability layers to understand when backend services go down, when error rates increase, when a service isn&#39;t responding correctly. If you get a bunch of 500 responses from a server, you know something&#39;s wrong.</p>
+<p>With LLMs and agents, this becomes different. The responses - whether they&#39;re good or bad - are subjective. Your token costs aren&#39;t fixed. You need to understand: are token costs increasing from that prompt we just updated? Do the responses look good? You want to look at the chain of thought and see how your agents and RAG retrieval are working behind the scenes.</p>
+<p>Otherwise, you&#39;re basically flying blind saying &quot;Hey customer, when you find a mistake, let us know.&quot; That&#39;s not a good way to do things. You want to get ahead of these issues.</p>
+<p>Luckily, LangSmith makes this super simple.</p>
 <hr>
 <h2>Setting Up LangSmith</h2>
-<h3>Step 1: Create Account &amp; Get API Key</h3>
+<h3>Step 1: Create Your Project</h3>
 <ol>
 <li>Go to <a href="https://smith.langchain.com/">smith.langchain.com</a></li>
-<li>Sign up for free account</li>
-<li>Navigate to Settings → API Keys</li>
-<li>Create and copy your API key</li>
+<li>Sign up and create your first app</li>
+<li>Create a project (click &quot;Projects&quot; in the sidebar)</li>
+<li>Click &quot;Trace an existing app&quot; and select OpenAI</li>
 </ol>
 <h3>Step 2: Add Environment Variables</h3>
-<p>Add to your <code>.env.local</code>:</p>
+<p>You&#39;ll get some output with your credentials. Add these to your <code>.env.local</code>:</p>
 <pre><code class="language-bash">LANGSMITH_TRACING=true
 LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 LANGSMITH_API_KEY=lsv2_pt_xxxxxxxxxxxxxxxxxxxxxxxx
 LANGSMITH_PROJECT=&quot;your-project-name&quot;
 </code></pre>
+<p><strong>Important:</strong> Without <code>LANGSMITH_PROJECT</code> set, nothing will work. I had to learn this the hard way - if you don&#39;t have the project set, you won&#39;t see any traces at all.</p>
 <p><strong>Where to find these:</strong></p>
 <ul>
 <li><strong>API Key</strong>: Settings → API Keys → Create API Key</li>
-<li><strong>Project Name</strong>: Look at the left sidebar - your project name is shown there (or create a new project under Projects)</li>
+<li><strong>Project Name</strong>: The project you created in step 3 (shown in left sidebar under Projects)</li>
 </ul>
 <h3>Step 3: Update OpenAI Client</h3>
 <p>Update <code>app/libs/openai/openai.ts</code>:</p>
-<p><strong>Before:</strong></p>
-<pre><code class="language-typescript">import OpenAI from &#39;openai&#39;;
-
-export const openaiClient = new OpenAI({
-	apiKey: process.env.OPENAI_API_KEY as string,
-});
-</code></pre>
-<p><strong>After:</strong></p>
 <pre><code class="language-typescript">import OpenAI from &#39;openai&#39;;
 import { wrapOpenAI } from &#39;langsmith/wrappers&#39;;
 
@@ -63,53 +36,43 @@ const baseClient = new OpenAI({
 
 export const openaiClient = wrapOpenAI(baseClient);
 </code></pre>
-<p><strong>That&#39;s it!</strong> All OpenAI API calls are now automatically traced.</p>
+<p>The <code>wrapOpenAI</code> function wraps around whatever LLM library you&#39;re using. The nice thing about having this base client pattern is you could swap OpenAI for Anthropic, Groq, or whatever you decide to use in the future.</p>
+<p>That&#39;s it! Save this, and your traces will start appearing.</p>
 <hr>
-<h2>How It Works</h2>
-<pre><code>Your App → wrapOpenAI wrapper → OpenAI API
-                ↓
-           Logs trace data (async)
-                ↓
-         LangSmith Dashboard
-</code></pre>
-<p>The wrapper intercepts your API calls, forwards them to OpenAI, and sends trace data asynchronously. Performance impact is minimal.</p>
-<hr>
-<h2>Viewing Your Data</h2>
-<p>Visit your LangSmith dashboard to see:</p>
+<h2>What You Can See</h2>
+<p>Once you make some requests, go to your LangSmith project and you&#39;ll see:</p>
 <ul>
-<li><strong>Traces</strong>: Every API call with full request/response</li>
-<li><strong>Latency</strong>: How long each call took</li>
-<li><strong>Tokens</strong>: Input/output token counts</li>
-<li><strong>Cost</strong>: Estimated cost per request</li>
+<li><strong>Runs</strong>: Every API call with full input/output</li>
+<li><strong>System prompts</strong>: What instructions were sent</li>
+<li><strong>User messages</strong>: What the user said</li>
+<li><strong>Tokens</strong>: Input tokens, output tokens, total tokens</li>
+<li><strong>Latency</strong>: How long each request took</li>
+<li><strong>Error rates</strong>: When things go wrong</li>
 </ul>
-<p>Click any trace to see the full conversation, including system prompts and responses.</p>
+<p>Click on any run to dig into the details. You can see exactly what went to the model and what came back.</p>
+<hr>
+<h2>Why This Matters</h2>
+<p>With this dashboard you can:</p>
+<ul>
+<li><strong>Check error rates</strong>: Are errors spiking today?</li>
+<li><strong>Monitor latency</strong>: Are requests getting slower?</li>
+<li><strong>Track token usage</strong>: Have tokens gone way up or down? Why? What changed?</li>
+<li><strong>Debug agent routing</strong>: &quot;Wait, this went to the wrong agent&quot; - now you can look inside and see what happened</li>
+<li><strong>Iterate confidently</strong>: Make changes to prompts and see how they affect performance</li>
+</ul>
+<p>You now have insight into how your app performs during all the changes you&#39;ll make as you iterate.</p>
 <hr>
 <h2>Your Task</h2>
 <ol>
-<li>Sign up for LangSmith at <a href="https://smith.langchain.com/">smith.langchain.com</a></li>
-<li>Add environment variables to <code>.env.local</code></li>
+<li>Create a LangSmith account and project</li>
+<li>Add the 4 environment variables to <code>.env.local</code></li>
 <li>Update <code>app/libs/openai/openai.ts</code> with the wrapper</li>
 <li>Run your app and ask a few questions</li>
-<li>Check the LangSmith dashboard to see your traces</li>
+<li>Check the LangSmith dashboard - you should see your traces</li>
 </ol>
 <hr>
-<h2>Common Issues</h2>
-<p><strong>&quot;Traces not appearing&quot;</strong><br>→ Check <code>LANGSMITH_TRACING=true</code> in your <code>.env</code></p>
-<p><strong>&quot;Unauthorized&quot; error</strong><br>→ Verify your <code>LANGSMITH_API_KEY</code> is correct</p>
-<p><strong>&quot;Module not found: langsmith&quot;</strong><br>→ Run <code>yarn add langsmith</code></p>
-<hr>
 <h2>Challenge: Add Custom Metadata</h2>
-<p>Once basic tracing works, try adding metadata to your traces. This helps you filter and analyze data in the dashboard.</p>
-<h3>Why Metadata Matters</h3>
-<p>Imagine your app has multiple agents (LinkedIn, RAG, General). Without metadata, all traces look the same in the dashboard. With metadata, you can:</p>
-<ul>
-<li>Filter traces by agent type</li>
-<li>Track costs per agent</li>
-<li>See which agents are slowest</li>
-<li>Debug specific user sessions</li>
-</ul>
-<h3>How to Add Metadata</h3>
-<p>Pass a second argument with <code>langsmithExtra</code>:</p>
+<p>For more advanced usage, you can add metadata to traces to make them easier to filter. This helps when you have multiple agents and want to track costs or latency per agent.</p>
 <pre><code class="language-typescript">const response = await openaiClient.chat.completions.create(
 	{
 		model: &#39;gpt-4o-mini&#39;,
@@ -125,13 +88,7 @@ export const openaiClient = wrapOpenAI(baseClient);
 	}
 );
 </code></pre>
-<h3>Challenge Tasks</h3>
-<ol>
-<li>Add an <code>agent</code> metadata field to each of your agents (linkedin, rag, general)</li>
-<li>Make a few requests to each agent</li>
-<li>In the LangSmith dashboard, filter by agent to see the breakdown</li>
-<li>Compare latency and cost between agents</li>
-</ol>
+<p>Play around with this - LangSmith is quickly becoming the defacto standard monitoring tool for AI projects.</p>
 <hr>
 <h2>What&#39;s Next?</h2>
 <p>You now have observability into your RAG system. In the next section, we&#39;ll test our selector agent to ensure it routes queries correctly.</p>
