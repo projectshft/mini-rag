@@ -1,8 +1,8 @@
 # Files Changed
 
 ## curriculum
-- CLAUDE.md
-- README.md
+
+### Code
 - app/agents/__tests__/llm-judge.test.ts
 - app/agents/linkedin.ts
 - app/agents/rag.ts
@@ -10,23 +10,36 @@
 - app/api/upload-document/route.ts
 - app/libs/chunking.ts
 - app/libs/openai/openai.ts
-- curriculum/12-observability/1-integrating-langsmith.md
-- curriculum/12-observability/1-integrating-langsmith.html
 - package.json
 - yarn.lock
 
+### Docs
+- CLAUDE.md
+- README.md
+
+### Curriculum
+- curriculum/4-pinecone-integration/1-setting-up-pinecone-client.html
+- curriculum/8-linkedin-agent/1-implementing-linkedin-agent.html
+- curriculum/9-rag-agent/2-implementing-reranking.html
+- curriculum/9-rag-agent/4-sparse-dense-vectors.html
+- curriculum/10-ai-frameworks/2-building-langgraph-agent.html
+- curriculum/10.5-tool-calling-exploration/1-exploring-tool-calling.html
+- curriculum/10.5-tool-calling-exploration/1-tool-calling-concepts.html
+- curriculum/11-chat-interface/1-understanding-the-interface.html
+- curriculum/12-observability/1-integrating-langsmith.html
+
 ## student-working-version
+- app/api/select-agent/route.ts
+- app/libs/openai/openai.ts
+- app/agents/__tests__/llm-judge.test.ts
+- package.json
+- yarn.lock
 - CLAUDE.md
 - README.md
 - STUDENT_EXERCISES.md
-- app/agents/__tests__/llm-judge.test.ts
-- app/api/select-agent/route.ts
-- app/libs/openai/openai.ts
-- package.json
-- yarn.lock
 
 ## student-todo-exercises
-- README.md
 - app/libs/openai/openai.ts
 - package.json
 - yarn.lock
+- README.md
