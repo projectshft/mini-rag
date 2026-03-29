@@ -50,6 +50,10 @@ LANGSMITH_API_KEY=lsv2_pt_xxxxxxxxxxxxxxxxxxxxxxxx
 LANGSMITH_PROJECT="your-project-name"
 ```
 
+**Where to find these:**
+- **API Key**: Settings → API Keys → Create API Key
+- **Project Name**: Look at the left sidebar - your project name is shown there (or create a new project under Projects)
+
 ### Step 3: Update OpenAI Client
 
 Update `app/libs/openai/openai.ts`:
