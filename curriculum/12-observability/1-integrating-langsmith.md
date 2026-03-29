@@ -2,7 +2,7 @@
 
 ## Video Walkthrough
 
-<iframe src="PLACEHOLDER_VIDEO_URL" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+<iframe src="https://share.descript.com/embed/UplDjm9F27o" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
 ---
 
