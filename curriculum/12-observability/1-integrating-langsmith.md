@@ -1,5 +1,11 @@
 # Integrating LangSmith for AI Observability
 
+## Video Walkthrough
+
+<iframe src="PLACEHOLDER_VIDEO_URL" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
+---
+
 Observability isn't something new or specific to AI. It's standard software development practice. You have observability layers to understand when backend services go down, when error rates increase, when a service isn't responding correctly. If you get a bunch of 500 responses from a server, you know something's wrong.
 
 With LLMs and agents, this becomes different. The responses - whether they're good or bad - are subjective. Your token costs aren't fixed. You need to understand: are token costs increasing from that prompt we just updated? Do the responses look good? You want to look at the chain of thought and see how your agents and RAG retrieval are working behind the scenes.
