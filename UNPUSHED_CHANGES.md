@@ -23,8 +23,8 @@
 - curriculum/9-rag-agent/2-implementing-reranking.html
 - curriculum/9-rag-agent/4-sparse-dense-vectors.html
 - curriculum/10-ai-frameworks/2-building-langgraph-agent.html
-- curriculum/10.5-tool-calling-exploration/1-exploring-tool-calling.html
-- curriculum/10.5-tool-calling-exploration/1-tool-calling-concepts.html
+- curriculum/14-tool-calling-exploration/1-tool-calling-concepts.html
+- curriculum/14-tool-calling-exploration/2-the-reveal.html
 - curriculum/11-chat-interface/1-understanding-the-interface.html
 - curriculum/12-observability/1-integrating-langsmith.html
 
