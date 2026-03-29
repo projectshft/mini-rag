@@ -150,7 +150,9 @@ PINECONE_INDEX=your-index-name
 
 # LangSmith (Observability)
 LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 LANGSMITH_API_KEY=lsv2_pt_...
+LANGSMITH_PROJECT="your-project-name"
 ```
 
 ---

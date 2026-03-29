@@ -35,7 +35,9 @@
 <h3>Step 2: Add Environment Variables</h3>
 <p>Add to your <code>.env.local</code>:</p>
 <pre><code class="language-bash">LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 LANGSMITH_API_KEY=lsv2_pt_xxxxxxxxxxxxxxxxxxxxxxxx
+LANGSMITH_PROJECT=&quot;your-project-name&quot;
 </code></pre>
 <h3>Step 3: Update OpenAI Client</h3>
 <p>Update <code>app/libs/openai/openai.ts</code>:</p>

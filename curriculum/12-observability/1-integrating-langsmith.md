@@ -45,7 +45,9 @@ Add to your `.env.local`:
 
 ```bash
 LANGSMITH_TRACING=true
+LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 LANGSMITH_API_KEY=lsv2_pt_xxxxxxxxxxxxxxxxxxxxxxxx
+LANGSMITH_PROJECT="your-project-name"
 ```
 
 ### Step 3: Update OpenAI Client
