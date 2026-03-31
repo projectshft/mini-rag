@@ -21,7 +21,7 @@
 - curriculum/4-pinecone-integration/1-setting-up-pinecone-client.html
 - curriculum/8-linkedin-agent/1-implementing-linkedin-agent.html
 - curriculum/9-rag-agent/2-implementing-reranking.html
-- curriculum/9-rag-agent/4-sparse-dense-vectors.html
+- curriculum/9-rag-agent/3-sparse-dense-vectors.html
 - curriculum/10-ai-frameworks/2-building-langgraph-agent.html
 - curriculum/14-tool-calling-exploration/1-tool-calling-concepts.html
 - curriculum/14-tool-calling-exploration/2-the-reveal.html
