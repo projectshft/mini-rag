@@ -33,12 +33,14 @@
  */
 
 import OpenAI from "openai";
-
+import { wrapOpenAI } from "langsmith/wrappers";
 let _client: OpenAI | null = null;
 
 function getClient(): OpenAI {
   if (!_client) {
-    _client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY as string });
+    _client = wrapOpenAI(
+      new OpenAI({ apiKey: process.env.OPENAI_API_KEY as string }),
+    );
   }
   return _client;
 }
