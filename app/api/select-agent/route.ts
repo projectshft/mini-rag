@@ -28,10 +28,44 @@ export async function POST(req: NextRequest) {
 			.map(([key, config]) => `- "${key}": ${config.description}`)
 			.join('\n');
 
-		// TODO: Implement the selector agent
-		// Follow the curriculum instructions to complete this implementation
+		// Use structured outputs with responses.parse
+		const result = await openaiClient.responses.parse({
+			model: 'gpt-4o-mini',
+			input: [
+				{
+					role: 'system',
+					content: `You are an agent router. Based on the conversation history, determine which agent should handle the request and create a focused query.
 
-		throw new Error('Selector not implemented yet!');
+Available agents:
+${agentDescriptions}
+
+The query should be a refined, clear version of what the user wants, removing conversational fluff.`,
+				},
+				...recentMessages.map((msg) => ({
+					role: msg.role as 'user' | 'assistant',
+					content: msg.content,
+				})),
+			],
+			text: {
+				format: zodTextFormat(agentSelectionSchema, 'agent_selection'),
+			},
+		});
+
+		// Access parsed result directly - no JSON.parse needed
+		const output = result.output_parsed;
+
+		if (output) {
+			return NextResponse.json({
+				agent: output.agent,
+				query: output.query,
+			});
+		}
+
+		// Fallback if parsing fails
+		return NextResponse.json({
+			agent: 'rag',
+			query: messages[messages.length - 1]?.content || '',
+		});
 	} catch (error) {
 		console.error('Error selecting agent:', error);
 		return NextResponse.json(

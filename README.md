@@ -95,5 +95,5 @@ mini-rag/
 
 -   [OpenAI Documentation](https://platform.openai.com/docs)
 -   [Pinecone Documentation](https://docs.pinecone.io)
--   [Helicone Documentation](https://docs.helicone.ai)
+-   [LangSmith Documentation](https://docs.langchain.com/langsmith)
 -   [Next.js Documentation](https://nextjs.org/docs)
