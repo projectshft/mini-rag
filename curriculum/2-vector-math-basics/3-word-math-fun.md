@@ -299,26 +299,47 @@ Understanding word math helps you understand RAG:
 
 ## Homework Assignment: Week 1
 
-**Video Assignment:** Record a **2-3 minute video** explaining the **dot product** to a beginner who is interested in AI but has no math background.
+**Code Assignment:** Build a **secure custom document ingestion route** that validates input, chunks text using sentence boundaries, and stores vectors in a separate Pinecone index.
+
+**What You're Building:**
+
+A `POST /api/ingest/custom` route that:
+1. Accepts raw text + metadata (source, author, date, category)
+2. Validates the input against prompt injection, repetitive content, metadata poisoning, and oversized payloads
+3. Chunks using sentence-boundary splitting (3-5 sentences per chunk, 1 sentence overlap)
+4. Stores vectors in a separate Pinecone index (`custom-chunks-index`)
 
 **Requirements:**
-- Explain what a dot product is in simple terms
-- Use a real-world analogy (shopping preferences, recipe similarity, etc.)
-- Connect it to how AI "understands" similarity between words
-- Show or reference your word math experiments from this module
 
-**Tips:**
-- Think about the 3Blue1Brown video you watched
-- Avoid heavy mathematical notation
-- Focus on intuition over formulas
+1. **Input security (the main learning goal):**
+   - Scan for prompt injection patterns ("ignore previous instructions", "you are now", etc.)
+   - Detect suspiciously repetitive content (any 5+ word phrase repeated > 8 times)
+   - Sanitize metadata fields — reject script tags and SQL keywords (DROP, INSERT, DELETE, UPDATE, UNION)
+   - Reject text over 50,000 characters with the actual character count in the error
+
+2. **Sentence-based chunking:**
+   - Split on sentence boundaries (`.!?`) — NOT the same as the character-based chunker in `app/libs/chunking.ts`
+   - Target ~4 sentences per chunk with 1 sentence overlap
+   - Each chunk's metadata must include: text, chunk_index, total_chunks, source, author, date, category, character_count
+
+3. **Frontend form** at `/ingest`:
+   - Fields for source, author, date, category (dropdown), and text (textarea with character count)
+   - Display validation errors inline next to each field
+   - On success, show how many chunks and vectors were created
+
+**Exercise Files:**
+- `app/api/ingest/custom/route.exercise.ts` — rename to `route.ts` and implement the TODOs
+- `app/ingest/page.exercise.tsx` — rename to `page.tsx` and build the form
+
+**Video Assignment:** Record a **3-4 minute video** explaining **document poisoning** — what it is, how an attacker could inject malicious instructions into a vector store, and what happens downstream when those chunks get retrieved into an LLM prompt. Show your validation code and demonstrate at least one rejection.
 
 **Submit Your Work:**
 - [Video Submission - Week 1](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission - Week 1](https://form.typeform.com/to/A0pGKPqU) (include link to your word math experiments)
+- [Code Submission - Week 1](https://form.typeform.com/to/A0pGKPqU) (include link to `app/api/ingest/custom/route.ts`)
 
 **Due:** Before Module 4
 
-**Why This Matters:** Teaching is the best way to learn. If you can explain dot products simply, you deeply understand the foundation of RAG and semantic search.
+**Why This Matters:** Your vector store is part of your LLM's attack surface. If bad content gets in, it gets retrieved and injected into prompts. Validating input BEFORE it enters the store is your first line of defense.
 
 ---
 

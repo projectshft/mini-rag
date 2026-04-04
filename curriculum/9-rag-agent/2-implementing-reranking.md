@@ -297,44 +297,57 @@ Use the context above to answer the user's question. If the context doesn't cont
 
 ## Homework Assignment: Week 3
 
-**Video Assignment:** Record a **3-5 minute video** explaining **re-ranking** and why it's used in semantic search.
+**Code Assignment:** Build a **two-stage reranking pipeline** that fetches results from Pinecone via vector similarity, then uses an LLM to re-score and re-order them — and build a UI that makes the comparison visible.
+
+**What You're Building:**
+
+A `POST /api/search/rerank` route that:
+1. Takes a query string
+2. **Stage 1:** Fetches top 20 results from Pinecone using vector similarity
+3. **Stage 2:** Passes the query + all 20 chunks to an LLM that scores each 0-10 for relevance with a one-sentence reason
+4. Returns pre-rerank top 5 and post-rerank top 5 side by side
 
 **Requirements:**
 
-1. **Explain the problem:**
-    - Why doesn't basic semantic search always return the best results?
-    - Give a specific example where initial retrieval fails
+1. **Stage 1 — Vector Retrieval:**
+   - Generate an embedding for the query (text-embedding-3-small, 512 dimensions)
+   - Query the default Pinecone index for top 20 results with metadata
 
-2. **Explain re-ranking:**
-    - What is the "over-fetch and re-rank" strategy?
-    - Why does looking at query + document together help?
+2. **Stage 2 — LLM Reranking:**
+   - Format all 20 chunks as numbered items for the LLM
+   - Use `gpt-4o-mini` with `temperature: 0` and `response_format: { type: 'json_object' }`
+   - System prompt: tell the model to score each chunk 0-10 and return JSON with `{ scores: [{ chunk_index, score, reason }] }`
+   - Sort by score descending, take top 5
 
-3. **Show a use case:**
-    - Describe a real scenario where re-ranking improves results
-    - Reference your implementation from this module
+3. **Response shape:**
+   ```json
+   {
+     "query": "...",
+     "pre_rerank_top5": [{ "rank": 1, "id": "...", "similarity_score": 0.87, "content": "...", "source": "..." }],
+     "post_rerank_top5": [{ "rank": 1, "id": "...", "rerank_score": 9, "reason": "...", "original_similarity": 0.82, "content": "...", "source": "..." }],
+     "rerank_scores": [{ "chunk_index": 0, "score": 9, "reason": "..." }, ...]
+   }
+   ```
 
-**Example to discuss:**
+4. **Frontend** at `/rerank`:
+   - Search input + button
+   - Side-by-side columns: "Before Reranking" (gray) and "After Reranking" (highlighted)
+   - Full scores table showing how every chunk was scored
 
-```
-Query: "How do I secure my Python code?"
+**Exercise Files:**
+- `app/api/search/rerank/route.exercise.ts` — rename to `route.ts` and implement the TODOs
+- `app/rerank/page.exercise.tsx` — rename to `page.tsx` and build the UI
 
-Before re-ranking:
-1. "Python security best practices" ✅
-2. "Python code examples" ❌ (keyword match, wrong intent)
-
-After re-ranking:
-1. "Python security best practices" ✅
-2. "Securing web applications" ✅
-```
+**Video Assignment:** Record a **3-5 minute video** explaining the **two-stage retrieval pattern** — why vector similarity alone isn't enough, how reranking improves quality, and the tradeoff (latency + cost). Show your side-by-side UI and walk through at least one query where the reranked order is meaningfully different from the original.
 
 **Submit Your Work:**
 
 - [Video Submission - Week 3](https://form.typeform.com/to/pwjkAruL)
-- [Code Submission - Week 3](https://form.typeform.com/to/q3mEuSmX) (include link to `app/agents/rag.ts`)
+- [Code Submission - Week 3](https://form.typeform.com/to/q3mEuSmX) (include link to `app/api/search/rerank/route.ts`)
 
 **Due:** Before Module 11
 
-**Why This Matters:** Re-ranking is a critical technique for production RAG. Understanding when to use it separates hobby projects from production systems.
+**Why This Matters:** In production, the first results from a vector DB aren't always the best results. Reranking is the most impactful single improvement you can make to a RAG pipeline — but it comes with real cost and latency tradeoffs you need to understand.
 
 ---
 

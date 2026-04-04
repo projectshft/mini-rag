@@ -267,43 +267,61 @@ getLastWords(&#39;Short&#39;, 100);
 
 <hr>
 <h2>Homework Assignment: Week 2</h2>
-<p><strong>Video Assignment:</strong> Record a <strong>3-4 minute video</strong> explaining <strong>chunking</strong> and <strong>semantic similarity</strong> to a non-technical audience.</p>
+<p><strong>Code Assignment:</strong> Build a <strong>structured query builder</strong> using Prisma that maps filter objects to safe, parameterized database queries — and understand why this is fundamentally different from string-interpolated SQL.</p>
+<p><strong>What You&#39;re Building:</strong></p>
+<p>A <code>POST /api/agent/prisma-query</code> route that:</p>
+<ol>
+<li>Accepts a structured filter object (category, price range, rating, stock status)</li>
+<li>Maps those filters to a Prisma <code>findMany</code> query with proper <code>where</code> clauses</li>
+<li>Returns matching products with average ratings computed from reviews</li>
+<li>Exposes the generated Prisma <code>where</code> clause so you can see the mapping</li>
+</ol>
+<p><strong>Setup:</strong></p>
+<pre><code class="language-bash">yarn prisma:setup
+# Runs: prisma generate → prisma migrate dev → prisma db seed
+# Creates 17 products across 4 categories with 30+ reviews
+</code></pre>
 <p><strong>Requirements:</strong></p>
 <ol>
-<li><p><strong>Explain chunking:</strong></p>
+<li><p><strong>Prisma query mapping:</strong></p>
 <ul>
-<li>What is it and why do we need it?</li>
-<li>What happens if chunks are too big or too small?</li>
-<li>Why does overlap matter?</li>
+<li><code>category</code> → exact match filter</li>
+<li><code>minPrice</code> / <code>maxPrice</code> → range filter with <code>gte</code> / <code>lte</code></li>
+<li><code>inStock</code> → <code>stockCount &gt; 0</code></li>
+<li><code>minRating</code> → post-query filter on computed average review rating</li>
+<li><code>orderBy</code> → support <code>price_asc</code>, <code>price_desc</code>, <code>rating_desc</code></li>
+<li><code>limit</code> → clamped between 1 and 50 (default 10)</li>
 </ul>
 </li>
-<li><p><strong>Explain semantic similarity:</strong></p>
+<li><p><strong>Understand the SQL injection contrast:</strong></p>
 <ul>
-<li>How do we find &quot;similar&quot; content?</li>
-<li>Why can&#39;t we just use keyword search?</li>
-<li>Give a concrete example</li>
+<li>Read the commented-out <code>dangerousRawQuery</code> function in the solution</li>
+<li>Understand why <code>&quot;&#39;; DROP TABLE products; --&quot;</code> as a category value would destroy the database with raw SQL but is harmless with Prisma</li>
+<li>Be ready to explain the difference in your video</li>
 </ul>
 </li>
-<li><p><strong>Show your work:</strong></p>
+<li><p><strong>Frontend</strong> at <code>/query-builder</code>:</p>
 <ul>
-<li>Reference the chunking implementation from this module</li>
-<li>Show an example of how text gets split into chunks</li>
+<li>Filter controls (dropdowns, inputs, checkbox)</li>
+<li>Display the Prisma <code>where</code> clause as formatted JSON</li>
+<li>Show products with name, price, avg rating, stock status</li>
 </ul>
 </li>
 </ol>
-<p><strong>Tips:</strong></p>
+<p><strong>Exercise Files:</strong></p>
 <ul>
-<li>Use analogies (library organization, recipe ingredients, etc.)</li>
-<li>Keep it simple - imagine explaining to a friend who doesn&#39;t code</li>
-<li>Show real examples from the codebase</li>
+<li><code>app/api/agent/prisma-query/route.exercise.ts</code> — rename to <code>route.ts</code> and implement the TODOs</li>
+<li><code>app/query-builder/page.exercise.tsx</code> — rename to <code>page.tsx</code> and build the UI</li>
+<li><code>prisma/schema.prisma</code> and <code>prisma/seed.ts</code> are provided (read them, don&#39;t modify)</li>
 </ul>
+<p><strong>Video Assignment:</strong> Record a <strong>3-4 minute video</strong> explaining <strong>SQL injection</strong> — what it is, how it works (walk through the <code>DROP TABLE</code> example), and how ORMs like Prisma prevent it with parameterized queries. Show your working query builder and demonstrate how filters map to the <code>where</code> clause.</p>
 <p><strong>Submit Your Work:</strong></p>
 <ul>
 <li><a href="https://form.typeform.com/to/VcNBEHNA">Video Submission - Week 2</a></li>
-<li><a href="https://form.typeform.com/to/EWWcsorL">Code Submission - Week 2</a> (include link to <code>app/libs/chunking.ts</code>)</li>
+<li><a href="https://form.typeform.com/to/EWWcsorL">Code Submission - Week 2</a> (include link to <code>app/api/agent/prisma-query/route.ts</code>)</li>
 </ul>
 <p><strong>Due:</strong> Before Module 5</p>
-<p><strong>Why This Matters:</strong> Chunking strategy directly impacts retrieval quality. Understanding the trade-offs helps you build better RAG systems.</p>
+<p><strong>Why This Matters:</strong> RAG doesn&#39;t always mean vector search. Structured data with known fields is often better served by a traditional database with typed queries. And understanding SQL injection is table-stakes security knowledge for any engineer.</p>
 <hr>
 <h2>Experiment: Try Different Parameters</h2>
 <p>Now that you understand the implementation, experiment with different chunking parameters:</p>
