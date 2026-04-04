@@ -378,7 +378,7 @@ Watch the solution walkthrough for the chunking exercise:
 
 ---
 
-## Homework Assignment: Week 2
+## Homework Assignment 2
 
 **Code Assignment:** Build a **structured query builder** using Prisma that maps filter objects to safe, parameterized database queries — and understand why this is fundamentally different from string-interpolated SQL.
 
@@ -426,8 +426,8 @@ yarn prisma:setup
 **Video Assignment:** Record a **3-4 minute video** explaining **SQL injection** — what it is, how it works (walk through the `DROP TABLE` example), and how ORMs like Prisma prevent it with parameterized queries. Show your working query builder and demonstrate how filters map to the `where` clause.
 
 **Submit Your Work:**
-- [Video Submission - Week 2](https://form.typeform.com/to/VcNBEHNA)
-- [Code Submission - Week 2](https://form.typeform.com/to/EWWcsorL) (include link to `app/api/agent/prisma-query/route.ts`)
+- [Video Submission - Assignment 2](https://form.typeform.com/to/VcNBEHNA)
+- [Code Submission - Assignment 2](https://form.typeform.com/to/EWWcsorL) (include link to `app/api/agent/prisma-query/route.ts`)
 
 **Due:** Before Module 5
 

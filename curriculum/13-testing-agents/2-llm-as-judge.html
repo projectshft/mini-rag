@@ -552,6 +552,50 @@ describe(&#39;LLM-as-Judge Response Quality&#39;, () =&gt; {
 <li>Does your judge prompt need adjustment?</li>
 </ul>
 <hr>
+<h2>Homework Assignment 4</h2>
+<p><strong>Code Assignment:</strong> Build a <strong>comprehensive test suite</strong> for your RAG system that combines routing tests and LLM-as-judge quality evaluation — proving your system routes correctly AND produces quality responses.</p>
+<p><strong>What You&#39;re Building:</strong></p>
+<p>A test file at <code>app/agents/__tests__/full-eval.test.ts</code> that:</p>
+<ol>
+<li>Tests <strong>routing accuracy</strong> for at least 5 queries across both agents (linkedin and rag)</li>
+<li>Tests <strong>response quality</strong> using LLM-as-judge with at least 3 golden response test cases</li>
+<li>Includes at least 1 <strong>edge case</strong> test (ambiguous query, very short input, or out-of-domain query)</li>
+<li>Logs a summary report showing pass/fail counts and average quality scores</li>
+</ol>
+<p><strong>Requirements:</strong></p>
+<ol>
+<li><p><strong>Routing tests (at least 5):</strong></p>
+<ul>
+<li>At least 2 LinkedIn agent routing tests with clear intent queries</li>
+<li>At least 2 RAG agent routing tests with technical questions</li>
+<li>At least 1 edge case (ambiguous, short, or unusual input)</li>
+<li>Each test validates both <code>agent</code> field and <code>query</code> field presence</li>
+</ul>
+</li>
+<li><p><strong>LLM-as-judge tests (at least 3):</strong></p>
+<ul>
+<li>Create golden responses by running your system and curating the best outputs</li>
+<li>Use the <code>JudgeResultSchema</code> with structured outputs (Zod + <code>zodResponseFormat</code>)</li>
+<li>Set a passing threshold of 7 or higher (justify your choice in the video)</li>
+<li>Log score and reason for each test case</li>
+</ul>
+</li>
+<li><p><strong>Summary report:</strong></p>
+<ul>
+<li>After all tests run, log: total tests, passed, failed, average judge score</li>
+<li>Use <code>afterAll()</code> hook to print the summary</li>
+</ul>
+</li>
+</ol>
+<p><strong>Video Assignment:</strong> Record a <strong>3-5 minute video</strong> explaining <strong>how to test non-deterministic AI systems</strong>. Cover: why exact string matching doesn&#39;t work, the difference between routing tests and quality tests, how LLM-as-judge works, and what your scores tell you about your system. Show your test output and walk through at least one case where the judge scored lower than expected and explain why.</p>
+<p><strong>Submit Your Work:</strong></p>
+<ul>
+<li><a href="https://form.typeform.com/to/REPLACE_VIDEO_4">Video Submission - Assignment 4</a></li>
+<li><a href="https://form.typeform.com/to/REPLACE_CODE_4">Code Submission - Assignment 4</a> (include link to <code>app/agents/__tests__/full-eval.test.ts</code>)</li>
+</ul>
+<p><strong>Due:</strong> Before the Capstone Project</p>
+<p><strong>Why This Matters:</strong> AI systems degrade silently — a model update, prompt tweak, or retrieval change can tank quality without any errors in the logs. Automated eval suites are your safety net. Every production AI system needs tests that catch regressions before users do.</p>
+<hr>
 <h2>Tips for Effective LLM-as-Judge Tests</h2>
 <h3>Keep Test Cases Focused</h3>
 <pre><code class="language-typescript">// ❌ Too broad - hard to evaluate

@@ -297,7 +297,7 @@ Understanding word math helps you understand RAG:
 
 ---
 
-## Homework Assignment: Week 1
+## Homework Assignment 1
 
 **Code Assignment:** Build a **secure custom document ingestion route** that validates input, chunks text using sentence boundaries, and stores vectors in a separate Pinecone index.
 
@@ -334,8 +334,8 @@ A `POST /api/ingest/custom` route that:
 **Video Assignment:** Record a **3-4 minute video** explaining **document poisoning** — what it is, how an attacker could inject malicious instructions into a vector store, and what happens downstream when those chunks get retrieved into an LLM prompt. Show your validation code and demonstrate at least one rejection.
 
 **Submit Your Work:**
-- [Video Submission - Week 1](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission - Week 1](https://form.typeform.com/to/A0pGKPqU) (include link to `app/api/ingest/custom/route.ts`)
+- [Video Submission - Assignment 1](https://form.typeform.com/to/NdVcsThQ)
+- [Code Submission - Assignment 1](https://form.typeform.com/to/A0pGKPqU) (include link to `app/api/ingest/custom/route.ts`)
 
 **Due:** Before Module 4
 

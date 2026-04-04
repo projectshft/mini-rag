@@ -23,7 +23,7 @@ We encourage you to experiment! You are not limited to the tools we used in clas
 
 ---
 
-## Week 4: Project Proposal
+## Assignment 5: Project Proposal
 
 Before building, submit a proposal outlining your plan.
 
@@ -56,8 +56,8 @@ Before building, submit a proposal outlining your plan.
    - If using agents, how will routing work?
 
 **Submit Your Proposal:**
-- [Video Submission - Week 4](https://form.typeform.com/to/Z9JApCkF)
-- [Code Submission - Week 4](https://form.typeform.com/to/DXPyafyJ) (include link to proposal doc or notes)
+- [Video Submission - Assignment 5](https://form.typeform.com/to/Z9JApCkF)
+- [Code Submission - Assignment 5](https://form.typeform.com/to/DXPyafyJ) (include link to proposal doc or notes)
 
 **Due:** Before starting implementation
 
@@ -94,7 +94,7 @@ Your `README.md` must explain:
 
 ---
 
-## Week 5: Final Submission
+## Assignment 6: Final Submission
 
 **Video Assignment:** Record a **3-5 minute video** demonstrating your completed RAG system.
 
@@ -106,8 +106,8 @@ Your `README.md` must explain:
 5. Any challenges you faced and how you solved them
 
 **Submit Your Final Project:**
-- [Video Submission - Week 5](https://form.typeform.com/to/SF6b6edL)
-- [Code Submission - Week 5](https://form.typeform.com/to/TXjlfrlr) (include GitHub repo link)
+- [Video Submission - Assignment 6](https://form.typeform.com/to/SF6b6edL)
+- [Code Submission - Assignment 6](https://form.typeform.com/to/TXjlfrlr) (include GitHub repo link)
 
 ---
 

@@ -295,7 +295,7 @@ Use the context above to answer the user's question. If the context doesn't cont
 
 ---
 
-## Homework Assignment: Week 3
+## Homework Assignment 3
 
 **Code Assignment:** Build a **two-stage reranking pipeline** that fetches results from Pinecone via vector similarity, then uses an LLM to re-score and re-order them — and build a UI that makes the comparison visible.
 
@@ -342,8 +342,8 @@ A `POST /api/search/rerank` route that:
 
 **Submit Your Work:**
 
-- [Video Submission - Week 3](https://form.typeform.com/to/pwjkAruL)
-- [Code Submission - Week 3](https://form.typeform.com/to/q3mEuSmX) (include link to `app/api/search/rerank/route.ts`)
+- [Video Submission - Assignment 3](https://form.typeform.com/to/pwjkAruL)
+- [Code Submission - Assignment 3](https://form.typeform.com/to/q3mEuSmX) (include link to `app/api/search/rerank/route.ts`)
 
 **Due:** Before Module 11
 

@@ -597,6 +597,49 @@ If tests fail, check:
 
 ---
 
+## Homework Assignment 4
+
+**Code Assignment:** Build a **comprehensive test suite** for your RAG system that combines routing tests and LLM-as-judge quality evaluation — proving your system routes correctly AND produces quality responses.
+
+**What You're Building:**
+
+A test file at `app/agents/__tests__/full-eval.test.ts` that:
+1. Tests **routing accuracy** for at least 5 queries across both agents (linkedin and rag)
+2. Tests **response quality** using LLM-as-judge with at least 3 golden response test cases
+3. Includes at least 1 **edge case** test (ambiguous query, very short input, or out-of-domain query)
+4. Logs a summary report showing pass/fail counts and average quality scores
+
+**Requirements:**
+
+1. **Routing tests (at least 5):**
+   - At least 2 LinkedIn agent routing tests with clear intent queries
+   - At least 2 RAG agent routing tests with technical questions
+   - At least 1 edge case (ambiguous, short, or unusual input)
+   - Each test validates both `agent` field and `query` field presence
+
+2. **LLM-as-judge tests (at least 3):**
+   - Create golden responses by running your system and curating the best outputs
+   - Use the `JudgeResultSchema` with structured outputs (Zod + `zodResponseFormat`)
+   - Set a passing threshold of 7 or higher (justify your choice in the video)
+   - Log score and reason for each test case
+
+3. **Summary report:**
+   - After all tests run, log: total tests, passed, failed, average judge score
+   - Use `afterAll()` hook to print the summary
+
+**Video Assignment:** Record a **3-5 minute video** explaining **how to test non-deterministic AI systems**. Cover: why exact string matching doesn't work, the difference between routing tests and quality tests, how LLM-as-judge works, and what your scores tell you about your system. Show your test output and walk through at least one case where the judge scored lower than expected and explain why.
+
+**Submit Your Work:**
+
+- [Video Submission - Assignment 4](https://form.typeform.com/to/REPLACE_VIDEO_4)
+- [Code Submission - Assignment 4](https://form.typeform.com/to/REPLACE_CODE_4) (include link to `app/agents/__tests__/full-eval.test.ts`)
+
+**Due:** Before the Capstone Project
+
+**Why This Matters:** AI systems degrade silently — a model update, prompt tweak, or retrieval change can tank quality without any errors in the logs. Automated eval suites are your safety net. Every production AI system needs tests that catch regressions before users do.
+
+---
+
 ## Tips for Effective LLM-as-Judge Tests
 
 ### Keep Test Cases Focused
