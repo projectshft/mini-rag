@@ -2,6 +2,9 @@
 	"name": "mini_rag",
 	"version": "0.1.0",
 	"private": true,
+	"prisma": {
+		"seed": "npx ts-node prisma/seed.ts"
+	},
 	"scripts": {
 		"dev": "next dev --turbopack",
 		"build": "next build",
@@ -19,7 +22,11 @@
 		"exercise:vectors": "npx ts-node app/scripts/exercises/vector-similarity.ts",
 		"exercise:vectors:test": "npx ts-node app/scripts/exercises/vector-similarity-test.ts",
 		"exercise:word-math": "npx ts-node app/scripts/exercises/vector-word-arithmetic.ts",
-		"convert-curriculum": "node scripts/convert-md-to-kajabi-html.mjs"
+		"convert-curriculum": "node scripts/convert-md-to-kajabi-html.mjs",
+		"prisma:generate": "npx prisma generate",
+		"prisma:migrate": "npx prisma migrate dev --name init",
+		"prisma:seed": "npx prisma db seed",
+		"prisma:setup": "npx prisma generate && npx prisma migrate dev --name init && npx prisma db seed"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [
@@ -34,6 +41,7 @@
 		"@langchain/langgraph-checkpoint-sqlite": "^0.0.3",
 		"@langchain/openai": "^0.3.17",
 		"@pinecone-database/pinecone": "6.1.0",
+		"@prisma/client": "^6.9.0",
 		"@tailwindcss/postcss": "^4.1.10",
 		"@types/cheerio": "1.0.0",
 		"@types/node-fetch": "3.0.2",
@@ -72,6 +80,7 @@
 		"jest-environment-jsdom": "30.0.0",
 		"lint-staged": "^16.0.0",
 		"marked": "^17.0.1",
+		"prisma": "^6.9.0",
 		"postcss": "^8",
 		"tailwindcss": "^4.1.10",
 		"ts-jest": "^29.1.2",

@@ -1,0 +1,30 @@
+// Prisma schema for the structured query builder assignment.
+// Uses SQLite so students don't need an external database.
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  category    String
+  price       Float
+  stockCount  Int
+  description String
+  reviews     Review[]
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  rating     Int // 1-5
+  reviewText String
+  createdAt  DateTime @default(now())
+  product    Product  @relation(fields: [productId], references: [id])
+  productId  Int
+}
