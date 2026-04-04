@@ -86,6 +86,39 @@ The seed script creates 17 products across 4 categories (electronics, books, hom
 
 ---
 
+## File Structure
+
+Each assignment has two versions of every file:
+
+- **`route.ts` / `page.tsx`** — Complete solution (reference implementation)
+- **`route.exercise.ts` / `page.exercise.tsx`** — TODO version for students
+
+To use the exercise versions, rename them to replace the solution files:
+
+```bash
+# Example: switch Assignment 1 to exercise mode
+mv app/api/ingest/custom/route.ts app/api/ingest/custom/route.solution.ts
+mv app/api/ingest/custom/route.exercise.ts app/api/ingest/custom/route.ts
+mv app/ingest/page.tsx app/ingest/page.solution.tsx
+mv app/ingest/page.exercise.tsx app/ingest/page.tsx
+```
+
+### Solution Files
+
+| Assignment | Route (solution) | Frontend (solution) |
+|---|---|---|
+| 1 | `app/api/ingest/custom/route.ts` | `app/ingest/page.tsx` |
+| 2 | `app/api/agent/prisma-query/route.ts` | `app/query-builder/page.tsx` |
+| 3 | `app/api/search/rerank/route.ts` | `app/rerank/page.tsx` |
+
+### Exercise Files (TODOs for students)
+
+| Assignment | Route (exercise) | Frontend (exercise) |
+|---|---|---|
+| 1 | `app/api/ingest/custom/route.exercise.ts` | `app/ingest/page.exercise.tsx` |
+| 2 | `app/api/agent/prisma-query/route.exercise.ts` | `app/query-builder/page.exercise.tsx` |
+| 3 | `app/api/search/rerank/route.exercise.ts` | `app/rerank/page.exercise.tsx` |
+
 ## Routes Summary
 
 | Assignment | Route | Frontend | Key Concept |
