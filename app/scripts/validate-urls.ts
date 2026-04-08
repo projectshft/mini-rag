@@ -56,82 +56,18 @@ type TestResult = {
 };
 
 async function validateUrls() {
-	console.log(`\n🔍 Testing ${urlsToTest.length} URLs...\n`);
+	// TODO: Implement URL validation
+	//
+	// Steps:
+	// 1. Loop through each URL in urlsToTest
+	// 2. Call scrapeWithCheerio() on each URL
+	// 3. Classify results as 'success', 'failed', or 'too_short'
+	// 4. Add a small delay between requests (500ms) to avoid rate limiting
+	// 5. Print summary: successful count, failed count, too short count
+	// 6. List recommended URLs (successful with > 5000 chars content)
+	// 7. List failed URLs with error reasons
 
-	const results: TestResult[] = [];
-
-	for (const url of urlsToTest) {
-		try {
-			const result = await scrapeWithCheerio(url);
-
-			if (result) {
-				results.push({
-					url,
-					status: 'success',
-					contentLength: result.content.length,
-					title: result.title,
-				});
-				console.log(`✅ ${url}`);
-				console.log(
-					`   ${result.title} (${result.content.length} chars)\n`
-				);
-			} else {
-				results.push({
-					url,
-					status: 'too_short',
-					error: 'Content too short (< 100 chars)',
-				});
-				console.log(`⚠️  ${url}`);
-				console.log(`   Content too short\n`);
-			}
-		} catch (error) {
-			results.push({
-				url,
-				status: 'failed',
-				error: error instanceof Error ? error.message : String(error),
-			});
-			console.log(`❌ ${url}`);
-			console.log(`   Error: ${error}\n`);
-		}
-
-		// Add small delay to avoid rate limiting
-		await new Promise((resolve) => setTimeout(resolve, 500));
-	}
-
-	// Summary
-	console.log('\n' + '='.repeat(80));
-	console.log('📊 SUMMARY\n');
-
-	const successful = results.filter((r) => r.status === 'success');
-	const failed = results.filter((r) => r.status === 'failed');
-	const tooShort = results.filter((r) => r.status === 'too_short');
-
-	console.log(`✅ Successful: ${successful.length}`);
-	console.log(`❌ Failed: ${failed.length}`);
-	console.log(`⚠️  Too Short: ${tooShort.length}`);
-	console.log(`📊 Total: ${results.length}\n`);
-
-	// Show recommended URLs
-	console.log('🌟 RECOMMENDED URLs for RAG system:\n');
-	const recommended = successful
-		.filter((r) => r.contentLength && r.contentLength > 5000)
-		.sort((a, b) => (b.contentLength || 0) - (a.contentLength || 0));
-
-	recommended.forEach((r) => {
-		console.log(`  ${r.url}`);
-		console.log(`    └─ ${r.title} (${r.contentLength?.toLocaleString()} chars)\n`);
-	});
-
-	// Show failed URLs
-	if (failed.length > 0) {
-		console.log('\n❌ FAILED URLs (avoid these):\n');
-		failed.forEach((r) => {
-			console.log(`  ${r.url}`);
-			console.log(`    └─ ${r.error}\n`);
-		});
-	}
-
-	return results;
+	throw new Error('validateUrls not implemented yet!');
 }
 
 validateUrls();

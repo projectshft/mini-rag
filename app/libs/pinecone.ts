@@ -37,27 +37,17 @@ export const pineconeClient = new Pinecone({
  */
 export const searchDocuments = async (
 	query: string,
-	topK: number = 3 // TRY CHANGING: Increase to 5-10 for more results, decrease to 1-2 for fewer
+	topK: number = 3
 ): Promise<ScoredPineconeRecord<RecordMetadata>[]> => {
-	// Connect to the  index (collection of vectors)
-	const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
+	// TODO: Implement semantic search in Pinecone
+	//
+	// Steps:
+	// 1. Connect to the Pinecone index using pineconeClient.Index()
+	// 2. Convert the search query to an embedding using openaiClient.embeddings.create()
+	//    - Model: 'text-embedding-3-small', Dimensions: 512
+	// 3. Query the Pinecone index with the embedding vector
+	//    - Use topK to limit results, include metadata
+	// 4. Return docs.matches
 
-	// Convert the search query into a vector embedding using OpenAI
-	const queryEmbedding = await openaiClient.embeddings.create({
-		model: 'text-embedding-3-small',
-		dimensions: 512,
-		input: query,
-	});
-
-	// Extract the actual embedding array from the API response
-	const embedding = queryEmbedding.data[0].embedding;
-
-	// Search the vector database for similar embeddings
-	const docs = await index.query({
-		vector: embedding,
-		topK, // How many results to return
-		includeMetadata: true, // Include the original text content with results
-	});
-
-	return docs.matches;
+	throw new Error('searchDocuments not implemented yet!');
 };

@@ -20,61 +20,29 @@ type TrainingExample = {
 };
 
 function countTokens(text: string): number {
-	const tokens = encodingForModel.encode(text);
-	return tokens.length;
+	// TODO: Implement token counting
+	//
+	// Use encodingForModel.encode() to tokenize the text
+	// Return the number of tokens
+
+	throw new Error('countTokens not implemented yet!');
 }
 
 function calculateTrainingCost(jsonlPath: string): void {
-	const fileContent = fs.readFileSync(jsonlPath, 'utf-8');
-	const examples = fileContent
-		.split('\n')
-		.filter((line) => line.trim())
-		.map((line) => JSON.parse(line) as TrainingExample);
+	// TODO: Implement training cost estimation
+	//
+	// Steps:
+	// 1. Read the JSONL file and parse each line as a TrainingExample
+	// 2. Calculate number of epochs based on example count:
+	//    - If examples * TARGET_EPOCHS < MIN_TARGET_EXAMPLES: increase epochs
+	//    - If examples * TARGET_EPOCHS > MAX_TARGET_EXAMPLES: decrease epochs
+	// 3. Count tokens for each example (concatenate all message contents)
+	//    - Cap each example at MAX_TOKENS_PER_EXAMPLE
+	// 4. Calculate total billing tokens = sum of tokens * epochs
+	// 5. Calculate cost at $0.008 per 1K tokens
+	// 6. Print the results
 
-	const n_train_examples = examples.length;
-	let n_epochs = TARGET_EPOCHS;
-
-	if (n_train_examples * TARGET_EPOCHS < MIN_TARGET_EXAMPLES) {
-		n_epochs = Math.min(
-			MAX_DEFAULT_EPOCHS,
-			Math.ceil(MIN_TARGET_EXAMPLES / n_train_examples)
-		);
-	} else if (n_train_examples * TARGET_EPOCHS > MAX_TARGET_EXAMPLES) {
-		n_epochs = Math.max(
-			MIN_DEFAULT_EPOCHS,
-			Math.floor(MAX_TARGET_EXAMPLES / n_train_examples)
-		);
-	}
-
-	const convo_lens = examples.map((example) => {
-		const totalContent = example.messages
-			.map((msg) => msg.content)
-			.join(' ');
-		return countTokens(totalContent);
-	});
-
-	const n_billing_tokens_in_dataset = convo_lens.reduce(
-		(sum, length) => sum + Math.min(MAX_TOKENS_PER_EXAMPLE, length),
-		0
-	);
-
-	console.log(
-		`Dataset has ~${n_billing_tokens_in_dataset} tokens that will be charged for during training`
-	);
-	console.log(
-		`By default, you'll train for ${n_epochs} epochs on this dataset`
-	);
-	console.log(
-		`By default, you'll be charged for ~${
-			n_epochs * n_billing_tokens_in_dataset
-		} tokens`
-	);
-
-	// Calculate cost (assuming $0.008 per 1K tokens for fine-tuning)
-	const costPer1KTokens = 0.008;
-	const totalCost =
-		((n_epochs * n_billing_tokens_in_dataset) / 1000) * costPer1KTokens;
-	console.log(`Estimated cost: $${totalCost.toFixed(2)}`);
+	throw new Error('calculateTrainingCost not implemented yet!');
 }
 
 // Run the estimation

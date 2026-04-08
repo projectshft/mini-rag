@@ -54,149 +54,47 @@ const genericPrompts = [
 
 // Extract likely topics from posts
 function extractTopic(text: string): string {
-	// Get first sentence or first 100 chars as topic
-	const firstSentence = text.split(/[.!?]/)[0];
-	if (firstSentence && firstSentence.length < 150) {
-		return firstSentence.trim();
-	}
-	return text.substring(0, 100).trim() + '...';
+	// TODO: Implement topic extraction
+	//
+	// Steps:
+	// 1. Get the first sentence of the text (split by .!?)
+	// 2. If the first sentence is < 150 chars, return it trimmed
+	// 3. Otherwise return first 100 chars + '...'
+
+	throw new Error('extractTopic not implemented yet!');
 }
 
 // Simple CSV parser - just split on newlines and handle quoted fields
 function parseCSV(content: string): Array<Record<string, string>> {
-	const lines = content.split('\n');
-	const headers = lines[0].split(',').map((h) => h.trim());
+	// TODO: Implement CSV parsing
+	//
+	// Steps:
+	// 1. Split content into lines
+	// 2. Extract headers from first line
+	// 3. For each remaining line, parse fields handling quoted values
+	//    - Track whether you're inside quotes to handle commas within fields
+	// 4. Map each row's values to headers to create Record objects
+	// 5. Return array of records
 
-	const records: Array<Record<string, string>> = [];
-
-	for (let i = 1; i < lines.length; i++) {
-		const line = lines[i];
-		if (!line.trim()) continue;
-
-		// Simple parser - handles quoted fields
-		const values: string[] = [];
-		let current = '';
-		let inQuotes = false;
-
-		for (let j = 0; j < line.length; j++) {
-			const char = line[j];
-
-			if (char === '"') {
-				inQuotes = !inQuotes;
-			} else if (char === ',' && !inQuotes) {
-				values.push(current.trim());
-				current = '';
-			} else {
-				current += char;
-			}
-		}
-		values.push(current.trim()); // Push last value
-
-		const record: Record<string, string> = {};
-		headers.forEach((header, idx) => {
-			record[header] = values[idx] || '';
-		});
-
-		records.push(record);
-	}
-
-	return records;
+	throw new Error('parseCSV not implemented yet!');
 }
 
 function generateTrainingExamples(csvPath: string, numExamples: number): void {
-	// Read and parse CSV
-	const csvContent = fs.readFileSync(csvPath, 'utf-8');
-	const records = parseCSV(csvContent);
+	// TODO: Implement training data generation
+	//
+	// Steps:
+	// 1. Read and parse the CSV file using parseCSV()
+	// 2. Filter to posts with text between 50-3000 chars
+	// 3. Randomly sample numExamples posts
+	// 4. For each post:
+	//    a. Extract topic using extractTopic()
+	//    b. Pick a random question template and fill in the topic
+	//    c. Create a TrainingExample with system/user/assistant messages
+	//    d. Optionally create a second example with a generic prompt
+	// 5. Shuffle all examples
+	// 6. Write to JSONL format at app/scripts/data/linkedin_training.jsonl
 
-	console.log(`Found ${records.length} posts in CSV`);
-
-	// Filter posts with meaningful content (text field)
-	const validPosts = records.filter((row) => {
-		const text = row['text'] || '';
-		return text.length > 50 && text.length < 3000;
-	});
-
-	console.log(`${validPosts.length} posts with valid length`);
-
-	// Randomly sample posts
-	const selectedPosts = validPosts
-		.sort(() => Math.random() - 0.5)
-		.slice(0, Math.min(numExamples, validPosts.length));
-
-	const trainingExamples: TrainingExample[] = [];
-
-	selectedPosts.forEach((post) => {
-		const text = post['text'] || '';
-
-		// Generate a question based on the post content
-		const topic = extractTopic(text);
-		const template =
-			questionTemplates[
-				Math.floor(Math.random() * questionTemplates.length)
-			];
-		const question = template.replace('{topic}', topic);
-
-		trainingExamples.push({
-			messages: [
-				{
-					role: 'system',
-					content: systemPrompt,
-				},
-				{
-					role: 'user',
-					content: question,
-				},
-				{
-					role: 'assistant',
-					content: text,
-				},
-			],
-		});
-
-		// Also create a variation with a generic prompt - helps learn writing style
-		// This helps the model learn the writing style more generally
-		if (Math.random() > 0.5) {
-			const genericPrompt =
-				genericPrompts[
-					Math.floor(Math.random() * genericPrompts.length)
-				];
-			trainingExamples.push({
-				messages: [
-					{
-						role: 'system',
-						content: systemPrompt,
-					},
-					{
-						role: 'user',
-						content: genericPrompt,
-					},
-					{
-						role: 'assistant',
-						content: text,
-					},
-				],
-			});
-		}
-	});
-
-	// Shuffle the examples
-	const shuffled = trainingExamples.sort(() => Math.random() - 0.5);
-
-	// Write to JSONL
-	const outputPath = path.join(
-		process.cwd(),
-		'app/scripts/data/linkedin_training.jsonl'
-	);
-
-	const jsonlContent = shuffled.map((ex) => JSON.stringify(ex)).join('\n');
-
-	fs.writeFileSync(outputPath, jsonlContent);
-
-	console.log(`\n✅ Generated ${shuffled.length} training examples`);
-	console.log(`📄 Saved to: ${outputPath}`);
-	console.log(
-		`\nRun 'npx tsx app/scripts/estimate-training-cost.ts' to estimate cost`
-	);
+	throw new Error('generateTrainingExamples not implemented yet!');
 }
 
 // Generate 100 examples

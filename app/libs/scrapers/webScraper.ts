@@ -19,57 +19,18 @@ export type ScrapedContent = {
 export async function scrapeWithCheerio(
 	url: string
 ): Promise<ScrapedContent | null> {
-	try {
-		console.log(`Scraping ${url} with Cheerio...`);
+	// TODO: Implement web scraping with Cheerio
+	//
+	// Steps:
+	// 1. Fetch the URL using axios with a User-Agent header
+	// 2. Load HTML into cheerio
+	// 3. Remove unwanted elements (script, style, nav, footer, .advertisement)
+	// 4. Extract title from <title>, <h1>, or default to 'Untitled'
+	// 5. Extract main content from (main, article, .content, .post-content, p)
+	// 6. Clean up content (normalize whitespace and line breaks)
+	// 7. Return null if content is < 100 chars
+	// 8. Return ScrapedContent object with title, content, url, metadata
 
-		const response = await axios.get(url, {
-			headers: {
-				'User-Agent': 'Mozilla/5.0 (compatible; RAG-Bot/1.0)',
-			},
-		});
-
-		const $ = cheerio.load(response.data);
-
-		// Remove unwanted elements
-		$('script, style, nav, footer, .advertisement').remove();
-
-		// Extract title
-		const title =
-			$('title').text().trim() ||
-			$('h1').first().text().trim() ||
-			'Untitled';
-
-		// Extract main content
-		const contentElements = $('main, article, .content, .post-content, p');
-		const content = contentElements
-			.map((_, el) => $(el).text())
-			.get()
-			.join('\n\n');
-
-		// Clean up content
-		const cleanContent = content
-			.replace(/\s+/g, ' ') // Normalize whitespace
-			.replace(/\n+/g, '\n') // Normalize line breaks
-			.trim();
-
-		if (!cleanContent || cleanContent.length < 100) {
-			console.warn(`Insufficient content from ${url}`);
-			return null;
-		}
-
-		return {
-			title,
-			content: cleanContent,
-			url,
-			metadata: {
-				scrapedAt: new Date().toISOString(),
-				method: 'cheerio',
-				contentLength: cleanContent.length,
-			},
-		};
-	} catch (error) {
-		console.error(`Error scraping ${url}:`, error);
-		return null;
-	}
+	throw new Error('scrapeWithCheerio not implemented yet!');
 }
 

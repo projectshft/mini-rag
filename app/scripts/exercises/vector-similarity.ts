@@ -18,35 +18,42 @@ export type Document = {
  * Calculate the dot product between two vectors
  */
 export function dotProduct(vectorA: number[], vectorB: number[]): number {
-	if (vectorA.length !== vectorB.length) {
-		throw new Error('Vectors must have the same dimension');
-	}
+	// TODO: Implement dot product
+	//
+	// Steps:
+	// 1. Validate vectors have the same length (throw Error if not)
+	// 2. Multiply corresponding elements and sum the results
+	// Hint: Use .reduce() to accumulate the sum
 
-	return vectorA.reduce((sum, a, i) => sum + a * vectorB[i], 0);
+	throw new Error('dotProduct not implemented yet!');
 }
 
 /**
  * Calculate the magnitude (length) of a vector
  */
 export function magnitude(vector: number[]): number {
-	const sumOfSquares = vector.reduce((sum, val) => sum + val * val, 0);
-	return Math.sqrt(sumOfSquares);
+	// TODO: Implement vector magnitude
+	//
+	// Steps:
+	// 1. Square each element and sum them
+	// 2. Return the square root of the sum
+
+	throw new Error('magnitude not implemented yet!');
 }
 
 /**
  * Calculate the cosine similarity between two vectors
  */
 export function cosineSimilarity(vectorA: number[], vectorB: number[]): number {
-	const dotProd = dotProduct(vectorA, vectorB);
-	const magnitudeA = magnitude(vectorA);
-	const magnitudeB = magnitude(vectorB);
+	// TODO: Implement cosine similarity
+	//
+	// Steps:
+	// 1. Calculate dot product of the two vectors
+	// 2. Calculate magnitude of each vector
+	// 3. Handle division by zero (return 0 if either magnitude is 0)
+	// 4. Return dotProduct / (magnitudeA * magnitudeB)
 
-	// Avoid division by zero
-	if (magnitudeA === 0 || magnitudeB === 0) {
-		return 0;
-	}
-
-	return dotProd / (magnitudeA * magnitudeB);
+	throw new Error('cosineSimilarity not implemented yet!');
 }
 
 /**

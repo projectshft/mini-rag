@@ -2,23 +2,13 @@ import { searchDocuments } from '@/app/libs/pinecone';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {
-	const body = await request.json();
-	const { query, topK } = body;
+	// TODO: Implement the RAG test endpoint
+	//
+	// Steps:
+	// 1. Parse request body and extract query and topK
+	// 2. Call searchDocuments() with query and topK
+	// 3. Format results: map each doc to { id, score, content, source, chunkIndex, totalChunks }
+	// 4. Return JSON with query, resultsCount, and formatted results
 
-	const results = await searchDocuments(query, topK);
-
-	const formattedResults = results.map((doc) => ({
-		id: doc.id,
-		score: doc.score,
-		content: doc.metadata?.text || '',
-		source: doc.metadata?.source || 'unknown',
-		chunkIndex: doc.metadata?.chunkIndex,
-		totalChunks: doc.metadata?.totalChunks,
-	}));
-
-	return NextResponse.json({
-		query,
-		resultsCount: formattedResults.length,
-		results: formattedResults,
-	});
+	throw new Error('RAG test endpoint not implemented yet!');
 }

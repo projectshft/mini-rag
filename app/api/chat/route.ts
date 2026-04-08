@@ -9,29 +9,16 @@ const chatSchema = z.object({
 });
 
 export async function POST(req: Request) {
-	try {
-		const body = await req.json();
-		const parsed = chatSchema.parse(body);
-		const { messages, agent, query } = parsed;
+	// TODO: Implement the chat endpoint
+	//
+	// Steps:
+	// 1. Parse and validate the request body using chatSchema.parse()
+	// 2. Extract messages, agent type, and query from parsed body
+	// 3. Get the original user query from the last message
+	// 4. Look up the agent executor using getAgent()
+	// 5. Execute the agent with { type, query, originalQuery, messages }
+	// 6. Return result.toTextStreamResponse()
+	// 7. Wrap in try/catch - return 500 on error
 
-		// Get original user query (last message)
-		const lastMessage = messages[messages.length - 1];
-		const originalQuery = lastMessage?.content || query;
-
-		// Get the agent executor from registry
-		const agentExecutor = getAgent(agent);
-
-		// Execute agent and get streamed response
-		const result = await agentExecutor({
-			type: agent,
-			query,
-			originalQuery,
-			messages,
-		});
-
-		return result.toTextStreamResponse();
-	} catch (error) {
-		console.error('Error in chat API:', error);
-		return new Response('Internal server error', { status: 500 });
-	}
+	throw new Error('Chat endpoint not implemented yet!');
 }

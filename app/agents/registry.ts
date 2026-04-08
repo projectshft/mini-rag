@@ -10,9 +10,12 @@ export const agentRegistry: Record<AgentType, AgentExecutor> = {
 };
 
 export function getAgent(agentType: AgentType): AgentExecutor {
-	const agent = agentRegistry[agentType];
-	if (!agent) {
-		throw new Error(`Unknown agent type: ${agentType}`);
-	}
-	return agent;
+	// TODO: Implement agent lookup
+	//
+	// Steps:
+	// 1. Look up the agent executor from agentRegistry using agentType
+	// 2. If not found, throw an Error with a descriptive message
+	// 3. Return the agent executor
+
+	throw new Error('getAgent not implemented yet!');
 }
