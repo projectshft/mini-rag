@@ -269,49 +269,49 @@ Use the context above to answer the user&#39;s question. If the context doesn&#3
 
 <hr>
 <h2>What You Learned</h2>
-<p>✅ Why re-ranking improves RAG quality<br>✅ The over-fetch and re-rank strategy<br>✅ How to use Cohere&#39;s re-ranking via Pinecone<br>✅ Trade-offs between speed and accuracy<br>✅ When to use re-ranking vs basic retrieval</p>
+<p>✅ Why re-ranking improves RAG quality
+✅ The over-fetch and re-rank strategy
+✅ How to use Cohere&#39;s re-ranking via Pinecone
+✅ Trade-offs between speed and accuracy
+✅ When to use re-ranking vs basic retrieval</p>
 <hr>
-<h2>Homework Assignment: Week 3</h2>
-<p><strong>Video Assignment:</strong> Record a <strong>3-5 minute video</strong> explaining <strong>re-ranking</strong> and why it&#39;s used in semantic search.</p>
-<p><strong>Requirements:</strong></p>
+<h2>Assignment 3: Reranking + Score Thresholding</h2>
+<p>Now apply what you&#39;ve learned about reranking to build a more robust retrieval system.</p>
+<h3>Video Assignment (3-5 minutes)</h3>
+<p>Explain the two-stage retrieval pattern and its tradeoffs:</p>
 <ol>
-<li><p><strong>Explain the problem:</strong></p>
-<ul>
-<li>Why doesn&#39;t basic semantic search always return the best results?</li>
-<li>Give a specific example where initial retrieval fails</li>
-</ul>
-</li>
-<li><p><strong>Explain re-ranking:</strong></p>
-<ul>
-<li>What is the &quot;over-fetch and re-rank&quot; strategy?</li>
-<li>Why does looking at query + document together help?</li>
-</ul>
-</li>
-<li><p><strong>Show a use case:</strong></p>
-<ul>
-<li>Describe a real scenario where re-ranking improves results</li>
-<li>Reference your implementation from this module</li>
-</ul>
-</li>
+<li><strong>When to rerank</strong> - Give specific scenarios where reranking is worth the latency and cost</li>
+<li><strong>When to skip</strong> - Give scenarios where basic retrieval is sufficient</li>
+<li><strong>Stage 1 vs Stage 2 cutoff</strong> - How do you decide how many results to fetch in stage 1? What factors matter?</li>
+<li><strong>Cost analysis</strong> - How would you estimate the cost/latency tradeoff for a specific use case?</li>
 </ol>
-<p><strong>Example to discuss:</strong></p>
-<pre><code>Query: &quot;How do I secure my Python code?&quot;
-
-Before re-ranking:
-1. &quot;Python security best practices&quot; ✅
-2. &quot;Python code examples&quot; ❌ (keyword match, wrong intent)
-
-After re-ranking:
-1. &quot;Python security best practices&quot; ✅
-2. &quot;Securing web applications&quot; ✅
-</code></pre>
-<p><strong>Submit Your Work:</strong></p>
+<p>Be specific with examples, not just general principles.</p>
+<h3>Code Assignment</h3>
+<p><strong>Complete the TODOs</strong> in the reranking implementation, then <strong>extend it</strong> with score thresholding:</p>
+<p><strong>Files:</strong></p>
 <ul>
-<li><a href="https://form.typeform.com/to/pwjkAruL">Video Submission - Week 3</a></li>
-<li><a href="https://form.typeform.com/to/q3mEuSmX">Code Submission - Week 3</a> (include link to <code>app/agents/rag.ts</code>)</li>
+<li><code>app/agents/rag.ts</code> (reranking section)</li>
 </ul>
-<p><strong>Due:</strong> Before Module 11</p>
-<p><strong>Why This Matters:</strong> Re-ranking is a critical technique for production RAG. Understanding when to use it separates hobby projects from production systems.</p>
+<p><strong>Extension - Add score thresholding:</strong></p>
+<ul>
+<li>Define a minimum confidence threshold for results</li>
+<li>Filter out results below the threshold after reranking</li>
+<li>Return &quot;I don&#39;t have enough information to answer that&quot; when no results pass threshold</li>
+<li>Log filtered results for analysis (what got cut and why)</li>
+</ul>
+<p><strong>What &quot;done&quot; looks like:</strong></p>
+<ul>
+<li>Reranking works and improves result ordering</li>
+<li>Low-confidence results are filtered out</li>
+<li>System gracefully handles queries with no good matches</li>
+<li>You can demonstrate the threshold filtering in action</li>
+</ul>
+<h3>Submit Your Work</h3>
+<ul>
+<li><a href="https://form.typeform.com/to/pwjkAruL">Video Submission - Assignment 3</a></li>
+<li><a href="https://form.typeform.com/to/q3mEuSmX">Code Submission - Assignment 3</a></li>
+</ul>
+<p><strong>Due:</strong> Before starting Assignment 4</p>
 <hr>
 <h2>Additional Reading</h2>
 <h3>Re-Ranking Semantic Search (Qdrant) ⭐ HIGHLY RECOMMENDED</h3>

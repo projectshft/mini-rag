@@ -618,6 +618,78 @@ const TEST_CASES = [
 <li>✅ Quality tests (LLM-as-judge)</li>
 <li>✅ Regression detection for model/prompt changes</li>
 </ul>
+<hr>
+<h2>Assignment 4: SQL Agent (RAG Without Vectors)</h2>
+<p>Not all &quot;retrieval&quot; requires vector search. For structured data with known schemas, traditional database queries are often more precise, faster, and cheaper.</p>
+<h3>Repository</h3>
+<p>Use the <strong>killer_agents</strong> repository for this assignment:</p>
+<pre><code class="language-bash">git clone https://github.com/projectshft/killer_agents.git
+cd killer_agents
+yarn install
+</code></pre>
+<p>This repo has Prisma + SQLite already configured with an influencer database (genres, tiers, pricing, locations).</p>
+<h3>Video Assignment (3-4 minutes)</h3>
+<p>Explain when to use structured queries vs vector search:</p>
+<ol>
+<li><strong>SQL strengths</strong> - What types of questions work better with SQL? (e.g., &quot;How many orders last month?&quot;, &quot;What&#39;s the average price?&quot;)</li>
+<li><strong>Vector strengths</strong> - What types need semantic search? (e.g., &quot;Find documents about customer complaints&quot;, &quot;What&#39;s our policy on returns?&quot;)</li>
+<li><strong>Hybrid approach</strong> - How would you build a system that uses both? What would the router logic look like?</li>
+<li><strong>Tradeoffs</strong> - When would you choose one over the other? Cost, latency, accuracy?</li>
+</ol>
+<p>Give specific examples for each.</p>
+<h3>Code Assignment</h3>
+<p>Complete the database search agent that translates natural language to Prisma queries:</p>
+<p><strong>What you&#39;re building:</strong></p>
+<p>The <code>databaseSearchAgent</code> in <code>app/agents/databaseSearchAgent.ts</code> that:</p>
+<ol>
+<li>Takes natural language questions about influencers</li>
+<li>Uses structured outputs to extract query parameters (genre, tier, location, price)</li>
+<li>Builds and executes a Prisma query with <code>constructWhereClause()</code></li>
+<li>Returns formatted results</li>
+</ol>
+<p><strong>Key files:</strong></p>
+<ul>
+<li><code>app/agents/databaseSearchAgent.ts</code> - The agent logic</li>
+<li><code>app/page.tsx</code> - The UI</li>
+<li><code>prisma/schema.prisma</code> - Database schema (already set up)</li>
+<li><code>prisma/seed.ts</code> - Sample data (already set up)</li>
+</ul>
+<p><strong>Requirements:</strong></p>
+<ol>
+<li><p><strong>Query mapping:</strong></p>
+<ul>
+<li>Support filtering by genre, tier, location, price range</li>
+<li>Map natural language to Prisma <code>where</code> clauses</li>
+<li>Use structured outputs for reliable parameter extraction</li>
+</ul>
+</li>
+<li><p><strong>SQL injection awareness:</strong></p>
+<ul>
+<li>Understand why Prisma&#39;s parameterized queries prevent SQL injection</li>
+<li>Be ready to explain this in your video (contrast with raw SQL string interpolation)</li>
+</ul>
+</li>
+<li><p><strong>Working UI:</strong></p>
+<ul>
+<li>Natural language input</li>
+<li>Display matching influencers with metadata</li>
+<li>Show how filters map to results</li>
+</ul>
+</li>
+</ol>
+<p><strong>What &quot;done&quot; looks like:</strong></p>
+<ul>
+<li>&quot;Show me fitness influencers in LA&quot; returns correct results</li>
+<li>&quot;Find creators under $500&quot; filters by price</li>
+<li>You can explain why this is safer than raw SQL</li>
+</ul>
+<h3>Submit Your Work</h3>
+<ul>
+<li><a href="https://form.typeform.com/to/TBD">Video Submission - Assignment 4</a></li>
+<li><a href="https://form.typeform.com/to/TBD">Code Submission - Assignment 4</a></li>
+</ul>
+<p><strong>Due:</strong> Before starting Capstone</p>
+<hr>
 <p>Next up: <strong>Capstone Project</strong> where you&#39;ll build and deploy your own RAG system!</p>
 <hr>
 <h2>Quick Reference</h2>

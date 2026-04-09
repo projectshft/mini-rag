@@ -119,7 +119,8 @@ setMessages((prev) =&gt; [...prev, userMessage]);
 <li>User knows message was received</li>
 <li>Can start typing next message</li>
 </ul>
-<p><strong>Why <code>role: &#39;user&#39; as const</code>?</strong><br>TypeScript needs to know it&#39;s the literal type <code>&#39;user&#39;</code>, not just <code>string</code>.</p>
+<p><strong>Why <code>role: &#39;user&#39; as const</code>?</strong>
+TypeScript needs to know it&#39;s the literal type <code>&#39;user&#39;</code>, not just <code>string</code>.</p>
 <h3>Step 3: Select Agent</h3>
 <pre><code class="language-typescript">const currentMessages = [
 	...messages,
@@ -164,7 +165,8 @@ if (!response.ok) {
 	return;
 }
 </code></pre>
-<p><strong>Why pass <code>currentMessages</code> again?</strong><br>The chat route needs conversation history to maintain context in the response.</p>
+<p><strong>Why pass <code>currentMessages</code> again?</strong>
+The chat route needs conversation history to maintain context in the response.</p>
 <h3>Step 5: Create Empty Assistant Message</h3>
 <pre><code class="language-typescript">const assistantMessageId = uuidv4();
 setMessages((prev) =&gt; [
@@ -523,9 +525,9 @@ AI: [provides hook example]
 <li>✅ RAG agent with retrieval and re-ranking</li>
 <li>✅ Streaming chat interface</li>
 </ul>
-<p><strong>Optional next modules:</strong></p>
+<p><strong>Optional next sections:</strong></p>
 <ul>
-<li><strong>Module 12:</strong> Observability with Helicone</li>
-<li><strong>Module 13:</strong> Testing your agents</li>
+<li>Observability with LangSmith</li>
+<li>Testing your agents</li>
 </ul>
 <hr>

@@ -310,7 +310,9 @@ const validAgent =
 
 return NextResponse.json({ agent: validAgent, query });
 </code></pre>
-<p><strong>Lines of code:</strong> ~20<br><strong>Type safety:</strong> ❌ None<br><strong>Can fail:</strong> ⚠️ Yes (parsing errors)</p>
+<p><strong>Lines of code:</strong> ~20
+<strong>Type safety:</strong> ❌ None
+<strong>Can fail:</strong> ⚠️ Yes (parsing errors)</p>
 <h3>Structured Outputs Version (After)</h3>
 <pre><code class="language-typescript">// Call OpenAI with schema
 const result = await openaiClient.responses.parse({
@@ -327,7 +329,9 @@ return NextResponse.json({
   query: result.output_parsed.query,
 });
 </code></pre>
-<p><strong>Lines of code:</strong> ~8<br><strong>Type safety:</strong> ✅ Full TypeScript support<br><strong>Can fail:</strong> ✅ Only on validation errors (caught by try/catch)</p>
+<p><strong>Lines of code:</strong> ~8
+<strong>Type safety:</strong> ✅ Full TypeScript support
+<strong>Can fail:</strong> ✅ Only on validation errors (caught by try/catch)</p>
 <hr>
 <h2>When to Use Each Approach</h2>
 <h3>Use Text Parsing When:</h3>
@@ -374,7 +378,8 @@ return NextResponse.json({
 });
 </code></pre>
 <h3>Issue: Still Getting Text Responses</h3>
-<p><strong>Symptoms:</strong><br>Response looks like text instead of structured JSON</p>
+<p><strong>Symptoms:</strong>
+Response looks like text instead of structured JSON</p>
 <p><strong>Cause:</strong> Using wrong API method</p>
 <p><strong>Solution:</strong> Make sure you&#39;re using <code>responses.parse()</code> not <code>chat.completions.create()</code></p>
 <hr>
@@ -463,9 +468,9 @@ The query should be a refined, clear version of what the user wants, removing co
 <p>Excellent! Your selector is now production-ready with type-safe, reliable routing.</p>
 <p><strong>Coming up:</strong></p>
 <ul>
-<li><strong>Module 8:</strong> Building the LinkedIn Agent with fine-tuned models</li>
-<li><strong>Module 9:</strong> Building the RAG Agent with retrieval and context</li>
-<li><strong>Module 10:</strong> Connecting everything with a streaming chat interface</li>
+<li>Building the LinkedIn Agent with fine-tuned models</li>
+<li>Building the RAG Agent with retrieval and context</li>
+<li>Connecting everything with a streaming chat interface</li>
 </ul>
 <hr>
 <h2>Quick Reference</h2>

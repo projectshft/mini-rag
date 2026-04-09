@@ -677,6 +677,83 @@ You now have:
 - ✅ Quality tests (LLM-as-judge)
 - ✅ Regression detection for model/prompt changes
 
+---
+
+## Assignment 4: SQL Agent (RAG Without Vectors)
+
+Not all "retrieval" requires vector search. For structured data with known schemas, traditional database queries are often more precise, faster, and cheaper.
+
+### Repository
+
+Use the **killer_agents** repository for this assignment:
+
+```bash
+git clone https://github.com/projectshft/killer_agents.git
+cd killer_agents
+yarn install
+```
+
+This repo has Prisma + SQLite already configured with an influencer database (genres, tiers, pricing, locations).
+
+### Video Assignment (3-4 minutes)
+
+Explain when to use structured queries vs vector search:
+
+1. **SQL strengths** - What types of questions work better with SQL? (e.g., "How many orders last month?", "What's the average price?")
+2. **Vector strengths** - What types need semantic search? (e.g., "Find documents about customer complaints", "What's our policy on returns?")
+3. **Hybrid approach** - How would you build a system that uses both? What would the router logic look like?
+4. **Tradeoffs** - When would you choose one over the other? Cost, latency, accuracy?
+
+Give specific examples for each.
+
+### Code Assignment
+
+Complete the database search agent that translates natural language to Prisma queries:
+
+**What you're building:**
+
+The `databaseSearchAgent` in `app/agents/databaseSearchAgent.ts` that:
+1. Takes natural language questions about influencers
+2. Uses structured outputs to extract query parameters (genre, tier, location, price)
+3. Builds and executes a Prisma query with `constructWhereClause()`
+4. Returns formatted results
+
+**Key files:**
+- `app/agents/databaseSearchAgent.ts` - The agent logic
+- `app/page.tsx` - The UI
+- `prisma/schema.prisma` - Database schema (already set up)
+- `prisma/seed.ts` - Sample data (already set up)
+
+**Requirements:**
+
+1. **Query mapping:**
+   - Support filtering by genre, tier, location, price range
+   - Map natural language to Prisma `where` clauses
+   - Use structured outputs for reliable parameter extraction
+
+2. **SQL injection awareness:**
+   - Understand why Prisma's parameterized queries prevent SQL injection
+   - Be ready to explain this in your video (contrast with raw SQL string interpolation)
+
+3. **Working UI:**
+   - Natural language input
+   - Display matching influencers with metadata
+   - Show how filters map to results
+
+**What "done" looks like:**
+- "Show me fitness influencers in LA" returns correct results
+- "Find creators under $500" filters by price
+- You can explain why this is safer than raw SQL
+
+### Submit Your Work
+
+- [Video Submission - Assignment 4](https://form.typeform.com/to/TBD)
+- [Code Submission - Assignment 4](https://form.typeform.com/to/TBD)
+
+**Due:** Before starting Capstone
+
+---
+
 Next up: **Capstone Project** where you'll build and deploy your own RAG system!
 
 ---

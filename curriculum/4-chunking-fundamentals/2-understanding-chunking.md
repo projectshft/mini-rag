@@ -366,7 +366,7 @@ Learn: How it handles actual documentation text
 
 ## What's Next
 
-Your chunking implementation is used in the document upload pipeline!
+The document upload pipeline uses your chunking implementation!
 
 ---
 
@@ -378,9 +378,60 @@ Watch the solution walkthrough for the chunking exercise:
 
 ---
 
-## Assignment
+## Homework Assignment 2
 
-See [Assignment 1: Chunking + Sanitization](../ASSIGNMENTS.md#assignment-1-chunking--sanitization) for the hands-on exercise for this section.
+**Code Assignment:** Build a **structured query builder** using Prisma that maps filter objects to safe, parameterized database queries — and understand why this is fundamentally different from string-interpolated SQL.
+
+**What You're Building:**
+
+A `POST /api/agent/prisma-query` route that:
+1. Accepts a structured filter object (category, price range, rating, stock status)
+2. Maps those filters to a Prisma `findMany` query with proper `where` clauses
+3. Returns matching products with average ratings computed from reviews
+4. Exposes the generated Prisma `where` clause so you can see the mapping
+
+**Setup:**
+
+```bash
+yarn prisma:setup
+# Runs: prisma generate → prisma migrate dev → prisma db seed
+# Creates 17 products across 4 categories with 30+ reviews
+```
+
+**Requirements:**
+
+1. **Prisma query mapping:**
+   - `category` → exact match filter
+   - `minPrice` / `maxPrice` → range filter with `gte` / `lte`
+   - `inStock` → `stockCount > 0`
+   - `minRating` → post-query filter on computed average review rating
+   - `orderBy` → support `price_asc`, `price_desc`, `rating_desc`
+   - `limit` → clamped between 1 and 50 (default 10)
+
+2. **Understand the SQL injection contrast:**
+   - Read the commented-out `dangerousRawQuery` function in the solution
+   - Understand why `"'; DROP TABLE products; --"` as a category value would destroy the database with raw SQL but is harmless with Prisma
+   - Be ready to explain the difference in your video
+
+3. **Frontend** at `/query-builder`:
+   - Filter controls (dropdowns, inputs, checkbox)
+   - Display the Prisma `where` clause as formatted JSON
+   - Show products with name, price, avg rating, stock status
+
+**Files:**
+- `app/api/agent/prisma-query/route.ts`
+- `app/query-builder/page.tsx`
+- `prisma/schema.prisma` and `prisma/seed.ts` (provided — read them, don't modify)
+
+**Video Assignment:** Record a **3-4 minute video** explaining **SQL injection** — what it is, how it works (walk through the `DROP TABLE` example), and how ORMs like Prisma prevent it with parameterized queries. Show your working query builder and demonstrate how filters map to the `where` clause.
+
+**Submit Your Work:**
+- [Video Submission - Assignment 2](https://form.typeform.com/to/VcNBEHNA)
+- [Code Submission - Assignment 2](https://form.typeform.com/to/EWWcsorL)
+
+**Due:** Before Assignment 3
+
+**Why This Matters:** RAG doesn't always mean vector search. Structured data with known fields is often better served by a traditional database with typed queries. And understanding SQL injection is table-stakes security knowledge for any engineer.
 
 ---
 

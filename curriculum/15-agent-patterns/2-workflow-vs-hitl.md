@@ -6,7 +6,7 @@ You've already built a **workflow agent**. Now let's understand when you need a 
 
 ## Your RAG Agent: A Workflow Pattern
 
-Let's review what you built in Module 9:
+Let's review what you built in the RAG agent section:
 
 ```typescript
 export async function ragAgent(request: AgentRequest) {

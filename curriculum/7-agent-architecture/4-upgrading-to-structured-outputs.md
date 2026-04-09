@@ -531,9 +531,9 @@ Now you understand:
 Excellent! Your selector is now production-ready with type-safe, reliable routing.
 
 **Coming up:**
-- **Module 8:** Building the LinkedIn Agent with fine-tuned models
-- **Module 9:** Building the RAG Agent with retrieval and context
-- **Module 10:** Connecting everything with a streaming chat interface
+- Building the LinkedIn Agent with fine-tuned models
+- Building the RAG Agent with retrieval and context
+- Connecting everything with a streaming chat interface
 
 ---
 

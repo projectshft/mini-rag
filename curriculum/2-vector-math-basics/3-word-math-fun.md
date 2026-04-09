@@ -297,31 +297,6 @@ Understanding word math helps you understand RAG:
 
 ---
 
-## Homework Assignment: Week 1
-
-**Video Assignment:** Record a **2-3 minute video** explaining the **dot product** to a beginner who is interested in AI but has no math background.
-
-**Requirements:**
-- Explain what a dot product is in simple terms
-- Use a real-world analogy (shopping preferences, recipe similarity, etc.)
-- Connect it to how AI "understands" similarity between words
-- Show or reference your word math experiments from this module
-
-**Tips:**
-- Think about the 3Blue1Brown video you watched
-- Avoid heavy mathematical notation
-- Focus on intuition over formulas
-
-**Submit Your Work:**
-- [Video Submission - Week 1](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission - Week 1](https://form.typeform.com/to/A0pGKPqU) (include link to your word math experiments)
-
-**Due:** Before Module 4
-
-**Why This Matters:** Teaching is the best way to learn. If you can explain dot products simply, you deeply understand the foundation of RAG and semantic search.
-
----
-
 ## What's Next
 
 You now understand the math! Time to build the actual Pinecone integration.

@@ -1,6 +1,6 @@
 # LinkedIn Agent
 
-Now that we have your fine-tuned model from module 5, we'll implement an agent that uses it to respond in your personal LinkedIn style with streaming responses.
+Now that we have your fine-tuned model, we'll implement an agent that uses it to respond in your personal LinkedIn style with streaming responses.
 
 ---
 

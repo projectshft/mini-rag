@@ -2,7 +2,8 @@
 <p>As you build AI agents, you&#39;ll encounter recurring challenges and solutions. Understanding these patterns helps you choose the right approach for your use case.</p>
 <hr>
 <h2>Pattern 1: Workflow Agents</h2>
-<p><strong>What it is:</strong><br>A fixed sequence of steps that always executes in the same order.</p>
+<p><strong>What it is:</strong>
+A fixed sequence of steps that always executes in the same order.</p>
 <p><strong>Example:</strong></p>
 <pre><code>Query → Embed → Search → Rerank → Generate
 </code></pre>
@@ -24,7 +25,8 @@
 </ul>
 <hr>
 <h2>Pattern 2: Router Agents</h2>
-<p><strong>What it is:</strong><br>An agent that routes requests to specialized sub-agents based on intent.</p>
+<p><strong>What it is:</strong>
+An agent that routes requests to specialized sub-agents based on intent.</p>
 <p><strong>Example:</strong></p>
 <pre><code>Query → Analyze Intent → Route to:
   - RAG Agent (technical questions)
@@ -48,7 +50,8 @@
 </ul>
 <hr>
 <h2>Pattern 3: Human-in-the-Loop (HITL)</h2>
-<p><strong>What it is:</strong><br>Agent pauses execution to request human approval or input before proceeding.</p>
+<p><strong>What it is:</strong>
+Agent pauses execution to request human approval or input before proceeding.</p>
 <p><strong>Example:</strong></p>
 <pre><code>Query → Plan Action → Request Approval → Execute (if approved)
 </code></pre>
@@ -76,7 +79,8 @@
 </ul>
 <hr>
 <h2>Pattern 4: Tool-Calling Agents</h2>
-<p><strong>What it is:</strong><br>AI decides when and which tools to use based on the query.</p>
+<p><strong>What it is:</strong>
+AI decides when and which tools to use based on the query.</p>
 <p><strong>Example:</strong></p>
 <pre><code>Query → AI Decides:
   - Need docs? → Call search_documentation tool
@@ -100,13 +104,14 @@
 </ul>
 <hr>
 <h2>Pattern 5: Iterative Refinement</h2>
-<p><strong>What it is:</strong><br>Agent evaluates its own output and refines until quality threshold is met.</p>
+<p><strong>What it is:</strong>
+Agent evaluates its own output and refines until quality threshold is met.</p>
 <p><strong>Example:</strong></p>
 <pre><code>Query → Generate → Evaluate Quality:
   - Good enough? → Return result
   - Not good enough? → Search more context → Generate again
 </code></pre>
-<p><strong>You&#39;ve seen this:</strong> Your LangGraph agent from Module 10 (optional)</p>
+<p><strong>You&#39;ve seen this:</strong> The LangGraph agent (optional)</p>
 <p><strong>When to use:</strong></p>
 <ul>
 <li>Quality is more important than speed</li>
@@ -125,7 +130,8 @@
 </ul>
 <hr>
 <h2>Pattern 6: Multi-Step Orchestration</h2>
-<p><strong>What it is:</strong><br>Agent breaks complex tasks into steps, executing them sequentially or in parallel.</p>
+<p><strong>What it is:</strong>
+Agent breaks complex tasks into steps, executing them sequentially or in parallel.</p>
 <p><strong>Example:</strong></p>
 <pre><code>&quot;Write a blog post about React hooks&quot;
   ↓

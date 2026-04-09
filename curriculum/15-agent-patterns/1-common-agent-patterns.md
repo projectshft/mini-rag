@@ -145,7 +145,7 @@ Query → Generate → Evaluate Quality:
   - Not good enough? → Search more context → Generate again
 ```
 
-**You've seen this:** Your LangGraph agent from Module 10 (optional)
+**You've seen this:** The LangGraph agent (optional)
 
 **When to use:**
 

@@ -702,9 +702,9 @@ Now you understand:
 -   ✅ RAG agent with retrieval and re-ranking
 -   ✅ Streaming chat interface
 
-**Optional next modules:**
+**Optional next sections:**
 
--   **Module 12:** Observability with Helicone
--   **Module 13:** Testing your agents
+-   Observability with LangSmith
+-   Testing your agents
 
 ---

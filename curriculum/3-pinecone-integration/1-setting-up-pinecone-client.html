@@ -1,0 +1,361 @@
+<h1>Setting Up OpenAI and Pinecone Integration</h1>
+<p>Now that you understand what vector databases are and why we need them, let&#39;s set up both OpenAI and Pinecone. These two services work together to power our RAG system.</p>
+<hr>
+<h2>What You&#39;ll Build</h2>
+<p>By the end of this module, you&#39;ll have:</p>
+<ul>
+<li>An OpenAI API key and configured client for generating embeddings</li>
+<li>A configured Pinecone client that connects to your vector database</li>
+<li>Helper functions to search for similar documents</li>
+<li>Understanding of how embeddings flow from OpenAI to Pinecone</li>
+</ul>
+<hr>
+<h2>The Big Picture: How It All Connects</h2>
+<p>Let&#39;s understand the complete flow before we write any code:</p>
+<pre><code>User Query
+    ↓
+1. Convert text to embedding (OpenAI)
+    ↓
+2. Search for similar embeddings (Pinecone)
+    ↓
+3. Retrieve matching documents
+    ↓
+4. Send to LLM with context (OpenAI)
+    ↓
+Response to User
+</code></pre>
+<p>This module sets up steps 1 and 2 - the OpenAI and Pinecone integrations.</p>
+<hr>
+<h2>Part 1: Setting Up OpenAI</h2>
+<h3>Getting Your OpenAI API Key</h3>
+<p><strong>Step 1: Create an OpenAI Account</strong></p>
+<ol>
+<li>Go to <a href="https://platform.openai.com">platform.openai.com</a></li>
+<li>Sign up or log in to your account</li>
+<li>Navigate to the &quot;API Keys&quot; section in your dashboard</li>
+<li>Click &quot;Create new secret key&quot;</li>
+<li><strong>Important</strong>: Copy the key immediately - you won&#39;t see it again!</li>
+</ol>
+<p><strong>Step 2: Add Credits</strong></p>
+<p>The OpenAI API is pay-per-use. You&#39;ll need to add a payment method:</p>
+<ol>
+<li>Go to &quot;Billing&quot; in your OpenAI dashboard</li>
+<li>Add a payment method</li>
+<li>Add $5-10 in credits (this will last you a long time for learning)</li>
+</ol>
+<p><strong>Cost Breakdown:</strong></p>
+<ul>
+<li>Embeddings (<code>text-embedding-3-small</code>): ~$0.0001 per 1K tokens (very cheap!)</li>
+<li>GPT-4o-mini: ~$0.15 per 1M input tokens</li>
+<li>For this tutorial, $5 will be more than enough</li>
+</ul>
+<p><strong>Learn more:</strong></p>
+<ul>
+<li><a href="https://platform.openai.com/docs/introduction">OpenAI Platform Documentation</a></li>
+<li><a href="https://github.com/openai/openai-node">OpenAI Node.js SDK</a> (version <code>5.15.0</code> used in this project)</li>
+<li><a href="https://platform.openai.com/docs/guides/embeddings">Embeddings Guide</a></li>
+</ul>
+<h3>Understanding OpenAI Models</h3>
+<p><strong>Embedding Models</strong> (convert text to vectors):</p>
+<ul>
+<li><strong>text-embedding-3-small</strong>: 512-1536 dimensions, fast and cheap ✅ (we&#39;ll use this)</li>
+<li><strong>text-embedding-3-large</strong>: up to 3072 dimensions, more accurate but pricier</li>
+</ul>
+<p><strong>Chat Models</strong> (generate responses):</p>
+<ul>
+<li><strong>gpt-4o</strong>: Most capable, best reasoning</li>
+<li><strong>gpt-4o-mini</strong>: Great balance of speed/cost/quality ✅ (we&#39;ll use this)</li>
+</ul>
+<hr>
+<h2>Part 2: Setting Up Pinecone</h2>
+<h3>Creating a Pinecone Account and Index</h3>
+<p><strong>Step 1: Create a free Pinecone account:</strong></p>
+<ol>
+<li>Go to <a href="https://www.pinecone.io/">https://www.pinecone.io/</a></li>
+<li>Click &quot;Sign Up&quot; and create a free account</li>
+<li>Once logged in, create a new index:<ul>
+<li><strong>Name</strong>: <code>rag-tutorial</code></li>
+<li><strong>Dimensions</strong>: <code>512</code> (matches our OpenAI embedding dimensions)</li>
+<li><strong>Metric</strong>: <code>cosine</code></li>
+</ul>
+</li>
+<li>Copy your API key from the console (API Keys section)</li>
+</ol>
+<p><strong>⚠️ CRITICAL</strong>: Your Pinecone index dimensions MUST match your OpenAI embedding dimensions. We&#39;re using <code>512</code> dimensions for <code>text-embedding-3-small</code>.</p>
+<p><strong>Learn more:</strong></p>
+<ul>
+<li><a href="https://docs.pinecone.io/guides/get-started/overview">Pinecone Documentation</a></li>
+<li><a href="https://www.npmjs.com/package/@pinecone-database/pinecone">Pinecone Node.js SDK</a> (version <code>6.1.0</code> used in this project)</li>
+</ul>
+<hr>
+<h2>Part 3: Environment Configuration</h2>
+<p><strong>Add both API keys to your <code>.env</code> or <code>.env.local</code> file:</strong></p>
+<pre><code class="language-bash"># OpenAI Configuration
+OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+
+# Pinecone Configuration
+PINECONE_API_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+PINECONE_INDEX=rag-tutorial
+</code></pre>
+<p><strong>Where to get these:</strong></p>
+<ul>
+<li><strong>OPENAI_API_KEY</strong>: OpenAI Platform → API Keys</li>
+<li><strong>PINECONE_API_KEY</strong>: Pinecone console → API Keys</li>
+<li><strong>PINECONE_INDEX</strong>: The name you chose when creating your index (<code>rag-tutorial</code>)</li>
+</ul>
+<hr>
+<h2>Understanding the Code Structure</h2>
+<h3>OpenAI Client (<code>app/libs/openai/openai.ts</code>)</h3>
+<p>This file is already configured and exports the OpenAI client:</p>
+<pre><code class="language-typescript">import OpenAI from &#39;openai&#39;;
+
+export const openaiClient = new OpenAI({
+	apiKey: process.env.OPENAI_API_KEY as string,
+});
+</code></pre>
+<h3>Pinecone Client (<code>app/libs/pinecone.ts</code>)</h3>
+<p>Let&#39;s understand the implementation. Open <code>app/libs/pinecone.ts</code> to see the complete code:</p>
+<p><strong>1. Client Initialization:</strong></p>
+<pre><code class="language-typescript">import { Pinecone } from &#39;@pinecone-database/pinecone&#39;;
+import { openaiClient } from &#39;../libs/openai/openai&#39;;
+
+export const pineconeClient = new Pinecone({
+	apiKey: process.env.PINECONE_API_KEY as string,
+});
+</code></pre>
+<p>This creates ONE connection that your entire app shares. It&#39;s more efficient than creating new connections each time.</p>
+<p><strong>2. The searchDocuments Function:</strong></p>
+<pre><code class="language-typescript">export const searchDocuments = async (
+	query: string,
+	topK: number = 3
+): Promise&lt;ScoredPineconeRecord&lt;RecordMetadata&gt;[]&gt; =&gt; {
+	// Get reference to your index
+	const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
+
+	// Convert query to embedding using OpenAI
+	const queryEmbedding = await openaiClient.embeddings.create({
+		model: &#39;text-embedding-3-small&#39;,
+		dimensions: 512,
+		input: query,
+	});
+
+	const embedding = queryEmbedding.data[0].embedding;
+
+	// Search Pinecone for similar vectors
+	const docs = await index.query({
+		vector: embedding,
+		topK,
+		includeMetadata: true,
+	});
+
+	return docs.matches;
+};
+</code></pre>
+<hr>
+<h2>Key Concepts Explained</h2>
+<h3>Client vs. Index</h3>
+<ul>
+<li><strong>Client</strong>: The connection to Pinecone (authenticate once, reuse everywhere)</li>
+<li><strong>Index</strong>: A specific vector database (like a table in a traditional database)</li>
+</ul>
+<p>Think of it like:</p>
+<ul>
+<li>Client = Database connection pool</li>
+<li>Index = Specific table you want to query</li>
+</ul>
+<h3>The Search Flow</h3>
+<pre><code class="language-typescript">1. Get embedding from OpenAI (convert text → vector)
+2. Pass embedding to Pinecone (search for similar vectors)
+3. Pinecone finds similar vectors using cosine similarity
+4. Returns documents with similarity scores (0-1, higher = more similar)
+</code></pre>
+<h3>Understanding the Query Parameters</h3>
+<p>When you query Pinecone:</p>
+<ol>
+<li><strong>vector</strong>: The embedding to search with (512 dimensions in our case)</li>
+<li><strong>topK</strong>: How many results to return (default 3, try 5-10 for more results)</li>
+<li><strong>includeMetadata</strong>: Whether to return the document text/metadata (we need this!)</li>
+</ol>
+<p>The response contains:</p>
+<ul>
+<li><strong>id</strong>: Unique document identifier</li>
+<li><strong>score</strong>: Similarity score (0-1, where 1 = identical)</li>
+<li><strong>metadata</strong>: The actual text content and any other data we stored</li>
+</ul>
+<hr>
+<h2>Testing Your Setup</h2>
+<p>Let&#39;s verify everything works. First, make sure your <code>.env</code> file has both keys:</p>
+<pre><code class="language-bash">OPENAI_API_KEY=sk-proj-...
+PINECONE_API_KEY=...
+PINECONE_INDEX=rag-tutorial
+</code></pre>
+<p>Then try importing the client in Node.js:</p>
+<pre><code class="language-typescript">import { pineconeClient, searchDocuments } from &#39;./app/libs/pinecone&#39;;
+
+// This should not throw an error
+console.log(&#39;Pinecone client initialized:&#39;, !!pineconeClient);
+</code></pre>
+<p><strong>Common Issues:</strong></p>
+<ul>
+<li>❌ <code>OPENAI_API_KEY is missing</code> → Check your .env file</li>
+<li>❌ <code>PINECONE_API_KEY is missing</code> → Check your .env file</li>
+<li>❌ <code>Dimensions mismatch</code> → Pinecone index must be 512 dimensions</li>
+<li>❌ <code>Index not found</code> → Verify your index name in Pinecone console</li>
+</ul>
+<hr>
+<h2>Understanding Embedding Dimensions</h2>
+<p>Notice we use <code>dimensions: 512</code> in our code:</p>
+<pre><code class="language-typescript">const queryEmbedding = await openaiClient.embeddings.create({
+	model: &#39;text-embedding-3-small&#39;,
+	dimensions: 512,  // Must match Pinecone index!
+	input: query,
+});
+</code></pre>
+<p><strong>Why 512 dimensions?</strong></p>
+<ul>
+<li>Smaller than default 1536 = faster and cheaper</li>
+<li>Still highly accurate for most use cases</li>
+<li>Reduces storage costs in Pinecone</li>
+<li>Faster similarity search</li>
+</ul>
+<p><strong>CRITICAL</strong>: Your Pinecone index dimensions must match this value. If you created your index with different dimensions, update the code to match.</p>
+<hr>
+<h2>Challenge: Understanding Embedding Dimensions</h2>
+<p>Before moving on, it&#39;s critical to understand how embedding dimensions affect your RAG system. This decision impacts cost, performance, and accuracy.</p>
+<h3>Your Challenge</h3>
+<p>Create a document (markdown, Google Doc, or notes) that answers these questions:</p>
+<p><strong>1. Content Type Analysis</strong></p>
+<p>For each content type below, what embedding dimensions would you choose and why?</p>
+<ul>
+<li><p><strong>LinkedIn Posts</strong> (short, casual, 1-3 paragraphs)</p>
+<ul>
+<li>Recommended dimensions: ?</li>
+<li>Reasoning: ?</li>
+</ul>
+</li>
+<li><p><strong>Legal Documents</strong> (long, technical, precise language)</p>
+<ul>
+<li>Recommended dimensions: ?</li>
+<li>Reasoning: ?</li>
+</ul>
+</li>
+<li><p><strong>Product Reviews</strong> (mixed sentiment, varied length)</p>
+<ul>
+<li>Recommended dimensions: ?</li>
+<li>Reasoning: ?</li>
+</ul>
+</li>
+<li><p><strong>Code Documentation</strong> (technical, structured)</p>
+<ul>
+<li>Recommended dimensions: ?</li>
+<li>Reasoning: ?</li>
+</ul>
+</li>
+</ul>
+<p><strong>2. Image Embeddings</strong></p>
+<p>Research how image embeddings differ from text embeddings:</p>
+<ul>
+<li>What models generate image embeddings? (Hint: CLIP, ResNet)</li>
+<li>What dimension ranges are typical for images?</li>
+<li>How do image embedding dimensions compare to text?</li>
+</ul>
+<p><strong>3. The Dimension Trade-off Matrix</strong></p>
+<p>Create a table comparing dimensions across these factors:</p>
+<table>
+<thead>
+<tr>
+<th>Dimensions</th>
+<th>Accuracy</th>
+<th>Speed</th>
+<th>Storage Cost</th>
+<th>Use Case</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>256</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+<tr>
+<td>512</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+<tr>
+<td>1536</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+<tr>
+<td>3072</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+<td>?</td>
+</tr>
+</tbody></table>
+<p><strong>4. Real-World Scenario</strong></p>
+<p>You&#39;re building a RAG system for a legal tech company that handles:</p>
+<ul>
+<li>Short case summaries (200-500 words)</li>
+<li>Full legal opinions (5,000-20,000 words)</li>
+<li>Case law citations (very short, highly precise)</li>
+</ul>
+<p>What dimensions would you choose for each? Would you use different Pinecone indexes? Why or why not?</p>
+<p><strong>5. Cost Analysis</strong></p>
+<p>Calculate the storage difference between dimensions:</p>
+<ul>
+<li>You have 100,000 documents</li>
+<li>Each dimension is a 32-bit float (4 bytes)</li>
+<li>Compare storage for 512 vs 1536 vs 3072 dimensions</li>
+</ul>
+<p><strong>Helpful Resources:</strong></p>
+<ul>
+<li><a href="https://platform.openai.com/docs/guides/embeddings/embedding-models">OpenAI Embeddings Dimensions Guide</a></li>
+<li><a href="https://docs.pinecone.io/guides/operations/performance-tuning">Pinecone Performance Guide</a></li>
+<li><a href="https://openai.com/index/clip/">CLIP Model for Images</a></li>
+</ul>
+<h3>Submission</h3>
+<p>Save your analysis document and keep it as a reference. Understanding these trade-offs will help you make informed decisions in production systems.</p>
+<p><strong>Estimated time:</strong> 30-45 minutes</p>
+<hr>
+<h2>What&#39;s Next?</h2>
+<p>Excellent! You now have:</p>
+<ul>
+<li>✅ OpenAI API configured for embeddings and chat</li>
+<li>✅ Pinecone vector database configured</li>
+<li>✅ A <code>searchDocuments()</code> function ready to use</li>
+<li>✅ Understanding of embedding dimension trade-offs</li>
+</ul>
+<p><strong>Coming up in the next modules:</strong></p>
+<ol>
+<li><strong>Chunking Fundamentals</strong>: Learn how to break documents into optimal chunks</li>
+<li><strong>Document Upload</strong>: Build a system to add content to your vector database</li>
+<li><strong>Agent Architecture</strong>: Create intelligent agents that route queries</li>
+<li><strong>RAG Agent</strong>: Implement retrieval-augmented generation</li>
+<li><strong>Chat Interface</strong>: Build a streaming UI for your RAG system</li>
+</ol>
+<hr>
+<h2>Quick Reference</h2>
+<p><strong>OpenAI SDK Documentation:</strong></p>
+<ul>
+<li><a href="https://github.com/openai/openai-node">OpenAI Node.js SDK GitHub</a></li>
+<li><a href="https://platform.openai.com/docs/api-reference/embeddings">Embeddings API Reference</a></li>
+<li><a href="https://platform.openai.com/docs/api-reference/chat">Chat Completions API Reference</a></li>
+</ul>
+<p><strong>Pinecone SDK Documentation:</strong></p>
+<ul>
+<li><a href="https://docs.pinecone.io/reference/sdks/node/overview">Pinecone Node.js SDK</a></li>
+<li><a href="https://docs.pinecone.io/reference/api/data-plane/query">Query API Reference</a></li>
+<li><a href="https://docs.pinecone.io/troubleshooting/best-practices">Best Practices</a></li>
+</ul>
+<hr>
+<h2>Video Walkthrough</h2>
+<p>Watch the complete setup of OpenAI and Pinecone step-by-step:</p>
+<iframe src="https://share.descript.com/embed/eDhPxpnPLKa" width="640" height="360" frameborder="0" allowfullscreen></iframe>

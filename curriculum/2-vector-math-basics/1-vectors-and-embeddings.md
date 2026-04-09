@@ -210,9 +210,9 @@ For beautiful visual explanations:
 - [Dot Products](https://projectshft.github.io/ai-accelerator-compendium/dot-products.html) - Visual explanation of dot products and similarity
 
 **Bonus - Dive Deeper:**
-- [LLMs](https://projectshft.github.io/ai-accelerator-compendium/llms.html) - How large language models work
-- [Transformers](https://projectshft.github.io/ai-accelerator-compendium/transformers.html) - The architecture behind modern AI
-- [Attention](https://projectshft.github.io/ai-accelerator-compendium/attention.html) - Understanding attention mechanisms
+- [LLMs](https://projectshft.github.io/ai-accelerator-compendium/mini-llm/index.html) - How large language models work
+- [Transformers](https://projectshft.github.io/ai-accelerator-compendium/gpt/index.html) - The architecture behind modern AI
+- [Attention](https://projectshft.github.io/ai-accelerator-compendium/attention/index.html) - Understanding attention mechanisms
 
 **3Blue1Brown's Linear Algebra Series:**
 

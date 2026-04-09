@@ -149,7 +149,47 @@ Answer using the context. If insufficient, say so.`;
 
 <hr>
 <h2>What You Learned</h2>
-<p>✅ How to generate embeddings for queries<br>✅ How to perform semantic search with Pinecone<br>✅ How to build context-aware prompts<br>✅ How to stream responses with retrieved context</p>
+<p>✅ How to generate embeddings for queries
+✅ How to perform semantic search with Pinecone
+✅ How to build context-aware prompts
+✅ How to stream responses with retrieved context</p>
 <hr>
 <h2>What&#39;s Next?</h2>
-<p>In the next module, you&#39;ll learn about <strong>re-ranking</strong> - a technique to improve retrieval quality by intelligently filtering results.</p>
+<p>Next, you&#39;ll learn about <strong>re-ranking</strong> - a technique to improve retrieval quality by intelligently filtering results.</p>
+<hr>
+<h2>Assignment 2: Retrieval Quality + Query Preprocessing</h2>
+<p>Now apply what you&#39;ve learned about RAG to improve retrieval quality.</p>
+<h3>Video Assignment (3-4 minutes)</h3>
+<p>Explain how you evaluate retrieval quality. Address these questions:</p>
+<ol>
+<li><strong>Chunk sizing</strong> - How do you know if your chunks are too big or too small? What symptoms would you see?</li>
+<li><strong>Retrieval accuracy</strong> - How do you know if you&#39;re retrieving the right content? What would &quot;wrong&quot; look like?</li>
+<li><strong>Similarity thresholds</strong> - How do you decide what score is &quot;good enough&quot;? What happens if it&#39;s too high or too low?</li>
+<li><strong>Metrics</strong> - What would you track in production to monitor retrieval quality?</li>
+</ol>
+<p>Give specific examples from your implementation.</p>
+<h3>Code Assignment</h3>
+<p><strong>Complete the TODOs</strong> in the RAG agent to make it work, then <strong>extend it</strong> with query preprocessing:</p>
+<p><strong>Files:</strong></p>
+<ul>
+<li><code>app/agents/rag.ts</code></li>
+</ul>
+<p><strong>Extension - Add query preprocessing:</strong></p>
+<ul>
+<li>Expand common abbreviations (e.g., &quot;JS&quot; → &quot;JavaScript&quot;, &quot;DB&quot; → &quot;database&quot;)</li>
+<li>Normalize casing for technical terms</li>
+<li>Handle common typos with fuzzy matching (optional)</li>
+<li>Strip filler words that don&#39;t help retrieval (&quot;um&quot;, &quot;like&quot;, &quot;basically&quot;)</li>
+</ul>
+<p><strong>What &quot;done&quot; looks like:</strong></p>
+<ul>
+<li>RAG agent retrieves relevant context and generates answers</li>
+<li>Query preprocessing improves retrieval for messy/casual queries</li>
+<li>You can demonstrate the before/after of preprocessing</li>
+</ul>
+<h3>Submit Your Work</h3>
+<ul>
+<li><a href="https://form.typeform.com/to/VcNBEHNA">Video Submission - Assignment 2</a></li>
+<li><a href="https://form.typeform.com/to/EWWcsorL">Code Submission - Assignment 2</a></li>
+</ul>
+<p><strong>Due:</strong> Before starting Assignment 3</p>

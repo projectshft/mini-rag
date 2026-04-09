@@ -295,46 +295,46 @@ Use the context above to answer the user's question. If the context doesn't cont
 
 ---
 
-## Homework Assignment: Week 3
+## Assignment 3: Reranking + Score Thresholding
 
-**Video Assignment:** Record a **3-5 minute video** explaining **re-ranking** and why it's used in semantic search.
+Now apply what you've learned about reranking to build a more robust retrieval system.
 
-**Requirements:**
+### Video Assignment (3-5 minutes)
 
-1. **Explain the problem:**
-    - Why doesn't basic semantic search always return the best results?
-    - Give a specific example where initial retrieval fails
+Explain the two-stage retrieval pattern and its tradeoffs:
 
-2. **Explain re-ranking:**
-    - What is the "over-fetch and re-rank" strategy?
-    - Why does looking at query + document together help?
+1. **When to rerank** - Give specific scenarios where reranking is worth the latency and cost
+2. **When to skip** - Give scenarios where basic retrieval is sufficient
+3. **Stage 1 vs Stage 2 cutoff** - How do you decide how many results to fetch in stage 1? What factors matter?
+4. **Cost analysis** - How would you estimate the cost/latency tradeoff for a specific use case?
 
-3. **Show a use case:**
-    - Describe a real scenario where re-ranking improves results
-    - Reference your implementation from this module
+Be specific with examples, not just general principles.
 
-**Example to discuss:**
+### Code Assignment
 
-```
-Query: "How do I secure my Python code?"
+**Complete the TODOs** in the reranking implementation, then **extend it** with score thresholding:
 
-Before re-ranking:
-1. "Python security best practices" ✅
-2. "Python code examples" ❌ (keyword match, wrong intent)
+**Files:**
+- `app/agents/rag.ts` (reranking section)
 
-After re-ranking:
-1. "Python security best practices" ✅
-2. "Securing web applications" ✅
-```
+**Extension - Add score thresholding:**
+- Define a minimum confidence threshold for results
+- Filter out results below the threshold after reranking
+- Return "I don't have enough information to answer that" when no results pass threshold
+- Log filtered results for analysis (what got cut and why)
 
-**Submit Your Work:**
+**What "done" looks like:**
+- Reranking works and improves result ordering
+- Low-confidence results are filtered out
+- System gracefully handles queries with no good matches
+- You can demonstrate the threshold filtering in action
 
-- [Video Submission - Week 3](https://form.typeform.com/to/pwjkAruL)
-- [Code Submission - Week 3](https://form.typeform.com/to/q3mEuSmX) (include link to `app/agents/rag.ts`)
+### Submit Your Work
 
-**Due:** Before Module 11
+- [Video Submission - Assignment 3](https://form.typeform.com/to/pwjkAruL)
+- [Code Submission - Assignment 3](https://form.typeform.com/to/q3mEuSmX)
 
-**Why This Matters:** Re-ranking is a critical technique for production RAG. Understanding when to use it separates hobby projects from production systems.
+**Due:** Before starting Assignment 4
 
 ---
 

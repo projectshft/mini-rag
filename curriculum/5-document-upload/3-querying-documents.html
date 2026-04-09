@@ -463,13 +463,18 @@ const highQuality = results.filter((doc) =&gt; doc.score &gt; 0.8);
 </code></pre>
 <hr>
 <h2>What You&#39;ve Learned</h2>
-<p>✅ How vector similarity search works<br>✅ Using the <code>searchDocuments()</code> function<br>✅ Understanding similarity scores<br>✅ Building an API route for testing<br>✅ Debugging common issues<br>✅ The importance of topK parameter</p>
+<p>✅ How vector similarity search works
+✅ Using the <code>searchDocuments()</code> function
+✅ Understanding similarity scores
+✅ Building an API route for testing
+✅ Debugging common issues
+✅ The importance of topK parameter</p>
 <hr>
 <h2>What&#39;s Next?</h2>
 <p>Now that you can:</p>
 <ol>
-<li>✅ Upload documents (Module 2)</li>
-<li>✅ Query documents (This module)</li>
+<li>✅ Upload documents</li>
+<li>✅ Query documents</li>
 </ol>
 <p>You&#39;re ready for:</p>
 <ul>
@@ -478,3 +483,46 @@ const highQuality = results.filter((doc) =&gt; doc.score &gt; 0.8);
 <li><strong>Chat Interface</strong> - Create user-facing app</li>
 </ul>
 <p>The foundation of your RAG system is complete!</p>
+<hr>
+<h2>Assignment 1: Chunking + Sanitization</h2>
+<p>Now it&#39;s time to apply what you&#39;ve learned to a new problem.</p>
+<h3>Video Assignment (3-4 minutes)</h3>
+<p>Explain chunking strategy tradeoffs. How would you chunk these different document types:</p>
+<ol>
+<li><strong>Medical records</strong> - HIPAA considerations, structured fields mixed with clinical notes, sensitive data</li>
+<li><strong>Confluence documentation</strong> - Headers, code blocks, tables, cross-references</li>
+<li><strong>Twitter/X posts</strong> - Short content, hashtags, threads, mentions</li>
+</ol>
+<p>For each type, explain:</p>
+<ul>
+<li>What chunk size would you use and why?</li>
+<li>Where would you split (sentences, paragraphs, sections)?</li>
+<li>What metadata would you preserve?</li>
+<li>What special handling is needed?</li>
+</ul>
+<h3>Code Assignment</h3>
+<p><strong>Complete the TODOs</strong> in the ingestion route to make the system work, then <strong>extend it</strong> with text sanitization:</p>
+<p><strong>Files:</strong></p>
+<ul>
+<li><code>app/api/upload-document/route.ts</code></li>
+<li><code>app/libs/chunking.ts</code></li>
+</ul>
+<p><strong>Extension - Add sanitization:</strong></p>
+<ul>
+<li>Strip HTML tags from content</li>
+<li>Normalize whitespace (collapse multiple spaces/newlines)</li>
+<li>Handle special characters (smart quotes, em dashes, etc.)</li>
+<li>Remove boilerplate text (navigation, footers, &quot;Click here to...&quot;, etc.)</li>
+</ul>
+<p><strong>What &quot;done&quot; looks like:</strong></p>
+<ul>
+<li>Documents upload and chunk correctly</li>
+<li>Sanitization cleans messy web content before chunking</li>
+<li>You can demonstrate the before/after of sanitization</li>
+</ul>
+<h3>Submit Your Work</h3>
+<ul>
+<li><a href="https://form.typeform.com/to/NdVcsThQ">Video Submission - Assignment 1</a></li>
+<li><a href="https://form.typeform.com/to/A0pGKPqU">Code Submission - Assignment 1</a></li>
+</ul>
+<p><strong>Due:</strong> Before starting Assignment 2</p>

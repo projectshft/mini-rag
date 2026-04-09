@@ -211,4 +211,46 @@ Answer using the context. If insufficient, say so.`;
 
 ## What's Next?
 
-In the next module, you'll learn about **re-ranking** - a technique to improve retrieval quality by intelligently filtering results.
+Next, you'll learn about **re-ranking** - a technique to improve retrieval quality by intelligently filtering results.
+
+---
+
+## Assignment 2: Retrieval Quality + Query Preprocessing
+
+Now apply what you've learned about RAG to improve retrieval quality.
+
+### Video Assignment (3-4 minutes)
+
+Explain how you evaluate retrieval quality. Address these questions:
+
+1. **Chunk sizing** - How do you know if your chunks are too big or too small? What symptoms would you see?
+2. **Retrieval accuracy** - How do you know if you're retrieving the right content? What would "wrong" look like?
+3. **Similarity thresholds** - How do you decide what score is "good enough"? What happens if it's too high or too low?
+4. **Metrics** - What would you track in production to monitor retrieval quality?
+
+Give specific examples from your implementation.
+
+### Code Assignment
+
+**Complete the TODOs** in the RAG agent to make it work, then **extend it** with query preprocessing:
+
+**Files:**
+- `app/agents/rag.ts`
+
+**Extension - Add query preprocessing:**
+- Expand common abbreviations (e.g., "JS" → "JavaScript", "DB" → "database")
+- Normalize casing for technical terms
+- Handle common typos with fuzzy matching (optional)
+- Strip filler words that don't help retrieval ("um", "like", "basically")
+
+**What "done" looks like:**
+- RAG agent retrieves relevant context and generates answers
+- Query preprocessing improves retrieval for messy/casual queries
+- You can demonstrate the before/after of preprocessing
+
+### Submit Your Work
+
+- [Video Submission - Assignment 2](https://form.typeform.com/to/VcNBEHNA)
+- [Code Submission - Assignment 2](https://form.typeform.com/to/EWWcsorL)
+
+**Due:** Before starting Assignment 3

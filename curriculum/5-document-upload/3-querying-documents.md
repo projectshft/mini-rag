@@ -576,8 +576,8 @@ const highQuality = results.filter((doc) => doc.score > 0.8);
 
 Now that you can:
 
-1. ✅ Upload documents (Module 2)
-2. ✅ Query documents (This module)
+1. ✅ Upload documents
+2. ✅ Query documents
 
 You're ready for:
 
@@ -586,3 +586,49 @@ You're ready for:
 -   **Chat Interface** - Create user-facing app
 
 The foundation of your RAG system is complete!
+
+---
+
+## Assignment 1: Chunking + Sanitization
+
+Now it's time to apply what you've learned to a new problem.
+
+### Video Assignment (3-4 minutes)
+
+Explain chunking strategy tradeoffs. How would you chunk these different document types:
+
+1. **Medical records** - HIPAA considerations, structured fields mixed with clinical notes, sensitive data
+2. **Confluence documentation** - Headers, code blocks, tables, cross-references
+3. **Twitter/X posts** - Short content, hashtags, threads, mentions
+
+For each type, explain:
+- What chunk size would you use and why?
+- Where would you split (sentences, paragraphs, sections)?
+- What metadata would you preserve?
+- What special handling is needed?
+
+### Code Assignment
+
+**Complete the TODOs** in the ingestion route to make the system work, then **extend it** with text sanitization:
+
+**Files:**
+- `app/api/upload-document/route.ts`
+- `app/libs/chunking.ts`
+
+**Extension - Add sanitization:**
+- Strip HTML tags from content
+- Normalize whitespace (collapse multiple spaces/newlines)
+- Handle special characters (smart quotes, em dashes, etc.)
+- Remove boilerplate text (navigation, footers, "Click here to...", etc.)
+
+**What "done" looks like:**
+- Documents upload and chunk correctly
+- Sanitization cleans messy web content before chunking
+- You can demonstrate the before/after of sanitization
+
+### Submit Your Work
+
+- [Video Submission - Assignment 1](https://form.typeform.com/to/NdVcsThQ)
+- [Code Submission - Assignment 1](https://form.typeform.com/to/A0pGKPqU)
+
+**Due:** Before starting Assignment 2
