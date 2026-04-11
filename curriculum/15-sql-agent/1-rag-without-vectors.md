@@ -168,69 +168,56 @@ Prisma's query builder:
 
 ### Repository
 
-Use the **killer_agents** repository:
+Clone the **sql-agent** branch:
 
 ```bash
-git clone https://github.com/projectshft/killer_agents.git
+git clone -b sql-agent https://github.com/projectshft/killer_agents.git
 cd killer_agents
 yarn install
 ```
 
-This repo has Prisma + SQLite configured with an influencer database (genres, tiers, pricing, locations).
+This repo has Prisma configured with a shared Postgres database containing 1000 influencers.
 
 ### Video Assignment (3-4 minutes)
 
-Explain when to use structured queries vs vector search:
+**Topic: When to use SQL vs Vector Search**
 
-1. **SQL strengths** - What types of questions work better with SQL?
-2. **Vector strengths** - What types need semantic search?
-3. **Hybrid approach** - How would you build a system that uses both?
-4. **Tradeoffs** - Cost, latency, accuracy considerations
+Record a video explaining when you'd choose traditional database queries over vector search:
 
-Give specific examples for each.
+1. **Give 2-3 examples where SQL is better** - e.g., "How many orders last month?", "Find users in California", "What's the average price?"
+
+2. **Give 2-3 examples where vectors are better** - e.g., "Find documents about frustrated customers", "What's our policy on returns?"
+
+3. **Explain the tradeoffs** - Cost, latency, accuracy, complexity
+
+4. **Bonus: Hybrid approach** - How would a router decide which to use?
+
+Be specific with your examples. Show you understand the fundamental difference.
 
 ### Code Assignment
 
-Complete the database search agent that translates natural language to Prisma queries.
+Complete the `databaseSearchAgent` in `app/agents/databaseSearchAgent.ts`.
 
-**What you're building:**
+**The TODOs:**
+1. Define the Zod schema for extracted parameters
+2. Build a Prisma WHERE clause from those parameters
+3. Implement the full agent flow (prompt → LLM → query → format)
 
-The `databaseSearchAgent` in `app/agents/databaseSearchAgent.ts` that:
-1. Takes natural language questions about influencers
-2. Uses structured outputs to extract query parameters
-3. Builds and executes a Prisma query
-4. Returns formatted results
+**Test these queries work:**
+- "Find fitness influencers in LA"
+- "Show me micro tier creators under $500"
+- "I need gaming influencers"
 
-**Key files:**
-- `app/agents/databaseSearchAgent.ts` - The agent logic
-- `app/page.tsx` - The UI
-- `prisma/schema.prisma` - Database schema
-- `prisma/seed.ts` - Sample data
-
-**Requirements:**
-
-1. **Query mapping:**
-   - Support filtering by genre, tier, location, price range
-   - Map natural language to Prisma `where` clauses
-   - Use structured outputs for reliable parameter extraction
-
-2. **SQL injection awareness:**
-   - Understand why Prisma's parameterized queries are safe
-   - Be ready to explain this in your video
-
-3. **Working UI:**
-   - Natural language input
-   - Display matching influencers
-   - Show how filters map to results
-
-**What "done" looks like:**
-- "Show me fitness influencers in LA" returns correct results
-- "Find creators under $500" filters by price
-- You can explain why Prisma is safer than raw SQL
+**Key understanding:**
+- Why is Prisma safer than raw SQL string interpolation?
+- How does structured output ensure reliable parameter extraction?
 
 ### Submit Your Work
 
+**Video:** Record your explanation and submit the link
 - [Video Submission - Assignment 4](https://form.typeform.com/to/TBD)
+
+**Code:** Push your completed code to your own GitHub repo and submit the link
 - [Code Submission - Assignment 4](https://form.typeform.com/to/TBD)
 
 **Due:** Before starting Capstone
