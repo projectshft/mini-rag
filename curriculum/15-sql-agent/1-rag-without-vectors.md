@@ -180,19 +180,28 @@ This repo has Prisma configured with a shared Postgres database containing 1000 
 
 ### Video Assignment (3-4 minutes)
 
-**Topic: When to use SQL vs Vector Search**
+**Topic: SQL for AI Applications**
 
-Record a video explaining when you'd choose traditional database queries over vector search:
+Record a video covering:
 
-1. **Give 2-3 examples where SQL is better** - e.g., "How many orders last month?", "Find users in California", "What's the average price?"
+1. **Types of SQL queries** - Explain the difference between:
+   - Filtering queries (WHERE clauses)
+   - Aggregation queries (COUNT, SUM, AVG, GROUP BY)
+   - Join queries (combining tables)
+   - Full-text search (LIKE, ILIKE, or full-text indexes)
 
-2. **Give 2-3 examples where vectors are better** - e.g., "Find documents about frustrated customers", "What's our policy on returns?"
+2. **pgvector** - Research Postgres's pgvector extension:
+   - What is it? (vector similarity search in Postgres)
+   - How does it combine SQL filtering WITH vector search?
+   - Why might you use pgvector instead of a dedicated vector DB like Pinecone?
 
-3. **Explain the tradeoffs** - Cost, latency, accuracy, complexity
+3. **When SQL beats dedicated vector DBs** - Give examples where keeping everything in Postgres (with pgvector) makes more sense than using separate systems
 
-4. **Bonus: Hybrid approach** - How would a router decide which to use?
+**Resources to explore:**
+- [pgvector GitHub](https://github.com/pgvector/pgvector)
+- [Supabase pgvector docs](https://supabase.com/docs/guides/ai)
 
-Be specific with your examples. Show you understand the fundamental difference.
+Show you understand when to use what—and that vectors can live inside SQL databases too.
 
 ### Code Assignment
 
