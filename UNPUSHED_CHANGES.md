@@ -4,32 +4,44 @@
 
 - Removed all "module" and "week" references from curriculum
 - Created new assignment structure (5 submissions: 4 assignments + capstone)
-- Updated ai-compendium links to new paths
-- Assignment 4 uses killer_agents repo for Prisma/SQLite
+- Moved SQL Agent to standalone module (15-sql-agent)
+- Renumbered modules: agent-patterns (16), capstone (17), interview-prep (18)
+- Assignment 4 uses killer_agents repo `sql-agent` branch
+
+## Module Structure
+
+```
+13-testing-agents     - LLM-as-judge (no more SQL assignment here)
+14-tool-calling-exploration - Tool-calling patterns
+15-sql-agent          - NEW: SQL Agent assignment (Assignment 4)
+16-agent-patterns     - (was 15)
+17-capstone-project   - (was 16)
+18-interview-prep     - (was 17)
+```
 
 ## New Files
 
+- curriculum/15-sql-agent/1-rag-without-vectors.md
 - curriculum/ASSIGNMENTS.md (overview of all 5 assignments)
-- curriculum/ASSIGNMENTS.html
 
 ## Modified Files
 
 | File | Changes |
 |------|---------|
-| curriculum/2-vector-math-basics/1-vectors-and-embeddings.md | Updated ai-compendium links |
-| curriculum/2-vector-math-basics/3-word-math-fun.md | Removed old Week 1 assignment |
-| curriculum/4.5-chunking-fundamentals/2-understanding-chunking.md | Removed Week 2 assignment, added Assignment 1 reference |
-| curriculum/5-document-upload/3-querying-documents.md | Removed module ref, added Assignment 1 |
-| curriculum/7-agent-architecture/4-upgrading-to-structured-outputs.md | Removed module refs |
-| curriculum/8-linkedin-agent/1-implementing-linkedin-agent.md | Removed module ref |
-| curriculum/9-rag-agent/1-implementing-rag-agent.md | Removed module ref, added Assignment 2 |
-| curriculum/9-rag-agent/2-implementing-reranking.md | Removed Week 3 assignment, added Assignment 3 |
-| curriculum/11-chat-interface/1-understanding-the-interface.md | Removed module refs |
-| curriculum/13-testing-agents/2-llm-as-judge.md | Added Assignment 4 (SQL Agent, uses killer_agents repo) |
-| curriculum/15-agent-patterns/1-common-agent-patterns.md | Removed module ref |
-| curriculum/15-agent-patterns/2-workflow-vs-hitl.md | Removed module ref |
-| curriculum/16-capstone-project/1-final-project.md | Rewrote as Assignment 5, removed week refs |
+| curriculum/9-rag-agent/3-sparse-dense-vectors.md | Renumbered from 4 |
+| curriculum/13-testing-agents/2-llm-as-judge.md | Removed SQL assignment, added test creation challenge |
+| curriculum/14-tool-calling-exploration/2-the-reveal.md | Added extension challenge, fixed outdated "next up" reference |
 
-## All HTML Files Regenerated
+## killer_agents Repo
 
-Corresponding .html files for all above .md files
+New `sql-agent` branch created with:
+- Stripped trendResearchAgent and videoFinderAgent
+- TODO version of databaseSearchAgent for students to implement
+- Simplified README focused on SQL agent assignment
+
+## Assignment 4 Video Topic
+
+Students should cover:
+1. Types of SQL queries (filtering, aggregation, joins, full-text)
+2. pgvector - Postgres extension for vector search
+3. When to use pgvector vs dedicated vector DBs
