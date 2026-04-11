@@ -1,0 +1,4 @@
+{
+  "title": "Multiagent Learning in Large Anonymous Games",
+  "abstract": "In large systems, it is important for agents to learn to act effectively, but\nsophisticated multi-agent learning algorithms generally do not scale. An\nalternative approach is to find restricted classes of games where simple,\nefficient algorithms converge. It is shown that stage learning efficiently\nconverges to Nash equilibria in large anonymous games if best-reply dynamics\nconverge. Two features are identified that improve convergence. First, rather\nthan making learning more difficult, more agents are actually beneficial in\nmany settings. Second, providing agents with statistical information about the\nbehavior of others can significantly reduce the number of observations needed."
+}

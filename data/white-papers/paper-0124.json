@@ -1,0 +1,4 @@
+{
+  "title": "Least Squares Superposition Codes of Moderate Dictionary Size, Reliable\n  at Rates up to Capacity",
+  "abstract": "For the additive white Gaussian noise channel with average codeword power\nconstraint, new coding methods are devised in which the codewords are sparse\nsuperpositions, that is, linear combinations of subsets of vectors from a given\ndesign, with the possible messages indexed by the choice of subset. Decoding is\nby least squares, tailored to the assumed form of linear combination.\nCommunication is shown to be reliable with error probability exponentially\nsmall for all rates up to the Shannon capacity."
+}

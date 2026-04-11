@@ -1,0 +1,4 @@
+{
+  "title": "Exponential Families for Conditional Random Fields",
+  "abstract": "In this paper we de ne conditional random elds in reproducing kernel Hilbert\nspaces and show connections to Gaussian Process classi cation. More speci\ncally, we prove decomposition results for undirected graphical models and we\ngive constructions for kernels. Finally we present e cient means of solving the\noptimization problem using reduced rank decompositions and we show how\nstationarity can be exploited e ciently in the optimization process."
+}

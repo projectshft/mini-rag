@@ -1,0 +1,4 @@
+{
+  "title": "Average-Case Active Learning with Costs",
+  "abstract": "We analyze the expected cost of a greedy active learning algorithm. Our\nanalysis extends previous work to a more general setting in which different\nqueries have different costs. Moreover, queries may have more than two possible\nresponses and the distribution over hypotheses may be non uniform. Specific\napplications include active learning with label costs, active learning for\nmulticlass and partial label queries, and batch mode active learning. We also\ndiscuss an approximate version of interest when there are very many queries."
+}

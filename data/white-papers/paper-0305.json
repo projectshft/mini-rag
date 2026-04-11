@@ -1,0 +1,4 @@
+{
+  "title": "Robust LogitBoost and Adaptive Base Class (ABC) LogitBoost",
+  "abstract": "Logitboost is an influential boosting algorithm for classification. In this\npaper, we develop robust logitboost to provide an explicit formulation of\ntree-split criterion for building weak learners (regression trees) for\nlogitboost. This formulation leads to a numerically stable implementation of\nlogitboost. We then propose abc-logitboost for multi-class classification, by\ncombining robust logitboost with the prior work of abc-boost. Previously,\nabc-boost was implemented as abc-mart using the mart algorithm. Our extensive\nexperiments on multi-class classification compare four algorithms: mart,\nabcmart, (robust) logitboost, and abc-logitboost, and demonstrate the\nsuperiority of abc-logitboost. Comparisons with other learning methods\nincluding SVM and deep learning are also available through prior publications."
+}

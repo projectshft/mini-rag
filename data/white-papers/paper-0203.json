@@ -1,0 +1,4 @@
+{
+  "title": "Data-Distributed Weighted Majority and Online Mirror Descent",
+  "abstract": "In this paper, we focus on the question of the extent to which online\nlearning can benefit from distributed computing. We focus on the setting in\nwhich $N$ agents online-learn cooperatively, where each agent only has access\nto its own data. We propose a generic data-distributed online learning\nmeta-algorithm. We then introduce the Distributed Weighted Majority and\nDistributed Online Mirror Descent algorithms, as special cases. We show, using\nboth theoretical analysis and experiments, that compared to a single agent:\ngiven the same computation time, these distributed algorithms achieve smaller\ngeneralization errors; and given the same generalization errors, they can be\n$N$ times faster."
+}

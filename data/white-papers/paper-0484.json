@@ -1,0 +1,4 @@
+{
+  "title": "Text Classification with Compression Algorithms",
+  "abstract": "This work concerns a comparison of SVM kernel methods in text categorization\ntasks. In particular I define a kernel function that estimates the similarity\nbetween two objects computing by their compressed lengths. In fact, compression\nalgorithms can detect arbitrarily long dependencies within the text strings.\nData text vectorization looses information in feature extractions and is highly\nsensitive by textual language. Furthermore, these methods are language\nindependent and require no text preprocessing. Moreover, the accuracy computed\non the datasets (Web-KB, 20ng and Reuters-21578), in some case, is greater than\nGaussian, linear and polynomial kernels. The method limits are represented by\ncomputational time complexity of the Gram matrix and by very poor performance\non non-textual datasets."
+}

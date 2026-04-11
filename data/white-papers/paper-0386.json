@@ -1,0 +1,4 @@
+{
+  "title": "Sparse Support Vector Infinite Push",
+  "abstract": "In this paper, we address the problem of embedded feature selection for\nranking on top of the list problems. We pose this problem as a regularized\nempirical risk minimization with $p$-norm push loss function ($p=\\infty$) and\nsparsity inducing regularizers. We leverage the issues related to this\nchallenging optimization problem by considering an alternating direction method\nof multipliers algorithm which is built upon proximal operators of the loss\nfunction and the regularizer. Our main technical contribution is thus to\nprovide a numerical scheme for computing the infinite push loss function\nproximal operator. Experimental results on toy, DNA microarray and BCI problems\nshow how our novel algorithm compares favorably to competitors for ranking on\ntop while using fewer variables in the scoring function."
+}

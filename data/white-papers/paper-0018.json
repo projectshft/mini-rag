@@ -1,0 +1,4 @@
+{
+  "title": "Introduction to Relational Networks for Classification",
+  "abstract": "The use of computational intelligence techniques for classification has been\nused in numerous applications. This paper compares the use of a Multi Layer\nPerceptron Neural Network and a new Relational Network on classifying the HIV\nstatus of women at ante-natal clinics. The paper discusses the architecture of\nthe relational network and its merits compared to a neural network and most\nother computational intelligence classifiers. Results gathered from the study\nindicate comparable classification accuracies as well as revealed relationships\nbetween data features in the classification data. Much higher classification\naccuracies are recommended for future research in the area of HIV\nclassification as well as missing data estimation."
+}

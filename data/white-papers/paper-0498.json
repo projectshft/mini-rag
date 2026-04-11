@@ -1,0 +1,4 @@
+{
+  "title": "A survey of non-exchangeable priors for Bayesian nonparametric models",
+  "abstract": "Dependent nonparametric processes extend distributions over measures, such as\nthe Dirichlet process and the beta process, to give distributions over\ncollections of measures, typically indexed by values in some covariate space.\nSuch models are appropriate priors when exchangeability assumptions do not\nhold, and instead we want our model to vary fluidly with some set of\ncovariates. Since the concept of dependent nonparametric processes was\nformalized by MacEachern [1], there have been a number of models proposed and\nused in the statistics and machine learning literatures. Many of these models\nexhibit underlying similarities, an understanding of which, we hope, will help\nin selecting an appropriate prior, developing new models, and leveraging\ninference techniques."
+}

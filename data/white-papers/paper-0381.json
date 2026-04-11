@@ -1,0 +1,4 @@
+{
+  "title": "Bounded Planning in Passive POMDPs",
+  "abstract": "In Passive POMDPs actions do not affect the world state, but still incur\ncosts. When the agent is bounded by information-processing constraints, it can\nonly keep an approximation of the belief. We present a variational principle\nfor the problem of maintaining the information which is most useful for\nminimizing the cost, and introduce an efficient and simple algorithm for\nfinding an optimum."
+}

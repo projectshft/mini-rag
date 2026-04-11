@@ -1,0 +1,4 @@
+{
+  "title": "Efficiently Learning from Revealed Preference",
+  "abstract": "In this paper, we consider the revealed preferences problem from a learning\nperspective. Every day, a price vector and a budget is drawn from an unknown\ndistribution, and a rational agent buys his most preferred bundle according to\nsome unknown utility function, subject to the given prices and budget\nconstraint. We wish not only to find a utility function which rationalizes a\nfinite set of observations, but to produce a hypothesis valuation function\nwhich accurately predicts the behavior of the agent in the future. We give\nefficient algorithms with polynomial sample-complexity for agents with linear\nvaluation functions, as well as for agents with linearly separable, concave\nvaluation functions with bounded second derivative."
+}

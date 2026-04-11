@@ -1,0 +1,4 @@
+{
+  "title": "Online Semi-Supervised Learning on Quantized Graphs",
+  "abstract": "In this paper, we tackle the problem of online semi-supervised learning\n(SSL). When data arrive in a stream, the dual problems of computation and data\nstorage arise for any SSL method. We propose a fast approximate online SSL\nalgorithm that solves for the harmonic solution on an approximate graph. We\nshow, both empirically and theoretically, that good behavior can be achieved by\ncollapsing nearby points into a set of local \"representative points\" that\nminimize distortion. Moreover, we regularize the harmonic solution to achieve\nbetter stability properties. We apply our algorithm to face recognition and\noptical character recognition applications to show that we can take advantage\nof the manifold structure to outperform the previous methods. Unlike previous\nheuristic approaches, we show that our method yields provable performance\nbounds."
+}

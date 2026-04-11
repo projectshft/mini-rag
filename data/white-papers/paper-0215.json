@@ -1,0 +1,4 @@
+{
+  "title": "On the Inclusion Relation of Reproducing Kernel Hilbert Spaces",
+  "abstract": "To help understand various reproducing kernels used in applied sciences, we\ninvestigate the inclusion relation of two reproducing kernel Hilbert spaces.\nCharacterizations in terms of feature maps of the corresponding reproducing\nkernels are established. A full table of inclusion relations among widely-used\ntranslation invariant kernels is given. Concrete examples for Hilbert-Schmidt\nkernels are presented as well. We also discuss the preservation of such a\nrelation under various operations of reproducing kernels. Finally, we briefly\ndiscuss the special inclusion with a norm equivalence."
+}

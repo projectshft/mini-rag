@@ -1,0 +1,4 @@
+{
+  "title": "Towards a Self-Organized Agent-Based Simulation Model for Exploration of\n  Human Synaptic Connections",
+  "abstract": "In this paper, the early design of our self-organized agent-based simulation\nmodel for exploration of synaptic connections that faithfully generates what is\nobserved in natural situation is given. While we take inspiration from\nneuroscience, our intent is not to create a veridical model of processes in\nneurodevelopmental biology, nor to represent a real biological system. Instead,\nour goal is to design a simulation model that learns acting in the same way of\nhuman nervous system by using findings on human subjects using reflex\nmethodologies in order to estimate unknown connections."
+}

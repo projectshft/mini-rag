@@ -1,0 +1,4 @@
+{
+  "title": "Distributed Tree Kernels",
+  "abstract": "In this paper, we propose the distributed tree kernels (DTK) as a novel\nmethod to reduce time and space complexity of tree kernels. Using a linear\ncomplexity algorithm to compute vectors for trees, we embed feature spaces of\ntree fragments in low-dimensional spaces where the kernel computation is\ndirectly done with dot product. We show that DTKs are faster, correlate with\ntree kernels, and obtain a statistically similar performance in two natural\nlanguage processing tasks."
+}

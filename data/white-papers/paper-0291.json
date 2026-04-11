@@ -1,0 +1,4 @@
+{
+  "title": "PAC-Bayesian Policy Evaluation for Reinforcement Learning",
+  "abstract": "Bayesian priors offer a compact yet general means of incorporating domain\nknowledge into many learning tasks. The correctness of the Bayesian analysis\nand inference, however, largely depends on accuracy and correctness of these\npriors. PAC-Bayesian methods overcome this problem by providing bounds that\nhold regardless of the correctness of the prior distribution. This paper\nintroduces the first PAC-Bayesian bound for the batch reinforcement learning\nproblem with function approximation. We show how this bound can be used to\nperform model-selection in a transfer learning scenario. Our empirical results\nconfirm that PAC-Bayesian policy evaluation is able to leverage prior\ndistributions when they are informative and, unlike standard Bayesian RL\napproaches, ignore them when they are misleading."
+}

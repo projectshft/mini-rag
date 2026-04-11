@@ -1,0 +1,4 @@
+{
+  "title": "Model Selection with the Loss Rank Principle",
+  "abstract": "A key issue in statistics and machine learning is to automatically select the\n\"right\" model complexity, e.g., the number of neighbors to be averaged over in\nk nearest neighbor (kNN) regression or the polynomial degree in regression with\npolynomials. We suggest a novel principle - the Loss Rank Principle (LoRP) -\nfor model selection in regression and classification. It is based on the loss\nrank, which counts how many other (fictitious) data would be fitted better.\nLoRP selects the model that has minimal loss rank. Unlike most penalized\nmaximum likelihood variants (AIC, BIC, MDL), LoRP depends only on the\nregression functions and the loss function. It works without a stochastic noise\nmodel, and is directly applicable to any non-parametric regressor, like kNN."
+}

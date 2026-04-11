@@ -1,0 +1,4 @@
+{
+  "title": "Regret Bounds for Opportunistic Channel Access",
+  "abstract": "We consider the task of opportunistic channel access in a primary system\ncomposed of independent Gilbert-Elliot channels where the secondary (or\nopportunistic) user does not dispose of a priori information regarding the\nstatistical characteristics of the system. It is shown that this problem may be\ncast into the framework of model-based learning in a specific class of\nPartially Observed Markov Decision Processes (POMDPs) for which we introduce an\nalgorithm aimed at striking an optimal tradeoff between the exploration (or\nestimation) and exploitation requirements. We provide finite horizon regret\nbounds for this algorithm as well as a numerical evaluation of its performance\nin the single channel model as well as in the case of stochastically identical\nchannels."
+}

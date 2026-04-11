@@ -1,0 +1,4 @@
+{
+  "title": "A Spiking Neural Learning Classifier System",
+  "abstract": "Learning Classifier Systems (LCS) are population-based reinforcement learners\nused in a wide variety of applications. This paper presents a LCS where each\ntraditional rule is represented by a spiking neural network, a type of network\nwith dynamic internal state. We employ a constructivist model of growth of both\nneurons and dendrites that realise flexible learning by evolving structures of\nsufficient complexity to solve a well-known problem involving continuous,\nreal-valued inputs. Additionally, we extend the system to enable temporal state\ndecomposition. By allowing our LCS to chain together sequences of heterogeneous\nactions into macro-actions, it is shown to perform optimally in a problem where\ntraditional methods can fail to find a solution in a reasonable amount of time.\nOur final system is tested on a simulated robotics platform."
+}

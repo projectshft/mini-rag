@@ -1,0 +1,4 @@
+{
+  "title": "Hybrid Variational/Gibbs Collapsed Inference in Topic Models",
+  "abstract": "Variational Bayesian inference and (collapsed) Gibbs sampling are the two\nimportant classes of inference algorithms for Bayesian networks. Both have\ntheir advantages and disadvantages: collapsed Gibbs sampling is unbiased but is\nalso inefficient for large count values and requires averaging over many\nsamples to reduce variance. On the other hand, variational Bayesian inference\nis efficient and accurate for large count values but suffers from bias for\nsmall counts. We propose a hybrid algorithm that combines the best of both\nworlds: it samples very small counts and applies variational updates to large\ncounts. This hybridization is shown to significantly improve testset perplexity\nrelative to variational inference at no computational cost."
+}

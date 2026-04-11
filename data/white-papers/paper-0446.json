@@ -1,0 +1,4 @@
+{
+  "title": "Generalized Canonical Correlation Analysis for Disparate Data Fusion",
+  "abstract": "Manifold matching works to identify embeddings of multiple disparate data\nspaces into the same low-dimensional space, where joint inference can be\npursued. It is an enabling methodology for fusion and inference from multiple\nand massive disparate data sources. In this paper we focus on a method called\nCanonical Correlation Analysis (CCA) and its generalization Generalized\nCanonical Correlation Analysis (GCCA), which belong to the more general Reduced\nRank Regression (RRR) framework. We present an efficiency investigation of CCA\nand GCCA under different training conditions for a particular text document\nclassification task."
+}

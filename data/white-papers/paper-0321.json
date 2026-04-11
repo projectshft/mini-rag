@@ -1,0 +1,4 @@
+{
+  "title": "Validation of nonlinear PCA",
+  "abstract": "Linear principal component analysis (PCA) can be extended to a nonlinear PCA\nby using artificial neural networks. But the benefit of curved components\nrequires a careful control of the model complexity. Moreover, standard\ntechniques for model selection, including cross-validation and more generally\nthe use of an independent test set, fail when applied to nonlinear PCA because\nof its inherent unsupervised characteristics. This paper presents a new\napproach for validating the complexity of nonlinear PCA models by using the\nerror in missing data estimation as a criterion for model selection. It is\nmotivated by the idea that only the model of optimal complexity is able to\npredict missing values with the highest accuracy. While standard test set\nvalidation usually favours over-fitted nonlinear PCA models, the proposed model\nvalidation approach correctly selects the optimal model complexity."
+}

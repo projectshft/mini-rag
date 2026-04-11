@@ -1,0 +1,4 @@
+{
+  "title": "Gaussian Process Quantile Regression using Expectation Propagation",
+  "abstract": "Direct quantile regression involves estimating a given quantile of a response\nvariable as a function of input variables. We present a new framework for\ndirect quantile regression where a Gaussian process model is learned,\nminimising the expected tilted loss function. The integration required in\nlearning is not analytically tractable so to speed up the learning we employ\nthe Expectation Propagation algorithm. We describe how this work relates to\nother quantile regression methods and apply the method on both synthetic and\nreal data sets. The method is shown to be competitive with state of the art\nmethods whilst allowing for the leverage of the full Gaussian process\nprobabilistic framework."
+}

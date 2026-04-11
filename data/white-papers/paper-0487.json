@@ -1,0 +1,4 @@
+{
+  "title": "Extension of TSVM to Multi-Class and Hierarchical Text Classification\n  Problems With General Losses",
+  "abstract": "Transductive SVM (TSVM) is a well known semi-supervised large margin learning\nmethod for binary text classification. In this paper we extend this method to\nmulti-class and hierarchical classification problems. We point out that the\ndetermination of labels of unlabeled examples with fixed classifier weights is\na linear programming problem. We devise an efficient technique for solving it.\nThe method is applicable to general loss functions. We demonstrate the value of\nthe new method using large margin loss on a number of multi-class and\nhierarchical classification datasets. For maxent loss we show empirically that\nour method is better than expectation regularization/constraint and posterior\nregularization methods, and competitive with the version of entropy\nregularization method which uses label constraints."
+}

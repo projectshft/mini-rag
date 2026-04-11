@@ -1,0 +1,4 @@
+{
+  "title": "Leveraging Side Observations in Stochastic Bandits",
+  "abstract": "This paper considers stochastic bandits with side observations, a model that\naccounts for both the exploration/exploitation dilemma and relationships\nbetween arms. In this setting, after pulling an arm i, the decision maker also\nobserves the rewards for some other actions related to i. We will see that this\nmodel is suited to content recommendation in social networks, where users'\nreactions may be endorsed or not by their friends. We provide efficient\nalgorithms based on upper confidence bounds (UCBs) to leverage this additional\ninformation and derive new bounds improving on standard regret guarantees. We\nalso evaluate these policies in the context of movie recommendation in social\nnetworks: experiments on real datasets show substantial learning rate speedups\nranging from 2.2x to 14x on dense networks."
+}

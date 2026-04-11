@@ -1,0 +1,4 @@
+{
+  "title": "Motion Planning Of an Autonomous Mobile Robot Using Artificial Neural\n  Network",
+  "abstract": "The paper presents the electronic design and motion planning of a robot based\non decision making regarding its straight motion and precise turn using\nArtificial Neural Network (ANN). The ANN helps in learning of robot so that it\nperforms motion autonomously. The weights calculated are implemented in\nmicrocontroller. The performance has been tested to be excellent."
+}

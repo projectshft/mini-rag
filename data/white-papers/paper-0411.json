@@ -1,0 +1,4 @@
+{
+  "title": "Kernelized Supervised Dictionary Learning",
+  "abstract": "In this paper, we propose supervised dictionary learning (SDL) by\nincorporating information on class labels into the learning of the dictionary.\nTo this end, we propose to learn the dictionary in a space where the dependency\nbetween the signals and their corresponding labels is maximized. To maximize\nthis dependency, the recently introduced Hilbert Schmidt independence criterion\n(HSIC) is used. One of the main advantages of this novel approach for SDL is\nthat it can be easily kernelized by incorporating a kernel, particularly a\ndata-derived kernel such as normalized compression distance, into the\nformulation. The learned dictionary is compact and the proposed approach is\nfast. We show that it outperforms other unsupervised and supervised dictionary\nlearning approaches in the literature, using real-world data."
+}

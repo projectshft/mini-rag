@@ -1,0 +1,4 @@
+{
+  "title": "Hilbert Space Embedding for Dirichlet Process Mixtures",
+  "abstract": "This paper proposes a Hilbert space embedding for Dirichlet Process mixture\nmodels via a stick-breaking construction of Sethuraman. Although Bayesian\nnonparametrics offers a powerful approach to construct a prior that avoids the\nneed to specify the model size/complexity explicitly, an exact inference is\noften intractable. On the other hand, frequentist approaches such as kernel\nmachines, which suffer from the model selection/comparison problems, often\nbenefit from efficient learning algorithms. This paper discusses the\npossibility to combine the best of both worlds by using the Dirichlet Process\nmixture model as a case study."
+}

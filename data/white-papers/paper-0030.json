@@ -1,0 +1,4 @@
+{
+  "title": "Predicting Abnormal Returns From News Using Text Classification",
+  "abstract": "We show how text from news articles can be used to predict intraday price\nmovements of financial assets using support vector machines. Multiple kernel\nlearning is used to combine equity returns with text as predictive features to\nincrease classification performance and we develop an analytic center cutting\nplane method to solve the kernel learning problem efficiently. We observe that\nwhile the direction of returns is not predictable using either text or returns,\ntheir size is, with text features producing significantly better performance\nthan historical returns alone."
+}

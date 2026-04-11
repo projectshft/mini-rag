@@ -1,0 +1,4 @@
+{
+  "title": "Using Feature Weights to Improve Performance of Neural Networks",
+  "abstract": "Different features have different relevance to a particular learning problem.\nSome features are less relevant; while some very important. Instead of\nselecting the most relevant features using feature selection, an algorithm can\nbe given this knowledge of feature importance based on expert opinion or prior\nlearning. Learning can be faster and more accurate if learners take feature\nimportance into account. Correlation aided Neural Networks (CANN) is presented\nwhich is such an algorithm. CANN treats feature importance as the correlation\ncoefficient between the target attribute and the features. CANN modifies normal\nfeed-forward Neural Network to fit both correlation values and training data.\nEmpirical evaluation shows that CANN is faster and more accurate than applying\nthe two step approach of feature selection and then using normal learning\nalgorithms."
+}

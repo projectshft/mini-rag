@@ -1,0 +1,4 @@
+{
+  "title": "An Iterative Locally Linear Embedding Algorithm",
+  "abstract": "Local Linear embedding (LLE) is a popular dimension reduction method. In this\npaper, we first show LLE with nonnegative constraint is equivalent to the\nwidely used Laplacian embedding. We further propose to iterate the two steps in\nLLE repeatedly to improve the results. Thirdly, we relax the kNN constraint of\nLLE and present a sparse similarity learning algorithm. The final Iterative LLE\ncombines these three improvements. Extensive experiment results show that\niterative LLE algorithm significantly improve both classification and\nclustering results."
+}

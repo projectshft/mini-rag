@@ -1,0 +1,4 @@
+{
+  "title": "On Power-law Kernels, corresponding Reproducing Kernel Hilbert Space and\n  Applications",
+  "abstract": "The role of kernels is central to machine learning. Motivated by the\nimportance of power-law distributions in statistical modeling, in this paper,\nwe propose the notion of power-law kernels to investigate power-laws in\nlearning problem. We propose two power-law kernels by generalizing Gaussian and\nLaplacian kernels. This generalization is based on distributions, arising out\nof maximization of a generalized information measure known as nonextensive\nentropy that is very well studied in statistical mechanics. We prove that the\nproposed kernels are positive definite, and provide some insights regarding the\ncorresponding Reproducing Kernel Hilbert Space (RKHS). We also study practical\nsignificance of both kernels in classification and regression, and present some\nsimulation results."
+}

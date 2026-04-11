@@ -1,0 +1,4 @@
+{
+  "title": "Conditional validity of inductive conformal predictors",
+  "abstract": "Conformal predictors are set predictors that are automatically valid in the\nsense of having coverage probability equal to or exceeding a given confidence\nlevel. Inductive conformal predictors are a computationally efficient version\nof conformal predictors satisfying the same property of validity. However,\ninductive conformal predictors have been only known to control unconditional\ncoverage probability. This paper explores various versions of conditional\nvalidity and various ways to achieve them using inductive conformal predictors\nand their modifications."
+}

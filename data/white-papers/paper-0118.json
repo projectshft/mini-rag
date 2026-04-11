@@ -1,0 +1,4 @@
+{
+  "title": "Using a Kernel Adatron for Object Classification with RCS Data",
+  "abstract": "Rapid identification of object from radar cross section (RCS) signals is\nimportant for many space and military applications. This identification is a\nproblem in pattern recognition which either neural networks or support vector\nmachines should prove to be high-speed. Bayesian networks would also provide\nvalue but require significant preprocessing of the signals. In this paper, we\ndescribe the use of a support vector machine for object identification from\nsynthesized RCS data. Our best results are from data fusion of X-band and\nS-band signals, where we obtained 99.4%, 95.3%, 100% and 95.6% correct\nidentification for cylinders, frusta, spheres, and polygons, respectively. We\nalso compare our results with a Bayesian approach and show that the SVM is\nthree orders of magnitude faster, as measured by the number of floating point\noperations."
+}

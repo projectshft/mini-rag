@@ -1,0 +1,4 @@
+{
+  "title": "Improving neural networks by preventing co-adaptation of feature\n  detectors",
+  "abstract": "When a large feedforward neural network is trained on a small training set,\nit typically performs poorly on held-out test data. This \"overfitting\" is\ngreatly reduced by randomly omitting half of the feature detectors on each\ntraining case. This prevents complex co-adaptations in which a feature detector\nis only helpful in the context of several other specific feature detectors.\nInstead, each neuron learns to detect a feature that is generally helpful for\nproducing the correct answer given the combinatorially large variety of\ninternal contexts in which it must operate. Random \"dropout\" gives big\nimprovements on many benchmark tasks and sets new records for speech and object\nrecognition."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Clique Matrices for Statistical Graph Decomposition and Parameterising\n  Restricted Positive Definite Matrices",
+  "abstract": "We introduce Clique Matrices as an alternative representation of undirected\ngraphs, being a generalisation of the incidence matrix representation. Here we\nuse clique matrices to decompose a graph into a set of possibly overlapping\nclusters, de ned as well-connected subsets of vertices. The decomposition is\nbased on a statistical description which encourages clusters to be well\nconnected and few in number. Inference is carried out using a variational\napproximation. Clique matrices also play a natural role in parameterising\npositive de nite matrices under zero constraints on elements of the matrix. We\nshow that clique matrices can parameterise all positive de nite matrices\nrestricted according to a decomposable graph and form a structured Factor\nAnalysis approximation in the non-decomposable case."
+}

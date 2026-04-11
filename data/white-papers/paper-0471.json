@@ -1,0 +1,4 @@
+{
+  "title": "Hilbert Space Embeddings of POMDPs",
+  "abstract": "A nonparametric approach for policy learning for POMDPs is proposed. The\napproach represents distributions over the states, observations, and actions as\nembeddings in feature spaces, which are reproducing kernel Hilbert spaces.\nDistributions over states given the observations are obtained by applying the\nkernel Bayes' rule to these distribution embeddings. Policies and value\nfunctions are defined on the feature space over states, which leads to a\nfeature space expression for the Bellman equation. Value iteration may then be\nused to estimate the optimal value function and associated policy. Experimental\nresults confirm that the correct policy is learned using the feature space\nrepresentation."
+}

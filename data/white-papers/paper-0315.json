@@ -1,0 +1,4 @@
+{
+  "title": "On the Equivalence between Herding and Conditional Gradient Algorithms",
+  "abstract": "We show that the herding procedure of Welling (2009) takes exactly the form\nof a standard convex optimization algorithm--namely a conditional gradient\nalgorithm minimizing a quadratic moment discrepancy. This link enables us to\ninvoke convergence results from convex optimization and to consider faster\nalternatives for the task of approximating integrals in a reproducing kernel\nHilbert space. We study the behavior of the different variants through\nnumerical simulations. The experiments indicate that while we can improve over\nherding on the task of approximating integrals, the original herding algorithm\ntends to approach more often the maximum entropy distribution, shedding more\nlight on the learning bias behind herding."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Sequential Document Representations and Simplicial Curves",
+  "abstract": "The popular bag of words assumption represents a document as a histogram of\nword occurrences. While computationally efficient, such a representation is\nunable to maintain any sequential information. We present a continuous and\ndifferentiable sequential document representation that goes beyond the bag of\nwords assumption, and yet is efficient and effective. This representation\nemploys smooth curves in the multinomial simplex to account for sequential\ninformation. We discuss the representation and its geometric properties and\ndemonstrate its applicability for the task of text classification."
+}

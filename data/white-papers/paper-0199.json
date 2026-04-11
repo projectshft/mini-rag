@@ -1,0 +1,4 @@
+{
+  "title": "Preference elicitation and inverse reinforcement learning",
+  "abstract": "We state the problem of inverse reinforcement learning in terms of preference\nelicitation, resulting in a principled (Bayesian) statistical formulation. This\ngeneralises previous work on Bayesian inverse reinforcement learning and allows\nus to obtain a posterior distribution on the agent's preferences, policy and\noptionally, the obtained reward sequence, from observations. We examine the\nrelation of the resulting approach to other statistical methods for inverse\nreinforcement learning via analysis and experimental results. We show that\npreferences can be determined accurately, even if the observed agent's policy\nis sub-optimal with respect to its own preferences. In that case, significantly\nimproved policies with respect to the agent's preferences are obtained,\ncompared to both other methods and to the performance of the demonstrated\npolicy."
+}

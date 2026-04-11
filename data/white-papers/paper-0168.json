@@ -1,0 +1,4 @@
+{
+  "title": "Split Bregman Method for Sparse Inverse Covariance Estimation with\n  Matrix Iteration Acceleration",
+  "abstract": "We consider the problem of estimating the inverse covariance matrix by\nmaximizing the likelihood function with a penalty added to encourage the\nsparsity of the resulting matrix. We propose a new approach based on the split\nBregman method to solve the regularized maximum likelihood estimation problem.\nWe show that our method is significantly faster than the widely used graphical\nlasso method, which is based on blockwise coordinate descent, on both\nartificial and real-world data. More importantly, different from the graphical\nlasso, the split Bregman based method is much more general, and can be applied\nto a class of regularization terms other than the $\\ell_1$ norm"
+}

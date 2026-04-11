@@ -1,0 +1,4 @@
+{
+  "title": "Decision Making Agent Searching for Markov Models in Near-Deterministic\n  World",
+  "abstract": "Reinforcement learning has solid foundations, but becomes inefficient in\npartially observed (non-Markovian) environments. Thus, a learning agent -born\nwith a representation and a policy- might wish to investigate to what extent\nthe Markov property holds. We propose a learning architecture that utilizes\ncombinatorial policy optimization to overcome non-Markovity and to develop\nefficient behaviors, which are easy to inherit, tests the Markov property of\nthe behavioral states, and corrects against non-Markovity by running a\ndeterministic factored Finite State Model, which can be learned. We illustrate\nthe properties of architecture in the near deterministic Ms. Pac-Man game. We\nanalyze the architecture from the point of view of evolutionary, individual,\nand social learning."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Comparison of Support Vector Machine and Back Propagation Neural Network\n  in Evaluating the Enterprise Financial Distress",
+  "abstract": "Recently, applying the novel data mining techniques for evaluating enterprise\nfinancial distress has received much research alternation. Support Vector\nMachine (SVM) and back propagation neural (BPN) network has been applied\nsuccessfully in many areas with excellent generalization results, such as rule\nextraction, classification and evaluation. In this paper, a model based on SVM\nwith Gaussian RBF kernel is proposed here for enterprise financial distress\nevaluation. BPN network is considered one of the simplest and are most general\nmethods used for supervised training of multilayered neural network. The\ncomparative results show that through the difference between the performance\nmeasures is marginal; SVM gives higher precision and lower error rates."
+}

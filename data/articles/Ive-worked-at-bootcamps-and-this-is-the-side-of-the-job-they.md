@@ -1,0 +1,7 @@
+# I’ve worked at bootcamps and this is the side of the job they never talk about.
+
+---
+
+I’ve worked at bootcamps and this is the side of the job they never talk about. I’ve worked on both ends of the spectrum; clocking in and out at a non-tech business where work from home was not a thing as well as an SF startup with catered lunches. I actually enjoyed both sides of the coin and there are pros and cons to each (maybe more cons depending on what you’re looking for). At the heart of the job was solving interesting problems which I did enjoy but too many people get in this profession for the perks it seems, of which there might be none for a while…
+
+I’ve worked at bootcamps and this is the side of the job they never talk about. I’ve worked on both ends of the spectrum; clocking in and out at a non-tech business where work from home was not a thing as well as an SF startup with catered lunches. I actually enjoyed both sides of the coin and there are pros and cons to each (maybe more cons depending on what you’re looking for). At the heart of the job was solving interesting problems which I did enjoy but too many people get in this profession for the perks it seems, of which there might be none for a while…

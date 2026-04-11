@@ -1,0 +1,4 @@
+{
+  "title": "Loop corrections for message passing algorithms in continuous variable\n  models",
+  "abstract": "In this paper we derive the equations for Loop Corrected Belief Propagation\non a continuous variable Gaussian model. Using the exactness of the averages\nfor belief propagation for Gaussian models, a different way of obtaining the\ncovariances is found, based on Belief Propagation on cavity graphs. We discuss\nthe relation of this loop correction algorithm to Expectation Propagation\nalgorithms for the case in which the model is no longer Gaussian, but slightly\nperturbed by nonlinear terms."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Designing neural networks that process mean values of random variables",
+  "abstract": "We introduce a class of neural networks derived from probabilistic models in\nthe form of Bayesian networks. By imposing additional assumptions about the\nnature of the probabilistic models represented in the networks, we derive\nneural networks with standard dynamics that require no training to determine\nthe synaptic weights, that perform accurate calculation of the mean values of\nthe random variables, that can pool multiple sources of evidence, and that deal\ncleanly and consistently with inconsistent or contradictory evidence. The\npresented neural networks capture many properties of Bayesian networks,\nproviding distributed versions of probabilistic models."
+}

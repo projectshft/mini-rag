@@ -1,0 +1,4 @@
+{
+  "title": "Computational Model of Music Sight Reading: A Reinforcement Learning\n  Approach",
+  "abstract": "Although the Music Sight Reading process has been studied from the cognitive\npsychology view points, but the computational learning methods like the\nReinforcement Learning have not yet been used to modeling of such processes. In\nthis paper, with regards to essential properties of our specific problem, we\nconsider the value function concept and will indicate that the optimum policy\ncan be obtained by the method we offer without to be getting involved with\ncomputing of the complex value functions. Also, we will offer a normative\nbehavioral model for the interaction of the agent with the musical pitch\nenvironment and by using a slightly different version of Partially observable\nMarkov decision processes we will show that our method helps for faster\nlearning of state-action pairs in our implemented agents."
+}

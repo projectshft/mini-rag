@@ -1,0 +1,4 @@
+{
+  "title": "Optimistic Agents are Asymptotically Optimal",
+  "abstract": "We use optimism to introduce generic asymptotically optimal reinforcement\nlearning agents. They achieve, with an arbitrary finite or compact class of\nenvironments, asymptotically optimal behavior. Furthermore, in the finite\ndeterministic case we provide finite error bounds."
+}

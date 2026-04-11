@@ -1,0 +1,4 @@
+{
+  "title": "Clustering for Improved Learning in Maze Traversal Problem",
+  "abstract": "The maze traversal problem (finding the shortest distance to the goal from\nany position in a maze) has been an interesting challenge in computational\nintelligence. Recent work has shown that the cellular simultaneous recurrent\nneural network (CSRN) can solve this problem for simple mazes. This thesis\nfocuses on exploiting relevant information about the maze to improve learning\nand decrease the training time for the CSRN to solve mazes. Appropriate\nvariables are identified to create useful clusters using relevant information.\nThe CSRN was next modified to allow for an additional external input. With this\nadditional input, several methods were tested and results show that clustering\nthe mazes improves the overall learning of the traversal problem for the CSRN."
+}

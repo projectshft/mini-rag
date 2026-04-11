@@ -1,0 +1,4 @@
+{
+  "title": "Learning Sequence Neighbourhood Metrics",
+  "abstract": "Recurrent neural networks (RNNs) in combination with a pooling operator and\nthe neighbourhood components analysis (NCA) objective function are able to\ndetect the characterizing dynamics of sequences and embed them into a\nfixed-length vector space of arbitrary dimensionality. Subsequently, the\nresulting features are meaningful and can be used for visualization or nearest\nneighbour classification in linear time. This kind of metric learning for\nsequential data enables the use of algorithms tailored towards fixed length\nvector spaces such as R^n."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Analysis of Heart Diseases Dataset using Neural Network Approach",
+  "abstract": "One of the important techniques of Data mining is Classification. Many real\nworld problems in various fields such as business, science, industry and\nmedicine can be solved by using classification approach. Neural Networks have\nemerged as an important tool for classification. The advantages of Neural\nNetworks helps for efficient classification of given data. In this study a\nHeart diseases dataset is analyzed using Neural Network approach. To increase\nthe efficiency of the classification process parallel approach is also adopted\nin the training phase."
+}

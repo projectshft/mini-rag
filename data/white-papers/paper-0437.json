@@ -1,0 +1,4 @@
+{
+  "title": "Learning Probability Measures with respect to Optimal Transport Metrics",
+  "abstract": "We study the problem of estimating, in the sense of optimal transport\nmetrics, a measure which is assumed supported on a manifold embedded in a\nHilbert space. By establishing a precise connection between optimal transport\nmetrics, optimal quantization, and learning theory, we derive new probabilistic\nbounds for the performance of a classic algorithm in unsupervised learning\n(k-means), when used to produce a probability measure derived from the data. In\nthe course of the analysis, we arrive at new lower bounds, as well as\nprobabilistic upper bounds on the convergence rate of the empirical law of\nlarge numbers, which, unlike existing bounds, are applicable to a wide class of\nmeasures."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Adaptive Bases for Reinforcement Learning",
+  "abstract": "We consider the problem of reinforcement learning using function\napproximation, where the approximating basis can change dynamically while\ninteracting with the environment. A motivation for such an approach is\nmaximizing the value function fitness to the problem faced. Three errors are\nconsidered: approximation square error, Bellman residual, and projected Bellman\nresidual. Algorithms under the actor-critic framework are presented, and shown\nto converge. The advantage of such an adaptive basis is demonstrated in\nsimulations."
+}

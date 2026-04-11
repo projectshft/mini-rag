@@ -1,0 +1,4 @@
+{
+  "title": "Probabilistic Approach to Neural Networks Computation Based on Quantum\n  Probability Model Probabilistic Principal Subspace Analysis Example",
+  "abstract": "In this paper, we introduce elements of probabilistic model that is suitable\nfor modeling of learning algorithms in biologically plausible artificial neural\nnetworks framework. Model is based on two of the main concepts in quantum\nphysics - a density matrix and the Born rule. As an example, we will show that\nproposed probabilistic interpretation is suitable for modeling of on-line\nlearning algorithms for PSA, which are preferably realized by a parallel\nhardware based on very simple computational units. Proposed concept (model) can\nbe used in the context of improving algorithm convergence speed, learning\nfactor choice, or input signal scale robustness. We are going to see how the\nBorn rule and the Hebbian learning rule are connected"
+}

@@ -1,0 +1,4 @@
+{
+  "title": "A Mixed Observability Markov Decision Process Model for Musical Pitch",
+  "abstract": "Partially observable Markov decision processes have been widely used to\nprovide models for real-world decision making problems. In this paper, we will\nprovide a method in which a slightly different version of them called Mixed\nobservability Markov decision process, MOMDP, is going to join with our\nproblem. Basically, we aim at offering a behavioural model for interaction of\nintelligent agents with musical pitch environment and we will show that how\nMOMDP can shed some light on building up a decision making model for musical\npitch conveniently."
+}

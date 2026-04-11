@@ -1,0 +1,4 @@
+{
+  "title": "Discrete Dynamical Genetic Programming in XCS",
+  "abstract": "A number of representation schemes have been presented for use within\nLearning Classifier Systems, ranging from binary encodings to neural networks.\nThis paper presents results from an investigation into using a discrete\ndynamical system representation within the XCS Learning Classifier System. In\nparticular, asynchronous random Boolean networks are used to represent the\ntraditional condition-action production system rules. It is shown possible to\nuse self-adaptive, open-ended evolution to design an ensemble of such discrete\ndynamical systems within XCS to solve a number of well-known test problems."
+}

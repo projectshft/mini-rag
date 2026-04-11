@@ -1,0 +1,4 @@
+{
+  "title": "On Training Deep Boltzmann Machines",
+  "abstract": "The deep Boltzmann machine (DBM) has been an important development in the\nquest for powerful \"deep\" probabilistic models. To date, simultaneous or joint\ntraining of all layers of the DBM has been largely unsuccessful with existing\ntraining methods. We introduce a simple regularization scheme that encourages\nthe weight vectors associated with each hidden unit to have similar norms. We\ndemonstrate that this regularization can be easily combined with standard\nstochastic maximum likelihood to yield an effective training strategy for the\nsimultaneous training of all layers of the deep Boltzmann machine."
+}

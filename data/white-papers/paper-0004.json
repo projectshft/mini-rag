@@ -1,0 +1,4 @@
+{
+  "title": "Supervised Feature Selection via Dependence Estimation",
+  "abstract": "We introduce a framework for filtering features that employs the\nHilbert-Schmidt Independence Criterion (HSIC) as a measure of dependence\nbetween the features and the labels. The key idea is that good features should\nmaximise such dependence. Feature selection for various supervised learning\nproblems (including classification and regression) is unified under this\nframework, and the solutions can be approximated using a backward-elimination\nalgorithm. We demonstrate the usefulness of our method on both artificial and\nreal world datasets."
+}

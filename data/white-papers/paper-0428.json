@@ -1,0 +1,4 @@
+{
+  "title": "Path Integral Control by Reproducing Kernel Hilbert Space Embedding",
+  "abstract": "We present an embedding of stochastic optimal control problems, of the so\ncalled path integral form, into reproducing kernel Hilbert spaces. Using\nconsistent, sample based estimates of the embedding leads to a model free,\nnon-parametric approach for calculation of an approximate solution to the\ncontrol problem. This formulation admits a decomposition of the problem into an\ninvariant and task dependent component. Consequently, we make much more\nefficient use of the sample data compared to previous sample based approaches\nin this domain, e.g., by allowing sample re-use across tasks. Numerical\nexamples on test problems, which illustrate the sample efficiency, are\nprovided."
+}

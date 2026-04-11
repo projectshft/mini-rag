@@ -1,0 +1,7 @@
+# This sounds like a case you're making for e2e type tests and I totally agree - in some cases...
+
+---
+
+This sounds like a case you're making for e2e type tests and I totally agree - in some cases... I think you are spot on with testing user experiences and for certain parts of our app like checkout for example, we have unit tests but e2e gives us true confidence that a series of button clicks will actually lead to an order submission. I will say that because our team has separated state logic logic from the presentational layer (mostly) that we do expect that just checking that a function has been called is sufficient in most scenarios because our state logic has it's own set of test associated with it.
+
+This sounds like a case you're making for e2e type tests and I totally agree - in some cases... I think you are spot on with testing user experiences and for certain parts of our app like checkout for example, we have unit tests but e2e gives us true confidence that a series of button clicks will actually lead to an order submission. I will say that because our team has separated state logic logic from the presentational layer (mostly) that we do expect that just checking that a function has been called is sufficient in most scenarios because our state logic has it's own set of test associated with it.

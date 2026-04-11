@@ -1,0 +1,4 @@
+{
+  "title": "Differential Privacy for Functions and Functional Data",
+  "abstract": "Differential privacy is a framework for privately releasing summaries of a\ndatabase. Previous work has focused mainly on methods for which the output is a\nfinite dimensional vector, or an element of some discrete set. We develop\nmethods for releasing functions while preserving differential privacy.\nSpecifically, we show that adding an appropriate Gaussian process to the\nfunction of interest yields differential privacy. When the functions lie in the\nsame RKHS as the Gaussian process, then the correct noise level is established\nby measuring the \"sensitivity\" of the function in the RKHS norm. As examples we\nconsider kernel density estimation, kernel support vector machines, and\nfunctions in reproducing kernel Hilbert spaces."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Gaussian Process Topic Models",
+  "abstract": "We introduce Gaussian Process Topic Models (GPTMs), a new family of topic\nmodels which can leverage a kernel among documents while extracting correlated\ntopics. GPTMs can be considered a systematic generalization of the Correlated\nTopic Models (CTMs) using ideas from Gaussian Process (GP) based embedding.\nSince GPTMs work with both a topic covariance matrix and a document kernel\nmatrix, learning GPTMs involves a novel component-solving a suitable Sylvester\nequation capturing both topic and document dependencies. The efficacy of GPTMs\nis demonstrated with experiments evaluating the quality of both topic modeling\nand embedding."
+}

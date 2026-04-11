@@ -1,0 +1,4 @@
+{
+  "title": "Conditional information and definition of neighbor in categorical random\n  fields",
+  "abstract": "We show that the definition of neighbor in Markov random fields as defined by\nBesag (1974) when the joint distribution of the sites is not positive is not\nwell-defined. In a random field with finite number of sites we study the\nconditions under which giving the value at extra sites will change the belief\nof an agent about one site. Also the conditions under which the information\nfrom some sites is equivalent to giving the value at all other sites is\nstudied. These concepts provide an alternative to the concept of neighbor for\ngeneral case where the positivity condition of the joint does not hold."
+}

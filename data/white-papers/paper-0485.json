@@ -1,0 +1,4 @@
+{
+  "title": "Temporal Autoencoding Restricted Boltzmann Machine",
+  "abstract": "Much work has been done refining and characterizing the receptive fields\nlearned by deep learning algorithms. A lot of this work has focused on the\ndevelopment of Gabor-like filters learned when enforcing sparsity constraints\non a natural image dataset. Little work however has investigated how these\nfilters might expand to the temporal domain, namely through training on natural\nmovies. Here we investigate exactly this problem in established temporal deep\nlearning algorithms as well as a new learning paradigm suggested here, the\nTemporal Autoencoding Restricted Boltzmann Machine (TARBM)."
+}

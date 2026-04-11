@@ -1,0 +1,4 @@
+{
+  "title": "Consistency of Feature Markov Processes",
+  "abstract": "We are studying long term sequence prediction (forecasting). We approach this\nby investigating criteria for choosing a compact useful state representation.\nThe state is supposed to summarize useful information from the history. We want\na method that is asymptotically consistent in the sense it will provably\neventually only choose between alternatives that satisfy an optimality property\nrelated to the used criterion. We extend our work to the case where there is\nside information that one can take advantage of and, furthermore, we briefly\ndiscuss the active setting where an agent takes actions to achieve desirable\noutcomes."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Modeling Temporal Dependencies in High-Dimensional Sequences:\n  Application to Polyphonic Music Generation and Transcription",
+  "abstract": "We investigate the problem of modeling symbolic sequences of polyphonic music\nin a completely general piano-roll representation. We introduce a probabilistic\nmodel based on distribution estimators conditioned on a recurrent neural\nnetwork that is able to discover temporal dependencies in high-dimensional\nsequences. Our approach outperforms many traditional models of polyphonic music\non a variety of realistic datasets. We show how our musical language model can\nserve as a symbolic prior to improve the accuracy of polyphonic transcription."
+}

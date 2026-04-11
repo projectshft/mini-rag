@@ -1,0 +1,4 @@
+{
+  "title": "PAC-Bayesian Inequalities for Martingales",
+  "abstract": "We present a set of high-probability inequalities that control the\nconcentration of weighted averages of multiple (possibly uncountably many)\nsimultaneously evolving and interdependent martingales. Our results extend the\nPAC-Bayesian analysis in learning theory from the i.i.d. setting to martingales\nopening the way for its application to importance weighted sampling,\nreinforcement learning, and other interactive learning domains, as well as many\nother domains in probability theory and statistics, where martingales are\nencountered.\n  We also present a comparison inequality that bounds the expectation of a\nconvex function of a martingale difference sequence shifted to the [0,1]\ninterval by the expectation of the same function of independent Bernoulli\nvariables. This inequality is applied to derive a tighter analog of\nHoeffding-Azuma's inequality."
+}

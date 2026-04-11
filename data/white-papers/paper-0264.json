@@ -1,0 +1,4 @@
+{
+  "title": "A Bayesian Model for Plan Recognition in RTS Games applied to StarCraft",
+  "abstract": "The task of keyhole (unobtrusive) plan recognition is central to adaptive\ngame AI. \"Tech trees\" or \"build trees\" are the core of real-time strategy (RTS)\ngame strategic (long term) planning. This paper presents a generic and simple\nBayesian model for RTS build tree prediction from noisy observations, which\nparameters are learned from replays (game logs). This unsupervised machine\nlearning approach involves minimal work for the game developers as it leverage\nplayers' data (com- mon in RTS). We applied it to StarCraft1 and showed that it\nyields high quality and robust predictions, that can feed an adaptive AI."
+}

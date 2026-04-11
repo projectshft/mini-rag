@@ -1,0 +1,4 @@
+{
+  "title": "TV-SVM: Total Variation Support Vector Machine for Semi-Supervised Data\n  Classification",
+  "abstract": "We introduce semi-supervised data classification algorithms based on total\nvariation (TV), Reproducing Kernel Hilbert Space (RKHS), support vector machine\n(SVM), Cheeger cut, labeled and unlabeled data points. We design binary and\nmulti-class semi-supervised classification algorithms. We compare the TV-based\nclassification algorithms with the related Laplacian-based algorithms, and show\nthat TV classification perform significantly better when the number of labeled\ndata is small."
+}

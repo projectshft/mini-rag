@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 
 const CSV_URL =
-	'https://huggingface.co/datasets/CShorten/ML-ArXiv-Papers/resolve/main/train.csv';
+	'https://huggingface.co/datasets/CShorten/ML-ArXiv-Papers/resolve/c878972daa0a5ec5f0d684354b6c8018f27d1316/ML-Arxiv-Papers.csv';
 
 const OUTPUT_DIR = path.join(process.cwd(), 'data', 'white-papers');
 
@@ -135,11 +135,15 @@ async function fetchPapers(): Promise<void> {
 	const response = await fetch(CSV_URL);
 
 	if (!response.ok) {
-		throw new Error(`Failed to fetch CSV: ${response.status} ${response.statusText}`);
+		throw new Error(
+			`Failed to fetch CSV: ${response.status} ${response.statusText}`,
+		);
 	}
 
 	const csvText = await response.text();
-	console.log(`Downloaded CSV (${(csvText.length / 1024 / 1024).toFixed(1)} MB)`);
+	console.log(
+		`Downloaded CSV (${(csvText.length / 1024 / 1024).toFixed(1)} MB)`,
+	);
 
 	const rows = parseCSV(csvText);
 
@@ -154,7 +158,7 @@ async function fetchPapers(): Promise<void> {
 
 	if (titleIdx === -1 || abstractIdx === -1) {
 		throw new Error(
-			`Could not find title/abstract columns. Headers: ${headers.join(', ')}`
+			`Could not find title/abstract columns. Headers: ${headers.join(', ')}`,
 		);
 	}
 
@@ -177,7 +181,9 @@ async function fetchPapers(): Promise<void> {
 		}
 	}
 
-	console.log(`Found ${papers.length} relevant papers (capped at ${MAX_PAPERS})`);
+	console.log(
+		`Found ${papers.length} relevant papers (capped at ${MAX_PAPERS})`,
+	);
 
 	// Ensure output directory exists
 	if (!fs.existsSync(OUTPUT_DIR)) {

@@ -1,0 +1,4 @@
+{
+  "title": "Learning Symbolic Models of Stochastic Domains",
+  "abstract": "In this article, we work towards the goal of developing agents that can learn\nto act in complex worlds. We develop a probabilistic, relational planning rule\nrepresentation that compactly models noisy, nondeterministic action effects,\nand show how such rules can be effectively learned. Through experiments in\nsimple planning domains and a 3D simulated blocks world with realistic physics,\nwe demonstrate that this learning algorithm allows agents to effectively model\nworld dynamics."
+}

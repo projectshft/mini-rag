@@ -1,0 +1,4 @@
+{
+  "title": "Random Feature Maps for Dot Product Kernels",
+  "abstract": "Approximating non-linear kernels using feature maps has gained a lot of\ninterest in recent years due to applications in reducing training and testing\ntimes of SVM classifiers and other kernel based learning algorithms. We extend\nthis line of work and present low distortion embeddings for dot product kernels\ninto linear Euclidean spaces. We base our results on a classical result in\nharmonic analysis characterizing all dot product kernels and use it to define\nrandomized feature maps into explicit low dimensional Euclidean spaces in which\nthe native dot product provides an approximation to the dot product kernel with\nhigh confidence."
+}

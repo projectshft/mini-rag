@@ -1,0 +1,4 @@
+{
+  "title": "A Framework for Evaluating Approximation Methods for Gaussian Process\n  Regression",
+  "abstract": "Gaussian process (GP) predictors are an important component of many Bayesian\napproaches to machine learning. However, even a straightforward implementation\nof Gaussian process regression (GPR) requires O(n^2) space and O(n^3) time for\na dataset of n examples. Several approximation methods have been proposed, but\nthere is a lack of understanding of the relative merits of the different\napproximations, and in what situations they are most useful. We recommend\nassessing the quality of the predictions obtained as a function of the compute\ntime taken, and comparing to standard baselines (e.g., Subset of Data and\nFITC). We empirically investigate four different approximation algorithms on\nfour different prediction problems, and make our code available to encourage\nfuture comparisons."
+}

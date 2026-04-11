@@ -1,0 +1,4 @@
+{
+  "title": "Efficient Nonparametric Conformal Prediction Regions",
+  "abstract": "We investigate and extend the conformal prediction method due to\nVovk,Gammerman and Shafer (2005) to construct nonparametric prediction regions.\nThese regions have guaranteed distribution free, finite sample coverage,\nwithout any assumptions on the distribution or the bandwidth. Explicit\nconvergence rates of the loss function are established for such regions under\nstandard regularity conditions. Approximations for simplifying implementation\nand data driven bandwidth selection methods are also discussed. The theoretical\nproperties of our method are demonstrated through simulations."
+}

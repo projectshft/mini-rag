@@ -1,0 +1,4 @@
+{
+  "title": "MOB-ESP and other Improvements in Probability Estimation",
+  "abstract": "A key prerequisite to optimal reasoning under uncertainty in intelligent\nsystems is to start with good class probability estimates. This paper improves\non the current best probability estimation trees (Bagged-PETs) and also\npresents a new ensemble-based algorithm (MOB-ESP). Comparisons are made using\nseveral benchmark datasets and multiple metrics. These experiments show that\nMOB-ESP outputs significantly more accurate class probabilities than either the\nbaseline BPETs algorithm or the enhanced version presented here (EB-PETs).\nThese results are based on metrics closely associated with the average accuracy\nof the predictions. MOB-ESP also provides much better probability rankings than\nB-PETs. The paper further suggests how these estimation techniques can be\napplied in concert with a broader category of classifiers."
+}

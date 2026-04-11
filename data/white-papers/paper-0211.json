@@ -1,0 +1,4 @@
+{
+  "title": "Using More Data to Speed-up Training Time",
+  "abstract": "In many recent applications, data is plentiful. By now, we have a rather\nclear understanding of how more data can be used to improve the accuracy of\nlearning algorithms. Recently, there has been a growing interest in\nunderstanding how more data can be leveraged to reduce the required training\nruntime. In this paper, we study the runtime of learning as a function of the\nnumber of available training examples, and underscore the main high-level\ntechniques. We provide some initial positive results showing that the runtime\ncan decrease exponentially while only requiring a polynomial growth of the\nnumber of examples, and spell-out several interesting open problems."
+}

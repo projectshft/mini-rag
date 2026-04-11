@@ -1,0 +1,4 @@
+{
+  "title": "Sequential Estimation Methods from Inclusion Principle",
+  "abstract": "In this paper, we propose new sequential estimation methods based on\ninclusion principle. The main idea is to reformulate the estimation problems as\nconstructing sequential random intervals and use confidence sequences to\ncontrol the associated coverage probabilities. In contrast to existing\nasymptotic sequential methods, our estimation procedures rigorously guarantee\nthe pre-specified levels of confidence."
+}

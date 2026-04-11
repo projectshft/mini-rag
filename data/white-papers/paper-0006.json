@@ -1,0 +1,4 @@
+{
+  "title": "Universal Reinforcement Learning",
+  "abstract": "We consider an agent interacting with an unmodeled environment. At each time,\nthe agent makes an observation, takes an action, and incurs a cost. Its actions\ncan influence future observations and costs. The goal is to minimize the\nlong-term average cost. We propose a novel algorithm, known as the active LZ\nalgorithm, for optimal control based on ideas from the Lempel-Ziv scheme for\nuniversal data compression and prediction. We establish that, under the active\nLZ algorithm, if there exists an integer $K$ such that the future is\nconditionally independent of the past given a window of $K$ consecutive actions\nand observations, then the average cost converges to the optimum. Experimental\nresults involving the game of Rock-Paper-Scissors illustrate merits of the\nalgorithm."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "The Augmented Complex Kernel LMS",
+  "abstract": "Recently, a unified framework for adaptive kernel based signal processing of\ncomplex data was presented by the authors, which, besides offering techniques\nto map the input data to complex Reproducing Kernel Hilbert Spaces, developed a\nsuitable Wirtinger-like Calculus for general Hilbert Spaces. In this short\npaper, the extended Wirtinger's calculus is adopted to derive complex\nkernel-based widely-linear estimation filters. Furthermore, we illuminate\nseveral important characteristics of the widely linear filters. We show that,\nalthough in many cases the gains from adopting widely linear estimation\nfilters, as alternatives to ordinary linear ones, are rudimentary, for the case\nof kernel based widely linear filters significant performance improvements can\nbe obtained."
+}

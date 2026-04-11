@@ -1,0 +1,4 @@
+{
+  "title": "On Theorem 2.3 in \"Prediction, Learning, and Games\" by Cesa-Bianchi and\n  Lugosi",
+  "abstract": "The note presents a modified proof of a loss bound for the exponentially\nweighted average forecaster with time-varying potential. The regret term of the\nalgorithm is upper-bounded by sqrt{n ln(N)} (uniformly in n), where N is the\nnumber of experts and n is the number of steps."
+}

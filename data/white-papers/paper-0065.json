@@ -1,0 +1,4 @@
+{
+  "title": "A Monte Carlo AIXI Approximation",
+  "abstract": "This paper introduces a principled approach for the design of a scalable\ngeneral reinforcement learning agent. Our approach is based on a direct\napproximation of AIXI, a Bayesian optimality notion for general reinforcement\nlearning agents. Previously, it has been unclear whether the theory of AIXI\ncould motivate the design of practical algorithms. We answer this hitherto open\nquestion in the affirmative, by providing the first computationally feasible\napproximation to the AIXI agent. To develop our approximation, we introduce a\nnew Monte-Carlo Tree Search algorithm along with an agent-specific extension to\nthe Context Tree Weighting algorithm. Empirically, we present a set of\nencouraging results on a variety of stochastic and partially observable\ndomains. We conclude by proposing a number of directions for future research."
+}

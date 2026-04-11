@@ -1,0 +1,4 @@
+{
+  "title": "Adaptive Policies for Sequential Sampling under Incomplete Information\n  and a Cost Constraint",
+  "abstract": "We consider the problem of sequential sampling from a finite number of\nindependent statistical populations to maximize the expected infinite horizon\naverage outcome per period, under a constraint that the expected average\nsampling cost does not exceed an upper bound. The outcome distributions are not\nknown. We construct a class of consistent adaptive policies, under which the\naverage outcome converges with probability 1 to the true value under complete\ninformation for all distributions with finite means. We also compare the rate\nof convergence for various policies in this class using simulation."
+}

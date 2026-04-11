@@ -1,0 +1,4 @@
+{
+  "title": "MLPACK: A Scalable C++ Machine Learning Library",
+  "abstract": "MLPACK is a state-of-the-art, scalable, multi-platform C++ machine learning\nlibrary released in late 2011 offering both a simple, consistent API accessible\nto novice users and high performance and flexibility to expert users by\nleveraging modern features of C++. MLPACK provides cutting-edge algorithms\nwhose benchmarks exhibit far better performance than other leading machine\nlearning libraries. MLPACK version 1.0.3, licensed under the LGPL, is available\nat http://www.mlpack.org."
+}

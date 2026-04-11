@@ -1,0 +1,4 @@
+{
+  "title": "Cooperative learning in multi-agent systems from intermittent\n  measurements",
+  "abstract": "Motivated by the problem of tracking a direction in a decentralized way, we\nconsider the general problem of cooperative learning in multi-agent systems\nwith time-varying connectivity and intermittent measurements. We propose a\ndistributed learning protocol capable of learning an unknown vector $\\mu$ from\nnoisy measurements made independently by autonomous nodes. Our protocol is\ncompletely distributed and able to cope with the time-varying, unpredictable,\nand noisy nature of inter-agent communication, and intermittent noisy\nmeasurements of $\\mu$. Our main result bounds the learning speed of our\nprotocol in terms of the size and combinatorial features of the (time-varying)\nnetworks connecting the nodes."
+}

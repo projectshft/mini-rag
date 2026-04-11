@@ -1,0 +1,4 @@
+{
+  "title": "Distributed High Dimensional Information Theoretical Image Registration\n  via Random Projections",
+  "abstract": "Information theoretical measures, such as entropy, mutual information, and\nvarious divergences, exhibit robust characteristics in image registration\napplications. However, the estimation of these quantities is computationally\nintensive in high dimensions. On the other hand, consistent estimation from\npairwise distances of the sample points is possible, which suits random\nprojection (RP) based low dimensional embeddings. We adapt the RP technique to\nthis task by means of a simple ensemble method. To the best of our knowledge,\nthis is the first distributed, RP based information theoretical image\nregistration approach. The efficiency of the method is demonstrated through\nnumerical examples."
+}

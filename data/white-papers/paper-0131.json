@@ -1,0 +1,4 @@
+{
+  "title": "Filtrage vaste marge pour l'\\'etiquetage s\\'equentiel \\`a noyaux de\n  signaux",
+  "abstract": "We address in this paper the problem of multi-channel signal sequence\nlabeling. In particular, we consider the problem where the signals are\ncontaminated by noise or may present some dephasing with respect to their\nlabels. For that, we propose to jointly learn a SVM sample classifier with a\ntemporal filtering of the channels. This will lead to a large margin filtering\nthat is adapted to the specificity of each channel (noise and time-lag). We\nderive algorithms to solve the optimization problem and we discuss different\nfilter regularizations for automated scaling or selection of channels. Our\napproach is tested on a non-linear toy example and on a BCI dataset. Results\nshow that the classification performance on these problems can be improved by\nlearning a large margin filtering."
+}

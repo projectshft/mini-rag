@@ -1,0 +1,4 @@
+{
+  "title": "On the Partition Function and Random Maximum A-Posteriori Perturbations",
+  "abstract": "In this paper we relate the partition function to the max-statistics of\nrandom variables. In particular, we provide a novel framework for approximating\nand bounding the partition function using MAP inference on randomly perturbed\nmodels. As a result, we can use efficient MAP solvers such as graph-cuts to\nevaluate the corresponding partition function. We show that our method excels\nin the typical \"high signal - high coupling\" regime that results in ragged\nenergy landscapes difficult for alternative approaches."
+}

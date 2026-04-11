@@ -1,0 +1,4 @@
+{
+  "title": "Discrete and fuzzy dynamical genetic programming in the XCSF learning\n  classifier system",
+  "abstract": "A number of representation schemes have been presented for use within\nlearning classifier systems, ranging from binary encodings to neural networks.\nThis paper presents results from an investigation into using discrete and fuzzy\ndynamical system representations within the XCSF learning classifier system. In\nparticular, asynchronous random Boolean networks are used to represent the\ntraditional condition-action production system rules in the discrete case and\nasynchronous fuzzy logic networks in the continuous-valued case. It is shown\npossible to use self-adaptive, open-ended evolution to design an ensemble of\nsuch dynamical systems within XCSF to solve a number of well-known test\nproblems."
+}

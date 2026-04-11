@@ -1,0 +1,4 @@
+{
+  "title": "Feature Dynamic Bayesian Networks",
+  "abstract": "Feature Markov Decision Processes (PhiMDPs) are well-suited for learning\nagents in general environments. Nevertheless, unstructured (Phi)MDPs are\nlimited to relatively simple environments. Structured MDPs like Dynamic\nBayesian Networks (DBNs) are used for large-scale real-world problems. In this\narticle I extend PhiMDP to PhiDBN. The primary contribution is to derive a cost\ncriterion that allows to automatically extract the most relevant features from\nthe environment, leading to the \"best\" DBN representation. I discuss all\nbuilding blocks required for a complete general learning algorithm."
+}

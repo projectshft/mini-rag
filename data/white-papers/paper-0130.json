@@ -1,0 +1,4 @@
+{
+  "title": "A Reinforcement Learning Model Using Neural Networks for Music Sight\n  Reading Learning Problem",
+  "abstract": "Music Sight Reading is a complex process in which when it is occurred in the\nbrain some learning attributes would be emerged. Besides giving a model based\non actor-critic method in the Reinforcement Learning, the agent is considered\nto have a neural network structure. We studied on where the sight reading\nprocess is happened and also a serious problem which is how the synaptic\nweights would be adjusted through the learning process. The model we offer here\nis a computational model on which an updated weights equation to fix the\nweights is accompanied too."
+}

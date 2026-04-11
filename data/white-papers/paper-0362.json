@@ -1,0 +1,4 @@
+{
+  "title": "Partial-Hessian Strategies for Fast Learning of Nonlinear Embeddings",
+  "abstract": "Stochastic neighbor embedding (SNE) and related nonlinear manifold learning\nalgorithms achieve high-quality low-dimensional representations of similarity\ndata, but are notoriously slow to train. We propose a generic formulation of\nembedding algorithms that includes SNE and other existing algorithms, and study\ntheir relation with spectral methods and graph Laplacians. This allows us to\ndefine several partial-Hessian optimization strategies, characterize their\nglobal and local convergence, and evaluate them empirically. We achieve up to\ntwo orders of magnitude speedup over existing training methods with a strategy\n(which we call the spectral direction) that adds nearly no overhead to the\ngradient and yet is simple, scalable and applicable to several existing and\nfuture embedding algorithms."
+}

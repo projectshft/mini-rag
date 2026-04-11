@@ -1,0 +1,4 @@
+{
+  "title": "Convolutional Neural Networks Applied to House Numbers Digit\n  Classification",
+  "abstract": "We classify digits of real-world house numbers using convolutional neural\nnetworks (ConvNets). ConvNets are hierarchical feature learning neural networks\nwhose structure is biologically inspired. Unlike many popular vision approaches\nthat are hand-designed, ConvNets can automatically learn a unique set of\nfeatures optimized for a given task. We augmented the traditional ConvNet\narchitecture by learning multi-stage features and by using Lp pooling and\nestablish a new state-of-the-art of 94.85% accuracy on the SVHN dataset (45.2%\nerror improvement). Furthermore, we analyze the benefits of different pooling\nmethods and multi-stage features in ConvNets. The source code and a tutorial\nare available at eblearn.sf.net."
+}

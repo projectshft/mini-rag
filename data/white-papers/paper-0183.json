@@ -1,0 +1,4 @@
+{
+  "title": "Deformed Statistics Free Energy Model for Source Separation using\n  Unsupervised Learning",
+  "abstract": "A generalized-statistics variational principle for source separation is\nformulated by recourse to Tsallis' entropy subjected to the additive duality\nand employing constraints described by normal averages. The variational\nprinciple is amalgamated with Hopfield-like learning rules resulting in an\nunsupervised learning model. The update rules are formulated with the aid of\nq-deformed calculus. Numerical examples exemplify the efficacy of this model."
+}

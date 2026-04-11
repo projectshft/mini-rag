@@ -1,0 +1,4 @@
+{
+  "title": "Scikit-learn: Machine Learning in Python",
+  "abstract": "Scikit-learn is a Python module integrating a wide range of state-of-the-art\nmachine learning algorithms for medium-scale supervised and unsupervised\nproblems. This package focuses on bringing machine learning to non-specialists\nusing a general-purpose high-level language. Emphasis is put on ease of use,\nperformance, documentation, and API consistency. It has minimal dependencies\nand is distributed under the simplified BSD license, encouraging its use in\nboth academic and commercial settings. Source code, binaries, and documentation\ncan be downloaded from http://scikit-learn.org."
+}

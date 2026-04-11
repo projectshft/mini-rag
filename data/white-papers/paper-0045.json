@@ -1,0 +1,4 @@
+{
+  "title": "Cross-situational and supervised learning in the emergence of\n  communication",
+  "abstract": "Scenarios for the emergence or bootstrap of a lexicon involve the repeated\ninteraction between at least two agents who must reach a consensus on how to\nname N objects using H words. Here we consider minimal models of two types of\nlearning algorithms: cross-situational learning, in which the individuals\ndetermine the meaning of a word by looking for something in common across all\nobserved uses of that word, and supervised operant conditioning learning, in\nwhich there is strong feedback between individuals about the intended meaning\nof the words. Despite the stark differences between these learning schemes, we\nshow that they yield the same communication accuracy in the realistic limits of\nlarge N and H, which coincides with the result of the classical occupancy\nproblem of randomly assigning N objects to H words."
+}

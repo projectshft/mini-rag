@@ -1,0 +1,4 @@
+{
+  "title": "On the Possibility of Learning in Reactive Environments with Arbitrary\n  Dependence",
+  "abstract": "We address the problem of reinforcement learning in which observations may\nexhibit an arbitrary form of stochastic dependence on past observations and\nactions, i.e. environments more general than (PO)MDPs. The task for an agent is\nto attain the best possible asymptotic reward where the true generating\nenvironment is unknown but belongs to a known countable family of environments.\nWe find some sufficient conditions on the class of environments under which an\nagent exists which attains the best asymptotic reward for any environment in\nthe class. We analyze how tight these conditions are and how they relate to\ndifferent probabilistic assumptions known in reinforcement learning and related\nfields, such as Markov Decision Processes and mixing conditions."
+}

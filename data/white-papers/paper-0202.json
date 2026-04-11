@@ -1,0 +1,4 @@
+{
+  "title": "Adaptively Learning the Crowd Kernel",
+  "abstract": "We introduce an algorithm that, given n objects, learns a similarity matrix\nover all n^2 pairs, from crowdsourced data alone. The algorithm samples\nresponses to adaptively chosen triplet-based relative-similarity queries. Each\nquery has the form \"is object 'a' more similar to 'b' or to 'c'?\" and is chosen\nto be maximally informative given the preceding responses. The output is an\nembedding of the objects into Euclidean space (like MDS); we refer to this as\nthe \"crowd kernel.\" SVMs reveal that the crowd kernel captures prominent and\nsubtle features across a number of domains, such as \"is striped\" among neckties\nand \"vowel vs. consonant\" among letters."
+}

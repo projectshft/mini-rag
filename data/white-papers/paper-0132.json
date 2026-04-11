@@ -1,0 +1,4 @@
+{
+  "title": "A note on sample complexity of learning binary output neural networks\n  under fixed input distributions",
+  "abstract": "We show that the learning sample complexity of a sigmoidal neural network\nconstructed by Sontag (1992) required to achieve a given misclassification\nerror under a fixed purely atomic distribution can grow arbitrarily fast: for\nany prescribed rate of growth there is an input distribution having this rate\nas the sample complexity, and the bound is asymptotically tight. The rate can\nbe superexponential, a non-recursive function, etc. We further observe that\nSontag's ANN is not Glivenko-Cantelli under any input distribution having a\nnon-atomic part."
+}

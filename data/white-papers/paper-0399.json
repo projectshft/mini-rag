@@ -1,0 +1,4 @@
+{
+  "title": "Apprenticeship Learning for Model Parameters of Partially Observable\n  Environments",
+  "abstract": "We consider apprenticeship learning, i.e., having an agent learn a task by\nobserving an expert demonstrating the task in a partially observable\nenvironment when the model of the environment is uncertain. This setting is\nuseful in applications where the explicit modeling of the environment is\ndifficult, such as a dialogue system. We show that we can extract information\nabout the environment model by inferring action selection process behind the\ndemonstration, under the assumption that the expert is choosing optimal actions\nbased on knowledge of the true model of the target environment. Proposed\nalgorithms can achieve more accurate estimates of POMDP parameters and better\npolicies from a short demonstration, compared to methods that learns only from\nthe reaction from the environment."
+}

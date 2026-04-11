@@ -1,0 +1,4 @@
+{
+  "title": "A New Framework of Multistage Hypothesis Tests",
+  "abstract": "In this paper, we have established a general framework of multistage\nhypothesis tests which applies to arbitrarily many mutually exclusive and\nexhaustive composite hypotheses. Within the new framework, we have constructed\nspecific multistage tests which rigorously control the risk of committing\ndecision errors and are more efficient than previous tests in terms of average\nsample number and the number of sampling operations. Without truncation, the\nsample numbers of our testing plans are absolutely bounded."
+}

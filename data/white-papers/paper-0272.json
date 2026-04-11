@@ -1,0 +1,4 @@
+{
+  "title": "Analysis and Extension of Arc-Cosine Kernels for Large Margin\n  Classification",
+  "abstract": "We investigate a recently proposed family of positive-definite kernels that\nmimic the computation in large neural networks. We examine the properties of\nthese kernels using tools from differential geometry; specifically, we analyze\nthe geometry of surfaces in Hilbert space that are induced by these kernels.\nWhen this geometry is described by a Riemannian manifold, we derive results for\nthe metric, curvature, and volume element. Interestingly, though, we find that\nthe simplest kernel in this family does not admit such an interpretation. We\nexplore two variations of these kernels that mimic computation in neural\nnetworks with different activation functions. We experiment with these new\nkernels on several data sets and highlight their general trends in performance\nfor classification."
+}

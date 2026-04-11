@@ -1,0 +1,4 @@
+{
+  "title": "From Data Topology to a Modular Classifier",
+  "abstract": "This article describes an approach to designing a distributed and modular\nneural classifier. This approach introduces a new hierarchical clustering that\nenables one to determine reliable regions in the representation space by\nexploiting supervised information. A multilayer perceptron is then associated\nwith each of these detected clusters and charged with recognizing elements of\nthe associated cluster while rejecting all others. The obtained global\nclassifier is comprised of a set of cooperating neural networks and completed\nby a K-nearest neighbor classifier charged with treating elements rejected by\nall the neural networks. Experimental results for the handwritten digit\nrecognition problem and comparison with neural and statistical nonmodular\nclassifiers are given."
+}

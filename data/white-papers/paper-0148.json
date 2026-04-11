@@ -1,0 +1,4 @@
+{
+  "title": "Text Classification using the Concept of Association Rule of Data Mining",
+  "abstract": "As the amount of online text increases, the demand for text classification to\naid the analysis and management of text is increasing. Text is cheap, but\ninformation, in the form of knowing what classes a text belongs to, is\nexpensive. Automatic classification of text can provide this information at low\ncost, but the classifiers themselves must be built with expensive human effort,\nor trained from texts which have themselves been manually classified. In this\npaper we will discuss a procedure of classifying text using the concept of\nassociation rule of data mining. Association rule mining technique has been\nused to derive feature set from pre-classified text documents. Naive Bayes\nclassifier is then used on derived features for final classification."
+}

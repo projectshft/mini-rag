@@ -7,6 +7,20 @@
  * Famous example: king - man + woman ≈ queen
  *
  * Run this script with: yarn exercise:word-math
+ *
+ * AVAILABLE WORDS (cached embeddings):
+ * - Royalty: king, queen, prince, princess, emperor, duchess, lady, monarch, ruler, empress
+ * - Gender: man, woman
+ * - Places: paris, france, italy, rome, milan, venice, florence, naples, berlin, madrid
+ * - Medical: doctor, nurse, physician, surgeon, dentist, therapist
+ * - Software Dev:
+ *     Languages: javascript, python, typescript, java, rust, golang
+ *     Roles: developer, programmer, coder, hacker, junior, senior, lead, architect
+ *     Specialties: frontend, backend, fullstack
+ *     Concepts: bug, feature, deploy, refactor, debug, code, software, application, program
+ *     Infrastructure: database, api, server, client
+ *     Frameworks: react, angular, vue, node
+ * - Business: CEO, founder, entrepreneur, executive, director, manager, intern, startup
  */
 
 import * as path from 'path';
@@ -43,76 +57,174 @@ try {
 
 // Vector operations
 function addVectors(a: number[], b: number[]): number[] {
-	// TODO: Implement vector addition
-	// Return a new array where each element is the sum of corresponding elements from a and b
-
-	throw new Error('addVectors not implemented yet!');
+	return a.map((val, i) => val + b[i]);
 }
 
 function subtractVectors(a: number[], b: number[]): number[] {
-	// TODO: Implement vector subtraction
-	// Return a new array where each element is the difference of corresponding elements (a[i] - b[i])
-
-	throw new Error('subtractVectors not implemented yet!');
+	return a.map((val, i) => val - b[i]);
 }
 
 function cosineSimilarity(a: number[], b: number[]): number {
-	// TODO: Implement cosine similarity
-	//
-	// Steps:
-	// 1. Calculate dot product: sum of a[i] * b[i]
-	// 2. Calculate magnitude of a: sqrt(sum of a[i]^2)
-	// 3. Calculate magnitude of b: sqrt(sum of b[i]^2)
-	// 4. Return dotProduct / (magA * magB)
-
-	throw new Error('cosineSimilarity not implemented yet!');
+	const dotProduct = a.reduce((sum, val, i) => sum + val * b[i], 0);
+	const magA = Math.sqrt(a.reduce((sum, val) => sum + val * val, 0));
+	const magB = Math.sqrt(b.reduce((sum, val) => sum + val * val, 0));
+	return dotProduct / (magA * magB);
 }
 
 // Get embedding for a word/phrase
 async function getEmbedding(text: string): Promise<number[]> {
-	// TODO: Implement embedding retrieval
-	//
-	// Steps:
-	// 1. Check embeddingsCache[text] first - return cached value if exists
-	// 2. If not cached, call openaiClient.embeddings.create()
-	//    - Model: 'text-embedding-3-small', Dimensions: 512
-	// 3. Return the embedding array from response.data[0].embedding
+	if (embeddingsCache[text]) {
+		return embeddingsCache[text];
+	}
 
-	throw new Error('getEmbedding not implemented yet!');
+	const response = await openaiClient.embeddings.create({
+		model: 'text-embedding-3-small',
+		input: text,
+		dimensions: 512,
+	});
+
+	return response.data[0].embedding;
 }
 
 // Find the closest word from a list given a target vector
 async function findClosestWord(
 	targetVector: number[],
-	candidates: string[]
+	candidates: string[],
 ): Promise<{ word: string; similarity: number }[]> {
-	// TODO: Implement closest word finder
-	//
-	// Steps:
-	// 1. For each candidate word, get its embedding
-	// 2. Calculate cosine similarity between targetVector and the embedding
-	// 3. Collect results as { word, similarity } objects
-	// 4. Sort by similarity (highest first)
-	// 5. Return sorted results
+	const results: { word: string; similarity: number }[] = [];
 
-	throw new Error('findClosestWord not implemented yet!');
+	for (const word of candidates) {
+		const embedding = await getEmbedding(word);
+		const similarity = cosineSimilarity(targetVector, embedding);
+		results.push({ word, similarity });
+	}
+
+	return results.sort((a, b) => b.similarity - a.similarity);
 }
 
 async function demonstrateWordArithmetic() {
-	// TODO: Implement word arithmetic demonstrations
-	//
-	// Create examples like:
-	//   king - man + woman ≈ queen
-	//
-	// Steps:
-	// 1. Get embeddings for each word using getEmbedding()
-	// 2. Perform vector arithmetic using addVectors() and subtractVectors()
-	// 3. Use findClosestWord() to find what the resulting vector is closest to
-	// 4. Display results
-	//
-	// Try creating your own examples to build intuition on how vector math works!
+	console.log('\n🧮 VECTOR WORD ARITHMETIC DEMONSTRATION\n');
+	console.log('='.repeat(50));
 
-	throw new Error('demonstrateWordArithmetic not implemented yet!');
+	// Example 1: king - man + woman ≈ queen
+	console.log('\n📝 Example 1: king - man + woman = ?');
+	console.log('-'.repeat(40));
+
+	const kingVec = await getEmbedding('king');
+	const manVec = await getEmbedding('man');
+	const womanVec = await getEmbedding('woman');
+
+	// king - man + woman
+	const resultVec = addVectors(subtractVectors(kingVec, manVec), womanVec);
+
+	const candidates1 = ['queen', 'princess', 'prince', 'emperor', 'duchess', 'lady', 'monarch'];
+	const results1 = await findClosestWord(resultVec, candidates1);
+
+	console.log('Results (sorted by similarity):');
+	results1.forEach((r, i) => {
+		console.log(`  ${i + 1}. ${r.word}: ${r.similarity.toFixed(4)}`);
+	});
+
+	// Example 2: paris - france + italy ≈ rome
+	console.log('\n📝 Example 2: paris - france + italy = ?');
+	console.log('-'.repeat(40));
+
+	const parisVec = await getEmbedding('paris');
+	const franceVec = await getEmbedding('france');
+	const italyVec = await getEmbedding('italy');
+
+	const resultVec2 = addVectors(subtractVectors(parisVec, franceVec), italyVec);
+
+	const candidates2 = ['rome', 'milan', 'venice', 'florence', 'naples', 'berlin', 'madrid'];
+	const results2 = await findClosestWord(resultVec2, candidates2);
+
+	console.log('Results (sorted by similarity):');
+	results2.forEach((r, i) => {
+		console.log(`  ${i + 1}. ${r.word}: ${r.similarity.toFixed(4)}`);
+	});
+
+	// Example 3: doctor - man + woman ≈ nurse (or doctor!)
+	console.log('\n📝 Example 3: doctor - man + woman = ?');
+	console.log('-'.repeat(40));
+
+	const doctorVec = await getEmbedding('doctor');
+
+	const resultVec3 = addVectors(subtractVectors(doctorVec, manVec), womanVec);
+
+	const candidates3 = ['nurse', 'physician', 'surgeon', 'dentist', 'therapist', 'doctor'];
+	const results3 = await findClosestWord(resultVec3, candidates3);
+
+	console.log('Results (sorted by similarity):');
+	results3.forEach((r, i) => {
+		console.log(`  ${i + 1}. ${r.word}: ${r.similarity.toFixed(4)}`);
+	});
+
+	// Software Dev Example 1: javascript - frontend + backend ≈ ?
+	console.log('\n📝 Example 4 (Software Dev): javascript - frontend + backend = ?');
+	console.log('-'.repeat(40));
+
+	const javascriptVec = await getEmbedding('javascript');
+	const frontendVec = await getEmbedding('frontend');
+	const backendVec = await getEmbedding('backend');
+
+	const resultVec4 = addVectors(subtractVectors(javascriptVec, frontendVec), backendVec);
+
+	const candidates4 = ['python', 'java', 'golang', 'rust', 'typescript', 'node'];
+	const results4 = await findClosestWord(resultVec4, candidates4);
+
+	console.log('Results (sorted by similarity):');
+	results4.forEach((r, i) => {
+		console.log(`  ${i + 1}. ${r.word}: ${r.similarity.toFixed(4)}`);
+	});
+
+	// Software Dev Example 2: junior - intern + senior ≈ ?
+	console.log('\n📝 Example 5 (Software Dev): junior - intern + senior = ?');
+	console.log('-'.repeat(40));
+
+	const juniorVec = await getEmbedding('junior');
+	const internVec = await getEmbedding('intern');
+	const seniorVec = await getEmbedding('senior');
+
+	const resultVec5 = addVectors(subtractVectors(juniorVec, internVec), seniorVec);
+
+	const candidates5 = ['lead', 'architect', 'manager', 'director', 'developer', 'executive'];
+	const results5 = await findClosestWord(resultVec5, candidates5);
+
+	console.log('Results (sorted by similarity):');
+	results5.forEach((r, i) => {
+		console.log(`  ${i + 1}. ${r.word}: ${r.similarity.toFixed(4)}`);
+	});
+
+	// Software Dev Example 3: bug - code + feature ≈ ?
+	console.log('\n📝 Example 6 (Software Dev): bug - code + feature = ?');
+	console.log('-'.repeat(40));
+
+	const bugVec = await getEmbedding('bug');
+	const codeVec = await getEmbedding('code');
+	const featureVec = await getEmbedding('feature');
+
+	const resultVec6 = addVectors(subtractVectors(bugVec, codeVec), featureVec);
+
+	const candidates6 = ['deploy', 'refactor', 'debug', 'software', 'application', 'program'];
+	const results6 = await findClosestWord(resultVec6, candidates6);
+
+	console.log('Results (sorted by similarity):');
+	results6.forEach((r, i) => {
+		console.log(`  ${i + 1}. ${r.word}: ${r.similarity.toFixed(4)}`);
+	});
+
+	console.log('\n' + '='.repeat(50));
+	console.log('✨ Try adding your own example below!');
+	console.log('='.repeat(50));
+
+	// TODO: Add your own word arithmetic example here!
+	// Example template:
+	// const wordAVec = await getEmbedding('wordA');
+	// const wordBVec = await getEmbedding('wordB');
+	// const wordCVec = await getEmbedding('wordC');
+	// const myResultVec = addVectors(subtractVectors(wordAVec, wordBVec), wordCVec);
+	// const myCandidates = ['option1', 'option2', 'option3'];
+	// const myResults = await findClosestWord(myResultVec, myCandidates);
 }
 
 // Run the demonstration

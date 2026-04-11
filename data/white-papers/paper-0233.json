@@ -1,0 +1,4 @@
+{
+  "title": "Gradient-based kernel dimension reduction for supervised learning",
+  "abstract": "This paper proposes a novel kernel approach to linear dimension reduction for\nsupervised learning. The purpose of the dimension reduction is to find\ndirections in the input space to explain the output as effectively as possible.\nThe proposed method uses an estimator for the gradient of regression function,\nbased on the covariance operators on reproducing kernel Hilbert spaces. In\ncomparison with other existing methods, the proposed one has wide applicability\nwithout strong assumptions on the distributions or the type of variables, and\nuses computationally simple eigendecomposition. Experimental results show that\nthe proposed method successfully finds the effective directions with efficient\ncomputation."
+}

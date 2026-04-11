@@ -1,0 +1,4 @@
+{
+  "title": "Copula-based Kernel Dependency Measures",
+  "abstract": "The paper presents a new copula based method for measuring dependence between\nrandom variables. Our approach extends the Maximum Mean Discrepancy to the\ncopula of the joint distribution. We prove that this approach has several\nadvantageous properties. Similarly to Shannon mutual information, the proposed\ndependence measure is invariant to any strictly increasing transformation of\nthe marginal variables. This is important in many applications, for example in\nfeature selection. The estimator is consistent, robust to outliers, and uses\nrank statistics only. We derive upper bounds on the convergence rate and\npropose independence tests too. We illustrate the theoretical contributions\nthrough a series of experiments in feature selection and low-dimensional\nembedding of distributions."
+}

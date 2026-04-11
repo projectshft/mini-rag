@@ -1,0 +1,4 @@
+{
+  "title": "Asymptotically Optimal Agents",
+  "abstract": "Artificial general intelligence aims to create agents capable of learning to\nsolve arbitrary interesting problems. We define two versions of asymptotic\noptimality and prove that no agent can satisfy the strong version while in some\ncases, depending on discounting, there does exist a non-computable weak\nasymptotically optimal agent."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Bellman Error Based Feature Generation using Random Projections on\n  Sparse Spaces",
+  "abstract": "We address the problem of automatic generation of features for value function\napproximation. Bellman Error Basis Functions (BEBFs) have been shown to improve\nthe error of policy evaluation with function approximation, with a convergence\nrate similar to that of value iteration. We propose a simple, fast and robust\nalgorithm based on random projections to generate BEBFs for sparse feature\nspaces. We provide a finite sample analysis of the proposed method, and prove\nthat projections logarithmic in the dimension of the original space are enough\nto guarantee contraction in the error. Empirical results demonstrate the\nstrength of this method."
+}

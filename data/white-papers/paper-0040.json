@@ -1,0 +1,4 @@
+{
+  "title": "Feature Markov Decision Processes",
+  "abstract": "General purpose intelligent learning agents cycle through (complex,non-MDP)\nsequences of observations, actions, and rewards. On the other hand,\nreinforcement learning is well-developed for small finite state Markov Decision\nProcesses (MDPs). So far it is an art performed by human designers to extract\nthe right state representation out of the bare observations, i.e. to reduce the\nagent setup to the MDP framework. Before we can think of mechanizing this\nsearch for suitable MDPs, we need a formal objective criterion. The main\ncontribution of this article is to develop such a criterion. I also integrate\nthe various parts into one learning algorithm. Extensions to more realistic\ndynamic Bayesian networks are developed in a companion article."
+}

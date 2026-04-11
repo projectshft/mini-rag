@@ -1,0 +1,4 @@
+{
+  "title": "Sequential search based on kriging: convergence analysis of some\n  algorithms",
+  "abstract": "Let $\\FF$ be a set of real-valued functions on a set $\\XX$ and let $S:\\FF \\to\n\\GG$ be an arbitrary mapping. We consider the problem of making inference about\n$S(f)$, with $f\\in\\FF$ unknown, from a finite set of pointwise evaluations of\n$f$. We are mainly interested in the problems of approximation and\noptimization. In this article, we make a brief review of results concerning\naverage error bounds of Bayesian search methods that use a random process prior\nabout $f$."
+}

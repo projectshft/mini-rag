@@ -1,0 +1,4 @@
+{
+  "title": "Applying Deep Belief Networks to Word Sense Disambiguation",
+  "abstract": "In this paper, we applied a novel learning algorithm, namely, Deep Belief\nNetworks (DBN) to word sense disambiguation (WSD). DBN is a probabilistic\ngenerative model composed of multiple layers of hidden units. DBN uses\nRestricted Boltzmann Machine (RBM) to greedily train layer by layer as a\npretraining. Then, a separate fine tuning step is employed to improve the\ndiscriminative power. We compared DBN with various state-of-the-art supervised\nlearning algorithms in WSD such as Support Vector Machine (SVM), Maximum\nEntropy model (MaxEnt), Naive Bayes classifier (NB) and Kernel Principal\nComponent Analysis (KPCA). We used all words in the given paragraph,\nsurrounding context words and part-of-speech of surrounding words as our\nknowledge sources. We conducted our experiment on the SENSEVAL-2 data set. We\nobserved that DBN outperformed all other learning algorithms."
+}

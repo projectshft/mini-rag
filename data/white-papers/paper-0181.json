@@ -1,0 +1,4 @@
+{
+  "title": "Sparse neural networks with large learning diversity",
+  "abstract": "Coded recurrent neural networks with three levels of sparsity are introduced.\nThe first level is related to the size of messages, much smaller than the\nnumber of available neurons. The second one is provided by a particular coding\nrule, acting as a local constraint in the neural activity. The third one is a\ncharacteristic of the low final connection density of the network after the\nlearning phase. Though the proposed network is very simple since it is based on\nbinary neurons and binary connections, it is able to learn a large number of\nmessages and recall them, even in presence of strong erasures. The performance\nof the network is assessed as a classifier and as an associative memory."
+}

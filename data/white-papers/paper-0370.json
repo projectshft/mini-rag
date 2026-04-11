@@ -1,0 +1,4 @@
+{
+  "title": "Mixture-of-Parents Maximum Entropy Markov Models",
+  "abstract": "We present the mixture-of-parents maximum entropy Markov model (MoP-MEMM), a\nclass of directed graphical models extending MEMMs. The MoP-MEMM allows\ntractable incorporation of long-range dependencies between nodes by restricting\nthe conditional distribution of each node to be a mixture of distributions\ngiven the parents. We show how to efficiently compute the exact marginal\nposterior node distributions, regardless of the range of the dependencies. This\nenables us to model non-sequential correlations present within text documents,\nas well as between interconnected documents, such as hyperlinked web pages. We\napply the MoP-MEMM to a named entity recognition task and a web page\nclassification task. In each, our model shows significant improvement over the\nbasic MEMM, and is competitive with other long-range sequence models that use\napproximate inference."
+}

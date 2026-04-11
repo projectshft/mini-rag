@@ -1,0 +1,4 @@
+{
+  "title": "A hybrid learning algorithm for text classification",
+  "abstract": "Text classification is the process of classifying documents into predefined\ncategories based on their content. Existing supervised learning algorithms to\nautomatically classify text need sufficient documents to learn accurately. This\npaper presents a new algorithm for text classification that requires fewer\ndocuments for training. Instead of using words, word relation i.e association\nrules from these words is used to derive feature set from preclassified text\ndocuments. The concept of Naive Bayes classifier is then used on derived\nfeatures and finally only a single concept of Genetic Algorithm has been added\nfor final classification. Experimental results show that the classifier build\nthis way is more accurate than the existing text classification systems."
+}

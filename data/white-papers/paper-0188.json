@@ -1,0 +1,4 @@
+{
+  "title": "Natural Language Processing (almost) from Scratch",
+  "abstract": "We propose a unified neural network architecture and learning algorithm that\ncan be applied to various natural language processing tasks including:\npart-of-speech tagging, chunking, named entity recognition, and semantic role\nlabeling. This versatility is achieved by trying to avoid task-specific\nengineering and therefore disregarding a lot of prior knowledge. Instead of\nexploiting man-made input features carefully optimized for each task, our\nsystem learns internal representations on the basis of vast amounts of mostly\nunlabeled training data. This work is then used as a basis for building a\nfreely available tagging system with good performance and minimal computational\nrequirements."
+}

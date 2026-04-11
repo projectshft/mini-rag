@@ -1,0 +1,4 @@
+{
+  "title": "Information-theoretic Semi-supervised Metric Learning via Entropy\n  Regularization",
+  "abstract": "We propose a general information-theoretic approach called Seraph\n(SEmi-supervised metRic leArning Paradigm with Hyper-sparsity) for metric\nlearning that does not rely upon the manifold assumption. Given the probability\nparameterized by a Mahalanobis distance, we maximize the entropy of that\nprobability on labeled data and minimize it on unlabeled data following entropy\nregularization, which allows the supervised and unsupervised parts to be\nintegrated in a natural and meaningful way. Furthermore, Seraph is regularized\nby encouraging a low-rank projection induced from the metric. The optimization\nof Seraph is solved efficiently and stably by an EM-like scheme with the\nanalytical E-Step and convex M-Step. Experiments demonstrate that Seraph\ncompares favorably with many well-known global and local metric learning\nmethods."
+}

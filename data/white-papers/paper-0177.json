@@ -1,0 +1,4 @@
+{
+  "title": "Spatially-Aware Comparison and Consensus for Clusterings",
+  "abstract": "This paper proposes a new distance metric between clusterings that\nincorporates information about the spatial distribution of points and clusters.\nOur approach builds on the idea of a Hilbert space-based representation of\nclusters as a combination of the representations of their constituent points.\nWe use this representation and the underlying metric to design a\nspatially-aware consensus clustering procedure. This consensus procedure is\nimplemented via a novel reduction to Euclidean clustering, and is both simple\nand efficient. All of our results apply to both soft and hard clusterings. We\naccompany these algorithms with a detailed experimental evaluation that\ndemonstrates the efficiency and quality of our techniques."
+}

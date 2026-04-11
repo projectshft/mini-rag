@@ -1,0 +1,4 @@
+{
+  "title": "Partition Tree Weighting",
+  "abstract": "This paper introduces the Partition Tree Weighting technique, an efficient\nmeta-algorithm for piecewise stationary sources. The technique works by\nperforming Bayesian model averaging over a large class of possible partitions\nof the data into locally stationary segments. It uses a prior, closely related\nto the Context Tree Weighting technique of Willems, that is well suited to data\ncompression applications. Our technique can be applied to any coding\ndistribution at an additional time and space cost only logarithmic in the\nsequence length. We provide a competitive analysis of the redundancy of our\nmethod, and explore its application in a variety of settings. The order of the\nredundancy and the complexity of our algorithm matches those of the best\ncompetitors available in the literature, and the new algorithm exhibits a\nsuperior complexity-performance trade-off in our experiments."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "A new approach to content-based file type detection",
+  "abstract": "File type identification and file type clustering may be difficult tasks that\nhave an increasingly importance in the field of computer and network security.\nClassical methods of file type detection including considering file extensions\nand magic bytes can be easily spoofed. Content-based file type detection is a\nnewer way that is taken into account recently. In this paper, a new\ncontent-based method for the purpose of file type detection and file type\nclustering is proposed that is based on the PCA and neural networks. The\nproposed method has a good accuracy and is fast enough."
+}

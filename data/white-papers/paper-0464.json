@@ -1,0 +1,4 @@
+{
+  "title": "Regulating the information in spikes: a useful bias",
+  "abstract": "The bias/variance tradeoff is fundamental to learning: increasing a model's\ncomplexity can improve its fit on training data, but potentially worsens\nperformance on future samples. Remarkably, however, the human brain\neffortlessly handles a wide-range of complex pattern recognition tasks. On the\nbasis of these conflicting observations, it has been argued that useful biases\nin the form of \"generic mechanisms for representation\" must be hardwired into\ncortex (Geman et al).\n  This note describes a useful bias that encourages cooperative learning which\nis both biologically plausible and rigorously justified."
+}

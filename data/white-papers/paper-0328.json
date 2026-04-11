@@ -1,0 +1,4 @@
+{
+  "title": "Fuzzy Dynamical Genetic Programming in XCSF",
+  "abstract": "A number of representation schemes have been presented for use within\nLearning Classifier Systems, ranging from binary encodings to Neural Networks,\nand more recently Dynamical Genetic Programming (DGP). This paper presents\nresults from an investigation into using a fuzzy DGP representation within the\nXCSF Learning Classifier System. In particular, asynchronous Fuzzy Logic\nNetworks are used to represent the traditional condition-action production\nsystem rules. It is shown possible to use self-adaptive, open-ended evolution\nto design an ensemble of such fuzzy dynamical systems within XCSF to solve\nseveral well-known continuous-valued test problems."
+}

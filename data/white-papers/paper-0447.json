@@ -1,0 +1,4 @@
+{
+  "title": "Evolution and the structure of learning agents",
+  "abstract": "This paper presents the thesis that all learning agents of finite information\nsize are limited by their informational structure in what goals they can\nefficiently learn to achieve in a complex environment. Evolutionary change is\ncritical for creating the required structure for all learning agents in any\ncomplex environment. The thesis implies that there is no efficient universal\nlearning algorithm. An agent can go past the learning limits imposed by its\nstructure only by slow evolutionary change or blind search which in a very\ncomplex environment can only give an agent an inefficient universal learning\ncapability that can work only in evolutionary timescales or improbable luck."
+}

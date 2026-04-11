@@ -1,0 +1,4 @@
+{
+  "title": "Random Utility Theory for Social Choice",
+  "abstract": "Random utility theory models an agent's preferences on alternatives by\ndrawing a real-valued score on each alternative (typically independently) from\na parameterized distribution, and then ranking the alternatives according to\nscores. A special case that has received significant attention is the\nPlackett-Luce model, for which fast inference methods for maximum likelihood\nestimators are available. This paper develops conditions on general random\nutility models that enable fast inference within a Bayesian framework through\nMC-EM, providing concave loglikelihood functions and bounded sets of global\nmaxima solutions. Results on both real-world and simulated data provide support\nfor the scalability of the approach and capability for model selection among\ngeneral random utility models including Plackett-Luce."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Practical recommendations for gradient-based training of deep\n  architectures",
+  "abstract": "Learning algorithms related to artificial neural networks and in particular\nfor Deep Learning may seem to involve many bells and whistles, called\nhyper-parameters. This chapter is meant as a practical guide with\nrecommendations for some of the most commonly used hyper-parameters, in\nparticular in the context of learning algorithms based on back-propagated\ngradient and gradient-based optimization. It also discusses how to deal with\nthe fact that more interesting results can be obtained when allowing one to\nadjust many hyper-parameters. Overall, it describes elements of the practice\nused to successfully and efficiently train and debug large-scale and often deep\nmulti-layer neural networks. It closes with open questions about the training\ndifficulties observed with deeper architectures."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Subgraph Matching Kernels for Attributed Graphs",
+  "abstract": "We propose graph kernels based on subgraph matchings, i.e.\nstructure-preserving bijections between subgraphs. While recently proposed\nkernels based on common subgraphs (Wale et al., 2008; Shervashidze et al.,\n2009) in general can not be applied to attributed graphs, our approach allows\nto rate mappings of subgraphs by a flexible scoring scheme comparing vertex and\nedge attributes by kernels. We show that subgraph matching kernels generalize\nseveral known kernels. To compute the kernel we propose a graph-theoretical\nalgorithm inspired by a classical relation between common subgraphs of two\ngraphs and cliques in their product graph observed by Levi (1973). Encouraging\nexperimental results on a classification task of real-world graphs are\npresented."
+}

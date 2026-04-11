@@ -1,0 +1,4 @@
+{
+  "title": "A Behavior-based Approach for Multi-agent Q-learning for Autonomous\n  Exploration",
+  "abstract": "The use of mobile robots is being popular over the world mainly for\nautonomous explorations in hazardous/ toxic or unknown environments. This\nexploration will be more effective and efficient if the explorations in unknown\nenvironment can be aided with the learning from past experiences. Currently\nreinforcement learning is getting more acceptances for implementing learning in\nrobots from the system-environment interactions. This learning can be\nimplemented using the concept of both single-agent and multiagent. This paper\ndescribes such a multiagent approach for implementing a type of reinforcement\nlearning using a priority based behaviour-based architecture. This proposed\nmethodology has been successfully tested in both indoor and outdoor\nenvironments."
+}

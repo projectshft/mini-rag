@@ -1,0 +1,4 @@
+{
+  "title": "Transfer from Multiple MDPs",
+  "abstract": "Transfer reinforcement learning (RL) methods leverage on the experience\ncollected on a set of source tasks to speed-up RL algorithms. A simple and\neffective approach is to transfer samples from source tasks and include them\ninto the training set used to solve a given target task. In this paper, we\ninvestigate the theoretical properties of this transfer method and we introduce\nnovel algorithms adapting the transfer process on the basis of the similarity\nbetween source and target tasks. Finally, we report illustrative experimental\nresults in a continuous chain problem."
+}

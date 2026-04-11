@@ -1,0 +1,4 @@
+{
+  "title": "Mixed Cumulative Distribution Networks",
+  "abstract": "Directed acyclic graphs (DAGs) are a popular framework to express\nmultivariate probability distributions. Acyclic directed mixed graphs (ADMGs)\nare generalizations of DAGs that can succinctly capture much richer sets of\nconditional independencies, and are especially useful in modeling the effects\nof latent variables implicitly. Unfortunately there are currently no good\nparameterizations of general ADMGs. In this paper, we apply recent work on\ncumulative distribution networks and copulas to propose one one general\nconstruction for ADMG models. We consider a simple parameter estimation\napproach, and report some encouraging experimental results."
+}

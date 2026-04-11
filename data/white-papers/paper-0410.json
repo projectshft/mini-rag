@@ -1,0 +1,4 @@
+{
+  "title": "Robust Online Hamiltonian Learning",
+  "abstract": "In this work we combine two distinct machine learning methodologies,\nsequential Monte Carlo and Bayesian experimental design, and apply them to the\nproblem of inferring the dynamical parameters of a quantum system. We design\nthe algorithm with practicality in mind by including parameters that control\ntrade-offs between the requirements on computational and experimental\nresources. The algorithm can be implemented online (during experimental data\ncollection), avoiding the need for storage and post-processing. Most\nimportantly, our algorithm is capable of learning Hamiltonian parameters even\nwhen the parameters change from experiment-to-experiment, and also when\nadditional noise processes are present and unknown. The algorithm also\nnumerically estimates the Cramer-Rao lower bound, certifying its own\nperformance."
+}

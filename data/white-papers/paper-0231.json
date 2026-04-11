@@ -1,0 +1,4 @@
+{
+  "title": "Probability Ranking in Vector Spaces",
+  "abstract": "The Probability Ranking Principle states that the document set with the\nhighest values of probability of relevance optimizes information retrieval\neffectiveness given the probabilities are estimated as accurately as possible.\nThe key point of the principle is the separation of the document set into two\nsubsets with a given level of fallout and with the highest recall. The paper\nintroduces the separation between two vector subspaces and shows that the\nseparation yields a more effective performance than the optimal separation into\nsubsets with the same available evidence, the performance being measured with\nrecall and fallout. The result is proved mathematically and exemplified\nexperimentally."
+}

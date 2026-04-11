@@ -1,0 +1,4 @@
+{
+  "title": "Detecting low-complexity unobserved causes",
+  "abstract": "We describe a method that infers whether statistical dependences between two\nobserved variables X and Y are due to a \"direct\" causal link or only due to a\nconnecting causal path that contains an unobserved variable of low complexity,\ne.g., a binary variable. This problem is motivated by statistical genetics.\nGiven a genetic marker that is correlated with a phenotype of interest, we want\nto detect whether this marker is causal or it only correlates with a causal\none. Our method is based on the analysis of the location of the conditional\ndistributions P(Y|x) in the simplex of all distributions of Y. We report\nencouraging results on semi-empirical data."
+}

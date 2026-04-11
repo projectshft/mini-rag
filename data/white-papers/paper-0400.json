@@ -1,0 +1,4 @@
+{
+  "title": "An Empirical Comparison of Algorithms for Aggregating Expert Predictions",
+  "abstract": "Predicting the outcomes of future events is a challenging problem for which a\nvariety of solution methods have been explored and attempted. We present an\nempirical comparison of a variety of online and offline adaptive algorithms for\naggregating experts' predictions of the outcomes of five years of US National\nFootball League games (1319 games) using expert probability elicitations\nobtained from an Internet contest called ProbabilitySports. We find that it is\ndifficult to improve over simple averaging of the predictions in terms of\nprediction accuracy, but that there is room for improvement in quadratic loss.\nSomewhat surprisingly, a Bayesian estimation algorithm which estimates the\nvariance of each expert's prediction exhibits the most consistent superior\nperformance over simple averaging among our collection of algorithms."
+}

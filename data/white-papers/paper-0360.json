@@ -1,0 +1,4 @@
+{
+  "title": "Artist Agent: A Reinforcement Learning Approach to Automatic Stroke\n  Generation in Oriental Ink Painting",
+  "abstract": "Oriental ink painting, called Sumi-e, is one of the most appealing painting\nstyles that has attracted artists around the world. Major challenges in\ncomputer-based Sumi-e simulation are to abstract complex scene information and\ndraw smooth and natural brush strokes. To automatically find such strokes, we\npropose to model the brush as a reinforcement learning agent, and learn desired\nbrush-trajectories by maximizing the sum of rewards in the policy search\nframework. We also provide elaborate design of actions, states, and rewards\ntailored for a Sumi-e agent. The effectiveness of our proposed approach is\ndemonstrated through simulated Sumi-e experiments."
+}

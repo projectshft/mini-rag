@@ -1,0 +1,4 @@
+{
+  "title": "A Bayesian Model Committee Approach to Forecasting Global Solar\n  Radiation",
+  "abstract": "This paper proposes to use a rather new modelling approach in the realm of\nsolar radiation forecasting. In this work, two forecasting models:\nAutoregressive Moving Average (ARMA) and Neural Network (NN) models are\ncombined to form a model committee. The Bayesian inference is used to affect a\nprobability to each model in the committee. Hence, each model's predictions are\nweighted by their respective probability. The models are fitted to one year of\nhourly Global Horizontal Irradiance (GHI) measurements. Another year (the test\nset) is used for making genuine one hour ahead (h+1) out-of-sample forecast\ncomparisons. The proposed approach is benchmarked against the persistence\nmodel. The very first results show an improvement brought by this approach."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "A Methodology for Learning Players' Styles from Game Records",
+  "abstract": "We describe a preliminary investigation into learning a Chess player's style\nfrom game records. The method is based on attempting to learn features of a\nplayer's individual evaluation function using the method of temporal\ndifferences, with the aid of a conventional Chess engine architecture. Some\nencouraging results were obtained in learning the styles of two recent Chess\nworld champions, and we report on our attempt to use the learnt styles to\ndiscriminate between the players from game records by trying to detect who was\nplaying white and who was playing black. We also discuss some limitations of\nour approach and propose possible directions for future research. The method we\nhave presented may also be applicable to other strategic games, and may even be\ngeneralisable to other domains where sequences of agents' actions are recorded."
+}

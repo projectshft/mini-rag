@@ -1,0 +1,4 @@
+{
+  "title": "The optimal assignment kernel is not positive definite",
+  "abstract": "We prove that the optimal assignment kernel, proposed recently as an attempt\nto embed labeled graphs and more generally tuples of basic data to a Hilbert\nspace, is in fact not always positive definite."
+}

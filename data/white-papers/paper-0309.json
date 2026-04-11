@@ -1,0 +1,4 @@
+{
+  "title": "Bayesian Model Averaging Using the k-best Bayesian Network Structures",
+  "abstract": "We study the problem of learning Bayesian network structures from data. We\ndevelop an algorithm for finding the k-best Bayesian network structures. We\npropose to compute the posterior probabilities of hypotheses of interest by\nBayesian model averaging over the k-best Bayesian networks. We present\nempirical results on structural discovery over several real and synthetic data\nsets and show that the method outperforms the model selection method and the\nstate of-the-art MCMC methods."
+}

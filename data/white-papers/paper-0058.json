@@ -1,0 +1,4 @@
+{
+  "title": "Bayesian Query-Focused Summarization",
+  "abstract": "We present BayeSum (for ``Bayesian summarization''), a model for sentence\nextraction in query-focused summarization. BayeSum leverages the common case in\nwhich multiple documents are relevant to a single query. Using these documents\nas reinforcement for query terms, BayeSum is not afflicted by the paucity of\ninformation in short queries. We show that approximate inference in BayeSum is\npossible on large data sets and results in a state-of-the-art summarization\nsystem. Furthermore, we show how BayeSum can be understood as a justified query\nexpansion technique in the language modeling for IR framework."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Sensory Anticipation of Optical Flow in Mobile Robotics",
+  "abstract": "In order to anticipate dangerous events, like a collision, an agent needs to\nmake long-term predictions. However, those are challenging due to uncertainties\nin internal and external variables and environment dynamics. A sensorimotor\nmodel is acquired online by the mobile robot using a state-of-the-art method\nthat learns the optical flow distribution in images, both in space and time.\nThe learnt model is used to anticipate the optical flow up to a given time\nhorizon and to predict an imminent collision by using reinforcement learning.\nWe demonstrate that multi-modal predictions reduce to simpler distributions\nonce actions are taken into account."
+}

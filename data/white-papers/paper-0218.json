@@ -1,0 +1,4 @@
+{
+  "title": "Text Classification: A Sequential Reading Approach",
+  "abstract": "We propose to model the text classification process as a sequential decision\nprocess. In this process, an agent learns to classify documents into topics\nwhile reading the document sentences sequentially and learns to stop as soon as\nenough information was read for deciding. The proposed algorithm is based on a\nmodelisation of Text Classification as a Markov Decision Process and learns by\nusing Reinforcement Learning. Experiments on four different classical\nmono-label corpora show that the proposed approach performs comparably to\nclassical SVM approaches for large training sets, and better for small training\nsets. In addition, the model automatically adapts its reading process to the\nquantity of training information provided."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "Counterfactual Reasoning and Learning Systems",
+  "abstract": "This work shows how to leverage causal inference to understand the behavior\nof complex learning systems interacting with their environment and predict the\nconsequences of changes to the system. Such predictions allow both humans and\nalgorithms to select changes that improve both the short-term and long-term\nperformance of such systems. This work is illustrated by experiments carried\nout on the ad placement system associated with the Bing search engine."
+}

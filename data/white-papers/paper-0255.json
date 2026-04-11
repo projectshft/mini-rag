@@ -1,0 +1,4 @@
+{
+  "title": "Kernel Topic Models",
+  "abstract": "Latent Dirichlet Allocation models discrete data as a mixture of discrete\ndistributions, using Dirichlet beliefs over the mixture weights. We study a\nvariation of this concept, in which the documents' mixture weight beliefs are\nreplaced with squashed Gaussian distributions. This allows documents to be\nassociated with elements of a Hilbert space, admitting kernel topic models\n(KTM), modelling temporal, spatial, hierarchical, social and other structure\nbetween documents. The main challenge is efficient approximate inference on the\nlatent Gaussian. We present an approximate algorithm cast around a Laplace\napproximation in a transformed basis. The KTM can also be interpreted as a type\nof Gaussian process latent variable model, or as a topic model conditional on\ndocument features, uncovering links between earlier work in these areas."
+}

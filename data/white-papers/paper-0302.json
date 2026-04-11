@@ -1,0 +1,4 @@
+{
+  "title": "Super-Samples from Kernel Herding",
+  "abstract": "We extend the herding algorithm to continuous spaces by using the kernel\ntrick. The resulting \"kernel herding\" algorithm is an infinite memory\ndeterministic process that learns to approximate a PDF with a collection of\nsamples. We show that kernel herding decreases the error of expectations of\nfunctions in the Hilbert space at a rate O(1/T) which is much faster than the\nusual O(1/pT) for iid random samples. We illustrate kernel herding by\napproximating Bayesian predictive distributions."
+}

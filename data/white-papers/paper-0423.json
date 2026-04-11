@@ -1,0 +1,4 @@
+{
+  "title": "Identifying Users From Their Rating Patterns",
+  "abstract": "This paper reports on our analysis of the 2011 CAMRa Challenge dataset (Track\n2) for context-aware movie recommendation systems. The train dataset comprises\n4,536,891 ratings provided by 171,670 users on 23,974$ movies, as well as the\nhousehold groupings of a subset of the users. The test dataset comprises 5,450\nratings for which the user label is missing, but the household label is\nprovided. The challenge required to identify the user labels for the ratings in\nthe test set. Our main finding is that temporal information (time labels of the\nratings) is significantly more useful for achieving this objective than the\nuser preferences (the actual ratings). Using a model that leverages on this\nfact, we are able to identify users within a known household with an accuracy\nof approximately 96% (i.e. misclassification rate around 4%)."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "A Monte Carlo Algorithm for Universally Optimal Bayesian Sequence\n  Prediction and Planning",
+  "abstract": "The aim of this work is to address the question of whether we can in\nprinciple design rational decision-making agents or artificial intelligences\nembedded in computable physics such that their decisions are optimal in\nreasonable mathematical senses. Recent developments in rare event probability\nestimation, recursive bayesian inference, neural networks, and probabilistic\nplanning are sufficient to explicitly approximate reinforcement learners of the\nAIXI style with non-trivial model classes (here, the class of resource-bounded\nTuring machines). Consideration of the effects of resource limitations in a\nconcrete implementation leads to insights about possible architectures for\nlearning systems using optimal decision makers as components."
+}

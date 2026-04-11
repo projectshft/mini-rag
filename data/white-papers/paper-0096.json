@@ -1,0 +1,4 @@
+{
+  "title": "Asymptotic Analysis of Generative Semi-Supervised Learning",
+  "abstract": "Semisupervised learning has emerged as a popular framework for improving\nmodeling accuracy while controlling labeling cost. Based on an extension of\nstochastic composite likelihood we quantify the asymptotic accuracy of\ngenerative semi-supervised learning. In doing so, we complement\ndistribution-free analysis by providing an alternative framework to measure the\nvalue associated with different labeling policies and resolve the fundamental\nquestion of how much data to label and in what manner. We demonstrate our\napproach with both simulation studies and real world experiments using naive\nBayes for text classification and MRFs and CRFs for structured prediction in\nNLP."
+}

@@ -1,0 +1,4 @@
+{
+  "title": "A Lipschitz Exploration-Exploitation Scheme for Bayesian Optimization",
+  "abstract": "The problem of optimizing unknown costly-to-evaluate functions has been\nstudied for a long time in the context of Bayesian Optimization. Algorithms in\nthis field aim to find the optimizer of the function by asking only a few\nfunction evaluations at locations carefully selected based on a posterior\nmodel. In this paper, we assume the unknown function is Lipschitz continuous.\nLeveraging the Lipschitz property, we propose an algorithm with a distinct\nexploration phase followed by an exploitation phase. The exploration phase aims\nto select samples that shrink the search space as much as possible. The\nexploitation phase then focuses on the reduced search space and selects samples\nclosest to the optimizer. Considering the Expected Improvement (EI) as a\nbaseline, we empirically show that the proposed algorithm significantly\noutperforms EI."
+}

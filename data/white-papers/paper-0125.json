@@ -1,0 +1,4 @@
+{
+  "title": "Toward Fast Reliable Communication at Rates Near Capacity with Gaussian\n  Noise",
+  "abstract": "For the additive Gaussian noise channel with average codeword power\nconstraint, sparse superposition codes and adaptive successive decoding is\ndeveloped. Codewords are linear combinations of subsets of vectors, with the\nmessage indexed by the choice of subset. A feasible decoding algorithm is\npresented. Communication is reliable with error probability exponentially small\nfor all rates below the Shannon capacity."
+}
