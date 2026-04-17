@@ -17,6 +17,7 @@
 		"upload-vectors": "npx ts-node app/scripts/upload-vectors.ts",
 		"upload-articles": "npx ts-node scripts/uploadArticles.ts",
 		"upload-linkedin": "npx ts-node scripts/uploadLinkedInPosts.ts",
+		"upload-papers": "npx ts-node scripts/uploadPapers.ts",
 		"prepare": "husky",
 		"exercise:vectors": "npx ts-node app/scripts/exercises/vector-similarity.ts",
 		"exercise:vectors:test": "npx ts-node app/scripts/exercises/vector-similarity-test.ts",
@@ -53,6 +54,7 @@
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-markdown": "^10.1.0",
+		"weaviate-client": "^3.2.0",
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {

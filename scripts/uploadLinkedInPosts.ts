@@ -1,7 +1,7 @@
 /**
  * LINKEDIN POSTS UPLOAD SCRIPT
  *
- * Uploads LinkedIn posts from data/brian_posts.csv to Pinecone.
+ * Uploads LinkedIn posts from data/brian_posts.csv to Weaviate.
  *
  * Usage:
  *   yarn upload-linkedin
@@ -9,7 +9,7 @@
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { Pinecone } from '@pinecone-database/pinecone';
+import weaviate, { WeaviateClient } from 'weaviate-client';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
 import { parse } from 'csv-parse/sync';
@@ -28,7 +28,7 @@ if (fs.existsSync(envLocalPath)) {
 }
 
 // Validate required environment variables
-const requiredEnvVars = ['OPENAI_API_KEY', 'PINECONE_API_KEY', 'PINECONE_INDEX'];
+const requiredEnvVars = ['OPENAI_API_KEY', 'WEAVIATE_URL', 'WEAVIATE_API_KEY'];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {
@@ -39,6 +39,8 @@ if (missingVars.length > 0) {
 const CSV_PATH = path.join(process.cwd(), 'data', 'brian_posts.csv');
 const BATCH_SIZE = 100;
 const MIN_POST_LENGTH = 100; // Skip very short posts
+const COLLECTION_NAME = 'LinkedInPosts';
+const EMBEDDING_DIMENSIONS = 1536;
 
 type LinkedInPost = {
 	urn: string;
@@ -53,16 +55,23 @@ type LinkedInPost = {
 };
 
 async function uploadLinkedInPosts(): Promise<void> {
-	console.log('Starting LinkedIn posts upload...\n');
+	console.log('Starting LinkedIn posts upload to Weaviate...\n');
 
 	// Initialize clients
 	const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-	const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY as string });
-	const index = pinecone.Index(process.env.PINECONE_INDEX as string);
+	const client: WeaviateClient = await weaviate.connectToWeaviateCloud(
+		process.env.WEAVIATE_URL as string,
+		{
+			authCredentials: new weaviate.ApiKey(process.env.WEAVIATE_API_KEY as string),
+		}
+	);
+
+	const collection = client.collections.get(COLLECTION_NAME);
 
 	// Read CSV
 	if (!fs.existsSync(CSV_PATH)) {
 		console.error(`CSV file not found: ${CSV_PATH}`);
+		await client.close();
 		process.exit(1);
 	}
 
@@ -81,15 +90,26 @@ async function uploadLinkedInPosts(): Promise<void> {
 
 	console.log(`${validPosts.length} posts with ${MIN_POST_LENGTH}+ characters\n`);
 
-	// Prepare vectors
-	const vectors: Array<{
+	// Prepare data
+	const postsData: Array<{
 		id: string;
 		content: string;
-		metadata: Record<string, string | number>;
+		metadata: {
+			text: string;
+			source: string;
+			sourceType: string;
+			urn: string;
+			impressions: number;
+			reactions: number;
+			comments: number;
+			hashtags: string;
+			createdAt: string;
+			link: string;
+		};
 	}> = [];
 
 	for (const post of validPosts) {
-		vectors.push({
+		postsData.push({
 			id: `linkedin:${post.urn}`,
 			content: post.text,
 			metadata: {
@@ -107,40 +127,53 @@ async function uploadLinkedInPosts(): Promise<void> {
 		});
 	}
 
-	console.log(`Uploading ${vectors.length} posts...\n`);
+	console.log(`Uploading ${postsData.length} posts...\n`);
 
 	// Upload in batches
 	let successCount = 0;
 
-	for (let i = 0; i < vectors.length; i += BATCH_SIZE) {
-		const batch = vectors.slice(i, i + BATCH_SIZE);
+	for (let i = 0; i < postsData.length; i += BATCH_SIZE) {
+		const batch = postsData.slice(i, i + BATCH_SIZE);
 
 		console.log(
-			`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(vectors.length / BATCH_SIZE)}...`
+			`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(postsData.length / BATCH_SIZE)}...`
 		);
 
 		// Generate embeddings
 		const embeddingResponse = await openai.embeddings.create({
 			model: 'text-embedding-3-small',
-			dimensions: 512,
-			input: batch.map((v) => v.content),
+			dimensions: EMBEDDING_DIMENSIONS,
+			input: batch.map((p) => p.content),
 		});
 
-		// Prepare Pinecone vectors
-		const pineconeVectors = batch.map((v, idx) => ({
-			id: v.id,
-			values: embeddingResponse.data[idx].embedding,
-			metadata: v.metadata,
+		// Prepare objects for Weaviate
+		const objects = batch.map((post, idx) => ({
+			properties: {
+				text: post.metadata.text,
+				source: post.metadata.source,
+				sourceType: post.metadata.sourceType,
+				urn: post.metadata.urn,
+				impressions: post.metadata.impressions,
+				reactions: post.metadata.reactions,
+				comments: post.metadata.comments,
+				hashtags: post.metadata.hashtags,
+				createdAt: post.metadata.createdAt,
+				link: post.metadata.link,
+			},
+			vectors: {
+				default: embeddingResponse.data[idx].embedding,
+			},
 		}));
 
-		// Upload to Pinecone
-		await index.upsert(pineconeVectors);
+		// Upload to Weaviate
+		await collection.data.insertMany(objects);
 		successCount += batch.length;
 
-		console.log(`  Uploaded ${successCount}/${vectors.length} posts`);
+		console.log(`  Uploaded ${successCount}/${postsData.length} posts`);
 	}
 
-	console.log(`\nDone! Successfully uploaded ${successCount} LinkedIn posts to Pinecone.`);
+	console.log(`\nDone! Successfully uploaded ${successCount} LinkedIn posts to Weaviate.`);
+	await client.close();
 }
 
 uploadLinkedInPosts().catch((error) => {

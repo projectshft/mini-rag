@@ -1,18 +1,20 @@
 /**
  * ARTICLE UPLOAD SCRIPT
  *
- * Uploads local markdown articles from data/articles to Pinecone.
+ * Uploads local markdown articles from data/articles to Weaviate.
+ * Articles are chunked into smaller pieces for better retrieval.
  *
  * Usage:
  *   npx ts-node scripts/uploadArticles.ts
- *   yarn tsx scripts/uploadArticles.ts
+ *   yarn upload-articles
  */
 
 import * as fs from 'fs';
 import * as path from 'path';
-import { Pinecone } from '@pinecone-database/pinecone';
+import weaviate, { WeaviateClient } from 'weaviate-client';
 import OpenAI from 'openai';
 import dotenv from 'dotenv';
+import { chunkText, Chunk } from '../app/libs/chunking';
 
 // Load environment variables
 const rootDir = path.resolve(__dirname, '..');
@@ -28,7 +30,7 @@ if (fs.existsSync(envLocalPath)) {
 }
 
 // Validate required environment variables
-const requiredEnvVars = ['OPENAI_API_KEY', 'PINECONE_API_KEY', 'PINECONE_INDEX'];
+const requiredEnvVars = ['OPENAI_API_KEY', 'WEAVIATE_URL', 'WEAVIATE_API_KEY'];
 const missingVars = requiredEnvVars.filter((varName) => !process.env[varName]);
 
 if (missingVars.length > 0) {
@@ -40,80 +42,8 @@ const ARTICLES_DIR = path.join(process.cwd(), 'data', 'articles');
 const CHUNK_SIZE = 500;
 const CHUNK_OVERLAP = 50;
 const BATCH_SIZE = 100;
-
-type Chunk = {
-	id: string;
-	content: string;
-	metadata: {
-		source: string;
-		title: string;
-		chunkIndex: number;
-		totalChunks: number;
-		sourceType: string;
-	};
-};
-
-/**
- * Simple text chunking that splits on sentence boundaries
- */
-function chunkText(
-	text: string,
-	source: string,
-	title: string
-): Chunk[] {
-	const chunks: Chunk[] = [];
-	const sentences = text.split(/(?<=[.!?])\s+/);
-
-	let currentChunk = '';
-	let chunkIndex = 0;
-
-	for (const sentence of sentences) {
-		if (currentChunk.length + sentence.length > CHUNK_SIZE && currentChunk.length > 0) {
-			// Save current chunk
-			chunks.push({
-				id: `${source}-chunk-${chunkIndex}`,
-				content: currentChunk.trim(),
-				metadata: {
-					source,
-					title,
-					chunkIndex,
-					totalChunks: 0, // Will be updated later
-					sourceType: 'article',
-				},
-			});
-
-			// Start new chunk with overlap
-			const words = currentChunk.split(' ');
-			const overlapWords = words.slice(-Math.ceil(CHUNK_OVERLAP / 5));
-			currentChunk = overlapWords.join(' ') + ' ' + sentence;
-			chunkIndex++;
-		} else {
-			currentChunk += (currentChunk ? ' ' : '') + sentence;
-		}
-	}
-
-	// Don't forget the last chunk
-	if (currentChunk.trim()) {
-		chunks.push({
-			id: `${source}-chunk-${chunkIndex}`,
-			content: currentChunk.trim(),
-			metadata: {
-				source,
-				title,
-				chunkIndex,
-				totalChunks: 0,
-				sourceType: 'article',
-			},
-		});
-	}
-
-	// Update totalChunks
-	for (const chunk of chunks) {
-		chunk.metadata.totalChunks = chunks.length;
-	}
-
-	return chunks;
-}
+const COLLECTION_NAME = 'MediumArticles';
+const EMBEDDING_DIMENSIONS = 1536;
 
 /**
  * Extract title from markdown content
@@ -128,16 +58,23 @@ function extractTitle(content: string, filename: string): string {
 }
 
 async function uploadArticles(): Promise<void> {
-	console.log('Starting article upload...\n');
+	console.log('Starting Medium articles upload to Weaviate...\n');
 
 	// Initialize clients
 	const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-	const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY as string });
-	const index = pinecone.Index(process.env.PINECONE_INDEX as string);
+	const client: WeaviateClient = await weaviate.connectToWeaviateCloud(
+		process.env.WEAVIATE_URL as string,
+		{
+			authCredentials: new weaviate.ApiKey(process.env.WEAVIATE_API_KEY as string),
+		}
+	);
+
+	const collection = client.collections.get(COLLECTION_NAME);
 
 	// Read all markdown files
 	if (!fs.existsSync(ARTICLES_DIR)) {
 		console.error(`Articles directory not found: ${ARTICLES_DIR}`);
+		await client.close();
 		process.exit(1);
 	}
 
@@ -145,6 +82,7 @@ async function uploadArticles(): Promise<void> {
 
 	if (files.length === 0) {
 		console.log('No markdown files found in', ARTICLES_DIR);
+		await client.close();
 		return;
 	}
 
@@ -161,7 +99,17 @@ async function uploadArticles(): Promise<void> {
 
 		console.log(`  - ${file} (${title})`);
 
-		const chunks = chunkText(content, source, title);
+		// TODO: Use chunkText from @app/libs/chunking.ts
+		// Call chunkText(content, CHUNK_SIZE, CHUNK_OVERLAP, source)
+		// Add title to each chunk's metadata
+		const chunks = chunkText(content, CHUNK_SIZE, CHUNK_OVERLAP, source);
+
+		// Add title to metadata
+		chunks.forEach(chunk => {
+			chunk.metadata.title = title;
+			chunk.metadata.sourceType = 'article';
+		});
+
 		allChunks.push(...chunks);
 	}
 
@@ -178,28 +126,34 @@ async function uploadArticles(): Promise<void> {
 		// Generate embeddings
 		const embeddingResponse = await openai.embeddings.create({
 			model: 'text-embedding-3-small',
-			dimensions: 512,
+			dimensions: EMBEDDING_DIMENSIONS,
 			input: batch.map((c) => c.content),
 		});
 
-		// Prepare vectors
-		const vectors = batch.map((chunk, idx) => ({
-			id: chunk.id,
-			values: embeddingResponse.data[idx].embedding,
-			metadata: {
+		// Prepare objects for Weaviate
+		const objects = batch.map((chunk, idx) => ({
+			properties: {
 				text: chunk.content,
-				...chunk.metadata,
+				source: chunk.metadata.source,
+				title: chunk.metadata.title,
+				chunkIndex: chunk.metadata.chunkIndex,
+				totalChunks: chunk.metadata.totalChunks,
+				sourceType: chunk.metadata.sourceType,
+			},
+			vectors: {
+				default: embeddingResponse.data[idx].embedding,
 			},
 		}));
 
-		// Upload to Pinecone
-		await index.upsert(vectors);
+		// Upload to Weaviate
+		await collection.data.insertMany(objects);
 		successCount += batch.length;
 
 		console.log(`  Uploaded ${successCount}/${allChunks.length} chunks`);
 	}
 
-	console.log(`\nDone! Successfully uploaded ${successCount} chunks to Pinecone.`);
+	console.log(`\nDone! Successfully uploaded ${successCount} chunks to Weaviate.`);
+	await client.close();
 }
 
 uploadArticles().catch((error) => {
