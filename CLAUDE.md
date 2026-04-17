@@ -2,14 +2,16 @@ Use yarn as package manager.
 
 # Branch Structure
 
-This repository has two main student-facing branches:
+This repository has two main branches:
 
-## `student-starter`
+## `curriculum` (Main Branch)
+
+The primary branch with complete working implementations.
 
 ### Purpose:
 
--   Reference implementation for students
--   All TODOs removed
+-   Complete reference implementation
+-   All features fully implemented
 -   Clean, well-structured code
 -   Ready to run and test
 
@@ -22,10 +24,10 @@ This repository has two main student-facing branches:
 
 ### Use This Branch:
 
--   As reference when students get stuck
--   For demos and live coding
+-   For instructor demos and live coding
 -   To verify expected behavior
--   To test the complete system
+-   To show working examples when students are stuck
+-   As the source of truth for the complete system
 
 ---
 
@@ -42,17 +44,16 @@ Code with implementations removed and detailed TODOs for students to complete.
 
 ### Key Files:
 
--   Same files as student-starter, but with:
-    -   Implementations removed
-    -   Detailed TODO comments with step-by-step instructions
-    -   `throw new Error()` placeholders
-    -   All imports and types intact
+-   `app/agents/linkedin.ts` - TODOs for LinkedIn agent
+-   `app/agents/rag.ts` - TODOs for RAG agent with reranking
+-   `app/api/select-agent/route.ts` - TODOs for selector
+-   All imports and types intact, only implementations removed
 
 ### Use This Branch:
 
 -   For students to work through exercises
--   Pair with curriculum in `curriculum/`
--   Students can compare their work to `student-starter`
+-   Pair with curriculum modules in `curriculum/`
+-   Students build everything from scratch with guided TODOs
 
 ---
 
@@ -60,25 +61,32 @@ Code with implementations removed and detailed TODOs for students to complete.
 
 The curriculum is organized in `curriculum/`:
 
-1. **Vector Math Basics** (`2-vector-math-basics/`)
-2. **Pinecone Integration** (`4-pinecone-integration/`)
-3. **Chunking Fundamentals** (`4.5-chunking-fundamentals/`)
-4. **Document Upload** (`5-document-upload/`)
-5. **Fine-tuning** (`5-fine-tuning/`)
-6. **Agent Architecture** (`7-agent-architecture/`)
+1. **How to Learn** (`0-how-to-learn/`)
+2. **Intro to RAG** (`1-intro-to-rag/`)
+3. **Vector Math Basics** (`2-vector-math-basics/`)
+4. **Pinecone Integration** (`3-pinecone-integration/`)
+5. **Chunking Fundamentals** (`4-chunking-fundamentals/`)
+6. **Document Upload** (`5-document-upload/`)
+7. **Fine-tuning** (`6-fine-tuning/`)
+8. **Agent Architecture** (`7-agent-architecture/`)
     - Understanding agents
     - Prompting strategies
     - Text-based selector
     - Structured outputs
-7. **LinkedIn Agent** (`8-linkedin-agent/`)
-8. **RAG Agent** (`9-rag-agent/`)
+9. **LinkedIn Agent** (`8-linkedin-agent/`)
+10. **RAG Agent** (`9-rag-agent/`)
     - Basic implementation
     - Reranking
     - Sparse and dense vectors
-9. **Chat Interface** (`11-chat-interface/`)
-10. **Observability** (`12-observability/`)
-11. **Testing Agents** (`13-testing-agents/`)
-12. **Capstone Project** (`14-capstone-project/`)
+11. **AI Frameworks** (`10-ai-frameworks/`)
+12. **Chat Interface** (`11-chat-interface/`)
+13. **Observability** (`12-observability/`)
+14. **Testing Agents** (`13-testing-agents/`)
+15. **Tool Calling** (`14-tool-calling-exploration/`)
+16. **SQL Agent** (`15-sql-agent/`)
+17. **Agent Patterns** (`16-agent-patterns/`)
+18. **Capstone Project** (`17-capstone-project/`)
+19. **Interview Prep** (`18-interview-prep/`)
 
 ---
 
@@ -108,22 +116,22 @@ yarn test:chunking    # Text chunking tests
 
 ## Quick Start
 
-### Student-Starter (Complete Code):
+### For Instructors (Complete Code):
 
 ```bash
-git checkout student-starter
+git checkout curriculum
 yarn install
 yarn dev
 yarn test:selector  # Verify everything works
 ```
 
-### Student-Todo-Exercises (For Learning):
+### For Students (Learning Exercises):
 
 ```bash
 git checkout student-todo-exercises
 yarn install
 
-# Work through curriculum modules
+# Work through curriculum modules in order
 # Implement TODOs in:
 # - app/agents/linkedin.ts
 # - app/agents/rag.ts
@@ -161,13 +169,14 @@ LANGSMITH_PROJECT="your-project-name"
 
 ### For Instructors:
 
-1. Keep `student-starter` as the reference
-2. Direct students to `student-todo-exercises` for exercises
-3. Update both branches when curriculum changes
+1. Keep `curriculum` as the source of truth
+2. Direct students to `student-todo-exercises` for hands-on learning
+3. Show working examples from `curriculum` branch when students need help
+4. Update both branches when curriculum changes
 
 ### For Students:
 
-1. Start with `student-todo-exercises`
-2. Follow curriculum in order
-3. Compare work to `student-starter` when needed
-4. Switch to `student-starter` to see complete implementation
+1. Work in `student-todo-exercises` branch
+2. Follow curriculum modules in order
+3. Implement features with TODO guidance
+4. Ask instructors or attend office hours when stuck (working code shown selectively)
