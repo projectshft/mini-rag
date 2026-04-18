@@ -1,4 +1,4 @@
-import { searchDocuments } from '@/app/libs/pinecone';
+import { searchDocuments } from '@/app/libs/weaviate';
 import { NextRequest, NextResponse } from 'next/server';
 
 export async function POST(request: NextRequest) {

@@ -18,16 +18,9 @@ import { chunkText, Chunk } from '../app/libs/chunking';
 
 // Load environment variables
 const rootDir = path.resolve(__dirname, '..');
-const envLocalPath = path.join(rootDir, '.env.local');
 const envPath = path.join(rootDir, '.env');
 
-if (fs.existsSync(envLocalPath)) {
-	dotenv.config({ path: envLocalPath });
-} else if (fs.existsSync(envPath)) {
-	dotenv.config({ path: envPath });
-} else {
-	dotenv.config();
-}
+dotenv.config({ path: envPath });
 
 // Validate required environment variables
 const requiredEnvVars = ['OPENAI_API_KEY', 'WEAVIATE_URL', 'WEAVIATE_API_KEY'];
@@ -65,8 +58,10 @@ async function uploadArticles(): Promise<void> {
 	const client: WeaviateClient = await weaviate.connectToWeaviateCloud(
 		process.env.WEAVIATE_URL as string,
 		{
-			authCredentials: new weaviate.ApiKey(process.env.WEAVIATE_API_KEY as string),
-		}
+			authCredentials: new weaviate.ApiKey(
+				process.env.WEAVIATE_API_KEY as string,
+			),
+		},
 	);
 
 	const collection = client.collections.get(COLLECTION_NAME);
@@ -105,7 +100,7 @@ async function uploadArticles(): Promise<void> {
 		const chunks = chunkText(content, CHUNK_SIZE, CHUNK_OVERLAP, source);
 
 		// Add title to metadata
-		chunks.forEach(chunk => {
+		chunks.forEach((chunk) => {
 			chunk.metadata.title = title;
 			chunk.metadata.sourceType = 'article';
 		});
@@ -121,7 +116,9 @@ async function uploadArticles(): Promise<void> {
 	for (let i = 0; i < allChunks.length; i += BATCH_SIZE) {
 		const batch = allChunks.slice(i, i + BATCH_SIZE);
 
-		console.log(`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(allChunks.length / BATCH_SIZE)}...`);
+		console.log(
+			`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(allChunks.length / BATCH_SIZE)}...`,
+		);
 
 		// Generate embeddings
 		const embeddingResponse = await openai.embeddings.create({
@@ -152,7 +149,9 @@ async function uploadArticles(): Promise<void> {
 		console.log(`  Uploaded ${successCount}/${allChunks.length} chunks`);
 	}
 
-	console.log(`\nDone! Successfully uploaded ${successCount} chunks to Weaviate.`);
+	console.log(
+		`\nDone! Successfully uploaded ${successCount} chunks to Weaviate.`,
+	);
 	await client.close();
 }
 
