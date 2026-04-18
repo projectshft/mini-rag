@@ -52,6 +52,7 @@ type LinkedInPost = {
 	hashtags: string;
 	createdAt: string;
 	link: string;
+	author: string;
 };
 
 async function uploadLinkedInPosts(): Promise<void> {
@@ -62,8 +63,10 @@ async function uploadLinkedInPosts(): Promise<void> {
 	const client: WeaviateClient = await weaviate.connectToWeaviateCloud(
 		process.env.WEAVIATE_URL as string,
 		{
-			authCredentials: new weaviate.ApiKey(process.env.WEAVIATE_API_KEY as string),
-		}
+			authCredentials: new weaviate.ApiKey(
+				process.env.WEAVIATE_API_KEY as string,
+			),
+		},
 	);
 
 	const collection = client.collections.get(COLLECTION_NAME);
@@ -85,10 +88,12 @@ async function uploadLinkedInPosts(): Promise<void> {
 
 	// Filter posts with meaningful content
 	const validPosts = records.filter(
-		(post) => post.text && post.text.length >= MIN_POST_LENGTH
+		(post) => post.text && post.text.length >= MIN_POST_LENGTH,
 	);
 
-	console.log(`${validPosts.length} posts with ${MIN_POST_LENGTH}+ characters\n`);
+	console.log(
+		`${validPosts.length} posts with ${MIN_POST_LENGTH}+ characters\n`,
+	);
 
 	// Prepare data
 	const postsData: Array<{
@@ -105,6 +110,7 @@ async function uploadLinkedInPosts(): Promise<void> {
 			hashtags: string;
 			createdAt: string;
 			link: string;
+			author: string;
 		};
 	}> = [];
 
@@ -123,6 +129,7 @@ async function uploadLinkedInPosts(): Promise<void> {
 				hashtags: post.hashtags || '',
 				createdAt: post.createdAt || '',
 				link: post.link || '',
+				author: 'brian jenney',
 			},
 		});
 	}
@@ -132,11 +139,11 @@ async function uploadLinkedInPosts(): Promise<void> {
 	// Upload in batches
 	let successCount = 0;
 
-	for (let i = 0; i < postsData.length; i += BATCH_SIZE) {
+	for (let i = 0; i < 1; i += BATCH_SIZE) {
 		const batch = postsData.slice(i, i + BATCH_SIZE);
 
 		console.log(
-			`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(postsData.length / BATCH_SIZE)}...`
+			`Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(postsData.length / BATCH_SIZE)}...`,
 		);
 
 		// Generate embeddings
@@ -159,6 +166,7 @@ async function uploadLinkedInPosts(): Promise<void> {
 				hashtags: post.metadata.hashtags,
 				createdAt: post.metadata.createdAt,
 				link: post.metadata.link,
+				author: post.metadata.author,
 			},
 			vectors: {
 				default: embeddingResponse.data[idx].embedding,
@@ -172,7 +180,9 @@ async function uploadLinkedInPosts(): Promise<void> {
 		console.log(`  Uploaded ${successCount}/${postsData.length} posts`);
 	}
 
-	console.log(`\nDone! Successfully uploaded ${successCount} LinkedIn posts to Weaviate.`);
+	console.log(
+		`\nDone! Successfully uploaded ${successCount} LinkedIn posts to Weaviate.`,
+	);
 	await client.close();
 }
 

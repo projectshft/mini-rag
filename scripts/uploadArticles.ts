@@ -86,7 +86,7 @@ async function uploadArticles(): Promise<void> {
 	// Process each file
 	const allChunks: Chunk[] = [];
 
-	for (const file of files) {
+	for (const file of files.slice(1)) {
 		const filepath = path.join(ARTICLES_DIR, file);
 		const content = fs.readFileSync(filepath, 'utf-8');
 		const title = extractTitle(content, file);
@@ -121,6 +121,7 @@ async function uploadArticles(): Promise<void> {
 		);
 
 		// Generate embeddings
+		// take the (chunk) and then geneate the embedding using openai.embeddings.create()
 		const embeddingResponse = await openai.embeddings.create({
 			model: 'text-embedding-3-small',
 			dimensions: EMBEDDING_DIMENSIONS,
@@ -136,6 +137,8 @@ async function uploadArticles(): Promise<void> {
 				chunkIndex: chunk.metadata.chunkIndex,
 				totalChunks: chunk.metadata.totalChunks,
 				sourceType: chunk.metadata.sourceType,
+				date: new Date().toISOString(),
+				author: 'Brian Jenney',
 			},
 			vectors: {
 				default: embeddingResponse.data[idx].embedding,
@@ -143,7 +146,11 @@ async function uploadArticles(): Promise<void> {
 		}));
 
 		// Upload to Weaviate
-		await collection.data.insertMany(objects);
+		try {
+			await collection.data.insertMany(objects);
+		} catch (e) {
+			throw e;
+		}
 		successCount += batch.length;
 
 		console.log(`  Uploaded ${successCount}/${allChunks.length} chunks`);

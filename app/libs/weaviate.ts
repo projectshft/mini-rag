@@ -34,8 +34,10 @@ async function getWeaviateClient(): Promise<WeaviateClient> {
 		clientInstance = await weaviate.connectToWeaviateCloud(
 			process.env.WEAVIATE_URL as string,
 			{
-				authCredentials: new weaviate.ApiKey(process.env.WEAVIATE_API_KEY as string),
-			}
+				authCredentials: new weaviate.ApiKey(
+					process.env.WEAVIATE_API_KEY as string,
+				),
+			},
 		);
 	}
 	return clientInstance;
@@ -63,9 +65,9 @@ export interface WeaviateSearchResult {
  * @returns Array of matching documents with similarity scores
  */
 export const searchDocuments = async (
-	collectionName: string,
-	query: string,
-	topK: number = 3
+	collectionName: string, //MediumArticles
+	query: string, //The query to search for
+	topK: number = 5, //The number of results to return
 ): Promise<WeaviateSearchResult[]> => {
 	const client = await getWeaviateClient();
 
@@ -94,6 +96,7 @@ export const searchDocuments = async (
 		metadata: {
 			distance: obj.metadata?.distance,
 			certainty: obj.metadata?.certainty,
+			...obj.metadata,
 		},
 	}));
 };
@@ -107,7 +110,7 @@ export const searchDocuments = async (
  */
 export const insertDocuments = async (
 	collectionName: string,
-	documents: Array<{ text: string; metadata: Record<string, any> }>
+	documents: Array<{ text: string; metadata: Record<string, any> }>,
 ): Promise<string[]> => {
 	const client = await getWeaviateClient();
 
