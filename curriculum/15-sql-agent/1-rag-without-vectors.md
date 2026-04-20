@@ -241,4 +241,4 @@ Complete the `databaseSearchAgent` in `app/agents/databaseSearchAgent.ts`.
 
 ## What's Next?
 
-You now understand both retrieval approaches. Next up: **Agent Patterns** — common architectures for building AI systems.
+You now understand both retrieval approaches. Next up: **Capstone Project** — build a complete RAG application for a domain of your choice.

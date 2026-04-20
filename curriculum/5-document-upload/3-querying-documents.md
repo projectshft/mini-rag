@@ -14,11 +14,11 @@ Watch this explanation of querying documents:
 
 ## What You'll Learn
 
--   How vector similarity search works
--   Querying Pinecone with embeddings
--   Understanding similarity scores
--   Building a test API route to query documents
--   Hands-on challenge: Implement your own query route
+- How vector similarity search works
+- Querying Pinecone with embeddings
+- Understanding similarity scores
+- Building a test API route to query documents
+- Hands-on challenge: Implement your own query route
 
 ---
 
@@ -74,10 +74,10 @@ When you query Pinecone:
 
 **Score range:** 0.0 to 1.0
 
--   **1.0** = Identical vectors (perfect match)
--   **0.8-0.95** = Highly similar (great results)
--   **0.6-0.8** = Moderately similar (decent results)
--   **< 0.6** = Low similarity (may not be relevant)
+- **1.0** = Identical vectors (perfect match)
+- **0.8-0.95** = Highly similar (great results)
+- **0.6-0.8** = Moderately similar (decent results)
+- **< 0.6** = Low similarity (may not be relevant)
 
 ---
 
@@ -88,7 +88,7 @@ We've already created a helper function in `app/libs/pinecone.ts`:
 ```typescript
 export const searchDocuments = async (
 	query: string,
-	topK: number = 3
+	topK: number = 3,
 ): Promise<ScoredPineconeRecord<RecordMetadata>[]> => {
 	// 1. Get reference to your index
 	const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
@@ -121,8 +121,8 @@ export const searchDocuments = async (
 const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
 ```
 
--   Connect to your specific Pinecone index
--   Same index you uploaded to
+- Connect to your specific Pinecone index
+- Same index you uploaded to
 
 **Step 2: Create query embedding**
 
@@ -154,9 +154,9 @@ return docs.matches;
 
 Each match contains:
 
--   `id` - Unique document ID
--   `score` - Similarity score (0-1)
--   `metadata` - Your stored data (text, URL, etc.)
+- `id` - Unique document ID
+- `score` - Similarity score (0-1)
+- `metadata` - Your stored data (text, URL, etc.)
 
 ---
 
@@ -202,9 +202,9 @@ When you call `searchDocuments()`, you get:
 
 **Notice:**
 
--   Sorted by score (highest first)
--   Metadata contains the actual text
--   Each result is from a different chunk
+- Sorted by score (highest first)
+- Metadata contains the actual text
+- Each result is from a different chunk
 
 ---
 
@@ -259,18 +259,18 @@ export async function POST(request: NextRequest) {
 **Add the following improvements:**
 
 1. **Add try/catch error handling**
-   - Wrap the function body in a try/catch block
-   - Log errors with `console.error`
-   - Return a 500 status code with error details
+    - Wrap the function body in a try/catch block
+    - Log errors with `console.error`
+    - Return a 500 status code with error details
 
 2. **Add input validation**
-   - Check if `query` exists and is a string
-   - Return a 400 status code if invalid
-   - Set a default value for `topK` (e.g., 5)
+    - Check if `query` exists and is a string
+    - Return a 400 status code if invalid
+    - Set a default value for `topK` (e.g., 5)
 
 3. **Add better error messages**
-   - Clear validation error messages
-   - Helpful error responses for debugging
+    - Clear validation error messages
+    - Helpful error responses for debugging
 
 ### Step 3: Test Your Route
 
@@ -302,72 +302,6 @@ curl -X POST http://localhost:3000/api/rag-test \
 	]
 }
 ```
-
----
-
-## Video Solution Walkthrough
-
-Watch the solution explanation:
-
-<iframe src="https://share.descript.com/embed/cOqfPDaYyTy" width="640" height="360" frameborder="0" allowfullscreen></iframe>
-
----
-
-## Complete Solution
-
-<details>
-<summary>Click to reveal complete solution</summary>
-
-```typescript
-import { NextRequest, NextResponse } from 'next/server';
-import { searchDocuments } from '@/app/libs/pinecone';
-
-export async function POST(request: NextRequest) {
-	try {
-		// Parse request body
-		const body = await request.json();
-		const { query, topK = 5 } = body;
-
-		// Validate query
-		if (!query || typeof query !== 'string') {
-			return NextResponse.json(
-				{ error: 'Query is required and must be a string' },
-				{ status: 400 }
-			);
-		}
-
-		// Search for similar documents
-		const results = await searchDocuments(query, topK);
-
-		// Format results for response
-		const formattedResults = results.map((doc) => ({
-			id: doc.id,
-			score: doc.score,
-			content: doc.metadata?.text || '',
-			source: doc.metadata?.source || 'unknown',
-			chunkIndex: doc.metadata?.chunkIndex,
-			totalChunks: doc.metadata?.totalChunks,
-		}));
-
-		return NextResponse.json({
-			query,
-			resultsCount: formattedResults.length,
-			results: formattedResults,
-		});
-	} catch (error) {
-		console.error('Search error:', error);
-		return NextResponse.json(
-			{
-				error: 'Failed to search documents',
-				details: (error as Error).message,
-			},
-			{ status: 500 }
-		);
-	}
-}
-```
-
-</details>
 
 ---
 
@@ -405,9 +339,9 @@ curl -X POST http://localhost:3000/api/rag-test \
 
 **Why similar results?**
 
--   Embeddings capture _meaning_, not just keywords
--   "state management" and "manage state" are semantically similar
--   Vector similarity finds conceptually related content
+- Embeddings capture _meaning_, not just keywords
+- "state management" and "manage state" are semantically similar
+- Vector similarity finds conceptually related content
 
 ---
 
@@ -428,15 +362,15 @@ await searchDocuments(query);
 
 **Guidelines:**
 
--   **topK = 3-5:** Focused, high-quality results
--   **topK = 5-10:** More context, some noise
--   **topK > 10:** Lots of context, potentially less relevant
+- **topK = 3-5:** Focused, high-quality results
+- **topK = 5-10:** More context, some noise
+- **topK > 10:** Lots of context, potentially less relevant
 
 **For RAG systems:**
 
--   Start with 3-5 chunks
--   Experiment to find optimal number
--   More isn't always better (token limits!)
+- Start with 3-5 chunks
+- Experiment to find optimal number
+- More isn't always better (token limits!)
 
 ---
 
@@ -450,9 +384,9 @@ await searchDocuments(query);
 
 **Causes:**
 
--   No documents uploaded yet
--   Query embedding model mismatch
--   Index is wrong
+- No documents uploaded yet
+- Query embedding model mismatch
+- Index is wrong
 
 **Solutions:**
 
@@ -468,9 +402,9 @@ await searchDocuments(query);
 
 **Causes:**
 
--   Query doesn't match uploaded content
--   Different domain/topic
--   Poor quality embeddings
+- Query doesn't match uploaded content
+- Different domain/topic
+- Poor quality embeddings
 
 **Solutions:**
 
@@ -482,9 +416,9 @@ await searchDocuments(query);
 
 **Causes:**
 
--   Chunking strategy issues
--   Documents from wrong domain
--   Need more specific query
+- Chunking strategy issues
+- Documents from wrong domain
+- Need more specific query
 
 **Solutions:**
 
@@ -511,10 +445,10 @@ const docs = await index.query({
 
 **Use cases:**
 
--   Filter by source URL
--   Filter by date uploaded
--   Filter by content type
--   Filter by tags
+- Filter by source URL
+- Filter by date uploaded
+- Filter by content type
+- Filter by tags
 
 ---
 
@@ -581,9 +515,9 @@ Now that you can:
 
 You're ready for:
 
--   **Agent Architecture** - Build intelligent routing
--   **RAG Agent** - Combine retrieval + generation
--   **Chat Interface** - Create user-facing app
+- **Agent Architecture** - Build intelligent routing
+- **RAG Agent** - Combine retrieval + generation
+- **Chat Interface** - Create user-facing app
 
 The foundation of your RAG system is complete!
 
@@ -602,6 +536,7 @@ Explain chunking strategy tradeoffs. How would you chunk these different documen
 3. **Twitter/X posts** - Short content, hashtags, threads, mentions
 
 For each type, explain:
+
 - What chunk size would you use and why?
 - Where would you split (sentences, paragraphs, sections)?
 - What metadata would you preserve?
@@ -612,16 +547,19 @@ For each type, explain:
 **Complete the TODOs** in the ingestion route to make the system work, then **extend it** with text sanitization:
 
 **Files:**
+
 - `app/api/upload-document/route.ts`
 - `app/libs/chunking.ts`
 
 **Extension - Add sanitization:**
+
 - Strip HTML tags from content
 - Normalize whitespace (collapse multiple spaces/newlines)
 - Handle special characters (smart quotes, em dashes, etc.)
 - Remove boilerplate text (navigation, footers, "Click here to...", etc.)
 
 **What "done" looks like:**
+
 - Documents upload and chunk correctly
 - Sanitization cleans messy web content before chunking
 - You can demonstrate the before/after of sanitization

@@ -65,7 +65,7 @@ Stored doc 3: [0.24, -0.16, 0.91, ..., 0.43]  // Very similar!
 <p>We&#39;ve already created a helper function in <code>app/libs/pinecone.ts</code>:</p>
 <pre><code class="language-typescript">export const searchDocuments = async (
 	query: string,
-	topK: number = 3
+	topK: number = 3,
 ): Promise&lt;ScoredPineconeRecord&lt;RecordMetadata&gt;[]&gt; =&gt; {
 	// 1. Get reference to your index
 	const index = pineconeClient.Index(process.env.PINECONE_INDEX!);
@@ -252,65 +252,6 @@ export async function POST(request: NextRequest) {
 }
 </code></pre>
 <hr>
-<h2>Video Solution Walkthrough</h2>
-<p>Watch the solution explanation:</p>
-<iframe src="https://share.descript.com/embed/cOqfPDaYyTy" width="640" height="360" frameborder="0" allowfullscreen></iframe>
-
-<hr>
-<h2>Complete Solution</h2>
-<details>
-<summary>Click to reveal complete solution</summary>
-
-<pre><code class="language-typescript">import { NextRequest, NextResponse } from &#39;next/server&#39;;
-import { searchDocuments } from &#39;@/app/libs/pinecone&#39;;
-
-export async function POST(request: NextRequest) {
-	try {
-		// Parse request body
-		const body = await request.json();
-		const { query, topK = 5 } = body;
-
-		// Validate query
-		if (!query || typeof query !== &#39;string&#39;) {
-			return NextResponse.json(
-				{ error: &#39;Query is required and must be a string&#39; },
-				{ status: 400 }
-			);
-		}
-
-		// Search for similar documents
-		const results = await searchDocuments(query, topK);
-
-		// Format results for response
-		const formattedResults = results.map((doc) =&gt; ({
-			id: doc.id,
-			score: doc.score,
-			content: doc.metadata?.text || &#39;&#39;,
-			source: doc.metadata?.source || &#39;unknown&#39;,
-			chunkIndex: doc.metadata?.chunkIndex,
-			totalChunks: doc.metadata?.totalChunks,
-		}));
-
-		return NextResponse.json({
-			query,
-			resultsCount: formattedResults.length,
-			results: formattedResults,
-		});
-	} catch (error) {
-		console.error(&#39;Search error:&#39;, error);
-		return NextResponse.json(
-			{
-				error: &#39;Failed to search documents&#39;,
-				details: (error as Error).message,
-			},
-			{ status: 500 }
-		);
-	}
-}
-</code></pre>
-</details>
-
-<hr>
 <h2>Testing Different Queries</h2>
 <p>Try these queries to see how semantic search works:</p>
 <h3>Technical Queries</h3>
@@ -463,12 +404,7 @@ const highQuality = results.filter((doc) =&gt; doc.score &gt; 0.8);
 </code></pre>
 <hr>
 <h2>What You&#39;ve Learned</h2>
-<p>✅ How vector similarity search works
-✅ Using the <code>searchDocuments()</code> function
-✅ Understanding similarity scores
-✅ Building an API route for testing
-✅ Debugging common issues
-✅ The importance of topK parameter</p>
+<p>✅ How vector similarity search works<br>✅ Using the <code>searchDocuments()</code> function<br>✅ Understanding similarity scores<br>✅ Building an API route for testing<br>✅ Debugging common issues<br>✅ The importance of topK parameter</p>
 <hr>
 <h2>What&#39;s Next?</h2>
 <p>Now that you can:</p>

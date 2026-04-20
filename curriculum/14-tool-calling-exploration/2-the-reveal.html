@@ -235,59 +235,7 @@ export async function ragAgent(request: AgentRequest) {
 </li>
 </ol>
 <hr>
-<h2>Extension Challenge: Add Your Own Tool</h2>
-<p>Now that you&#39;ve implemented the search tool, try adding a second one. Here are some ideas:</p>
-<h3>Option 1: Web Search Tool</h3>
-<p>Add a tool that searches the web for information not in your docs:</p>
-<pre><code class="language-typescript">const webSearchTool = tool({
-	description: `Search the web for current information that isn't in the
-documentation. Use this for news, updates, or external references.`,
-
-	parameters: z.object({
-		query: z.string().describe('The web search query'),
-	}),
-
-	execute: async ({ query }) => {
-		// Use a search API (Tavily, SerpAPI, etc.)
-		const results = await fetch(`https://api.tavily.com/search`, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/json' },
-			body: JSON.stringify({
-				api_key: process.env.TAVILY_API_KEY,
-				query,
-				max_results: 3,
-			}),
-		});
-		return results.json();
-	},
-});
-</code></pre>
-<h3>Option 2: Code Execution Tool</h3>
-<p>Let the AI run code snippets to verify examples:</p>
-<pre><code class="language-typescript">const runCodeTool = tool({
-	description: 'Execute JavaScript code to verify examples or calculations',
-
-	parameters: z.object({
-		code: z.string().describe('JavaScript code to execute'),
-	}),
-
-	execute: async ({ code }) => {
-		// Use a sandboxed execution environment
-		// Never use eval() in production!
-		return { result: 'Code execution result here' };
-	},
-});
-</code></pre>
-<h3>Test Your Multi-Tool Agent</h3>
-<p>Try queries that might use both tools:</p>
-<ol>
-<li><code>"What's new in React 19?"</code> - Might need web search (not in your docs)</li>
-<li><code>"Explain useEffect"</code> - Should use your docs</li>
-<li><code>"What are the latest TypeScript 5.4 features?"</code> - Web search</li>
-</ol>
-<p>Watch the console to see which tools the AI chooses. Does it make the right decisions?</p>
-<hr>
 <h2>What&#39;s Next</h2>
-<p>You&#39;ve now experienced both patterns: fixed workflows and tool-calling. Most production AI features use workflows (predictable, testable, cheap), but tool-calling is powerful when you need true autonomy.</p>
-<p>Keep this distinction in mind as you build. The best engineers pick the right tool for the job—sometimes that&#39;s a workflow, sometimes that&#39;s tool-calling.</p>
+<p>Now that you understand both patterns, we&#39;ll continue building our RAG app with workflows. You&#39;ve got tool-calling in your toolkit for when you truly need it.</p>
+<p>Next up: <strong>Chat Interface</strong> — connecting your agents to a real UI.</p>
 <hr>

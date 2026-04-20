@@ -1,0 +1,233 @@
+<h1>RAG Without Vectors: SQL Agents</h1>
+<p>Not all &quot;retrieval&quot; requires vector search. For structured data with known schemas, traditional database queries are often more precise, faster, and cheaper.</p>
+<hr>
+<h2>When to Use SQL vs Vector Search</h2>
+<h3>SQL Strengths</h3>
+<p>SQL queries excel when you need:</p>
+<ul>
+<li><strong>Exact matches</strong>: &quot;Show me orders from customer ID 12345&quot;</li>
+<li><strong>Aggregations</strong>: &quot;What&#39;s the total revenue last month?&quot;</li>
+<li><strong>Filtering on known fields</strong>: &quot;Find users in California with premium accounts&quot;</li>
+<li><strong>Sorting and pagination</strong>: &quot;Top 10 products by sales&quot;</li>
+<li><strong>Joins across tables</strong>: &quot;Orders with their customer details&quot;</li>
+</ul>
+<pre><code class="language-sql">-- Precise, fast, deterministic
+SELECT * FROM influencers
+WHERE genre = &#39;fitness&#39; AND location = &#39;Los Angeles&#39;
+ORDER BY follower_count DESC
+LIMIT 10;
+</code></pre>
+<h3>Vector Search Strengths</h3>
+<p>Vector search excels when you need:</p>
+<ul>
+<li><strong>Semantic similarity</strong>: &quot;Find documents about customer complaints&quot; (even if they don&#39;t use the word &quot;complaint&quot;)</li>
+<li><strong>Fuzzy matching</strong>: &quot;What&#39;s our policy on returns?&quot; (matches refund policy docs)</li>
+<li><strong>Unstructured content</strong>: Searching through PDFs, articles, support tickets</li>
+<li><strong>When you don&#39;t know the exact terms</strong>: Natural language queries</li>
+</ul>
+<pre><code class="language-typescript">// Semantic, flexible, approximate
+const results = await index.query({
+  vector: await embed(&quot;frustrated customer experience&quot;),
+  topK: 10
+});
+</code></pre>
+<h3>The Decision Framework</h3>
+<table>
+<thead>
+<tr>
+<th>Question</th>
+<th>SQL</th>
+<th>Vector</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Do I know the exact field names?</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>Is the data structured with a schema?</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>Do I need aggregations (COUNT, SUM, AVG)?</td>
+<td>✅</td>
+<td></td>
+</tr>
+<tr>
+<td>Is the query about meaning/similarity?</td>
+<td></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Is the content unstructured text?</td>
+<td></td>
+<td>✅</td>
+</tr>
+<tr>
+<td>Do users ask in natural language?</td>
+<td>Depends</td>
+<td>✅</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Hybrid Approach: Best of Both</h2>
+<p>Many production systems use both:</p>
+<pre><code>User Query
+    │
+    ▼
+┌─────────────┐
+│   Router    │ ── &quot;How many orders?&quot; ──▶ SQL Agent
+│             │
+│             │ ── &quot;What&#39;s our refund policy?&quot; ──▶ RAG Agent
+└─────────────┘
+</code></pre>
+<p>The router (which you&#39;ve already built!) decides which retrieval method to use based on the query type.</p>
+<hr>
+<h2>Building a SQL Agent</h2>
+<p>A SQL agent translates natural language to database queries:</p>
+<pre><code>&quot;Show me fitness influencers in LA under $500&quot;
+                    │
+                    ▼
+            ┌───────────────┐
+            │ Extract params│
+            │ using LLM     │
+            └───────────────┘
+                    │
+                    ▼
+        genre: &quot;fitness&quot;
+        location: &quot;Los Angeles&quot;
+        maxPrice: 500
+                    │
+                    ▼
+            ┌───────────────┐
+            │ Build Prisma  │
+            │ query         │
+            └───────────────┘
+                    │
+                    ▼
+        prisma.influencer.findMany({
+          where: {
+            genre: &quot;fitness&quot;,
+            location: &quot;Los Angeles&quot;,
+            price: { lte: 500 }
+          }
+        })
+</code></pre>
+<h3>Why Structured Outputs Matter Here</h3>
+<p>Use structured outputs to reliably extract query parameters:</p>
+<pre><code class="language-typescript">const QueryParamsSchema = z.object({
+  genre: z.string().optional(),
+  location: z.string().optional(),
+  tier: z.enum([&#39;micro&#39;, &#39;mid&#39;, &#39;macro&#39;, &#39;mega&#39;]).optional(),
+  minPrice: z.number().optional(),
+  maxPrice: z.number().optional(),
+});
+
+// LLM extracts structured params from natural language
+const params = await extractParams(userQuery);
+
+// Build type-safe Prisma query
+const results = await prisma.influencer.findMany({
+  where: constructWhereClause(params)
+});
+</code></pre>
+<hr>
+<h2>SQL Injection: Why Prisma is Safe</h2>
+<h3>The Dangerous Way (Raw SQL)</h3>
+<pre><code class="language-typescript">// ❌ NEVER DO THIS - SQL injection vulnerability
+const query = `SELECT * FROM users WHERE name = &#39;${userInput}&#39;`;
+
+// User inputs: &quot;&#39;; DROP TABLE users; --&quot;
+// Resulting query: SELECT * FROM users WHERE name = &#39;&#39;; DROP TABLE users; --&#39;
+</code></pre>
+<h3>The Safe Way (Prisma)</h3>
+<pre><code class="language-typescript">// ✅ Prisma uses parameterized queries
+const users = await prisma.user.findMany({
+  where: { name: userInput }
+});
+
+// User input is treated as DATA, not SQL code
+// Even malicious input just searches for that literal string
+</code></pre>
+<p>Prisma&#39;s query builder:</p>
+<ol>
+<li>Separates SQL structure from data values</li>
+<li>Escapes all user input automatically</li>
+<li>Never interpolates user strings into SQL</li>
+</ol>
+<p><strong>Key insight</strong>: With Prisma, you&#39;re building queries with a type-safe API, not concatenating strings. The database receives the query structure and values separately.</p>
+<hr>
+<h2>Assignment 4: SQL Agent</h2>
+<h3>Repository</h3>
+<p>Clone the <strong>sql-agent</strong> branch:</p>
+<pre><code class="language-bash">git clone -b sql-agent https://github.com/projectshft/killer_agents.git
+cd killer_agents
+yarn install
+</code></pre>
+<p>This repo has Prisma configured with a shared Postgres database containing 1000 influencers.</p>
+<h3>Video Assignment (3-4 minutes)</h3>
+<p><strong>Topic: SQL for AI Applications</strong></p>
+<p>Record a video covering:</p>
+<ol>
+<li><p><strong>Types of SQL queries</strong> - Explain the difference between:</p>
+<ul>
+<li>Filtering queries (WHERE clauses)</li>
+<li>Aggregation queries (COUNT, SUM, AVG, GROUP BY)</li>
+<li>Join queries (combining tables)</li>
+<li>Full-text search (LIKE, ILIKE, or full-text indexes)</li>
+</ul>
+</li>
+<li><p><strong>pgvector</strong> - Research Postgres&#39;s pgvector extension:</p>
+<ul>
+<li>What is it? (vector similarity search in Postgres)</li>
+<li>How does it combine SQL filtering WITH vector search?</li>
+<li>Why might you use pgvector instead of a dedicated vector DB like Pinecone?</li>
+</ul>
+</li>
+<li><p><strong>When SQL beats dedicated vector DBs</strong> - Give examples where keeping everything in Postgres (with pgvector) makes more sense than using separate systems</p>
+</li>
+</ol>
+<p><strong>Resources to explore:</strong></p>
+<ul>
+<li><a href="https://github.com/pgvector/pgvector">pgvector GitHub</a></li>
+<li><a href="https://supabase.com/docs/guides/ai">Supabase pgvector docs</a></li>
+</ul>
+<p>Show you understand when to use what—and that vectors can live inside SQL databases too.</p>
+<h3>Code Assignment</h3>
+<p>Complete the <code>databaseSearchAgent</code> in <code>app/agents/databaseSearchAgent.ts</code>.</p>
+<p><strong>The TODOs:</strong></p>
+<ol>
+<li>Define the Zod schema for extracted parameters</li>
+<li>Build a Prisma WHERE clause from those parameters</li>
+<li>Implement the full agent flow (prompt → LLM → query → format)</li>
+</ol>
+<p><strong>Test these queries work:</strong></p>
+<ul>
+<li>&quot;Find fitness influencers in LA&quot;</li>
+<li>&quot;Show me micro tier creators under $500&quot;</li>
+<li>&quot;I need gaming influencers&quot;</li>
+</ul>
+<h3>Submit Your Work</h3>
+<p><strong>Video:</strong> Upload to Loom or YouTube and submit the link</p>
+<ul>
+<li><a href="https://form.typeform.com/to/TBD">Video Submission - Assignment 4</a></li>
+</ul>
+<p><strong>Code:</strong> Push your completed code to your own GitHub repo and submit the link</p>
+<ul>
+<li><a href="https://form.typeform.com/to/TBD">Code Submission - Assignment 4</a></li>
+</ul>
+<p><strong>Due:</strong> Before starting Capstone</p>
+<hr>
+<h2>Key Takeaways</h2>
+<ol>
+<li><strong>SQL and vector search solve different problems</strong> - Use the right tool for the job</li>
+<li><strong>Structured data with known schemas</strong> → SQL</li>
+<li><strong>Unstructured text with semantic queries</strong> → Vector search</li>
+<li><strong>Many systems need both</strong> - Your router can decide</li>
+<li><strong>Always use parameterized queries</strong> - Prisma handles this automatically</li>
+</ol>
+<hr>
+<h2>What&#39;s Next?</h2>
+<p>You now understand both retrieval approaches. Next up: <strong>Capstone Project</strong> — build a complete RAG application for a domain of your choice.</p>

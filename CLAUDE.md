@@ -78,13 +78,13 @@ The curriculum is organized in `curriculum/`:
     - Basic implementation
     - Reranking
     - Sparse and dense vectors
-11. **AI Frameworks** (`10-ai-frameworks/`)
+11. **AI Frameworks** (`10-ai-frameworks/`) ⚠️ DRAFT
 12. **Chat Interface** (`11-chat-interface/`)
 13. **Observability** (`12-observability/`)
 14. **Testing Agents** (`13-testing-agents/`)
 15. **Tool Calling** (`14-tool-calling-exploration/`)
 16. **SQL Agent** (`15-sql-agent/`)
-17. **Agent Patterns** (`16-agent-patterns/`)
+17. **Agent Patterns** (`16-agent-patterns/`) ⚠️ DRAFT
 18. **Capstone Project** (`17-capstone-project/`)
 19. **Interview Prep** (`18-interview-prep/`)
 
@@ -180,3 +180,42 @@ LANGSMITH_PROJECT="your-project-name"
 2. Follow curriculum modules in order
 3. Implement features with TODO guidance
 4. Ask instructors or attend office hours when stuck (working code shown selectively)
+
+---
+
+## Draft Modules (Do Not Reference)
+
+The following modules are in draft state and should NOT be referenced from other curriculum materials:
+
+-   **`10-ai-frameworks/`** - LangGraph content (draft)
+-   **`16-agent-patterns/`** - Agent patterns content (draft)
+
+When writing or editing curriculum:
+
+-   Do not add "What's Next" or cross-references pointing to draft modules
+-   Do not assume students have completed draft module content
+-   These modules may be removed or significantly changed
+
+---
+
+## Curriculum Alignment Checklist
+
+**After making changes to curriculum, verify alignment:**
+
+1. **Check `student-todo-exercises` branch:**
+   ```bash
+   git checkout student-todo-exercises
+   # Verify TODOs match curriculum instructions
+   # Ensure no references to draft modules
+   git checkout curriculum
+   ```
+
+2. **Verify cross-references:**
+   - "What's Next" sections point to non-draft modules
+   - Assignment instructions match what students can access
+   - No broken links to draft content
+
+3. **Check ASSIGNMENTS.md:**
+   - Assignment numbering is consistent
+   - Submission links are correct
+   - Prerequisites don't require draft modules
