@@ -1,6 +1,43 @@
-# Curriculum Changes - April 17, 2026
+# Curriculum Changes
 
-## Summary
+## Latest Changes - April 20, 2026
+
+### Assignment 1 Fix: Remove Solutions Before Assignment
+
+**Problem:** Assignment 1 asks students to "Complete the TODOs" but solutions were revealed in the lessons BEFORE the assignment, undermining the learning experience.
+
+**Changes:**
+- ✅ **Removed solution from `5-document-upload/2-building-the-api-route.md`** - Deleted "Challenge Solution" section (78 lines)
+- ✅ **Removed solutions from `5-document-upload/3-querying-documents.md`** - Deleted "Video Solution Walkthrough" and "Complete Solution" sections
+- ✅ **Updated SQL agent "What's Next"** - Now points to Capstone (not draft Agent Patterns module)
+- ✅ **Added draft module warnings to CLAUDE.md** - Modules 10 (AI Frameworks) and 16 (Agent Patterns) marked as draft
+- ✅ **Added curriculum alignment checklist to CLAUDE.md** - Process for verifying changes
+- ✅ **Regenerated all HTML files** - 21 files updated
+
+**Commit:** fce5939 - "Remove solutions before Assignment 1 + mark draft modules"
+
+### Files Changed (April 20, 2026)
+
+| File | Changes |
+|------|---------|
+| `curriculum/5-document-upload/2-building-the-api-route.md` | Removed "Challenge Solution" section |
+| `curriculum/5-document-upload/3-querying-documents.md` | Removed "Video Solution Walkthrough" + "Complete Solution" sections |
+| `curriculum/15-sql-agent/1-rag-without-vectors.md` | "What's Next" now points to Capstone |
+| `curriculum/15-sql-agent/1-rag-without-vectors.html` | **NEW** - generated HTML |
+| `CLAUDE.md` | Added draft module warnings + curriculum alignment checklist |
+| + 15 other HTML files | Regenerated from markdown |
+
+### Draft Modules (Do Not Reference)
+
+These modules are in draft state and should NOT be referenced from other curriculum:
+- `10-ai-frameworks/` - LangGraph content
+- `16-agent-patterns/` - Agent patterns content
+
+---
+
+## Previous Changes - April 17, 2026
+
+### Summary
 
 - ✅ **Removed student-starter branch** - No longer needed (curriculum branch is the reference)
 - ✅ **Removed duplicate modules** - Deleted 4-pinecone-integration and 4.5-chunking-fundamentals
@@ -93,7 +130,11 @@ Students should cover:
 
 ## All Changes Pushed
 
-All changes have been committed and pushed to the curriculum branch as of April 17, 2026.
+All changes have been committed and pushed to the curriculum branch.
 
+**April 20, 2026:**
+- Commit: fce5939 - "Remove solutions before Assignment 1 + mark draft modules"
+
+**April 17, 2026:**
 - Commit: d167663 - "Remove duplicate curriculum modules and update documentation"
 - Branch deletions: student-starter (local and remote)
