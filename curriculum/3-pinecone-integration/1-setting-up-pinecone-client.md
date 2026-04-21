@@ -65,7 +65,7 @@ The OpenAI API is pay-per-use. You'll need to add a payment method:
 **Learn more:**
 - [OpenAI Platform Documentation](https://platform.openai.com/docs/introduction)
 - [OpenAI Node.js SDK](https://github.com/openai/openai-node) (version `5.15.0` used in this project)
-- [Embeddings Guide](https://platform.openai.com/docs/guides/embeddings)
+- [Embeddings Guide](https://developers.openai.com/api/docs/guides/embeddings)
 
 ### Understanding OpenAI Models
 
@@ -332,7 +332,7 @@ Calculate the storage difference between dimensions:
 - Compare storage for 512 vs 1536 vs 3072 dimensions
 
 **Helpful Resources:**
-- [OpenAI Embeddings Dimensions Guide](https://platform.openai.com/docs/guides/embeddings/embedding-models)
+- [OpenAI Embeddings Guide](https://developers.openai.com/api/docs/guides/embeddings)
 - [Pinecone Performance Guide](https://docs.pinecone.io/guides/operations/performance-tuning)
 - [CLIP Model for Images](https://openai.com/index/clip/)
 
