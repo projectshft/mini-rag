@@ -374,6 +374,34 @@ Your knowledge is now searchable by semantic similarity!
 
 ---
 
+## Think Beyond the Exercise
+
+Now that you understand the upload pipeline, consider these real-world challenges:
+
+**1. Scale:** What if you need to upload 100,000 documents?
+- How would you handle rate limits?
+- Would you process synchronously or use a job queue?
+- How do you track progress and handle partial failures?
+
+**2. Updates:** What happens when a document changes?
+- Do you re-upload the entire document?
+- How do you delete old chunks when content is removed?
+- How do you handle version history?
+
+**3. Quality:** Not all content is worth indexing.
+- How would you filter out low-quality pages (404s, login walls, ads)?
+- What if a scrape returns gibberish or duplicates?
+- Should you validate content before spending money on embeddings?
+
+**4. Cost:** Embeddings aren't free.
+- At $0.02 per 1M tokens, what's the cost of your knowledge base?
+- When does it make sense to use a smaller/cheaper model?
+- How do you avoid re-embedding unchanged content?
+
+**There's no assignment here.** Just questions to think about as you build real systems.
+
+---
+
 ## What's Next?
 
 Awesome! You now have a way to add knowledge to your RAG system. But RAG also needs a way to retrieve that knowledge intelligently.

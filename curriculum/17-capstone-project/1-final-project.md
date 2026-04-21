@@ -14,6 +14,50 @@ Both options are equally valid. Choose what excites you most.
 
 ---
 
+## Finding Your Use Case
+
+**This is the highest ROI part of the capstone.** Building a RAG system for a real problem you care about—or one your company faces—can be career-changing.
+
+### Where to Look for Ideas
+
+**At work:**
+- Documentation that's hard to search ("Where's the policy on X?")
+- Onboarding knowledge that lives in senior engineers' heads
+- Support tickets that keep asking the same questions
+- Internal wikis that nobody can navigate
+- Slack history that contains answers but is impossible to find
+
+**Personal projects:**
+- Your notes, journals, or research
+- A hobby with lots of documentation (music, games, sports rules)
+- Learning a new skill with scattered resources
+- Organizing recipes, articles, or bookmarks you've saved
+
+**Open data:**
+- Legal documents (case law, contracts, regulations)
+- Academic papers in a field you're interested in
+- Public company filings (SEC, earnings calls)
+- Government data (city council minutes, legislation)
+- Product reviews or forum discussions
+
+### The "10x Question"
+
+Ask yourself: **"What takes me 10 minutes to find that should take 10 seconds?"**
+
+That's your RAG use case.
+
+### Real Student Examples
+
+- **Internal docs search** - "Our engineering wiki has 500 pages and no one can find anything"
+- **Recipe assistant** - "I have 200 saved recipes and can never remember which one has that technique"
+- **Legal research** - "Finding relevant case law takes hours of reading"
+- **Course notes** - "I took 3 years of notes but can't search them semantically"
+- **API documentation** - "Our API docs are split across 5 repos"
+
+**Don't overthink it.** Pick something you'll actually use after the course ends.
+
+---
+
 ## Flexibility & Experimentation
 
 You are not limited to the tools we used in class:
