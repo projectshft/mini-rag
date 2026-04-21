@@ -156,6 +156,7 @@ Students should cover:
 All changes have been committed and pushed to the curriculum branch.
 
 **April 20, 2026:**
+- Commit: 8f6a279 - "Fix broken OpenAI embeddings documentation links"
 - Commit: ed607aa - "Regenerate HTML for curriculum updates"
 - Commit: 4d29718 - "Add use case guidance, graceful degradation lesson, and open-ended thinking"
 - Commit: fce5939 - "Remove solutions before Assignment 1 + mark draft modules"
