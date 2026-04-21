@@ -302,6 +302,34 @@ const id = `${chunk.metadata.url}-${chunk.metadata.chunkIndex}`;
 </code></pre>
 <p>Your knowledge is now searchable by semantic similarity!</p>
 <hr>
+<h2>Think Beyond the Exercise</h2>
+<p>Now that you understand the upload pipeline, consider these real-world challenges:</p>
+<p><strong>1. Scale:</strong> What if you need to upload 100,000 documents?</p>
+<ul>
+<li>How would you handle rate limits?</li>
+<li>Would you process synchronously or use a job queue?</li>
+<li>How do you track progress and handle partial failures?</li>
+</ul>
+<p><strong>2. Updates:</strong> What happens when a document changes?</p>
+<ul>
+<li>Do you re-upload the entire document?</li>
+<li>How do you delete old chunks when content is removed?</li>
+<li>How do you handle version history?</li>
+</ul>
+<p><strong>3. Quality:</strong> Not all content is worth indexing.</p>
+<ul>
+<li>How would you filter out low-quality pages (404s, login walls, ads)?</li>
+<li>What if a scrape returns gibberish or duplicates?</li>
+<li>Should you validate content before spending money on embeddings?</li>
+</ul>
+<p><strong>4. Cost:</strong> Embeddings aren&#39;t free.</p>
+<ul>
+<li>At $0.02 per 1M tokens, what&#39;s the cost of your knowledge base?</li>
+<li>When does it make sense to use a smaller/cheaper model?</li>
+<li>How do you avoid re-embedding unchanged content?</li>
+</ul>
+<p><strong>There&#39;s no assignment here.</strong> Just questions to think about as you build real systems.</p>
+<hr>
 <h2>What&#39;s Next?</h2>
 <p>Awesome! You now have a way to add knowledge to your RAG system. But RAG also needs a way to retrieve that knowledge intelligently.</p>
 <p>That&#39;s where agents come in...</p>
