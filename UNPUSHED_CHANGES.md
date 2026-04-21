@@ -16,15 +16,38 @@
 
 **Commit:** fce5939 - "Remove solutions before Assignment 1 + mark draft modules"
 
+### Capstone Use Case Guidance + Graceful Degradation
+
+**Problem:** Students need help identifying high-ROI use cases, and curriculum lacked production resilience content.
+
+**Changes:**
+- ✅ **Added "Finding Your Use Case" to Capstone** - Practical guidance for identifying real problems
+  - "10x Question" framework: "What takes 10 minutes that should take 10 seconds?"
+  - Real student examples (internal docs, recipes, legal research, etc.)
+  - Where to look: work, personal projects, open data
+- ✅ **NEW: Graceful Degradation lesson** (`7-agent-architecture/5-graceful-degradation.md`)
+  - Model fallback chains
+  - Provider redundancy (with embedding dimension warnings)
+  - Circuit breaker pattern implementation
+  - Error classification (retryable vs permanent)
+  - User communication during degradation
+- ✅ **Added "Think Beyond the Exercise"** to document upload module
+  - Open-ended questions about scale, updates, quality, cost
+  - No assignment, just prompts for deeper thinking
+
+**Commit:** 4d29718 - "Add use case guidance, graceful degradation lesson, and open-ended thinking"
+
 ### Files Changed (April 20, 2026)
 
 | File | Changes |
 |------|---------|
-| `curriculum/5-document-upload/2-building-the-api-route.md` | Removed "Challenge Solution" section |
+| `curriculum/5-document-upload/2-building-the-api-route.md` | Removed solution + added "Think Beyond the Exercise" |
 | `curriculum/5-document-upload/3-querying-documents.md` | Removed "Video Solution Walkthrough" + "Complete Solution" sections |
 | `curriculum/15-sql-agent/1-rag-without-vectors.md` | "What's Next" now points to Capstone |
 | `curriculum/15-sql-agent/1-rag-without-vectors.html` | **NEW** - generated HTML |
 | `CLAUDE.md` | Added draft module warnings + curriculum alignment checklist |
+| `curriculum/17-capstone-project/1-final-project.md` | Added "Finding Your Use Case" section |
+| `curriculum/7-agent-architecture/5-graceful-degradation.md` | **NEW** - Production resilience lesson |
 | + 15 other HTML files | Regenerated from markdown |
 
 ### Draft Modules (Do Not Reference)
@@ -133,6 +156,7 @@ Students should cover:
 All changes have been committed and pushed to the curriculum branch.
 
 **April 20, 2026:**
+- Commit: 4d29718 - "Add use case guidance, graceful degradation lesson, and open-ended thinking"
 - Commit: fce5939 - "Remove solutions before Assignment 1 + mark draft modules"
 
 **April 17, 2026:**
