@@ -40,9 +40,6 @@ yarn-error.log*
 .venv/
 __pycache__/
 
-# large embedding files
-data/music-embeddings.json
-
 # typescript
 *.tsbuildinfo
 next-env.d.ts
