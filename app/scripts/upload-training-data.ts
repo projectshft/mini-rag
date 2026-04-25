@@ -33,14 +33,15 @@ const openai = new OpenAI({
  * This is step 1 of the fine-tuning process.
  */
 async function uploadTrainingFile(filePath: string): Promise<string> {
-	// TODO: Implement training file upload
-	//
-	// Steps:
-	// 1. Use openai.files.create() with the file and purpose: 'fine-tune'
-	// 2. Log the file ID on success
-	// 3. Return the file ID
+	console.log(`📤 Uploading training file: ${filePath}`);
 
-	throw new Error('uploadTrainingFile not implemented yet!');
+	const file = await openai.files.create({
+		file: fs.createReadStream(filePath),
+		purpose: 'fine-tune',
+	});
+
+	console.log(`✅ File uploaded successfully. File ID: ${file.id}`);
+	return file.id;
 }
 
 /**
@@ -48,26 +49,39 @@ async function uploadTrainingFile(filePath: string): Promise<string> {
  * This is step 2 of the fine-tuning process.
  */
 async function createFineTuningJob(fileId: string): Promise<void> {
-	// TODO: Implement fine-tuning job creation
-	//
-	// Steps:
-	// 1. Use openai.fineTuning.jobs.create() with training_file and model
-	//    - Model: 'gpt-4o-mini-2024-07-18'
-	// 2. Log the job ID and dashboard URL
-	// 3. Remind user to update config.ts with new model ID after completion
+	console.log(`🚀 Creating fine-tuning job with file: ${fileId}`);
 
-	throw new Error('createFineTuningJob not implemented yet!');
+	const job = await openai.fineTuning.jobs.create({
+		training_file: fileId,
+		model: 'gpt-4o-mini-2024-07-18',
+	});
+
+	console.log(`\n✅ Fine-tuning job created successfully!`);
+	console.log(`   Job ID: ${job.id}`);
+	console.log(`   Status: ${job.status}`);
+	console.log(`\n📊 Monitor progress at:`);
+	console.log(`   https://platform.openai.com/finetune/${job.id}`);
+	console.log(`\n⚠️  Once complete, update app/api/config.ts with the new model ID`);
 }
 
 async function main() {
-	// TODO: Implement main orchestration
-	//
-	// Steps:
-	// 1. Check for OPENAI_API_KEY environment variable
-	// 2. Upload the training file using uploadTrainingFile()
-	// 3. Create a fine-tuning job using createFineTuningJob()
+	if (!process.env.OPENAI_API_KEY) {
+		console.error('❌ OPENAI_API_KEY environment variable is not set');
+		process.exit(1);
+	}
 
-	throw new Error('main not implemented yet!');
+	const trainingFilePath = path.join(
+		process.cwd(),
+		'app/scripts/data/linkedin_training.jsonl'
+	);
+
+	if (!fs.existsSync(trainingFilePath)) {
+		console.error(`❌ Training file not found: ${trainingFilePath}`);
+		process.exit(1);
+	}
+
+	const fileId = await uploadTrainingFile(trainingFilePath);
+	await createFineTuningJob(fileId);
 }
 
 main();

@@ -20,29 +20,48 @@ type TrainingExample = {
 };
 
 function countTokens(text: string): number {
-	// TODO: Implement token counting
-	//
-	// Use encodingForModel.encode() to tokenize the text
-	// Return the number of tokens
-
-	throw new Error('countTokens not implemented yet!');
+	return encodingForModel.encode(text).length;
 }
 
 function calculateTrainingCost(jsonlPath: string): void {
-	// TODO: Implement training cost estimation
-	//
-	// Steps:
-	// 1. Read the JSONL file and parse each line as a TrainingExample
-	// 2. Calculate number of epochs based on example count:
-	//    - If examples * TARGET_EPOCHS < MIN_TARGET_EXAMPLES: increase epochs
-	//    - If examples * TARGET_EPOCHS > MAX_TARGET_EXAMPLES: decrease epochs
-	// 3. Count tokens for each example (concatenate all message contents)
-	//    - Cap each example at MAX_TOKENS_PER_EXAMPLE
-	// 4. Calculate total billing tokens = sum of tokens * epochs
-	// 5. Calculate cost at $0.008 per 1K tokens
-	// 6. Print the results
+	const fileContent = fs.readFileSync(jsonlPath, 'utf-8');
+	const lines = fileContent.trim().split('\n');
+	const examples: TrainingExample[] = lines.map((line) => JSON.parse(line));
 
-	throw new Error('calculateTrainingCost not implemented yet!');
+	const numExamples = examples.length;
+
+	let epochs = TARGET_EPOCHS;
+	if (numExamples * TARGET_EPOCHS < MIN_TARGET_EXAMPLES) {
+		epochs = Math.min(
+			MAX_DEFAULT_EPOCHS,
+			Math.ceil(MIN_TARGET_EXAMPLES / numExamples)
+		);
+	} else if (numExamples * TARGET_EPOCHS > MAX_TARGET_EXAMPLES) {
+		epochs = Math.max(
+			MIN_DEFAULT_EPOCHS,
+			Math.floor(MAX_TARGET_EXAMPLES / numExamples)
+		);
+	}
+
+	let totalTokens = 0;
+	for (const example of examples) {
+		const text = example.messages.map((m) => m.content).join(' ');
+		const tokens = Math.min(countTokens(text), MAX_TOKENS_PER_EXAMPLE);
+		totalTokens += tokens;
+	}
+
+	const billingTokens = totalTokens * epochs;
+	const costPerThousand = 0.008;
+	const estimatedCost = (billingTokens / 1000) * costPerThousand;
+
+	console.log('\n📊 Fine-Tuning Cost Estimate');
+	console.log('═'.repeat(40));
+	console.log(`Training examples:    ${numExamples}`);
+	console.log(`Epochs:               ${epochs}`);
+	console.log(`Tokens per epoch:     ${totalTokens.toLocaleString()}`);
+	console.log(`Total billing tokens: ${billingTokens.toLocaleString()}`);
+	console.log(`Estimated cost:       $${estimatedCost.toFixed(2)}`);
+	console.log('═'.repeat(40));
 }
 
 // Run the estimation
