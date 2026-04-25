@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
 		// Use structured outputs with responses.parse
 		const result = await openaiClient.responses.parse({
-			model: 'gpt-4o-mini',
+			model: 'gpt-4o-mini', // why mini?
 			input: [
 				{
 					role: 'system',
@@ -70,7 +70,7 @@ The query should be a refined, clear version of what the user wants, removing co
 		console.error('Error selecting agent:', error);
 		return NextResponse.json(
 			{ error: 'Failed to select agent' },
-			{ status: 500 }
+			{ status: 500 },
 		);
 	}
 }
