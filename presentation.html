@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agentic RAG: Tool-Calling vs Workflows</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0f172a; color: #e2e8f0; }
+    .slide { min-height: 100vh; padding: 60px; display: flex; flex-direction: column; justify-content: center; border-bottom: 1px solid #334155; }
+    h1 { font-size: 3rem; margin-bottom: 1.5rem; color: #f8fafc; }
+    h2 { font-size: 2.25rem; margin-bottom: 1.5rem; color: #38bdf8; }
+    h3 { font-size: 1.5rem; margin-bottom: 1rem; color: #a78bfa; }
+    p, li { font-size: 1.4rem; line-height: 1.8; color: #cbd5e1; }
+    ul { margin-left: 2rem; margin-bottom: 1rem; }
+    li { margin-bottom: 0.75rem; }
+    .highlight { color: #4ade80; font-weight: 600; }
+    .code { background: #1e293b; padding: 24px; border-radius: 12px; font-family: 'Fira Code', monospace; font-size: 1.1rem; overflow-x: auto; margin: 1.5rem 0; border-left: 4px solid #38bdf8; white-space: pre-wrap; }
+    .code .comment { color: #64748b; }
+    .code .keyword { color: #c084fc; }
+    .code .string { color: #4ade80; }
+    .code .type { color: #38bdf8; }
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 2rem; }
+    .card { background: #1e293b; padding: 30px; border-radius: 16px; border: 1px solid #334155; }
+    .card h3 { margin-bottom: 1rem; }
+    .vs { font-size: 2rem; color: #f472b6; text-align: center; align-self: center; }
+    .diagram { background: #1e293b; padding: 40px; border-radius: 16px; margin: 2rem 0; text-align: center; }
+    .diagram-box { display: inline-block; padding: 16px 28px; margin: 8px; border-radius: 10px; font-weight: 600; font-size: 1.1rem; }
+    .box-user { background: #3b82f6; color: white; }
+    .box-agent { background: #8b5cf6; color: white; }
+    .box-index { background: #10b981; color: white; }
+    .box-llm { background: #f59e0b; color: white; }
+    .arrow { color: #64748b; font-size: 2rem; margin: 0 8px; }
+    .flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; margin: 16px 0; }
+    .subtitle { font-size: 1.6rem; color: #94a3b8; margin-bottom: 2rem; }
+    .emoji { font-size: 4rem; margin-bottom: 1rem; }
+    .center { text-align: center; }
+    .tag { display: inline-block; background: #4f46e5; padding: 6px 14px; border-radius: 20px; font-size: 0.9rem; margin: 4px; }
+    .tool-box { background: #334155; border: 2px dashed #64748b; padding: 14px 20px; border-radius: 10px; font-size: 1.1rem; transition: all 0.2s; }
+    .tool-box:hover { border-color: #f59e0b; background: #1e293b; }
+  </style>
+</head>
+<body>
+
+<!-- Slide 1: Title -->
+<section class="slide center">
+  <div class="emoji">🤖</div>
+  <h1>Agentic RAG</h1>
+  <p class="subtitle">Tool-Calling vs Workflows & Building a Selector Agent</p>
+  <p style="margin-top: 2rem; color: #64748b;">Scroll down to navigate slides</p>
+</section>
+
+<!-- Slide 2: The Problem -->
+<section class="slide">
+  <h2>The Problem</h2>
+  <p style="font-size: 1.6rem; margin-bottom: 2rem;">You have <span class="highlight">multiple knowledge bases</span>. How does your RAG system know which one(s) to search?</p>
+
+  <div class="diagram">
+    <p style="margin-bottom: 1.5rem; color: #94a3b8;">Your Knowledge Bases:</p>
+    <span class="diagram-box box-index">LinkedInPosts</span>
+    <span class="diagram-box box-index">MediumArticles</span>
+    <span class="diagram-box box-index">ScientificPapers</span>
+  </div>
+
+  <ul style="margin-top: 2rem;">
+    <li><strong>"What are good LinkedIn post ideas?"</strong> → Search LinkedInPosts</li>
+    <li><strong>"Latest transformer research"</strong> → Search ScientificPapers</li>
+    <li><strong>"Content writing tips"</strong> → Search LinkedInPosts + MediumArticles</li>
+  </ul>
+</section>
+
+<!-- Slide 3: Two Approaches -->
+<section class="slide">
+  <h2>Two Approaches to Solve This</h2>
+
+  <div class="two-col">
+    <div class="card">
+      <h3>🔧 Tool-Calling</h3>
+      <p>LLM decides <em>on the fly</em> which tools/functions to invoke</p>
+      <ul style="margin-top: 1rem;">
+        <li>Dynamic decision-making</li>
+        <li>LLM controls the flow</li>
+        <li>Can be unpredictable</li>
+        <li>Good for open-ended tasks</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>📋 Workflow</h3>
+      <p>Pre-defined steps executed in a <em>deterministic</em> order</p>
+      <ul style="margin-top: 1rem;">
+        <li>Predictable execution</li>
+        <li>Code controls the flow</li>
+        <li>Easier to debug</li>
+        <li>Good for structured tasks</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 4: Tool-Calling Visual -->
+<section class="slide">
+  <h2>🔧 Tool-Calling: How It Works</h2>
+  <p style="margin-bottom: 1.5rem;">You give the LLM a toolbox. It decides what to use.</p>
+
+  <div class="diagram" style="padding: 30px;">
+    <div class="flow-row">
+      <span class="diagram-box box-user">User Query</span>
+      <span class="arrow">→</span>
+      <span class="diagram-box box-llm" style="font-size: 1.5rem;">🧠 LLM</span>
+    </div>
+    <div style="color: #64748b; margin: 16px 0; font-size: 1.2rem;">picks from toolbox ↓</div>
+    <div style="display: flex; justify-content: center; gap: 16px; flex-wrap: wrap;">
+      <div class="tool-box">🔍 searchDB</div>
+      <div class="tool-box">📧 sendEmail</div>
+      <div class="tool-box">📝 createDoc</div>
+      <div class="tool-box">🌐 fetchURL</div>
+      <div class="tool-box">💾 saveFile</div>
+      <div class="tool-box">📊 runQuery</div>
+    </div>
+    <div style="color: #64748b; margin: 16px 0; font-size: 1.2rem;">↓ executes tools, maybe loops back</div>
+    <div class="flow-row">
+      <span class="diagram-box box-agent">Response</span>
+    </div>
+  </div>
+
+  <p style="text-align: center; margin-top: 1rem; color: #94a3b8; font-size: 1.2rem;">
+    The LLM is <span class="highlight">in control</span> — it decides what, when, and how many times
+  </p>
+</section>
+
+<!-- Slide 5: When Tool-Calling Works -->
+<section class="slide">
+  <h2>✅ When Tool-Calling Works Well</h2>
+
+  <div class="two-col" style="margin-top: 1rem;">
+    <div class="card" style="border-left: 4px solid #4ade80;">
+      <h3 style="color: #4ade80;">Good For</h3>
+      <ul>
+        <li><strong>Open-ended exploration</strong><br><span style="color: #94a3b8;">User: "Research this topic and summarize"</span></li>
+        <li><strong>Personal assistants</strong><br><span style="color: #94a3b8;">Calendar, email, tasks — flexible intent</span></li>
+        <li><strong>Developer tools</strong><br><span style="color: #94a3b8;">Claude Code, Cursor — user supervises</span></li>
+        <li><strong>Low-stakes tasks</strong><br><span style="color: #94a3b8;">Mistakes are cheap to fix</span></li>
+      </ul>
+    </div>
+
+    <div class="card" style="border-left: 4px solid #f87171;">
+      <h3 style="color: #f87171;">Bad For</h3>
+      <ul>
+        <li><strong>Production pipelines</strong><br><span style="color: #94a3b8;">Need predictable, testable behavior</span></li>
+        <li><strong>High-stakes decisions</strong><br><span style="color: #94a3b8;">Financial, medical, legal</span></li>
+        <li><strong>Cost-sensitive apps</strong><br><span style="color: #94a3b8;">LLM might loop and burn tokens</span></li>
+        <li><strong>Latency-sensitive apps</strong><br><span style="color: #94a3b8;">Multiple round-trips = slow</span></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 6: Why Companies Need Workflows -->
+<section class="slide">
+  <h2>🏢 Why Most Companies Need Workflows</h2>
+
+  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 2rem;">
+    <div class="card center">
+      <div style="font-size: 2.5rem; margin-bottom: 12px;">🔒</div>
+      <h3 style="font-size: 1.2rem;">Predictability</h3>
+      <p style="font-size: 1rem; color: #94a3b8;">Same input → same steps<br>Every. Single. Time.</p>
+    </div>
+    <div class="card center">
+      <div style="font-size: 2.5rem; margin-bottom: 12px;">🐛</div>
+      <h3 style="font-size: 1.2rem;">Debuggability</h3>
+      <p style="font-size: 1rem; color: #94a3b8;">Step failed? You know exactly where and why</p>
+    </div>
+    <div class="card center">
+      <div style="font-size: 2.5rem; margin-bottom: 12px;">💰</div>
+      <h3 style="font-size: 1.2rem;">Cost Control</h3>
+      <p style="font-size: 1rem; color: #94a3b8;">Fixed # of LLM calls<br>No runaway loops</p>
+    </div>
+    <div class="card center">
+      <div style="font-size: 2.5rem; margin-bottom: 12px;">⚡</div>
+      <h3 style="font-size: 1.2rem;">Speed</h3>
+      <p style="font-size: 1rem; color: #94a3b8;">Parallel steps, no back-and-forth</p>
+    </div>
+    <div class="card center">
+      <div style="font-size: 2.5rem; margin-bottom: 12px;">🧪</div>
+      <h3 style="font-size: 1.2rem;">Testability</h3>
+      <p style="font-size: 1rem; color: #94a3b8;">Unit test each step<br>Mock dependencies</p>
+    </div>
+    <div class="card center">
+      <div style="font-size: 2.5rem; margin-bottom: 12px;">📋</div>
+      <h3 style="font-size: 1.2rem;">Compliance</h3>
+      <p style="font-size: 1rem; color: #94a3b8;">Audit logs, approvals<br>Regulatory needs</p>
+    </div>
+  </div>
+
+  <p style="text-align: center; margin-top: 2rem; font-size: 1.4rem; color: #f472b6;">
+    <strong>Rule of thumb:</strong> If you're building for users (not developers), use workflows.
+  </p>
+</section>
+
+<!-- Slide 7: Anthropic Quote -->
+<section class="slide">
+  <h2>💬 From Anthropic</h2>
+
+  <div style="background: #1e293b; padding: 40px; border-radius: 16px; border-left: 4px solid #8b5cf6; margin: 2rem 0;">
+    <p style="font-size: 1.35rem; line-height: 1.9; font-style: italic; color: #e2e8f0;">
+      "When building applications with LLMs, we recommend finding the <span class="highlight">simplest solution possible</span>, and only increasing complexity when needed. This might mean not building agentic systems at all."
+    </p>
+    <p style="font-size: 1.35rem; line-height: 1.9; font-style: italic; color: #e2e8f0; margin-top: 1.5rem;">
+      "When more complexity is warranted, <span style="color: #38bdf8;">workflows offer predictability</span> and consistency for well-defined tasks, whereas <span style="color: #f59e0b;">agents are better when flexibility</span> and model-driven decision-making are needed at scale."
+    </p>
+    <p style="font-size: 1.35rem; line-height: 1.9; font-style: italic; color: #e2e8f0; margin-top: 1.5rem;">
+      "For many applications, however, <span class="highlight">optimizing single LLM calls with retrieval and in-context examples is usually enough.</span>"
+    </p>
+  </div>
+
+  <p style="text-align: right; color: #64748b; margin-top: 1rem;">— Anthropic, "Building Effective Agents"</p>
+</section>
+
+<!-- Slide 8: Fine-Tuning vs RAG -->
+<section class="slide">
+  <h2>🎓 Fine-Tuning vs RAG</h2>
+  <p class="subtitle">Two ways to make LLMs smarter about your domain</p>
+
+  <div class="two-col" style="margin-top: 1.5rem;">
+    <div class="card" style="border-left: 4px solid #f59e0b;">
+      <h3 style="color: #f59e0b;">🔧 Fine-Tuning</h3>
+      <p style="margin-bottom: 1rem;">Train the model on your data</p>
+      <ul>
+        <li>Changes model <strong>behavior/style</strong></li>
+        <li>Learns patterns, tone, format</li>
+        <li>Knowledge baked into weights</li>
+        <li>Can't easily update</li>
+      </ul>
+      <div style="margin-top: 1rem; padding: 12px; background: #0f172a; border-radius: 8px;">
+        <p style="font-size: 1rem; color: #94a3b8;"><strong>Use when:</strong> You need a specific voice, style, or behavior the base model can't do</p>
+      </div>
+    </div>
+
+    <div class="card" style="border-left: 4px solid #38bdf8;">
+      <h3 style="color: #38bdf8;">📚 RAG</h3>
+      <p style="margin-bottom: 1rem;">Give the model your data at runtime</p>
+      <ul>
+        <li>Provides <strong>knowledge/facts</strong></li>
+        <li>Retrieves relevant context</li>
+        <li>Knowledge in vector DB</li>
+        <li>Easy to update anytime</li>
+      </ul>
+      <div style="margin-top: 1rem; padding: 12px; background: #0f172a; border-radius: 8px;">
+        <p style="font-size: 1rem; color: #94a3b8;"><strong>Use when:</strong> You need current facts, docs, or domain knowledge</p>
+      </div>
+    </div>
+  </div>
+
+  <p style="text-align: center; margin-top: 2rem; font-size: 1.3rem; color: #a78bfa;">
+    <strong>Today:</strong> We're building RAG (the more common pattern)
+  </p>
+</section>
+
+<!-- Slide 9: Fine-Tuning Overview -->
+<section class="slide">
+  <h2>📝 Fine-Tuning: Quick Look</h2>
+  <p style="margin-bottom: 1rem; color: #94a3b8;">(We won't implement this today — just understanding the concept)</p>
+
+  <p style="margin-bottom: 1.5rem;">Training data teaches the model a specific voice/style:</p>
+
+  <div class="code" style="font-size: 0.95rem;">
+<span class="comment">// linkedin_training.jsonl — example format</span>
+{
+  <span class="type">"messages"</span>: [
+    {
+      <span class="type">"role"</span>: <span class="string">"system"</span>,
+      <span class="type">"content"</span>: <span class="string">"You are a brutally honest career coach..."</span>
+    },
+    {
+      <span class="type">"role"</span>: <span class="string">"user"</span>,
+      <span class="type">"content"</span>: <span class="string">"Write a post about tutorial hell."</span>
+    },
+    {
+      <span class="type">"role"</span>: <span class="string">"assistant"</span>,
+      <span class="type">"content"</span>: <span class="string">"Turn off the tutorial. Open the code editor..."</span>
+    }
+  ]
+}
+  </div>
+
+  <div style="margin-top: 2rem; padding: 20px; background: #1e293b; border-radius: 12px; border-left: 4px solid #f59e0b;">
+    <p style="font-size: 1.2rem;"><strong>Fine-tuning is for:</strong> Changing HOW the model responds (tone, format, style)</p>
+    <p style="font-size: 1.2rem; margin-top: 0.5rem;"><strong>RAG is for:</strong> Giving the model WHAT to know (facts, docs, context)</p>
+  </div>
+</section>
+
+<!-- Slide 10: Workflow Deep Dive -->
+<section class="slide">
+  <h2>📋 Workflow Pattern</h2>
+  <p style="margin-bottom: 1.5rem;">Structured steps with LLM making specific decisions at each stage</p>
+
+  <div class="code">
+<span class="comment">// Step 1: Selector Agent picks indexes</span>
+<span class="keyword">const</span> { indexes, query } = <span class="keyword">await</span> selectorAgent(userMessage);
+
+<span class="comment">// Step 2: Search selected indexes (deterministic)</span>
+<span class="keyword">const</span> results = <span class="keyword">await</span> searchIndexes(indexes, query);
+
+<span class="comment">// Step 3: Generate response with context</span>
+<span class="keyword">const</span> response = <span class="keyword">await</span> generateResponse(results, messages);
+  </div>
+
+  <p style="margin-top: 1.5rem; color: #4ade80;"><strong>Benefit:</strong> Predictable flow, LLM focused on narrow decision</p>
+</section>
+
+<!-- Slide 6: What We're Building -->
+<section class="slide">
+  <h2>🎯 What We're Building</h2>
+  <p class="subtitle">A Selector Agent using the Workflow Pattern</p>
+
+  <div class="diagram">
+    <div class="flow-row">
+      <span class="diagram-box box-user">User Query</span>
+      <span class="arrow">→</span>
+      <span class="diagram-box box-agent">Selector Agent</span>
+      <span class="arrow">→</span>
+      <span class="diagram-box box-index">0-3 Indexes</span>
+      <span class="arrow">→</span>
+      <span class="diagram-box box-llm">RAG Response</span>
+    </div>
+  </div>
+
+  <p style="text-align: center; margin: 2rem 0; font-size: 1.3rem;">The Selector Agent outputs <span class="highlight">structured data</span> (not free text)</p>
+
+  <div class="code">
+<span class="comment">// Selector Agent Output Schema</span>
+{
+  <span class="type">indexes</span>: [<span class="string">"LinkedInPosts"</span>, <span class="string">"MediumArticles"</span>],  <span class="comment">// 1-3 indexes</span>
+  <span class="type">query</span>: <span class="string">"optimized search query for retrieval"</span>
+}
+  </div>
+</section>
+
+<!-- Slide 7: Structured Output -->
+<section class="slide">
+  <h2>🔒 Structured Output with Zod</h2>
+  <p style="margin-bottom: 1.5rem;">Force the LLM to return valid, typed data</p>
+
+  <div class="code">
+<span class="keyword">const</span> indexSchema = z.enum([
+  <span class="string">'LinkedInPosts'</span>,
+  <span class="string">'MediumArticles'</span>,
+  <span class="string">'ScientificPapers'</span>
+]);
+
+<span class="keyword">const</span> indexSelectionSchema = z.object({
+  <span class="type">indexes</span>: z.array(indexSchema).min(1).max(3),
+  <span class="type">query</span>: z.string()
+});
+
+<span class="comment">// OpenAI will ONLY return data matching this schema</span>
+<span class="keyword">const</span> response = <span class="keyword">await</span> openai.chat({
+  response_format: zodTextFormat(indexSelectionSchema)
+});
+  </div>
+</section>
+
+<!-- Slide 8: Few-Shot Prompting -->
+<section class="slide">
+  <h2>📚 Few-Shot Examples</h2>
+  <p style="margin-bottom: 1.5rem;">Guide the LLM with examples of correct behavior</p>
+
+  <div class="code" style="font-size: 1rem;">
+<span class="comment">// Examples in our system prompt:</span>
+
+User: <span class="string">"What are good LinkedIn post ideas for developers?"</span>
+Output: {<span class="type">indexes</span>: [<span class="string">"LinkedInPosts"</span>], <span class="type">query</span>: <span class="string">"developer post ideas engagement"</span>}
+
+User: <span class="string">"Latest research on transformer architectures"</span>
+Output: {<span class="type">indexes</span>: [<span class="string">"ScientificPapers"</span>], <span class="type">query</span>: <span class="string">"transformer architecture research"</span>}
+
+User: <span class="string">"How do I write engaging content?"</span>
+Output: {<span class="type">indexes</span>: [<span class="string">"LinkedInPosts"</span>, <span class="string">"MediumArticles"</span>], <span class="type">query</span>: <span class="string">"engaging content tips"</span>}
+  </div>
+</section>
+
+<!-- Slide 9: Architecture -->
+<section class="slide">
+  <h2>🏗️ Full Architecture</h2>
+
+  <div class="diagram" style="padding: 30px;">
+    <div class="flow-row">
+      <span class="diagram-box box-user">User</span>
+      <span class="arrow">→</span>
+      <span class="diagram-box" style="background: #334155;">Chat UI</span>
+    </div>
+    <div style="color: #64748b; margin: 8px 0;">↓</div>
+    <div class="flow-row">
+      <span class="diagram-box box-agent">Selector Agent</span>
+      <span style="color: #94a3b8; margin: 0 12px; font-size: 0.9rem;">picks indexes + refines query</span>
+    </div>
+    <div style="color: #64748b; margin: 8px 0;">↓</div>
+    <div class="flow-row">
+      <span class="diagram-box box-index">Weaviate</span>
+      <span style="color: #94a3b8; margin: 0 12px; font-size: 0.9rem;">vector search on selected indexes</span>
+    </div>
+    <div style="color: #64748b; margin: 8px 0;">↓</div>
+    <div class="flow-row">
+      <span class="diagram-box box-llm">RAG Agent</span>
+      <span style="color: #94a3b8; margin: 0 12px; font-size: 0.9rem;">generates response with context</span>
+    </div>
+    <div style="color: #64748b; margin: 8px 0;">↓</div>
+    <div class="flow-row">
+      <span class="diagram-box box-user">User</span>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 10: Key Takeaways -->
+<section class="slide">
+  <h2>🎯 Key Takeaways</h2>
+
+  <ul style="font-size: 1.5rem;">
+    <li><span class="highlight">Tool-Calling:</span> LLM decides flow dynamically — flexible but unpredictable</li>
+    <li><span class="highlight">Workflows:</span> Code controls flow, LLM makes narrow decisions — predictable</li>
+    <li><span class="highlight">Selector Agent:</span> Uses structured output to pick 1-3 indexes</li>
+    <li><span class="highlight">Zod Schemas:</span> Guarantee valid, typed LLM responses</li>
+    <li><span class="highlight">Few-Shot:</span> Examples guide the LLM's decision-making</li>
+  </ul>
+
+  <div style="margin-top: 3rem; padding: 24px; background: #1e293b; border-radius: 12px; border-left: 4px solid #4ade80;">
+    <p style="font-size: 1.3rem;"><strong>Why this matters:</strong> Multi-index RAG lets you build specialized knowledge bases while keeping a unified chat interface.</p>
+  </div>
+</section>
+
+<!-- Slide 11: Let's Build -->
+<section class="slide center">
+  <div class="emoji">🚀</div>
+  <h1>Let's Build It</h1>
+  <p class="subtitle">Time to implement the Selector Agent</p>
+  <div style="margin-top: 2rem;">
+    <span class="tag">Next.js API Route</span>
+    <span class="tag">OpenAI</span>
+    <span class="tag">Zod</span>
+    <span class="tag">Weaviate</span>
+  </div>
+</section>
+
+</body>
+</html>
