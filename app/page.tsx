@@ -44,7 +44,7 @@ export default function Home() {
 
 				if (response.ok) {
 					setUploadStatus(
-						`✅ Success! Uploaded ${data.vectorsUploaded} vectors`
+						`✅ Success! Uploaded ${data.vectorsUploaded} vectors`,
 					);
 					setUploadContent('');
 				} else {
@@ -62,7 +62,7 @@ export default function Home() {
 
 				if (response.ok) {
 					setUploadStatus(
-						`✅ Success! Uploaded ${data.vectorsUploaded} vectors from text`
+						`✅ Success! Uploaded ${data.vectorsUploaded} vectors from text`,
 					);
 					setUploadContent('');
 				} else {
@@ -113,7 +113,7 @@ export default function Home() {
 				body: JSON.stringify({ messages: currentMessages }),
 			});
 
-			const { agent, query } = await agentResponse.json();
+			const { indexes, query } = await agentResponse.json();
 
 			// Step 2: Make direct API call
 			const response = await fetch('/api/chat', {
@@ -123,7 +123,7 @@ export default function Home() {
 				},
 				body: JSON.stringify({
 					messages: currentMessages,
-					agent,
+					indexes,
 					query,
 				}),
 			});
@@ -162,8 +162,8 @@ export default function Home() {
 						prev.map((msg) =>
 							msg.id === assistantMessageId
 								? { ...msg, content: assistantResponse }
-								: msg
-						)
+								: msg,
+						),
 					);
 				}
 			}

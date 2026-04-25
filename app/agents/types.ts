@@ -1,13 +1,13 @@
 import { z } from 'zod';
 import { StreamTextResult } from 'ai';
 
-export const agentTypeSchema = z
-	.enum(['linkedin', 'rag'])
-	.describe(
-		'The agent to use: linkedin for help writing posts, rag for help with technical questions'
-	);
 
-export type AgentType = z.infer<typeof agentTypeSchema>;
+// Weaviate indexes for RAG
+export const indexSchema = z
+	.enum(['LinkedInPosts', 'MediumArticles', 'ScientificPapers'])
+	.describe('Knowledge base index to search');
+
+export type IndexType = z.infer<typeof indexSchema>;
 
 export const messageSchema = z.object({
 	role: z.enum(['user', 'assistant', 'system']),
@@ -17,10 +17,10 @@ export const messageSchema = z.object({
 export type Message = z.infer<typeof messageSchema>;
 
 export interface AgentRequest {
-	type: AgentType;
 	query: string; // Refined/summarized query from selector
 	originalQuery: string; // Original user message
 	messages: Message[]; // Conversation history
+	indexes: IndexType[]; // Weaviate indexes to search
 }
 
 export type AgentResponse = StreamTextResult<Record<string, never>, never>;

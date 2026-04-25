@@ -1,7 +1,7 @@
 /**
- * SELECTOR AGENT TESTS
+ * INDEX SELECTOR TESTS
  *
- * These tests verify that queries are routed to the correct agent.
+ * These tests verify that queries are routed to the correct indexes.
  * Since LLMs are non-deterministic, we test routing decisions and
  * response structure, not exact text output.
  *
@@ -11,7 +11,9 @@
 import { POST } from '@/app/api/select-agent/route';
 import { NextRequest } from 'next/server';
 
-describe('Selector Agent Routing', () => {
+const VALID_INDEXES = ['LinkedInPosts', 'MediumArticles', 'ScientificPapers'];
+
+describe('Index Selector Routing', () => {
 	// Increase timeout for LLM API calls
 	jest.setTimeout(15000);
 
@@ -25,77 +27,94 @@ describe('Selector Agent Routing', () => {
 	};
 
 	// Helper to call the selector and get response
-	const selectAgent = async (query: string) => {
+	const selectIndexes = async (query: string) => {
 		const request = createRequest(query);
 		const response = await POST(request);
-		return response.json();
+		return response?.json();
 	};
 
-	describe('LinkedIn Agent Routing', () => {
-		it('should route LinkedIn post creation to linkedin agent', async () => {
-			const result = await selectAgent(
-				'Write a LinkedIn post about learning TypeScript'
+	describe('LinkedInPosts Routing', () => {
+		it('should route LinkedIn content questions to LinkedInPosts', async () => {
+			const result = await selectIndexes(
+				'What are some good LinkedIn post ideas for developers?'
 			);
 
-			expect(result.agent).toBe('linkedin');
+			expect(result.indexes).toContain('LinkedInPosts');
 		});
 
-		it('should route career advice to linkedin agent', async () => {
-			const result = await selectAgent(
-				'What career advice do you have for junior developers?'
+		it('should route career advice to LinkedInPosts', async () => {
+			const result = await selectIndexes(
+				'How do I build my personal brand on LinkedIn?'
 			);
 
-			expect(result.agent).toBe('linkedin');
-		});
-
-		it('should route professional networking questions to linkedin agent', async () => {
-			const result = await selectAgent(
-				'How do I improve my LinkedIn profile?'
-			);
-
-			expect(result.agent).toBe('linkedin');
+			expect(result.indexes).toContain('LinkedInPosts');
 		});
 	});
 
-	describe('RAG Agent Routing', () => {
-		it('should route technical documentation questions to rag agent', async () => {
-			const result = await selectAgent('How do React hooks work?');
-
-			expect(result.agent).toBe('rag');
-			expect(result.query).toBeTruthy();
-		});
-
-		it('should route coding questions to rag agent', async () => {
-			const result = await selectAgent(
-				'Explain async/await in JavaScript'
+	describe('MediumArticles Routing', () => {
+		it('should route technical tutorial questions to MediumArticles', async () => {
+			const result = await selectIndexes(
+				'Find programming tutorials about React hooks'
 			);
 
-			expect(result.agent).toBe('rag');
+			expect(result.indexes).toContain('MediumArticles');
 		});
 
-		it('should route framework questions to rag agent', async () => {
-			const result = await selectAgent(
-				'What is the difference between useEffect and useLayoutEffect?'
+		it('should route software development articles to MediumArticles', async () => {
+			const result = await selectIndexes(
+				'What are best practices for writing clean code?'
 			);
 
-			expect(result.agent).toBe('rag');
+			expect(result.indexes).toContain('MediumArticles');
+		});
+	});
+
+	describe('ScientificPapers Routing', () => {
+		it('should route research questions to ScientificPapers', async () => {
+			const result = await selectIndexes(
+				'What does the latest research say about transformer architectures?'
+			);
+
+			expect(result.indexes).toContain('ScientificPapers');
+		});
+
+		it('should route academic topics to ScientificPapers', async () => {
+			const result = await selectIndexes(
+				'Find papers about attention mechanisms in neural networks'
+			);
+
+			expect(result.indexes).toContain('ScientificPapers');
+		});
+	});
+
+	describe('Multi-Index Routing', () => {
+		it('should select multiple indexes for broad queries', async () => {
+			const result = await selectIndexes(
+				'Find articles and research about machine learning'
+			);
+
+			expect(result.indexes.length).toBeGreaterThanOrEqual(1);
+			expect(result.indexes.length).toBeLessThanOrEqual(3);
 		});
 	});
 
 	describe('Response Structure', () => {
 		it('should return valid response structure', async () => {
-			const result = await selectAgent('Any question here');
+			const result = await selectIndexes('Any question here');
 
 			// Verify required fields exist
-			expect(result).toHaveProperty('agent');
+			expect(result).toHaveProperty('indexes');
 			expect(result).toHaveProperty('query');
 
-			// Verify agent is valid
-			expect(['linkedin', 'rag']).toContain(result.agent);
+			// Verify indexes are valid
+			expect(Array.isArray(result.indexes)).toBe(true);
+			result.indexes.forEach((index: string) => {
+				expect(VALID_INDEXES).toContain(index);
+			});
 		});
 
 		it('should refine queries', async () => {
-			const result = await selectAgent('Tell me about hooks');
+			const result = await selectIndexes('Tell me about deep learning');
 
 			// Refined query should be non-empty
 			expect(result.query).toBeTruthy();
@@ -105,24 +124,21 @@ describe('Selector Agent Routing', () => {
 
 	describe('Edge Cases', () => {
 		it('should handle very short queries', async () => {
-			const result = await selectAgent('Help');
+			const result = await selectIndexes('Help');
 
-			// Should still route to a valid agent
-			expect(['linkedin', 'rag']).toContain(result.agent);
-		});
-
-		it('should handle out-of-domain queries', async () => {
-			const result = await selectAgent('What is the weather today?');
-
-			// Should pick an agent (probably rag as fallback)
-			expect(['linkedin', 'rag']).toContain(result.agent);
+			// Should still return valid indexes
+			expect(Array.isArray(result.indexes)).toBe(true);
+			expect(result.indexes.length).toBeGreaterThanOrEqual(1);
 		});
 
 		it('should handle ambiguous queries', async () => {
-			const result = await selectAgent('Tell me about JavaScript');
+			const result = await selectIndexes('Tell me about AI');
 
-			// Could go to either agent - both are valid
-			expect(['linkedin', 'rag']).toContain(result.agent);
+			// Should return at least one valid index
+			expect(result.indexes.length).toBeGreaterThanOrEqual(1);
+			result.indexes.forEach((index: string) => {
+				expect(VALID_INDEXES).toContain(index);
+			});
 		});
 	});
 });

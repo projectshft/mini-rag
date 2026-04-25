@@ -1,14 +1,21 @@
-import { AgentType, AgentConfig } from './types';
+import { IndexType } from './types';
 
-export const agentConfigs: Record<AgentType, AgentConfig> = {
-	linkedin: {
-		name: 'LinkedIn Agent',
-		description:
-			'For writing posts in a certain voice and tone for LinkedIn',
+export interface IndexConfig {
+	name: string;
+	description: string;
+}
+
+export const indexConfigs: Record<IndexType, IndexConfig> = {
+	LinkedInPosts: {
+		name: 'LinkedIn Posts',
+		description: 'Professional content, career advice, LinkedIn engagement strategies, personal branding',
 	},
-	rag: {
-		name: 'RAG Agent',
-		description:
-			'For questions about documentation regarding Typescript, NextJS, Pinecone, Vercel AI SDK technical content, or information that requires knowledge base retrieval',
+	MediumArticles: {
+		name: 'Medium Articles',
+		description: 'Technical tutorials, programming guides, software development articles',
+	},
+	ScientificPapers: {
+		name: 'Scientific Papers',
+		description: 'Academic research, scientific studies, technical papers',
 	},
 };

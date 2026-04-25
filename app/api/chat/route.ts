@@ -1,10 +1,10 @@
 import { z } from 'zod';
-import { agentTypeSchema, messageSchema } from '@/app/agents/types';
-import { getAgent } from '@/app/agents/registry';
+import { indexSchema, messageSchema } from '@/app/agents/types';
+import { executeAgent } from '@/app/agents/registry';
 
 const chatSchema = z.object({
 	messages: z.array(messageSchema),
-	agent: agentTypeSchema,
+	indexes: z.array(indexSchema).min(1).max(3),
 	query: z.string(),
 });
 
@@ -13,12 +13,11 @@ export async function POST(req: Request) {
 	//
 	// Steps:
 	// 1. Parse and validate the request body using chatSchema.parse()
-	// 2. Extract messages, agent type, and query from parsed body
+	// 2. Extract messages, indexes, and query from parsed body
 	// 3. Get the original user query from the last message
-	// 4. Look up the agent executor using getAgent()
-	// 5. Execute the agent with { type, query, originalQuery, messages }
-	// 6. Return result.toTextStreamResponse()
-	// 7. Wrap in try/catch - return 500 on error
+	// 4. Execute the agent with { query, originalQuery, messages, indexes }
+	// 5. Return result.toTextStreamResponse()
+	// 6. Wrap in try/catch - return 500 on error
 
 	throw new Error('Chat endpoint not implemented yet!');
 }
