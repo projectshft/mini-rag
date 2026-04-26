@@ -68,6 +68,25 @@ For any RAG system, address these six areas:
 
 ---
 
+## 🎥 Video: Live System Design Walkthrough
+
+> **[VIDEO PLACEHOLDER]**
+>
+> **Title:** "RAG System Design: Thinking Out Loud"
+>
+> **Content:**
+> - Walk through ONE scenario (legal docs recommended) as if in a real interview
+> - Show the "messy" thinking process: pausing, considering alternatives, self-correcting
+> - Demonstrate drawing architecture on a whiteboard/screen while explaining
+> - Explicitly call out: "Here's where I'd pause and ask the interviewer a clarifying question"
+> - End with a 30-second summary of key decisions
+>
+> **Duration:** 8-10 minutes
+>
+> **Why this video:** System design is the hardest interview skill to learn from reading. Senior devs need to see the pacing, when to go deep vs stay high-level, and how to handle "I don't know" moments gracefully.
+
+---
+
 ## Scenario 1: Legal Document RAG
 
 ### The Prompt

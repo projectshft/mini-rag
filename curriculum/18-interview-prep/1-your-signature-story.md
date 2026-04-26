@@ -407,6 +407,24 @@ Cut ruthlessly. Focus on the framework.
 
 ---
 
+## 🎥 Video: Signature Story Example (Weak vs Strong)
+
+> **[VIDEO PLACEHOLDER]**
+>
+> **Title:** "Signature Story: What Makes the Difference"
+>
+> **Content:**
+> - Live demonstration of a weak signature story (~1 min) - rambling, no structure, implementation-first
+> - Replay with commentary on what went wrong
+> - Live demonstration of a strong signature story (~2 min) - using the PASR framework
+> - Key moments to highlight: the problem setup, the tradeoff explanation, the "what I learned" close
+>
+> **Duration:** 5-7 minutes
+>
+> **Why this video:** Senior engineers know _what_ to say but struggle with _how_ to say it. Seeing the contrast between weak/strong delivery is impossible to convey in text.
+
+---
+
 ## Example Story
 
 Here's a complete example following the framework:

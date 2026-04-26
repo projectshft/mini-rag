@@ -48,6 +48,25 @@ For any tool, pattern, or approach, have:
 
 ---
 
+## 🎥 Video: Taking a Position Under Pressure
+
+> **[VIDEO PLACEHOLDER]**
+>
+> **Title:** "How to Sound Opinionated (Without Being Wrong)"
+>
+> **Content:**
+> - Demonstrate answering "What do you think about autonomous agents?" two ways:
+>   1. Weak: hedging, "it depends", no actual position
+>   2. Strong: clear position, tradeoffs acknowledged, specific use cases
+> - Show the "I prefer X because... but I'd use Y when..." pattern in action
+> - Bonus: handle a pushback ("But what about [counter-example]?") and show how to engage without backing down
+>
+> **Duration:** 4-5 minutes
+>
+> **Why this video:** Mid-level devs often know the right answer but deliver it like a question. This video shows the subtle confidence shift that senior engineers need.
+
+---
+
 ## Opinion 1: Agents vs Structured Workflows
 
 This is the most common interview question. You must have a clear answer.
