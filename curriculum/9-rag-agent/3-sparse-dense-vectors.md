@@ -1,5 +1,37 @@
 # Sparse and Dense Vectors in RAG
 
+---
+
+## Visual Presentation
+
+Open the interactive presentation to see sparse vs dense vectors explained visually:
+
+**[Open Presentation](./sparse-dense-presentation.html)** (open in browser)
+
+---
+
+## Hands-On Demo
+
+Run the complete demo to create an index, upload documents, and compare search modes:
+
+```bash
+npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts all
+```
+
+Or run steps individually:
+```bash
+npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts create   # Create index
+npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts upsert   # Upload docs
+npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts search   # Compare searches
+npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts cleanup  # Delete demo data
+```
+
+The demo uses real production tools:
+- **Dense vectors**: OpenAI `text-embedding-3-small`
+- **Sparse vectors**: Pinecone's `pinecone-sparse-english-v0` encoder
+
+---
+
 ## Introduction
 
 When building RAG systems, you have two main approaches to representing text for search: **dense vectors** and **sparse vectors**. Many production systems use both in a hybrid approach.
