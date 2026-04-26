@@ -1,6 +1,38 @@
 # Curriculum Changes
 
-## Latest Changes - April 20, 2026
+## Latest Changes - April 26, 2026
+
+### Sparse/Dense Vectors Demo + Curriculum Cleanup
+
+**Changes:**
+- ✅ **NEW: Hybrid search demo script** (`app/scripts/exercises/hybrid-search-demo.ts`)
+  - Creates index with dotproduct metric (required for hybrid search)
+  - Uploads documents with both dense (OpenAI) and sparse (Pinecone) vectors
+  - Compares dense-only vs hybrid search results
+  - Available on both `curriculum` and `student-todo-exercises` branches
+- ✅ **NEW: Visual presentation** (`curriculum/9-rag-agent/sparse-dense-presentation.html`)
+  - 8-slide interactive presentation explaining sparse vs dense vectors
+- ✅ **Updated `curriculum/9-rag-agent/3-sparse-dense-vectors.md`**
+  - Added demo instructions and presentation link
+- ✅ **Simplified `curriculum/7-agent-architecture/5-graceful-degradation.md`**
+  - Focused on: model providers, retries, user messaging
+  - Removed: caching, circuit breaker, feature reduction (over-engineered for intro)
+- ✅ **Removed outdated "Our Learning Path" from `curriculum/1-intro-to-rag/1-what-is-rag.md`**
+  - Listed 10 topics that didn't match actual 19-module curriculum
+
+### Unpushed Commits
+
+**curriculum branch (3 commits):**
+- 79e63af - Move hybrid-search-demo.ts to app/scripts/exercises
+- 896bae0 - Add hybrid search demo for sparse/dense vectors
+- c9510aa - update curriculum for interview
+
+**student-todo-exercises branch (1 commit):**
+- 8ad7822 - Add hybrid search demo script
+
+---
+
+## Previous Changes - April 20, 2026
 
 ### Assignment 1 Fix: Remove Solutions Before Assignment
 
@@ -151,9 +183,13 @@ Students should cover:
 **Total required**: 3 videos, 9 written pieces (~2,500 lines total)
 **Assessment**: Appropriate workload, focused on practical interview skills
 
-## All Changes Pushed
+## Push Status
 
-All changes have been committed and pushed to the curriculum branch.
+**Unpushed as of April 26, 2026:**
+- curriculum: 3 commits
+- student-todo-exercises: 1 commit
+
+Run `git push` on each branch to publish.
 
 **April 20, 2026:**
 - Commit: 8f6a279 - "Fix broken OpenAI embeddings documentation links"
