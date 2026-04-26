@@ -4,11 +4,11 @@
  * A complete demo showing sparse + dense vectors in Pinecone.
  *
  * Usage:
- *   npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts create   # Create the index
- *   npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts upsert   # Upload documents
- *   npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts search   # Run search comparisons
- *   npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts cleanup  # Delete demo data
- *   npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts all      # Run everything
+ *   npx ts-node app/scripts/exercises/hybrid-search-demo.ts create   # Create the index
+ *   npx ts-node app/scripts/exercises/hybrid-search-demo.ts upsert   # Upload documents
+ *   npx ts-node app/scripts/exercises/hybrid-search-demo.ts search   # Run search comparisons
+ *   npx ts-node app/scripts/exercises/hybrid-search-demo.ts cleanup  # Delete demo data
+ *   npx ts-node app/scripts/exercises/hybrid-search-demo.ts all      # Run everything
  *
  * Prerequisites:
  *   - OPENAI_API_KEY in .env

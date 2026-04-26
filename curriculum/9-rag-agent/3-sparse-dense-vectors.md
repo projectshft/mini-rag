@@ -15,15 +15,15 @@ Open the interactive presentation to see sparse vs dense vectors explained visua
 Run the complete demo to create an index, upload documents, and compare search modes:
 
 ```bash
-npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts all
+npx ts-node app/scripts/exercises/hybrid-search-demo.ts all
 ```
 
 Or run steps individually:
 ```bash
-npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts create   # Create index
-npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts upsert   # Upload docs
-npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts search   # Compare searches
-npx ts-node curriculum/9-rag-agent/hybrid-search-demo.ts cleanup  # Delete demo data
+npx ts-node app/scripts/exercises/hybrid-search-demo.ts create   # Create index
+npx ts-node app/scripts/exercises/hybrid-search-demo.ts upsert   # Upload docs
+npx ts-node app/scripts/exercises/hybrid-search-demo.ts search   # Compare searches
+npx ts-node app/scripts/exercises/hybrid-search-demo.ts cleanup  # Delete demo data
 ```
 
 The demo uses real production tools:
