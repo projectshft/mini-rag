@@ -1,0 +1,156 @@
+RAG CURRICULUM GUIDE
+====================
+
+This curriculum teaches students to build production RAG (Retrieval-Augmented Generation) applications using TypeScript, Next.js, Pinecone, and OpenAI.
+
+BRANCH STRUCTURE
+----------------
+- curriculum: Complete reference implementations (instructor use)
+- student-todo-exercises: Starter code with TODOs for students to complete
+
+MODULES (in order)
+------------------
+
+0. HOW TO LEARN
+   - Feynman technique for understanding concepts
+   - Learning strategies
+
+1. INTRO TO RAG
+   - What RAG is and why it matters
+   - Real-world applications
+   - High-level architecture overview
+
+2. VECTOR MATH BASICS
+   - Vectors and embeddings explained
+   - Cosine similarity implementation
+   - Word arithmetic (king - man + woman = queen)
+
+3. PINECONE INTEGRATION
+   - Setting up Pinecone client
+   - Creating indexes
+   - Upserting and querying vectors
+
+4. CHUNKING FUNDAMENTALS
+   - Introduction to web scraping
+   - Why chunking matters
+   - Chunking strategies (size, overlap)
+
+5. DOCUMENT UPLOAD
+   - Uploading documents via script
+   - Building the API route
+   - Querying documents
+   - Assignment 1: Complete the document upload TODOs
+
+6. FINE-TUNING
+   - When to fine-tune vs use RAG
+   - Fine-tuning overview
+   - Running a fine-tuning job
+
+7. AGENT ARCHITECTURE
+   - Understanding agent systems
+   - Prompting strategies for agents
+   - Text-based selector implementation
+   - Structured outputs with Zod
+   - Graceful degradation (model fallbacks, retries, user messaging)
+   - Assignment 2: Build the selector agent
+
+8. LINKEDIN AGENT
+   - Implementing a specialized LinkedIn content agent
+   - Prompt engineering for specific use cases
+
+9. RAG AGENT
+   - Implementing the core RAG agent
+   - Reranking results for better relevance
+   - Sparse and dense vectors (hybrid search)
+   - Demo script: app/scripts/exercises/hybrid-search-demo.ts
+   - Assignment 3: Build the RAG agent with reranking
+
+10. AI FRAMEWORKS (DRAFT - not referenced)
+    - LangGraph introduction
+    - Building agents with frameworks
+
+11. CHAT INTERFACE
+    - Understanding the Next.js chat UI
+    - Streaming responses
+    - Conversation context
+
+12. OBSERVABILITY
+    - LangSmith integration
+    - Tracing and debugging agents
+    - Monitoring production systems
+
+13. TESTING AGENTS
+    - Testing the selector agent
+    - LLM-as-judge evaluation pattern
+
+14. TOOL CALLING EXPLORATION
+    - Tool calling concepts
+    - Building tools for agents
+
+15. SQL AGENT
+    - RAG without vectors (structured data)
+    - Text-to-SQL patterns
+    - Assignment 4: Build SQL agent (uses killer_agents repo)
+
+16. AGENT PATTERNS (DRAFT - not referenced)
+    - Common agent architectures
+    - Workflow vs human-in-the-loop
+
+17. CAPSTONE PROJECT
+    - Finding your use case ("10x Question" framework)
+    - Building a complete RAG application
+    - Final submission requirements
+
+18. INTERVIEW PREP
+    - Your signature story
+    - Strong opinions and tradeoffs
+    - RAG system design questions
+    - Live practice
+
+99. CHEAT CODES
+    - Quick reference for: embeddings, structured outputs, tool calling,
+      chunking, streaming, human-in-the-loop, router agents, prompt templates
+
+ASSIGNMENTS (5 total)
+---------------------
+1. Document Upload - Complete TODOs in document upload module
+2. Selector Agent - Build agent routing with structured outputs
+3. RAG Agent - Implement RAG with reranking
+4. SQL Agent - Build text-to-SQL agent (killer_agents repo, sql-agent branch)
+5. Capstone - Build your own RAG application
+
+KEY FILES FOR STUDENTS
+----------------------
+app/agents/linkedin.ts - LinkedIn agent (TODO)
+app/agents/rag.ts - RAG agent with reranking (TODO)
+app/api/select-agent/route.ts - Selector agent (TODO)
+app/libs/chunking.ts - Chunking utilities (TODO: getLastWords)
+app/scripts/exercises/vector-similarity.ts - Similarity exercise
+app/scripts/exercises/hybrid-search-demo.ts - Sparse/dense vectors demo
+
+RUNNING THE APP
+---------------
+yarn install
+yarn dev
+
+RUNNING TESTS
+-------------
+yarn test              # All tests
+yarn test:selector     # Selector agent tests
+yarn test:chunking     # Chunking tests
+
+ENVIRONMENT VARIABLES
+---------------------
+OPENAI_API_KEY=sk-...
+PINECONE_API_KEY=...
+PINECONE_INDEX=your-index-name
+LANGSMITH_TRACING=true
+LANGSMITH_API_KEY=lsv2_pt_...
+LANGSMITH_PROJECT=your-project
+
+DRAFT MODULES (do not reference)
+--------------------------------
+- 10-ai-frameworks (LangGraph content)
+- 16-agent-patterns (agent patterns content)
+
+These may change significantly and should not be referenced from other curriculum.
