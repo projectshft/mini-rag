@@ -85,21 +85,4 @@ Don't worry if you haven't worked with AI/ML before - we'll cover everything you
 
 ---
 
-## Our Learning Path
-
-Here's what we'll cover in this curriculum:
-
-1. **RAG Fundamentals** - Understanding the concepts and architecture
-2. **Vector Math Basics** - Just enough linear algebra to understand embeddings
-3. **Pinecone Setup** - Getting our vector database ready
-4. **OpenAI Integration** - Working with embeddings and chat completions
-5. **Document Processing** - Scraping and preparing data
-6. **Building the RAG Pipeline** - Connecting all the pieces
-7. **Full-Stack Implementation** - Next.js app with TypeScript
-8. **Fine-Tuning Concepts** - When and how to customize models
-9. **Advanced Techniques** - Improving accuracy and performance
-10. **Final Project** - Build your own RAG application
-
 Let's build.
-
----
