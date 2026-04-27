@@ -1,9 +1,8 @@
-# Files to Update on Site
+# Site Update - April 27, 2026
 
-Base URL: https://github.com/projectshft/mini-rag/tree/curriculum/
+## Files to Update (Copy-Paste List)
 
-## Curriculum Files (HTML)
-
+```
 https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/0-how-to-learn
 https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/1-intro-to-rag
 https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/2-vector-math-basics
@@ -22,12 +21,61 @@ https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/15-sql-agent
 https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/17-capstone-project
 https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/18-interview-prep
 https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/99-cheat-codes
-
-## New File
-
 https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/ASSIGNMENTS.md
+```
 
-## Skip (Draft - Do Not Publish)
+**Skip (Draft):** 10-ai-frameworks, 16-agent-patterns
 
-- curriculum/10-ai-frameworks
-- curriculum/16-agent-patterns
+---
+
+## What Changed (Last 6 Weeks)
+
+### HIGH-IMPACT
+
+1. **New Assignment Structure** - 5 coding assignments (replaced weekly homework)
+   - Assignment 1: Document Upload
+   - Assignment 2: Selector Agent
+   - Assignment 3: RAG Agent
+   - Assignment 4: SQL Agent
+   - Assignment 5: Capstone
+
+2. **Observability: Helicone → LangSmith** - Complete migration in module 12
+
+3. **Curriculum Reorganization**
+   - Deleted: 4-pinecone-integration, 4.5-chunking-fundamentals (duplicates)
+   - Moved tool-calling to module 14
+   - Renumbered: agent-patterns (16), capstone (17), interview-prep (18)
+
+4. **Solutions Removed** - From document upload module (before Assignment 1)
+
+5. **New Content**
+   - 0-how-to-learn/1-feynman-technique.md
+   - 7-agent-architecture/5-graceful-degradation.md
+   - 14-tool-calling-exploration/ (new module)
+   - 17-capstone-project - "Finding Your Use Case" section
+   - 9-rag-agent/sparse-dense-presentation.html
+
+### MEDIUM-IMPACT
+
+- Fix select-agent to use `responses.parse` pattern
+- Fix tool-calling route for AI SDK v5
+- Fix LLM-as-judge test
+- Fix broken OpenAI documentation links
+- Remove internal navigation references
+
+### LOW-IMPACT
+
+- Removed outdated "Our Learning Path" from intro
+- Added curriculum-guide.txt
+- Added hybrid-search-demo.ts script
+
+---
+
+## Commit History
+
+**April 26-27:** Hybrid search demo, curriculum cleanup, removed learning path
+**April 20-23:** Link fixes, graceful degradation, solutions removed, HTML regeneration
+**April 17-18:** Removed duplicate modules, chunking fixes
+**April 4-11:** New assignment structure, module/week references removed
+**March 26-30:** Helicone → LangSmith, curriculum reorder, link fixes
+**March 17-25:** Feynman technique, tool-calling, LLM-as-judge, code fixes
