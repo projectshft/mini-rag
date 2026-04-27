@@ -1,202 +1,184 @@
-# Curriculum Changes
+# Curriculum Changes - Site Update Summary
 
-## Latest Changes - April 26, 2026
-
-### Sparse/Dense Vectors Demo + Curriculum Cleanup
-
-**Changes:**
-- ✅ **NEW: Hybrid search demo script** (`app/scripts/exercises/hybrid-search-demo.ts`)
-  - Creates index with dotproduct metric (required for hybrid search)
-  - Uploads documents with both dense (OpenAI) and sparse (Pinecone) vectors
-  - Compares dense-only vs hybrid search results
-  - Available on both `curriculum` and `student-todo-exercises` branches
-- ✅ **NEW: Visual presentation** (`curriculum/9-rag-agent/sparse-dense-presentation.html`)
-  - 8-slide interactive presentation explaining sparse vs dense vectors
-- ✅ **Updated `curriculum/9-rag-agent/3-sparse-dense-vectors.md`**
-  - Added demo instructions and presentation link
-- ✅ **Simplified `curriculum/7-agent-architecture/5-graceful-degradation.md`**
-  - Focused on: model providers, retries, user messaging
-  - Removed: caching, circuit breaker, feature reduction (over-engineered for intro)
-- ✅ **Removed outdated "Our Learning Path" from `curriculum/1-intro-to-rag/1-what-is-rag.md`**
-  - Listed 10 topics that didn't match actual 19-module curriculum
-
-### Unpushed Commits
-
-**curriculum branch (3 commits):**
-- 79e63af - Move hybrid-search-demo.ts to app/scripts/exercises
-- 896bae0 - Add hybrid search demo for sparse/dense vectors
-- c9510aa - update curriculum for interview
-
-**student-todo-exercises branch (1 commit):**
-- 8ad7822 - Add hybrid search demo script
+**Last site update:** ~6 weeks ago (mid-March 2026)
+**This document:** Summary of all changes since then for site republishing
 
 ---
 
-## Previous Changes - April 20, 2026
+## HIGH-IMPACT CHANGES (Affect Student Experience)
 
-### Assignment 1 Fix: Remove Solutions Before Assignment
+### 1. New Assignment Structure
+**Changed from weekly homework to 5 coding assignments:**
+- Assignment 1: Document Upload (complete TODOs)
+- Assignment 2: Selector Agent (structured outputs)
+- Assignment 3: RAG Agent (reranking)
+- Assignment 4: SQL Agent (uses killer_agents repo, sql-agent branch)
+- Assignment 5: Capstone Project
 
-**Problem:** Assignment 1 asks students to "Complete the TODOs" but solutions were revealed in the lessons BEFORE the assignment, undermining the learning experience.
+**Files:**
+- `curriculum/ASSIGNMENTS.md` - NEW overview of all assignments
+- All module files updated to remove "Week N" / "Module N" references
 
-**Changes:**
-- ✅ **Removed solution from `5-document-upload/2-building-the-api-route.md`** - Deleted "Challenge Solution" section (78 lines)
-- ✅ **Removed solutions from `5-document-upload/3-querying-documents.md`** - Deleted "Video Solution Walkthrough" and "Complete Solution" sections
-- ✅ **Updated SQL agent "What's Next"** - Now points to Capstone (not draft Agent Patterns module)
-- ✅ **Added draft module warnings to CLAUDE.md** - Modules 10 (AI Frameworks) and 16 (Agent Patterns) marked as draft
-- ✅ **Added curriculum alignment checklist to CLAUDE.md** - Process for verifying changes
-- ✅ **Regenerated all HTML files** - 21 files updated
+### 2. Observability: Helicone → LangSmith
+**Replaced Helicone with LangSmith throughout:**
+- `curriculum/12-observability/1-integrating-langsmith.md` - Complete rewrite
+- Video walkthrough added
+- New env vars: LANGSMITH_TRACING, LANGSMITH_ENDPOINT, LANGSMITH_API_KEY, LANGSMITH_PROJECT
 
-**Commit:** fce5939 - "Remove solutions before Assignment 1 + mark draft modules"
+### 3. Curriculum Reorganization
+**Module changes:**
+- Deleted `4-pinecone-integration/` (duplicate of 3-pinecone-integration)
+- Deleted `4.5-chunking-fundamentals/` (duplicate of 4-chunking-fundamentals)
+- Moved tool-calling to module 14 (after testing)
+- Renumbered: agent-patterns (16), capstone (17), interview-prep (18)
+- `9-rag-agent/3-sparse-dense-vectors.md` renumbered from 4
 
-### Capstone Use Case Guidance + Graceful Degradation
+### 4. Solutions Removed Before Assignments
+**To preserve learning experience:**
+- Removed "Challenge Solution" from `5-document-upload/2-building-the-api-route.md`
+- Removed "Video Solution Walkthrough" and "Complete Solution" from `5-document-upload/3-querying-documents.md`
 
-**Problem:** Students need help identifying high-ROI use cases, and curriculum lacked production resilience content.
-
-**Changes:**
-- ✅ **Added "Finding Your Use Case" to Capstone** - Practical guidance for identifying real problems
-  - "10x Question" framework: "What takes 10 minutes that should take 10 seconds?"
-  - Real student examples (internal docs, recipes, legal research, etc.)
-  - Where to look: work, personal projects, open data
-- ✅ **NEW: Graceful Degradation lesson** (`7-agent-architecture/5-graceful-degradation.md`)
-  - Model fallback chains
-  - Provider redundancy (with embedding dimension warnings)
-  - Circuit breaker pattern implementation
-  - Error classification (retryable vs permanent)
-  - User communication during degradation
-- ✅ **Added "Think Beyond the Exercise"** to document upload module
-  - Open-ended questions about scale, updates, quality, cost
-  - No assignment, just prompts for deeper thinking
-
-**Commit:** 4d29718 - "Add use case guidance, graceful degradation lesson, and open-ended thinking"
-
-### Files Changed (April 20, 2026)
-
-| File | Changes |
-|------|---------|
-| `curriculum/5-document-upload/2-building-the-api-route.md` | Removed solution + added "Think Beyond the Exercise" |
-| `curriculum/5-document-upload/3-querying-documents.md` | Removed "Video Solution Walkthrough" + "Complete Solution" sections |
-| `curriculum/15-sql-agent/1-rag-without-vectors.md` | "What's Next" now points to Capstone |
-| `curriculum/15-sql-agent/1-rag-without-vectors.html` | **NEW** - generated HTML |
-| `CLAUDE.md` | Added draft module warnings + curriculum alignment checklist |
-| `curriculum/17-capstone-project/1-final-project.md` | Added "Finding Your Use Case" section |
-| `curriculum/7-agent-architecture/5-graceful-degradation.md` | **NEW** - Production resilience lesson |
-| + 15 other HTML files | Regenerated from markdown |
-
-### Draft Modules (Do Not Reference)
-
-These modules are in draft state and should NOT be referenced from other curriculum:
-- `10-ai-frameworks/` - LangGraph content
-- `16-agent-patterns/` - Agent patterns content
+### 5. New Content Added
+- `curriculum/0-how-to-learn/1-feynman-technique.md` - Learning strategies
+- `curriculum/7-agent-architecture/5-graceful-degradation.md` - Model fallbacks, retries, user messaging
+- `curriculum/17-capstone-project/1-final-project.md` - Added "Finding Your Use Case" section with 10x Question framework
+- `curriculum/14-tool-calling-exploration/` - Tool calling concepts and implementation
 
 ---
 
-## Previous Changes - April 17, 2026
+## MEDIUM-IMPACT CHANGES
 
-### Summary
+### Code Fixes
+- Fix select-agent to use `responses.parse` pattern
+- Fix tool-calling route for AI SDK v5
+- Fix LLM-as-judge test to use working structured output pattern
+- Fix metadata field handling ('text' standard, 'content' fallback)
+- Fix chunking and overlap issues
 
-- ✅ **Removed student-starter branch** - No longer needed (curriculum branch is the reference)
-- ✅ **Removed duplicate modules** - Deleted 4-pinecone-integration and 4.5-chunking-fundamentals
-- ✅ **Updated CLAUDE.md** - Reflects new 2-branch structure (curriculum + student-todo-exercises)
-- Previously: Removed all "module" and "week" references from curriculum
-- Previously: Created new assignment structure (5 submissions: 4 assignments + capstone)
-- Previously: Moved SQL Agent to standalone module (15-sql-agent)
-- Previously: Renumbered modules: agent-patterns (16), capstone (17), interview-prep (18)
-- Assignment 4 uses killer_agents repo `sql-agent` branch
+### Documentation Fixes
+- Fix broken OpenAI embeddings documentation links
+- Fix broken links across curriculum
+- Remove internal navigation references
+- Add topN configuration comments to reranking
 
-## Branch Structure (Current)
+### New Demo Scripts
+- `app/scripts/exercises/hybrid-search-demo.ts` - Sparse + dense vectors demo
+  - Creates hybrid index, uploads with both vector types, compares search modes
+  - Available on both curriculum and student-todo-exercises branches
+- `curriculum/9-rag-agent/sparse-dense-presentation.html` - Visual presentation
 
+---
+
+## LOW-IMPACT CHANGES
+
+### Cleanup
+- Removed outdated "Our Learning Path" from intro (listed 10 topics, actual curriculum has 19)
+- Added `curriculum-guide.txt` for assistant reference
+- Added draft module warnings to CLAUDE.md (modules 10, 16 are draft)
+- Added curriculum alignment checklist to CLAUDE.md
+
+### Experimental (Not in main curriculum)
+- CLAP music search notebook (Weaviate) - in notebooks/
+- Fine-tuning training scripts updates
+
+---
+
+## FILES CHANGED (Curriculum - need HTML regeneration)
+
+### New Files
 ```
-curriculum              - Complete working implementations (main reference)
-student-todo-exercises  - TODOs for students to implement
+curriculum/ASSIGNMENTS.md
+curriculum/0-how-to-learn/1-feynman-technique.md
+curriculum/7-agent-architecture/5-graceful-degradation.md
+curriculum/9-rag-agent/sparse-dense-presentation.html
+curriculum/14-tool-calling-exploration/1-tool-calling-concepts.md
+curriculum/14-tool-calling-exploration/2-the-reveal.md
+app/scripts/exercises/hybrid-search-demo.ts
+curriculum-guide.txt
 ```
 
-**Deleted branches:**
-- student-starter (April 17, 2026) - Was duplicate of student-todo-exercises with TODOs
-
-## Module Structure (Current - Clean, No Duplicates)
-
+### Modified Files
 ```
-0-how-to-learn
-1-intro-to-rag
-2-vector-math-basics
-3-pinecone-integration      ← ONLY version (deleted 4-pinecone-integration)
-4-chunking-fundamentals     ← ONLY version (deleted 4.5-chunking-fundamentals)
-5-document-upload
-6-fine-tuning
-7-agent-architecture
-8-linkedin-agent
-9-rag-agent
-10-ai-frameworks
-11-chat-interface
-12-observability
-13-testing-agents           - LLM-as-judge (no more SQL assignment here)
-14-tool-calling-exploration - Tool-calling patterns
-15-sql-agent                - SQL Agent assignment (Assignment 4)
-16-agent-patterns           - (was 15)
-17-capstone-project         - (was 16)
-18-interview-prep           - (was 17)
-99-cheat-codes
+curriculum/1-intro-to-rag/1-what-is-rag.md (removed learning path)
+curriculum/5-document-upload/2-building-the-api-route.md (removed solution)
+curriculum/5-document-upload/3-querying-documents.md (removed solutions)
+curriculum/9-rag-agent/3-sparse-dense-vectors.md (renumbered, added demo)
+curriculum/12-observability/1-integrating-langsmith.md (complete rewrite)
+curriculum/13-testing-agents/2-llm-as-judge.md (removed SQL assignment)
+curriculum/15-sql-agent/1-rag-without-vectors.md (What's Next points to Capstone)
+curriculum/17-capstone-project/1-final-project.md (added use case guidance)
++ many others with module/week reference removals
 ```
 
-## Recently Changed Files (April 17, 2026)
+### Deleted Files
+```
+curriculum/4-pinecone-integration/ (entire folder - duplicate)
+curriculum/4.5-chunking-fundamentals/ (entire folder - duplicate)
+```
 
-| File | Changes |
-|------|---------|
-| CLAUDE.md | Complete rewrite: removed student-starter references, updated to curriculum + student-todo-exercises structure, added full module list (0-18) |
-| curriculum/4-pinecone-integration/ | **DELETED** (duplicate of 3-pinecone-integration) |
-| curriculum/4.5-chunking-fundamentals/ | **DELETED** (duplicate of 4-chunking-fundamentals) |
+---
 
-## Previously Modified Files
+## BRANCH STATUS
 
-| File | Changes |
-|------|---------|
-| curriculum/15-sql-agent/1-rag-without-vectors.md | NEW: SQL Agent assignment module |
-| curriculum/ASSIGNMENTS.md | NEW: Overview of all 5 assignments |
-| curriculum/9-rag-agent/3-sparse-dense-vectors.md | Renumbered from 4 |
-| curriculum/13-testing-agents/2-llm-as-judge.md | Removed SQL assignment, added test creation challenge |
-| curriculum/14-tool-calling-exploration/2-the-reveal.md | Added extension challenge, fixed outdated "next up" reference |
+Both branches are pushed and up to date:
+- `curriculum` - Complete reference implementations
+- `student-todo-exercises` - Starter code with TODOs
 
-## killer_agents Repo
+---
 
-New `sql-agent` branch created with:
-- Stripped trendResearchAgent and videoFinderAgent
-- TODO version of databaseSearchAgent for students to implement
-- Simplified README focused on SQL agent assignment
+## DRAFT MODULES (Do Not Publish)
 
-## Assignment 4 Video Topic
+These modules are incomplete and should NOT be published:
+- `10-ai-frameworks/` - LangGraph content (draft)
+- `16-agent-patterns/` - Agent patterns content (draft)
 
-Students should cover:
-1. Types of SQL queries (filtering, aggregation, joins, full-text)
-2. pgvector - Postgres extension for vector search
-3. When to use pgvector vs dedicated vector DBs
+---
 
-## Interview Prep Assessment (18-interview-prep)
+## RECOMMENDED ACTIONS FOR SITE UPDATE
 
-**Status**: ✅ Good scope - not overly verbose
+1. **Regenerate all HTML** from markdown files
+2. **Update navigation** to reflect new module structure
+3. **Remove** any references to deleted modules (4-pinecone-integration, 4.5-chunking-fundamentals)
+4. **Add** new files listed above
+5. **Verify** LangSmith instructions work (replaced Helicone)
+6. **Test** assignment instructions are clear without solutions showing
 
-**Required deliverables:**
-- Module 1: 1 written story + 1 video (signature story)
-- Module 2: 5 written opinions + 1 video (strongest opinion)
-- Module 3: 3 written system designs + 1 video walkthrough
-- Module 4: Optional extra practice (3 videos + self-assessments)
+---
 
-**Total required**: 3 videos, 9 written pieces (~2,500 lines total)
-**Assessment**: Appropriate workload, focused on practical interview skills
+## COMMIT HISTORY (Last 6 Weeks)
 
-## Push Status
+### April 26-27, 2026
+- Remove outdated "Our Learning Path" section
+- Add curriculum-guide.txt
+- Add hybrid search demo script
+- Move hybrid-search-demo.ts to app/scripts/exercises
 
-**Unpushed as of April 26, 2026:**
-- curriculum: 3 commits
-- student-todo-exercises: 1 commit
+### April 20-23, 2026
+- Fix broken OpenAI embeddings documentation links
+- Add use case guidance, graceful degradation lesson
+- Remove solutions before Assignment 1
+- Add CLAP music search notebook (experimental)
+- Regenerate HTML for curriculum updates
 
-Run `git push` on each branch to publish.
+### April 17-18, 2026
+- Remove duplicate curriculum modules
+- Fix chunking and overlap
+- Updates from cohort 2
 
-**April 20, 2026:**
-- Commit: 8f6a279 - "Fix broken OpenAI embeddings documentation links"
-- Commit: ed607aa - "Regenerate HTML for curriculum updates"
-- Commit: 4d29718 - "Add use case guidance, graceful degradation lesson, and open-ended thinking"
-- Commit: fce5939 - "Remove solutions before Assignment 1 + mark draft modules"
+### April 4-11, 2026
+- New assignment structure (5 assignments)
+- Restructure assignments, remove module/week references
+- Assignment 4: SQL types and pgvector content
 
-**April 17, 2026:**
-- Commit: d167663 - "Remove duplicate curriculum modules and update documentation"
-- Branch deletions: student-starter (local and remote)
+### March 26-30, 2026
+- Replace Helicone with LangSmith
+- Fix broken documentation links
+- Reorder curriculum (tool-calling after testing)
+- Fix select-agent pattern
+
+### March 17-25, 2026
+- Add 4-week program schedule
+- Add Feynman technique intro
+- Add tool-calling curriculum
+- Add LLM-as-judge test
+- Fix various code issues
