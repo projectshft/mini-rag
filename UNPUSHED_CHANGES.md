@@ -3,25 +3,54 @@
 ## Files to Update (Copy-Paste List)
 
 ```
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/0-how-to-learn
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/1-intro-to-rag
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/2-vector-math-basics
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/3-pinecone-integration
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/4-chunking-fundamentals
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/5-document-upload
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/6-fine-tuning
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/7-agent-architecture
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/8-linkedin-agent
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/9-rag-agent
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/11-chat-interface
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/12-observability
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/13-testing-agents
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/14-tool-calling-exploration
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/15-sql-agent
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/17-capstone-project
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/18-interview-prep
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/99-cheat-codes
-https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/ASSIGNMENTS.md
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/0-how-to-learn/1-feynman-technique.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/1-intro-to-rag/1-what-is-rag.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/2-vector-math-basics/1-vectors-and-embeddings.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/2-vector-math-basics/2-implementing-similarity.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/2-vector-math-basics/3-word-math-fun.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/3-pinecone-integration/1-setting-up-pinecone-client.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/4-chunking-fundamentals/1-introduction-to-scraping.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/4-chunking-fundamentals/2-understanding-chunking.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/5-document-upload/1-uploading-with-a-script.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/5-document-upload/2-building-the-api-route.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/5-document-upload/3-querying-documents.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/6-fine-tuning/1-fine-tuning-overview.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/6-fine-tuning/2-running-fine-tuning.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/1-understanding-agent-systems.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/2-prompting-for-agents.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/3-implementing-selector-text-based.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/4-upgrading-to-structured-outputs.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/5-graceful-degradation.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/8-linkedin-agent/1-implementing-linkedin-agent.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/9-rag-agent/1-implementing-rag-agent.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/9-rag-agent/2-implementing-reranking.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/9-rag-agent/3-sparse-dense-vectors.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/9-rag-agent/sparse-dense-presentation.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/11-chat-interface/1-understanding-the-interface.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/12-observability/1-integrating-langsmith.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/13-testing-agents/1-testing-selector-agent.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/13-testing-agents/2-llm-as-judge.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/14-tool-calling-exploration/1-tool-calling-concepts.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/14-tool-calling-exploration/2-the-reveal.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/15-sql-agent/1-rag-without-vectors.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/17-capstone-project/1-final-project.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/0-overview.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/1-your-signature-story.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/2-strong-opinions-tradeoffs.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/3-rag-system-design.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/4-live-practice.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/README.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/0-index.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/1-embeddings-and-search.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/2-structured-outputs.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/3-tool-calling.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/4-chunking.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/5-streaming.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/6-human-in-the-loop.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/7-router-agent.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/8-langgraph.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/9-prompt-templates.html
+https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/ASSIGNMENTS.html
 ```
 
 **Skip (Draft):** 10-ai-frameworks, 16-agent-patterns
@@ -49,8 +78,8 @@ https://github.com/projectshft/mini-rag/tree/curriculum/curriculum/ASSIGNMENTS.m
 4. **Solutions Removed** - From document upload module (before Assignment 1)
 
 5. **New Content**
-   - 0-how-to-learn/1-feynman-technique.md
-   - 7-agent-architecture/5-graceful-degradation.md
+   - 0-how-to-learn/1-feynman-technique.html
+   - 7-agent-architecture/5-graceful-degradation.html
    - 14-tool-calling-exploration/ (new module)
    - 17-capstone-project - "Finding Your Use Case" section
    - 9-rag-agent/sparse-dense-presentation.html
