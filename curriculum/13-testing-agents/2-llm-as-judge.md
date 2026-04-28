@@ -695,7 +695,8 @@ When you've completed the LLM-as-judge exercise:
 2. Screenshot of your tests passing (`yarn test:judge`)
 
 **Submit:**
-- [Code Submission - LLM-as-Judge](https://form.typeform.com/to/TBD)
+- [Video Submission - LLM-as-Judge](https://form.typeform.com/to/QR9Vohg0)
+- [Code Submission - LLM-as-Judge](https://form.typeform.com/to/FNEjXTwk)
 
 ---
 
