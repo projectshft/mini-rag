@@ -110,6 +110,50 @@
 </ul>
 <p><strong>The best candidates don&#39;t just explain what they built — they explain why they built it that way.</strong></p>
 <hr>
+<h2>Technical Foundations</h2>
+<p>Before interviews, make sure you can explain these concepts clearly.</p>
+<h3>RAG Implementation</h3>
+<p>RAG is retrieval + generation. The core loop:</p>
+<ol>
+<li><strong>Chunk</strong> documents into smaller pieces (500-1000 tokens)</li>
+<li><strong>Embed</strong> chunks into vectors using an embedding model</li>
+<li><strong>Store</strong> vectors in a database (Pinecone, pgvector, etc.)</li>
+<li><strong>Query</strong> - embed the user&#39;s question, find similar chunks</li>
+<li><strong>Generate</strong> - pass retrieved chunks to the LLM as context</li>
+</ol>
+<p><strong>Key interview points:</strong></p>
+<ul>
+<li>Why chunk? (Context windows, relevance, cost)</li>
+<li>Chunk overlap prevents cutting sentences mid-thought</li>
+<li>Embedding models (OpenAI, Cohere) convert text → vectors</li>
+<li>Cosine similarity finds &quot;closest&quot; vectors</li>
+</ul>
+<h3>Embeddings &amp; Vectors (Brief)</h3>
+<p>Vectors are just arrays of numbers: <code>[0.2, -0.5, 0.8, ...]</code></p>
+<p>Embedding models learn to place similar concepts close together in vector space. &quot;King&quot; and &quot;Queen&quot; are closer than &quot;King&quot; and &quot;Banana&quot;.</p>
+<p>For deeper understanding of the math behind LLMs and neural networks:</p>
+<ul>
+<li><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi">3Blue1Brown: Neural Networks</a></li>
+<li><a href="https://www.youtube.com/watch?v=wjZofJX0v4M">3Blue1Brown: Transformers</a></li>
+</ul>
+<h3>Structured Outputs</h3>
+<p>Force the LLM to return valid JSON matching a schema:</p>
+<pre><code class="language-typescript">const schema = z.object({
+  agent: z.enum([&#39;rag&#39;, &#39;linkedin&#39;, &#39;general&#39;]),
+  confidence: z.number(),
+});
+
+const response = await openai.chat.completions.create({
+  model: &#39;gpt-4o-mini&#39;,
+  messages: [...],
+  response_format: zodResponseFormat(schema, &#39;routing&#39;),
+});
+</code></pre>
+<p><strong>Why it matters:</strong> Reliable parsing, type safety, no regex hacks.</p>
+<h3>Practice Projects</h3>
+<p>Solidify your understanding with these small projects:</p>
+<p><strong><a href="https://github.com/projectshft/cringe-influencer">Cringe Influencer</a></strong> - A small structured outputs project. Build a social media post generator with type-safe LLM responses.</p>
+<hr>
 <h2>Ready to Start?</h2>
 <p>Move on to Module 1: Your Signature Story.</p>
 <p>This is the most important module. Nail this, and you&#39;ll stand out in every interview.</p>

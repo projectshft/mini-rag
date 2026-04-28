@@ -127,6 +127,63 @@ They ARE looking for:
 
 ---
 
+## Technical Foundations
+
+Before interviews, make sure you can explain these concepts clearly.
+
+### RAG Implementation
+
+RAG is retrieval + generation. The core loop:
+
+1. **Chunk** documents into smaller pieces (500-1000 tokens)
+2. **Embed** chunks into vectors using an embedding model
+3. **Store** vectors in a database (Pinecone, pgvector, etc.)
+4. **Query** - embed the user's question, find similar chunks
+5. **Generate** - pass retrieved chunks to the LLM as context
+
+**Key interview points:**
+- Why chunk? (Context windows, relevance, cost)
+- Chunk overlap prevents cutting sentences mid-thought
+- Embedding models (OpenAI, Cohere) convert text → vectors
+- Cosine similarity finds "closest" vectors
+
+### Embeddings & Vectors (Brief)
+
+Vectors are just arrays of numbers: `[0.2, -0.5, 0.8, ...]`
+
+Embedding models learn to place similar concepts close together in vector space. "King" and "Queen" are closer than "King" and "Banana".
+
+For deeper understanding of the math behind LLMs and neural networks:
+- [3Blue1Brown: Neural Networks](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
+- [3Blue1Brown: Transformers](https://www.youtube.com/watch?v=wjZofJX0v4M)
+
+### Structured Outputs
+
+Force the LLM to return valid JSON matching a schema:
+
+```typescript
+const schema = z.object({
+  agent: z.enum(['rag', 'linkedin', 'general']),
+  confidence: z.number(),
+});
+
+const response = await openai.chat.completions.create({
+  model: 'gpt-4o-mini',
+  messages: [...],
+  response_format: zodResponseFormat(schema, 'routing'),
+});
+```
+
+**Why it matters:** Reliable parsing, type safety, no regex hacks.
+
+### Practice Projects
+
+Solidify your understanding with these small projects:
+
+**[Cringe Influencer](https://github.com/projectshft/cringe-influencer)** - A small structured outputs project. Build a social media post generator with type-safe LLM responses.
+
+---
+
 ## Ready to Start?
 
 Move on to Module 1: Your Signature Story.
