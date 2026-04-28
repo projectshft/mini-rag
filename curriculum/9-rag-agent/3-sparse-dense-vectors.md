@@ -2,14 +2,6 @@
 
 ---
 
-## Visual Presentation
-
-Open the interactive presentation to see sparse vs dense vectors explained visually:
-
-**[Open Presentation](./sparse-dense-presentation.html)** (open in browser)
-
----
-
 ## Hands-On Demo
 
 Run the complete demo to create an index, upload documents, and compare search modes:
