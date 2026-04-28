@@ -60,38 +60,42 @@ interface SparseVector {
 // EMBEDDING FUNCTIONS
 // ============================================================
 
-async function createDenseEmbedding(text: string): Promise<number[]> {
-  const response = await openai.embeddings.create({
-    model: 'text-embedding-3-small',
-    dimensions: DEMO_DIMENSIONS,
-    input: text,
-  });
-  return response.data[0].embedding;
+interface HybridEmbedding {
+  dense: number[];
+  sparse: SparseVector;
 }
 
-async function createSparseEmbeddings(
+async function createHybridEmbeddings(
   texts: string[],
   inputType: 'passage' | 'query'
-): Promise<SparseVector[]> {
-  const response = await pinecone.inference.embed('pinecone-sparse-english-v0', texts, {
+): Promise<HybridEmbedding[]> {
+  // Get dense embeddings from OpenAI
+  const denseResponse = await openai.embeddings.create({
+    model: 'text-embedding-3-small',
+    dimensions: DEMO_DIMENSIONS,
+    input: texts,
+  });
+
+  // Get sparse embeddings from Pinecone
+  const sparseResponse = await pinecone.inference.embed('pinecone-sparse-english-v0', texts, {
     inputType,
     truncate: 'END',
   });
 
-  return response.data.map((item) => {
-    const sparseItem = item as {
+  return texts.map((_, i) => {
+    const sparseItem = sparseResponse.data[i] as {
       vectorType?: string;
       sparseIndices?: number[];
       sparseValues?: number[];
     };
 
-    if (sparseItem.vectorType === 'sparse' && sparseItem.sparseIndices && sparseItem.sparseValues) {
-      return {
-        indices: sparseItem.sparseIndices,
-        values: sparseItem.sparseValues,
-      };
-    }
-    return { indices: [], values: [] };
+    return {
+      dense: denseResponse.data[i].embedding,
+      sparse:
+        sparseItem.vectorType === 'sparse' && sparseItem.sparseIndices && sparseItem.sparseValues
+          ? { indices: sparseItem.sparseIndices, values: sparseItem.sparseValues }
+          : { indices: [], values: [] },
+    };
   });
 }
 
@@ -147,33 +151,27 @@ async function upsertDocuments() {
 
   console.log('\nCreating embeddings for', documents.length, 'documents...\n');
 
-  // Get sparse embeddings for all docs
   const allTexts = documents.map((d) => d.text);
-  const sparseEmbeddings = await createSparseEmbeddings(allTexts, 'passage');
+  const embeddings = await createHybridEmbeddings(allTexts, 'passage');
 
-  const vectors = [];
-  for (let i = 0; i < documents.length; i++) {
-    const doc = documents[i];
+  const vectors = documents.map((doc, i) => {
     console.log(`[${i + 1}/${documents.length}] "${doc.text.substring(0, 50)}..."`);
-
-    const dense = await createDenseEmbedding(doc.text);
-    const sparse = sparseEmbeddings[i];
 
     // Show first document's vectors
     if (i === 0) {
-      console.log('\n  DENSE (first 5 values):', dense.slice(0, 5).map((v) => v.toFixed(4)).join(', '));
-      console.log('  SPARSE indices:', sparse.indices.slice(0, 5).join(', '), '...');
-      console.log('  SPARSE values:', sparse.values.slice(0, 5).map((v) => v.toFixed(3)).join(', '), '...');
+      console.log('\n  DENSE (first 5 values):', embeddings[i].dense.slice(0, 5).map((v) => v.toFixed(4)).join(', '));
+      console.log('  SPARSE indices:', embeddings[i].sparse.indices.slice(0, 5).join(', '), '...');
+      console.log('  SPARSE values:', embeddings[i].sparse.values.slice(0, 5).map((v) => v.toFixed(3)).join(', '), '...');
       console.log('');
     }
 
-    vectors.push({
+    return {
       id: doc.id,
-      values: dense,
-      sparseValues: sparse,
+      values: embeddings[i].dense,
+      sparseValues: embeddings[i].sparse,
       metadata: { text: doc.text },
-    });
-  }
+    };
+  });
 
   console.log('\nUpserting to Pinecone...');
   await index.upsert(vectors);
@@ -191,19 +189,18 @@ async function runSearch() {
   const query1 = 'How to prevent re-renders in React?';
   console.log('\n--- Query 1 (semantic):', query1, '---\n');
 
-  const q1Dense = await createDenseEmbedding(query1);
-  const [q1Sparse] = await createSparseEmbeddings([query1], 'query');
+  const [q1Embedding] = await createHybridEmbeddings([query1], 'query');
 
   console.log('DENSE ONLY:');
-  const denseResults1 = await index.query({ vector: q1Dense, topK: 3, includeMetadata: true });
+  const denseResults1 = await index.query({ vector: q1Embedding.dense, topK: 3, includeMetadata: true });
   for (const match of denseResults1.matches) {
     console.log(`  [${match.score?.toFixed(3)}] ${match.metadata?.text}`);
   }
 
   console.log('\nHYBRID (dense + sparse):');
   const hybridResults1 = await index.query({
-    vector: q1Dense,
-    sparseVector: q1Sparse,
+    vector: q1Embedding.dense,
+    sparseVector: q1Embedding.sparse,
     topK: 3,
     includeMetadata: true,
   });
@@ -215,11 +212,10 @@ async function runSearch() {
   const query2 = 'React.memo';
   console.log('\n--- Query 2 (exact term):', query2, '---\n');
 
-  const q2Dense = await createDenseEmbedding(query2);
-  const [q2Sparse] = await createSparseEmbeddings([query2], 'query');
+  const [q2Embedding] = await createHybridEmbeddings([query2], 'query');
 
   console.log('DENSE ONLY:');
-  const denseResults2 = await index.query({ vector: q2Dense, topK: 3, includeMetadata: true });
+  const denseResults2 = await index.query({ vector: q2Embedding.dense, topK: 3, includeMetadata: true });
   for (const match of denseResults2.matches) {
     const hasExact = (match.metadata?.text as string)?.includes('React.memo');
     console.log(`  [${match.score?.toFixed(3)}] ${hasExact ? '* ' : '  '}${match.metadata?.text}`);
@@ -227,8 +223,8 @@ async function runSearch() {
 
   console.log('\nHYBRID (dense + sparse):');
   const hybridResults2 = await index.query({
-    vector: q2Dense,
-    sparseVector: q2Sparse,
+    vector: q2Embedding.dense,
+    sparseVector: q2Embedding.sparse,
     topK: 3,
     includeMetadata: true,
   });
@@ -294,7 +290,7 @@ const commands: Record<string, () => Promise<void>> = {
 };
 
 if (!commands[command]) {
-  console.log('Usage: npx ts-node app/scripts/exercises/hybrid-search-demo.ts <command>');
+  console.log('Usage: npx ts-node hybrid-search-demo.ts <command>');
   console.log('');
   console.log('Commands:');
   console.log('  create   - Create the hybrid-demo index');
