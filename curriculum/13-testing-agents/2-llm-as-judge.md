@@ -683,6 +683,22 @@ Think about what questions are critical for your users. Those are the ones worth
 
 ---
 
+## Submit Your Work
+
+When you've completed the LLM-as-judge exercise:
+
+**What to submit:**
+1. Your completed `app/agents/__tests__/llm-judge.test.ts` with:
+   - Filled-in judge system prompt with scoring criteria
+   - At least 3 test cases with golden responses
+   - Working `judgeResponse` function implementation
+2. Screenshot of your tests passing (`yarn test:judge`)
+
+**Submit:**
+- [Code Submission - LLM-as-Judge](https://form.typeform.com/to/TBD)
+
+---
+
 ## What's Next?
 
 You now have:
