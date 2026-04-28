@@ -688,14 +688,12 @@ Think about what questions are critical for your users. Those are the ones worth
 When you've completed the LLM-as-judge exercise:
 
 **What to submit:**
-1. Your completed `app/agents/__tests__/llm-judge.test.ts` with:
-   - Filled-in judge system prompt with scoring criteria
-   - At least 3 test cases with golden responses
-   - Working `judgeResponse` function implementation
-2. Screenshot of your tests passing (`yarn test:judge`)
+Your completed `app/agents/__tests__/llm-judge.test.ts` with:
+- Filled-in judge system prompt with scoring criteria
+- At least 3 test cases with golden responses
+- Working `judgeResponse` function implementation
 
 **Submit:**
-- [Video Submission - LLM-as-Judge](https://form.typeform.com/to/QR9Vohg0)
 - [Code Submission - LLM-as-Judge](https://form.typeform.com/to/FNEjXTwk)
 
 ---
