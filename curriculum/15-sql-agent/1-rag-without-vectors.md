@@ -219,13 +219,8 @@ Complete the `databaseSearchAgent` in `app/agents/databaseSearchAgent.ts`.
 
 ### Submit Your Work
 
-**Video:** Upload to Loom or YouTube and submit the link
-- [Video Submission - Assignment 4](https://form.typeform.com/to/TBD)
-
-**Code:** Push your completed code to your own GitHub repo and submit the link
-- [Code Submission - Assignment 4](https://form.typeform.com/to/TBD)
-
-**Due:** Before starting Capstone
+- [Video Submission](https://form.typeform.com/to/QR9Vohg0)
+- [Code Submission](https://form.typeform.com/to/FNEjXTwk)
 
 ---
 
