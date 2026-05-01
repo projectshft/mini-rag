@@ -365,11 +365,22 @@ response references deprecated APIs.
 
 ---
 
-## Exercise: Create Your Own LLM-as-Judge Tests
+## Your Challenge: Implement LLM-as-Judge Testing
 
-### Step 1: Add the Test Script to package.json
+The test file `app/agents/__tests__/llm-judge.test.ts` has TODOs for you to complete. You'll implement the judge from scratch using the concepts above as reference.
 
-Add this script to your `package.json`:
+### What You'll Implement
+
+Open the test file and complete these TODOs:
+
+1. **Judge System Prompt** - Define scoring criteria (what does 10 mean? What does 1 mean?)
+2. **Zod Schema** - Add constraints to ensure valid scores (1-10 range)
+3. **Test Cases** - Add at least 3 golden responses for questions relevant to your RAG content
+4. **Judge Function** - Implement `judgeResponse()` using structured outputs
+
+### Step 1: Add the Test Script
+
+Add this to your `package.json` scripts:
 
 ```json
 {
@@ -379,9 +390,11 @@ Add this script to your `package.json`:
 }
 ```
 
-### Step 2: Create the Test File
+### Step 2: Complete the TODOs
 
-Create `app/agents/__tests__/llm-judge.test.ts`:
+Open `app/agents/__tests__/llm-judge.test.ts` and implement each TODO.
+
+**Reference implementation** (use as a guide, not something to copy):
 
 ```typescript
 /**
@@ -577,11 +590,19 @@ describe('LLM-as-Judge Response Quality', () => {
 });
 ```
 
+**Key implementation details:**
+
+- Use `zodResponseFormat()` to get structured JSON responses from the judge
+- Set `temperature: 0` for consistent scoring
+- Parse the JSON response to extract `{ score, reason }`
+- The `getRAGResponse` helper is already provided in the file
+
 ### Step 3: Get Golden Responses
 
-1. Open your chat interface (`yarn dev`)
+1. Run your chat interface (`yarn dev`)
 2. Ask questions you want to test
 3. Copy the best responses as your golden references
+4. Add them to the `TEST_CASES` array
 
 ### Step 4: Run and Iterate
 
@@ -666,20 +687,6 @@ Each test makes 2 LLM calls:
 - Run on PR merges, not every commit
 - Use GPT-4o-mini for judging (accurate enough, much cheaper)
 - Keep test suite small and focused (5-10 critical cases)
-
----
-
-## Your Challenge: Create Your Own Tests
-
-Now it's your turn. Add at least 2-3 more test cases to the LLM-as-judge test file:
-
-1. **Run your chat interface** (`yarn dev`)
-2. **Ask questions** relevant to your documentation
-3. **Copy the best responses** as golden references
-4. **Add them to TEST_CASES** in `llm-judge.test.ts`
-5. **Run the tests** and adjust thresholds if needed
-
-Think about what questions are critical for your users. Those are the ones worth testing.
 
 ---
 
