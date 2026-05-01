@@ -1,0 +1,337 @@
+<h1>Testing the Selector Agent</h1>
+<p>The selector agent is critical to your RAG system - it routes queries to the right specialized agent. In this module, you&#39;ll learn how to test it effectively.</p>
+<hr>
+<h2>Video Walkthrough</h2>
+<p>Watch this guide to testing and the course outro:</p>
+<div style="position: relative; padding-bottom: 56.25%; height: 0;"><iframe src="https://share.descript.com/embed/bLBxAMMBx6D" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"></iframe></div>
+
+<hr>
+<h2>What You&#39;ll Learn</h2>
+<ul>
+<li>Why testing AI agents is challenging</li>
+<li>What you can (and can&#39;t) test with LLMs</li>
+<li>How to write simple, effective tests</li>
+<li>Running and debugging your test suite</li>
+</ul>
+<hr>
+<h2>The Challenge: Non-Deterministic AI</h2>
+<h3>Why Testing AI is Different</h3>
+<p>LLMs are <strong>non-deterministic</strong> - they can give different outputs for the same input:</p>
+<pre><code class="language-typescript">// Same query, different times:
+selectAgent(&quot;How do hooks work?&quot;)
+→ &quot;Explain React hooks concepts&quot;  // First run
+→ &quot;How to use React hooks&quot;        // Second run
+→ &quot;React hooks tutorial&quot;          // Third run
+</code></pre>
+<p>Even with <code>temperature=0</code>, you get slight variations.</p>
+<h3>What This Means for Testing</h3>
+<p><strong>❌ DON&#39;T test:</strong></p>
+<ul>
+<li>Exact text output (&quot;should return &#39;Explain React hooks&#39;&quot;)</li>
+<li>Specific word choices</li>
+<li>Response creativity or style</li>
+</ul>
+<p><strong>✅ DO test:</strong></p>
+<ul>
+<li>Output structure (has required fields)</li>
+<li>Agent routing decisions (linkedin vs rag)</li>
+<li>Response validity (not empty, proper type)</li>
+<li>Error handling</li>
+</ul>
+<hr>
+<h2>Our Testing Strategy</h2>
+<p>We&#39;ll keep tests simple and focused on what matters:</p>
+<ol>
+<li><strong>Route verification</strong> - Does it pick the right agent?</li>
+<li><strong>Structure validation</strong> - Does it return valid data?</li>
+<li><strong>Edge case handling</strong> - Does it handle weird inputs?</li>
+</ol>
+<p>We won&#39;t test exact text, just the routing decisions and structure.</p>
+<hr>
+<h2>The Test Suite</h2>
+<p>Location: <code>app/agents/__tests__/selector.test.ts</code></p>
+<h3>Running the Tests</h3>
+<p><strong>No server needed!</strong> Tests call the API handler directly.</p>
+<pre><code class="language-bash">yarn test:selector
+</code></pre>
+<p>This runs all selector agent tests. First time might take 15-30 seconds (calling OpenAI API).</p>
+<h3>What We&#39;re Testing</h3>
+<h4>How Tests Work</h4>
+<p>Tests import the API route handler directly:</p>
+<pre><code class="language-typescript">import { POST } from &#39;@/app/api/select-agent/route&#39;;
+
+// Create a mock request
+const request = {
+	json: async () =&gt; ({
+		messages: [{ role: &#39;user&#39;, content: query }],
+	}),
+} as NextRequest;
+
+// Call the handler directly
+const response = await POST(request);
+const result = await response.json();
+</code></pre>
+<h4>1. LinkedIn Agent Routing</h4>
+<pre><code class="language-typescript">it(&#39;should route LinkedIn post creation to linkedin agent&#39;, async () =&gt; {
+	const result = await selectAgent(
+		&#39;Write a LinkedIn post about learning TypeScript&#39;,
+	);
+
+	expect(result.agent).toBe(&#39;linkedin&#39;);
+	expect(result.query).toBeTruthy();
+});
+</code></pre>
+<p><strong>What we&#39;re checking:</strong></p>
+<ul>
+<li>✅ Routes to <code>&#39;linkedin&#39;</code> agent</li>
+<li>✅ Returns a non-empty refined query</li>
+</ul>
+<h4>2. RAG Agent Routing</h4>
+<pre><code class="language-typescript">it(&#39;should route technical documentation questions to rag agent&#39;, async () =&gt; {
+	const result = await selectAgent(&#39;How do React hooks work?&#39;);
+
+	expect(result.agent).toBe(&#39;rag&#39;);
+	expect(result.query).toBeTruthy();
+});
+</code></pre>
+<p><strong>What we&#39;re checking:</strong></p>
+<ul>
+<li>✅ Routes to <code>&#39;rag&#39;</code> agent</li>
+<li>✅ Technical questions go to RAG</li>
+</ul>
+<h4>3. Response Structure</h4>
+<pre><code class="language-typescript">it(&#39;should return valid response structure&#39;, async () =&gt; {
+	const result = await selectAgent(&#39;Any question here&#39;);
+
+	expect(result).toHaveProperty(&#39;agent&#39;);
+	expect(result).toHaveProperty(&#39;query&#39;);
+	expect([&#39;linkedin&#39;, &#39;rag&#39;]).toContain(result.agent);
+});
+</code></pre>
+<p><strong>What we&#39;re checking:</strong></p>
+<ul>
+<li>✅ Has required fields (<code>agent</code> and <code>query</code>)</li>
+<li>✅ Agent is valid (&#39;linkedin&#39; or &#39;rag&#39;)</li>
+</ul>
+<h4>4. Edge Cases</h4>
+<pre><code class="language-typescript">it(&#39;should handle very short queries&#39;, async () =&gt; {
+	const result = await selectAgent(&#39;Help&#39;);
+
+	expect([&#39;linkedin&#39;, &#39;rag&#39;]).toContain(result.agent);
+});
+</code></pre>
+<p><strong>What we&#39;re checking:</strong></p>
+<ul>
+<li>✅ Doesn&#39;t crash on short input</li>
+<li>✅ Still routes to a valid agent</li>
+</ul>
+<hr>
+<h2>Running the Tests</h2>
+<h3>First Run</h3>
+<pre><code class="language-bash">yarn test:selector
+</code></pre>
+<p><strong>Expected output:</strong></p>
+<pre><code>PASS app/agents/__tests__/selector.test.ts
+  Selector Agent Routing
+    LinkedIn Agent Routing
+      ✓ should route LinkedIn post creation to linkedin agent (2145ms)
+      ✓ should route career advice to linkedin agent (1832ms)
+      ✓ should route professional networking questions to linkedin agent (1654ms)
+    RAG Agent Routing
+      ✓ should route technical documentation questions to rag agent (1723ms)
+      ✓ should route coding questions to rag agent (1567ms)
+      ✓ should route framework questions to rag agent (1689ms)
+    Response Structure
+      ✓ should return valid response structure (1543ms)
+      ✓ should refine queries (1698ms)
+    Edge Cases
+      ✓ should handle very short queries (1421ms)
+      ✓ should handle out-of-domain queries (1589ms)
+      ✓ should handle ambiguous queries (1623ms)
+
+Test Suites: 1 passed, 1 total
+Tests:       11 passed, 11 total
+Time:        17.234s
+</code></pre>
+<h3>What to Expect</h3>
+<ul>
+<li>✅ Tests take 15-20 seconds (calling OpenAI API)</li>
+<li>✅ All 11 tests should pass</li>
+<li>⚠️ Occasional routing variations are normal (non-determinism)</li>
+</ul>
+<p><strong>How it works:</strong> Tests import and call the API route handler directly, bypassing the need for a running server. This is faster and more reliable for testing.</p>
+<hr>
+<h2>When Tests Fail</h2>
+<h3>Common Issues</h3>
+<p><strong>❌ &quot;Timeout exceeded&quot;</strong></p>
+<pre><code>Test timeout of 5000ms exceeded
+</code></pre>
+<p><strong>Fix:</strong> Tests have 15s timeout - this means API is slow or down. Check:</p>
+<ul>
+<li>OpenAI API status</li>
+<li>Your internet connection</li>
+<li>Rate limits</li>
+</ul>
+<p><strong>❌ &quot;Unexpected agent selected&quot;</strong></p>
+<pre><code>Expected: &#39;linkedin&#39;
+Received: &#39;rag&#39;
+</code></pre>
+<p><strong>Fix:</strong> This can happen! LLMs are non-deterministic. Ask yourself:</p>
+<ul>
+<li>Is my test query actually clear?</li>
+<li>Could it reasonably go to either agent?</li>
+<li>Maybe my expectation is wrong?</li>
+</ul>
+<p><strong>❌ &quot;Missing API key&quot;</strong></p>
+<pre><code>Error: OPENAI_API_KEY is not set
+</code></pre>
+<p><strong>Fix:</strong> Check your <code>.env.local</code> file has the key</p>
+<hr>
+<h2>Understanding Non-Determinism</h2>
+<h3>Why Tests Might Fail Occasionally</h3>
+<pre><code class="language-typescript">// This query is ambiguous:
+&#39;Tell me about JavaScript&#39;;
+
+// Could route to:
+// - &#39;rag&#39; → technical documentation
+// - &#39;linkedin&#39; → career advice about learning JS
+
+// Both are valid!
+</code></pre>
+<h3>How to Handle It</h3>
+<ol>
+<li><strong>Make queries clearer:</strong></li>
+</ol>
+<pre><code class="language-typescript">❌ &quot;Tell me about JavaScript&quot;
+✅ &quot;Write a LinkedIn post about JavaScript&quot;
+✅ &quot;How do I use JavaScript async/await?&quot;
+</code></pre>
+<ol start="2">
+<li><strong>Accept some randomness:</strong></li>
+</ol>
+<pre><code class="language-typescript">// Instead of this:
+expect(data.selectedAgent).toBe(&#39;rag&#39;);
+
+// Consider this for ambiguous queries:
+expect([&#39;linkedin&#39;, &#39;rag&#39;]).toContain(data.selectedAgent);
+</code></pre>
+<hr>
+<h2>What We&#39;re NOT Testing</h2>
+<p>Remember, we&#39;re keeping it simple:</p>
+<p>❌ <strong>Not testing:</strong></p>
+<ul>
+<li>Exact refined query text</li>
+<li>Response quality or tone</li>
+<li>Specific word choices</li>
+<li>LLM creativity</li>
+</ul>
+<p>✅ <strong>Only testing:</strong></p>
+<ul>
+<li>Routing decisions</li>
+<li>Response structure</li>
+<li>Error handling</li>
+<li>Valid agent types</li>
+</ul>
+<p>This keeps tests stable and reliable despite AI non-determinism.</p>
+<hr>
+<h2>Exercise: Write Your Own Tests</h2>
+<p>Now it&#39;s your turn to add test cases to strengthen the test suite.</p>
+<h3>Add 2-3 New Test Cases</h3>
+<p>Add new test cases to <code>app/agents/__tests__/selector.test.ts</code>:</p>
+<p><strong>Test Ideas:</strong></p>
+<p><strong>LinkedIn scenarios:</strong></p>
+<ul>
+<li>Job search queries</li>
+<li>Resume and career advice</li>
+<li>Professional networking questions</li>
+<li>Personal branding</li>
+</ul>
+<p><strong>RAG scenarios:</strong></p>
+<ul>
+<li>Debugging questions</li>
+<li>API documentation lookups</li>
+<li>Framework best practices</li>
+<li>Code examples and tutorials</li>
+</ul>
+<p><strong>Edge cases:</strong></p>
+<ul>
+<li>Very long queries</li>
+<li>Queries with special characters</li>
+<li>Mixed intent (could go to either agent)</li>
+</ul>
+<h3>Test Template</h3>
+<pre><code class="language-typescript">it(&#39;should route [scenario] to [agent] agent&#39;, async () =&gt; {
+	const result = await selectAgent(&#39;[your test query]&#39;);
+
+	expect(result.agent).toBe(&#39;[linkedin|rag]&#39;);
+	expect(result.query).toBeTruthy();
+});
+</code></pre>
+<h3>Example</h3>
+<pre><code class="language-typescript">it(&#39;should route resume advice to linkedin agent&#39;, async () =&gt; {
+	const result = await selectAgent(
+		&#39;How can I improve my resume for software engineering roles?&#39;
+	);
+
+	expect(result.agent).toBe(&#39;linkedin&#39;);
+	expect(result.query).toBeTruthy();
+});
+</code></pre>
+<h3>Run Your Tests</h3>
+<pre><code class="language-bash">yarn test:selector
+</code></pre>
+<p><strong>Verify:</strong></p>
+<ul>
+<li>All existing tests still pass ✅</li>
+<li>Your new tests pass ✅</li>
+<li>No errors in output</li>
+</ul>
+<h3>Tips</h3>
+<ul>
+<li><strong>Be specific:</strong> Clear test queries reduce non-determinism</li>
+<li><strong>Test both agents:</strong> Add cases for both LinkedIn and RAG routing</li>
+<li><strong>Consider edge cases:</strong> What happens with unusual inputs?</li>
+<li><strong>Keep it simple:</strong> Focus on routing and structure, not exact text</li>
+</ul>
+<hr>
+<h2>Your Turn</h2>
+<p><strong>Step 1: Run existing tests</strong></p>
+<pre><code class="language-bash">yarn test:selector
+</code></pre>
+<p><strong>Verify:</strong></p>
+<ul>
+<li>All 11 tests pass ✅</li>
+<li>Takes 15-20 seconds</li>
+<li>No errors in output</li>
+</ul>
+<p><strong>Step 2: Complete the exercise above</strong></p>
+<ul>
+<li>Add 2-3 new test cases</li>
+<li>Run tests to verify they pass</li>
+<li>Experiment with different query types</li>
+</ul>
+<p>If tests fail, review the &quot;When Tests Fail&quot; section above.</p>
+<p><strong>Note:</strong> Tests call the API handler directly (no server needed). This is a common pattern in Next.js testing - you import the route handler and call it like a regular function.</p>
+<hr>
+<h2>What&#39;s Next?</h2>
+<p>Now you have:</p>
+<ul>
+<li>✅ Working agent system</li>
+<li>✅ Observability with Helicone</li>
+<li>✅ Test coverage for routing</li>
+</ul>
+<p>Next up: <strong>Capstone Project</strong> where you&#39;ll deploy your custom RAG system!</p>
+<hr>
+<h2>Quick Reference</h2>
+<pre><code class="language-bash"># Run selector tests
+yarn test:selector
+
+# Run all tests
+yarn test
+
+# Run specific test
+yarn test:selector -t &quot;LinkedIn&quot;
+
+# Watch mode
+yarn test:selector --watch
+</code></pre>

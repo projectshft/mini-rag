@@ -8,9 +8,14 @@ export async function linkedInAgent(
 	// TODO: Implement the LinkedIn agent
 	//
 	// Follow Module 8 in the curriculum:
-	//   1. Get the fine-tuned model ID from environment
+	//   1. Get the fine-tuned model ID from environment (process.env.OPENAI_FINETUNED_MODEL)
 	//   2. Build a system prompt for LinkedIn content
-	//   3. Use streamText() to stream the response
+	//   3. Use streamText() with:
+	//      - model: openai(modelId)
+	//      - system: your system prompt
+	//      - prompt: include request.originalQuery and request.query
+	//
+	// Note: Use `prompt` parameter (not `messages`) for single-turn agent responses
 
 	throw new Error('LinkedIn agent not implemented yet!');
 }
