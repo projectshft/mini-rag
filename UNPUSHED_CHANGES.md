@@ -100,6 +100,8 @@ https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/ASSIGNMENTS.h
 - **LLM-as-Judge curriculum** - Clarified students implement from scratch (not copy code)
 - **Module 13.1** - Fixed "Helicone" → "LangSmith" typo
 - **Module 14.2** - Fixed "What's Next" from "Chat Interface" → "SQL Agent"
+- **Removed all "Due: Before Assignment X"** - From modules 5, 9, 15
+- **Fixed SQL Agent submission links** - Were TBD, now correct Typeform URLs
 
 ### LOW-IMPACT
 
