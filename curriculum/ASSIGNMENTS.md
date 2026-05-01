@@ -104,10 +104,7 @@ Build a complete RAG application for a domain of your choice. Requirements:
 4. **Evaluation** - How do you know it's working?
 5. **One unique feature** - Something not covered in the curriculum
 
-**Video (5-7 min):** Demo your application and explain your design decisions.
-
-**Submit:**
-- [Capstone Submission](https://form.typeform.com/to/TBD)
+**Submissions:** See the [Capstone Project page](./17-capstone-project/1-final-project.md) for proposal and final submission forms.
 
 ---
 
