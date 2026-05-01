@@ -1,4 +1,4 @@
-# Site Update - April 27, 2026
+# Site Update - May 1, 2026
 
 ## Files to Update (Copy-Paste List)
 
@@ -57,6 +57,12 @@ https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/ASSIGNMENTS.h
 
 ---
 
+## Student Branch Changes (student-todo-exercises)
+
+- **LinkedIn Agent TODO** - Added missing step about `prompt` parameter (not `messages`)
+
+---
+
 ## What Changed (Last 6 Weeks)
 
 ### HIGH-IMPACT
@@ -91,6 +97,9 @@ https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/ASSIGNMENTS.h
 - Fix LLM-as-judge test
 - Fix broken OpenAI documentation links
 - Remove internal navigation references
+- **LLM-as-Judge curriculum** - Clarified students implement from scratch (not copy code)
+- **Module 13.1** - Fixed "Helicone" → "LangSmith" typo
+- **Module 14.2** - Fixed "What's Next" from "Chat Interface" → "SQL Agent"
 
 ### LOW-IMPACT
 
@@ -102,6 +111,7 @@ https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/ASSIGNMENTS.h
 
 ## Commit History
 
+**May 1:** Curriculum alignment verification, LLM-as-Judge clarification, What's Next fixes
 **April 26-27:** Hybrid search demo, curriculum cleanup, removed learning path
 **April 20-23:** Link fixes, graceful degradation, solutions removed, HTML regeneration
 **April 17-18:** Removed duplicate modules, chunking fixes
