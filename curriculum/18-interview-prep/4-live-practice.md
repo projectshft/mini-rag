@@ -1,4 +1,4 @@
-# Module 4: Live Practice & Mock Interviews
+# Live Practice
 
 Practice makes permanent. Time to practice answering common questions out loud.
 
@@ -6,7 +6,7 @@ Practice makes permanent. Time to practice answering common questions out loud.
 
 ## What You'll Build
 
-By the end of this module, you'll have:
+By the end of this section, you'll have:
 
 - Three video recordings answering different question types
 - Practice with technical explanations
@@ -80,7 +80,7 @@ Record yourself answering this question:
 **"Tell me about a RAG system you built."**
 
 **Requirements:**
-- Use the Problem → Agitate → Solve → Reflect framework from Module 1
+- Use the Problem → Agitate → Solve → Reflect framework
 - Don't read from notes
 - Record in one take
 
@@ -170,7 +170,7 @@ Record yourself answering ONE of these questions (your choice):
 **Option C:** "Design a RAG system for a code review tool that suggests improvements."
 
 **Requirements:**
-- Use the six-part framework from Module 3
+- Use the six-part framework from RAG System Design
 - Explain your reasoning for each choice
 - Mention at least one tradeoff
 - Don't read from notes
@@ -267,22 +267,6 @@ Record your initial answer, then record a follow-up:
 - Simulates real interview flow
 - Tests your ability to extend your thinking
 - Reveals gaps in your knowledge
-
-### Peer Review
-
-Exchange videos with another student:
-
-**What to look for:**
-- Did they answer the question?
-- Was their reasoning clear?
-- Did they mention tradeoffs?
-- Where did they stumble?
-- What sounded strong?
-
-**Give feedback:**
-- One thing they did well
-- One thing to improve
-- One question you still have
 
 ---
 
@@ -418,7 +402,7 @@ Before submitting your three videos, verify:
 Create a single document with:
 
 ```markdown
-# Module 4: Live Practice Submissions
+# Live Practice Submissions
 
 ## Video 1: Project Question
 **Link:** [your-link]
@@ -460,10 +444,10 @@ Create a single document with:
 
 You now have:
 
-- ✅ A signature story (Module 1)
-- ✅ Strong opinions with reasoning (Module 2)
-- ✅ System design frameworks (Module 3)
-- ✅ Practice speaking out loud (Module 4)
+- ✅ A signature story
+- ✅ Strong opinions with reasoning
+- ✅ System design frameworks
+- ✅ Practice speaking out loud
 
 This is more preparation than 95% of candidates do.
 

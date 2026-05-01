@@ -4,7 +4,7 @@ How to think, explain, and stand out in AI engineering interviews.
 
 ---
 
-## What This Module Covers
+## What This Covers
 
 Most engineers struggle with AI interviews because they treat them like traditional software interviews. But AI engineering interviews test different skills:
 
@@ -19,7 +19,7 @@ This is not about memorizing answers. This is about learning how to think and ex
 
 ## What You'll Build
 
-By the end of this module, you'll have:
+By the end, you'll have:
 
 - ✅ A signature story about your RAG project
 - ✅ Strong opinions on agents, frameworks, and RAG patterns
@@ -29,9 +29,9 @@ By the end of this module, you'll have:
 
 ---
 
-## Module Structure
+## Structure
 
-### Module 1: Your Signature Story
+### Your Signature Story
 **Goal:** Craft a clear, compelling story about your project.
 
 **Deliverables:**
@@ -40,7 +40,7 @@ By the end of this module, you'll have:
 
 ---
 
-### Module 2: Strong Opinions & Tradeoffs
+### Strong Opinions & Tradeoffs
 **Goal:** Develop defensible positions on agents, frameworks, and workflows.
 
 **Deliverables:**
@@ -49,7 +49,7 @@ By the end of this module, you'll have:
 
 ---
 
-### Module 3: RAG System Design
+### RAG System Design
 **Goal:** Design RAG systems for different scenarios with clear reasoning.
 
 **Deliverables:**
@@ -58,12 +58,11 @@ By the end of this module, you'll have:
 
 ---
 
-### Module 4: Live Practice & Mock Interviews
+### Live Practice
 **Goal:** Practice answering common questions out loud.
 
 **Deliverables:**
 - 3 video recordings answering different interview questions
-- Peer feedback (optional but recommended)
 
 ---
 
@@ -82,10 +81,10 @@ By the end of this module, you'll have:
 
 ---
 
-## How to Use This Module
+## How to Use This
 
-### Step 1: Complete Each Module in Order
-Work through modules 1-4 sequentially. Each builds on the previous.
+### Step 1: Work Through Each Section in Order
+Each section builds on the previous.
 
 ### Step 2: Do the Written Assignments First
 Writing forces clarity. Do written assignments before video recordings.
@@ -186,6 +185,4 @@ Solidify your understanding with these small projects:
 
 ## Ready to Start?
 
-Move on to Module 1: Your Signature Story.
-
-This is the most important module. Nail this, and you'll stand out in every interview.
+Start with Your Signature Story - it's the most important section. Nail this, and you'll stand out in every interview.

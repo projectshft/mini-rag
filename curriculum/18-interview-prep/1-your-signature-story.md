@@ -1,4 +1,4 @@
-# Module 1: Your Signature Story
+# Your Signature Story
 
 This is the most important skill in AI interviews. You need one clear, compelling story about a project you've built.
 
@@ -6,7 +6,7 @@ This is the most important skill in AI interviews. You need one clear, compellin
 
 ## What You'll Build
 
-By the end of this module, you'll have:
+By the end of this section, you'll have:
 
 - A clear 2-minute story about your RAG project
 - A framework for explaining any technical project
@@ -467,4 +467,4 @@ Here's a complete example following the framework:
 
 ## What's Next?
 
-In Module 2, you'll develop strong opinions on agents vs workflows, frameworks, and RAG patterns - the second most common interview topic.
+Next, you'll develop strong opinions on agents vs workflows, frameworks, and RAG patterns - the second most common interview topic.

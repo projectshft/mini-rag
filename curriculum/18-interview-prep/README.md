@@ -1,4 +1,4 @@
-# Module 16: AI Engineering Interview Playbook
+# AI Engineering Interview Playbook
 
 Master AI engineering interviews with structured frameworks for explaining your work, defending technical decisions, and designing systems on the spot.
 
@@ -6,7 +6,7 @@ Master AI engineering interviews with structured frameworks for explaining your 
 
 ## Overview
 
-This module is designed to help you:
+This is designed to help you:
 - Clearly explain what you've built
 - Demonstrate strong technical thinking
 - Communicate tradeoffs and decisions
@@ -16,87 +16,87 @@ This module is designed to help you:
 
 ---
 
-## Module Structure
+## Structure
 
-### 📖 Start Here
+### Start Here
 **[0-overview.md](./0-overview.md)** - Read this first to understand the approach
 
 ---
 
-### Module 1: Your Signature Story (Most Important)
+### Your Signature Story (Most Important)
 **[1-your-signature-story.md](./1-your-signature-story.md)**
 
 **Goal:** Craft a clear, compelling story about your RAG project.
 
 **Deliverables:**
-- 📝 Written story using Problem → Agitate → Solve → Reflect framework
-- 🎥 Video recording of your story (1-5 minutes, no notes)
-- 📬 **Submit for feedback** - you'll receive personalized feedback on your delivery
+- Written story using Problem → Agitate → Solve → Reflect framework
+- Video recording of your story (1-5 minutes, no notes)
+- Submit for feedback
 
 **Why this matters:** This is THE most important interview skill. Nail this, and you'll stand out in every interview.
 
 ---
 
-### Module 2: Strong Opinions & Tradeoffs
+### Strong Opinions & Tradeoffs
 **[2-strong-opinions-tradeoffs.md](./2-strong-opinions-tradeoffs.md)**
 
 **Goal:** Develop defensible positions on agents, frameworks, and RAG patterns.
 
 **Deliverables:**
-- 📝 Written opinions on:
+- Written opinions on:
   - Agents vs Workflows
   - LangChain vs LangGraph
   - RAG Patterns (Chunking + Re-Ranking)
   - Model Selection
   - Observability
-- 🎥 Video explaining your strongest opinion (1-5 minutes)
-- 📬 **Submit for feedback** - you'll receive feedback on your reasoning and delivery
+- Video explaining your strongest opinion (1-5 minutes)
+- Submit for feedback
 
 **Why this matters:** Most candidates describe. Strong candidates take positions and defend them.
 
 ---
 
-### Module 3: RAG System Design
+### RAG System Design
 **[3-rag-system-design.md](./3-rag-system-design.md)**
 
 **Goal:** Design RAG systems for different scenarios with clear reasoning.
 
 **Deliverables:**
-- 📝 Three complete system designs:
+- Three complete system designs:
   - Legal document RAG
   - Customer support RAG
   - Code documentation RAG
-- 🎥 Video walkthrough of one design (1-5 minutes)
-- 📬 **Submit for feedback** - you'll receive feedback on your system design thinking
+- Video walkthrough of one design (1-5 minutes)
+- Submit for feedback
 
 **Why this matters:** "Design a RAG system for X" is the most common technical interview question.
 
 ---
 
-### Module 4: Live Practice & Mock Interviews (Optional)
+### Live Practice (Optional)
 **[4-live-practice.md](./4-live-practice.md)**
 
 **Goal:** Additional practice answering common questions out loud.
 
 **Deliverables:**
-- 🎥 **Video 1:** Project question
-- 🎥 **Video 2:** Opinion question
-- 🎥 **Video 3:** Design question
-- 📝 Self-assessment for each video
+- Video 1: Project question
+- Video 2: Opinion question
+- Video 3: Design question
+- Self-assessment for each video
 
 **Why this matters:** Extra practice builds confidence and exposes patterns you might miss.
 
-**Note:** This module is optional since you'll already have submitted videos in Modules 1-3. Use this for additional practice if needed.
+**Note:** This is optional since you'll already have submitted videos in the previous sections.
 
 ---
 
-## How to Use This Module
+## How to Use This
 
 ### Step 1: Read the Overview
 Start with [0-overview.md](./0-overview.md) to understand the approach and mindset.
 
-### Step 2: Complete Each Module in Order
-Work through modules 1-4 sequentially. Each builds on the previous.
+### Step 2: Complete Each Section in Order
+Work through each section sequentially. Each builds on the previous.
 
 ### Step 3: Do Written Assignments First
 Writing forces clarity. Complete written artifacts before recording videos.
@@ -113,17 +113,17 @@ Watch your videos back. Notice where you stumbled. Re-record until clear.
 
 ---
 
-## Module Progression
+## Progression
 
-Complete Modules 1-3 in order, submitting your video after each for feedback. Module 4 is optional for additional practice.
+Complete the first three sections in order, submitting your video after each for feedback. Live Practice is optional for additional practice.
 
-**Core modules (required):**
-- Module 1: Your Signature Story
-- Module 2: Strong Opinions & Tradeoffs
-- Module 3: RAG System Design
+**Core (required):**
+- Your Signature Story
+- Strong Opinions & Tradeoffs
+- RAG System Design
 
 **Optional:**
-- Module 4: Live Practice & Mock Interviews
+- Live Practice
 
 This is more preparation than 95% of candidates do.
 
@@ -183,20 +183,17 @@ They ARE looking for:
 
 - **Slack:** #interview-prep channel
 - **Office Hours:** Thursdays 3-4 PM
-- **Peer Review:** Exchange videos with classmates
 
 ---
 
 ## Ready to Start?
 
 1. Read [0-overview.md](./0-overview.md)
-2. Move to [Module 1: Your Signature Story](./1-your-signature-story.md)
+2. Move to [Your Signature Story](./1-your-signature-story.md)
 3. Complete the written assignment
 4. Record your video
-5. Continue to Module 2
+5. Continue to the next section
 
 ---
 
 **Remember:** The goal is not to memorize perfect answers. The goal is to learn frameworks for thinking clearly and explaining confidently.
-
-Good luck! 🚀

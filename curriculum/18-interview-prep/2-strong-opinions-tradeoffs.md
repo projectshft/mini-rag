@@ -1,4 +1,4 @@
-# Module 2: Strong Opinions & Tradeoffs
+# Strong Opinions & Tradeoffs
 
 Most candidates describe. Strong candidates take positions and defend them.
 
@@ -6,7 +6,7 @@ Most candidates describe. Strong candidates take positions and defend them.
 
 ## What You'll Build
 
-By the end of this module, you'll have:
+By the end of this section, you'll have:
 
 - Defensible positions on agents vs workflows
 - Opinions on LangChain vs LangGraph
@@ -498,4 +498,4 @@ Even if you're not 100% confident, sound like you have a position.
 
 ## What's Next?
 
-In Module 3, you'll design RAG systems for specific scenarios - the most common technical interview question.
+Next, you'll design RAG systems for specific scenarios - the most common technical interview question.

@@ -1,4 +1,4 @@
-# Module 3: RAG System Design
+# RAG System Design
 
 Design RAG systems for different scenarios with clear reasoning about architecture, chunking, and retrieval.
 
@@ -6,7 +6,7 @@ Design RAG systems for different scenarios with clear reasoning about architectu
 
 ## What You'll Build
 
-By the end of this module, you'll have:
+By the end of this section, you'll have:
 
 - Three complete system designs for different scenarios
 - A framework for designing any RAG system
@@ -731,4 +731,4 @@ Each has different:
 
 ## What's Next?
 
-In Module 4, you'll practice answering common interview questions out loud - the final skill before real interviews.
+Next, you'll practice answering common interview questions out loud - the final skill before real interviews.
