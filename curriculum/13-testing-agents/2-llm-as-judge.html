@@ -333,17 +333,27 @@ Reason: RAG is now retrieving outdated documentation,
 response references deprecated APIs.
 </code></pre>
 <hr>
-<h2>Exercise: Create Your Own LLM-as-Judge Tests</h2>
-<h3>Step 1: Add the Test Script to package.json</h3>
-<p>Add this script to your <code>package.json</code>:</p>
+<h2>Your Challenge: Implement LLM-as-Judge Testing</h2>
+<p>The test file <code>app/agents/__tests__/llm-judge.test.ts</code> has TODOs for you to complete. You&#39;ll implement the judge from scratch using the concepts above as reference.</p>
+<h3>What You&#39;ll Implement</h3>
+<p>Open the test file and complete these TODOs:</p>
+<ol>
+<li><strong>Judge System Prompt</strong> - Define scoring criteria (what does 10 mean? What does 1 mean?)</li>
+<li><strong>Zod Schema</strong> - Add constraints to ensure valid scores (1-10 range)</li>
+<li><strong>Test Cases</strong> - Add at least 3 golden responses for questions relevant to your RAG content</li>
+<li><strong>Judge Function</strong> - Implement <code>judgeResponse()</code> using structured outputs</li>
+</ol>
+<h3>Step 1: Add the Test Script</h3>
+<p>Add this to your <code>package.json</code> scripts:</p>
 <pre><code class="language-json">{
 	&quot;scripts&quot;: {
 		&quot;test:judge&quot;: &quot;jest llm-judge&quot;
 	}
 }
 </code></pre>
-<h3>Step 2: Create the Test File</h3>
-<p>Create <code>app/agents/__tests__/llm-judge.test.ts</code>:</p>
+<h3>Step 2: Complete the TODOs</h3>
+<p>Open <code>app/agents/__tests__/llm-judge.test.ts</code> and implement each TODO.</p>
+<p><strong>Reference implementation</strong> (use as a guide, not something to copy):</p>
 <pre><code class="language-typescript">/**
  * LLM-AS-JUDGE TESTS
  *
@@ -536,11 +546,19 @@ describe(&#39;LLM-as-Judge Response Quality&#39;, () =&gt; {
 	);
 });
 </code></pre>
+<p><strong>Key implementation details:</strong></p>
+<ul>
+<li>Use <code>zodResponseFormat()</code> to get structured JSON responses from the judge</li>
+<li>Set <code>temperature: 0</code> for consistent scoring</li>
+<li>Parse the JSON response to extract <code>{ score, reason }</code></li>
+<li>The <code>getRAGResponse</code> helper is already provided in the file</li>
+</ul>
 <h3>Step 3: Get Golden Responses</h3>
 <ol>
-<li>Open your chat interface (<code>yarn dev</code>)</li>
+<li>Run your chat interface (<code>yarn dev</code>)</li>
 <li>Ask questions you want to test</li>
 <li>Copy the best responses as your golden references</li>
+<li>Add them to the <code>TEST_CASES</code> array</li>
 </ol>
 <h3>Step 4: Run and Iterate</h3>
 <pre><code class="language-bash">yarn test:judge
@@ -610,17 +628,6 @@ const TEST_CASES = [
 <li>Use GPT-4o-mini for judging (accurate enough, much cheaper)</li>
 <li>Keep test suite small and focused (5-10 critical cases)</li>
 </ul>
-<hr>
-<h2>Your Challenge: Create Your Own Tests</h2>
-<p>Now it&#39;s your turn. Add at least 2-3 more test cases to the LLM-as-judge test file:</p>
-<ol>
-<li><strong>Run your chat interface</strong> (<code>yarn dev</code>)</li>
-<li><strong>Ask questions</strong> relevant to your documentation</li>
-<li><strong>Copy the best responses</strong> as golden references</li>
-<li><strong>Add them to TEST_CASES</strong> in <code>llm-judge.test.ts</code></li>
-<li><strong>Run the tests</strong> and adjust thresholds if needed</li>
-</ol>
-<p>Think about what questions are critical for your users. Those are the ones worth testing.</p>
 <hr>
 <h2>Submit Your Work</h2>
 <p>When you&#39;ve completed the LLM-as-judge exercise:</p>

@@ -1,0 +1,65 @@
+<h1>Assignments</h1>
+<hr>
+<h2>Document Upload</h2>
+<p><strong>Video (3-4 minutes):</strong> Explain chunking strategy tradeoffs for medical records, Confluence docs, and Twitter posts.</p>
+<p><strong>Code:</strong> Complete the TODOs in the ingestion route, then add text sanitization (strip HTML, normalize whitespace, handle special characters, remove boilerplate).</p>
+<p><strong>Files:</strong> <code>app/api/upload-document/route.ts</code>, <code>app/libs/chunking.ts</code></p>
+<p><strong>Submit:</strong></p>
+<ul>
+<li><a href="https://form.typeform.com/to/NdVcsThQ">Video Submission</a></li>
+<li><a href="https://form.typeform.com/to/A0pGKPqU">Code Submission</a></li>
+</ul>
+<hr>
+<h2>RAG Agent</h2>
+<p><strong>Video (3-4 minutes):</strong> Explain how you evaluate retrieval quality - chunk sizing, retrieval accuracy, similarity thresholds, and metrics.</p>
+<p><strong>Code:</strong> Complete the TODOs in the RAG agent, then add query preprocessing (expand abbreviations, normalize casing, strip filler words).</p>
+<p><strong>Files:</strong> <code>app/agents/rag.ts</code></p>
+<p><strong>Submit:</strong></p>
+<ul>
+<li><a href="https://form.typeform.com/to/VcNBEHNA">Video Submission</a></li>
+<li><a href="https://form.typeform.com/to/EWWcsorL">Code Submission</a></li>
+</ul>
+<hr>
+<h2>Reranking</h2>
+<p><strong>Video (3-5 minutes):</strong> Explain the two-stage retrieval pattern - when to rerank, when to skip, stage cutoffs, and cost analysis.</p>
+<p><strong>Code:</strong> Complete the TODOs in reranking, then add score thresholding (minimum confidence, filter low results, graceful &quot;I don&#39;t know&quot; responses).</p>
+<p><strong>Files:</strong> <code>app/agents/rag.ts</code> (reranking section)</p>
+<p><strong>Submit:</strong></p>
+<ul>
+<li><a href="https://form.typeform.com/to/pwjkAruL">Video Submission</a></li>
+<li><a href="https://form.typeform.com/to/q3mEuSmX">Code Submission</a></li>
+</ul>
+<hr>
+<h2>SQL Agent</h2>
+<p><strong>Video (3-4 minutes):</strong> Explain SQL query types (filtering, aggregation, joins, full-text search), pgvector, and when SQL beats dedicated vector DBs.</p>
+<p><strong>Code:</strong> Complete the <code>databaseSearchAgent</code> - define Zod schema, build Prisma WHERE clause, implement full agent flow.</p>
+<p><strong>Repo:</strong> Clone <code>sql-agent</code> branch from <code>https://github.com/projectshft/killer_agents.git</code></p>
+<p><strong>Files:</strong> <code>app/agents/databaseSearchAgent.ts</code></p>
+<p><strong>Submit:</strong></p>
+<ul>
+<li><a href="https://form.typeform.com/to/QR9Vohg0">Video Submission</a></li>
+<li><a href="https://form.typeform.com/to/FNEjXTwk">Code Submission</a></li>
+</ul>
+<hr>
+<h2>Capstone Project</h2>
+<p>Build a complete RAG application for a domain of your choice.</p>
+<p><strong>Option A:</strong> Extend the existing RAG project with a new data source and agent</p>
+<p><strong>Option B:</strong> Build your own RAG system from scratch</p>
+<p><strong>Proposal Submit:</strong></p>
+<ul>
+<li><a href="https://form.typeform.com/to/Z9JApCkF">Proposal Video</a></li>
+<li><a href="https://form.typeform.com/to/DXPyafyJ">Proposal Notes</a></li>
+</ul>
+<p><strong>Final Submit:</strong></p>
+<ul>
+<li><a href="https://form.typeform.com/to/SF6b6edL">Final Video</a></li>
+<li><a href="https://form.typeform.com/to/TXjlfrlr">Code Submission</a></li>
+</ul>
+<hr>
+<h2>LLM-as-Judge (Practice)</h2>
+<p><strong>Code:</strong> Implement the LLM-as-judge test pattern to evaluate agent routing quality.</p>
+<p><strong>Files:</strong> <code>app/agents/__tests__/llm-judge.test.ts</code></p>
+<p><strong>Submit:</strong></p>
+<ul>
+<li><a href="https://form.typeform.com/to/FNEjXTwk">Code Submission</a></li>
+</ul>
