@@ -566,7 +566,5 @@ For each type, explain:
 
 ### Submit Your Work
 
-- [Video Submission - Assignment 1](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission - Assignment 1](https://form.typeform.com/to/A0pGKPqU)
-
-**Due:** Before starting Assignment 2
+- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
+- [Code Submission](https://form.typeform.com/to/A0pGKPqU)

@@ -250,7 +250,5 @@ Give specific examples from your implementation.
 
 ### Submit Your Work
 
-- [Video Submission - Assignment 2](https://form.typeform.com/to/VcNBEHNA)
-- [Code Submission - Assignment 2](https://form.typeform.com/to/EWWcsorL)
-
-**Due:** Before starting Assignment 3
+- [Video Submission](https://form.typeform.com/to/VcNBEHNA)
+- [Code Submission](https://form.typeform.com/to/EWWcsorL)

@@ -331,10 +331,8 @@ Be specific with examples, not just general principles.
 
 ### Submit Your Work
 
-- [Video Submission - Assignment 3](https://form.typeform.com/to/pwjkAruL)
-- [Code Submission - Assignment 3](https://form.typeform.com/to/q3mEuSmX)
-
-**Due:** Before starting Assignment 4
+- [Video Submission](https://form.typeform.com/to/pwjkAruL)
+- [Code Submission](https://form.typeform.com/to/q3mEuSmX)
 
 ---
 

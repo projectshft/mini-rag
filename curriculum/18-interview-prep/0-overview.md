@@ -1,109 +1,75 @@
 # AI Engineering Interview Playbook
 
-How to think, explain, and stand out in AI engineering interviews.
+How to stand out in AI engineering interviews.
 
 ---
 
-## What This Covers
+## The Hardest Part of AI Interviews
 
-Most engineers struggle with AI interviews because they treat them like traditional software interviews. But AI engineering interviews test different skills:
+You've built an end-to-end RAG system. You understand chunking, embeddings, agents, and retrieval. You've made real architectural decisions and seen what works.
 
-- **Technical thinking** - Can you explain tradeoffs and make decisions?
-- **Communication** - Can you articulate what you built and why?
-- **Opinions** - Do you have defensible positions on frameworks, patterns, and tools?
-- **System design** - Can you architect RAG systems, chunking strategies, and agent workflows?
+Now comes the hard part: **proving you know what you're talking about.**
 
-This is not about memorizing answers. This is about learning how to think and explain like an engineer.
+The coding portion of AI interviews typically follows traditional software engineering patterns. But the conversation portion - where you explain what you've built, why you made certain choices, and how you'd approach new problems - is where AI engineering interviews diverge.
+
+Most candidates stumble here. Not because they lack knowledge, but because they haven't practiced articulating it.
+
+---
+
+## Why Stories Matter
+
+Having a bank of well-rehearsed stories creates:
+
+- **Confidence** - You know exactly what you're going to say
+- **Clarity** - You've refined your explanations through practice
+- **Credibility** - You can speak fluidly about real decisions you made
+
+When an interviewer asks "Tell me about a project you've worked on" or "How would you design a RAG system?", you won't be improvising. You'll be drawing from prepared, practiced material.
+
+This isn't about memorizing scripts. It's about having thought deeply about what you built and why - then practicing saying it out loud until it flows naturally.
 
 ---
 
 ## What You'll Build
 
-By the end, you'll have:
+By the end of this module, you'll have:
 
-- ✅ A signature story about your RAG project
-- ✅ Strong opinions on agents, frameworks, and RAG patterns
-- ✅ System design answers for common scenarios
-- ✅ Video recordings of your practice sessions
-- ✅ Written artifacts you can reference before interviews
+- A signature story about your RAG project
+- Strong opinions on agents, frameworks, and patterns
+- System design answers for common scenarios
+- Video recordings of your practice sessions
+- Written artifacts you can review before any interview
 
 ---
 
 ## Structure
 
 ### Your Signature Story
-**Goal:** Craft a clear, compelling story about your project.
-
-**Deliverables:**
-- Written story using Problem → Agitate → Solve → Reflect framework
-- Video recording of your story
-
----
+Craft a clear, compelling story about your project using the Problem → Agitate → Solve → Reflect framework.
 
 ### Strong Opinions & Tradeoffs
-**Goal:** Develop defensible positions on agents, frameworks, and workflows.
-
-**Deliverables:**
-- Written opinions on agents vs workflows, LangChain vs LangGraph
-- Video recording explaining your strongest opinion
-
----
+Develop defensible positions on the decisions you made and the tools you used.
 
 ### RAG System Design
-**Goal:** Design RAG systems for different scenarios with clear reasoning.
-
-**Deliverables:**
-- Written system designs for 3 different scenarios
-- Video walkthrough of one system design
-
----
+Design systems for different scenarios with clear reasoning.
 
 ### Live Practice
-**Goal:** Practice answering common questions out loud.
-
-**Deliverables:**
-- 3 video recordings answering different interview questions
-
----
-
-## Why This Works
-
-**The problem with most interview prep:**
-- Memorizing answers (sounds robotic)
-- Generic responses (doesn't differentiate you)
-- No practice speaking out loud (stumbles in real interviews)
-
-**Our approach:**
-- ✅ Build frameworks for thinking, not scripts
-- ✅ Create written artifacts you can review
-- ✅ Practice out loud with video recordings
-- ✅ Get comfortable explaining your decisions
+Practice answering common questions out loud with video recordings.
 
 ---
 
 ## How to Use This
 
-### Step 1: Work Through Each Section in Order
-Each section builds on the previous.
+### 1. Write First, Then Record
+Writing forces clarity. Do written exercises before video recordings.
 
-### Step 2: Do the Written Assignments First
-Writing forces clarity. Do written assignments before video recordings.
+### 2. Record Yourself
+Speaking out loud is different from writing. Video exposes filler words, unclear explanations, and poor pacing.
 
-### Step 3: Record Video Assignments
-Speaking out loud is different from writing. Video exposes:
-- Filler words ("um", "like", "you know")
-- Unclear explanations
-- Poor pacing
-- Missing structure
+### 3. Watch Your Videos
+This is uncomfortable but critical. Notice where you stumbled and what sounded unclear.
 
-### Step 4: Watch Your Videos
-This is uncomfortable but critical. Notice:
-- Where you stumbled
-- What sounded unclear
-- What you forgot to mention
-- What you explained well
-
-### Step 5: Iterate
+### 4. Iterate
 Re-record until you can explain clearly without reading notes.
 
 ---
@@ -111,78 +77,28 @@ Re-record until you can explain clearly without reading notes.
 ## What Interviewers Actually Look For
 
 They are NOT looking for:
-- ❌ Perfect answers
-- ❌ Memorized scripts
-- ❌ Buzzword bingo
+- Perfect answers
+- Memorized scripts
+- Buzzword bingo
 
 They ARE looking for:
-- ✅ Clear thinking
-- ✅ Tradeoff awareness
-- ✅ Strong opinions (with reasoning)
-- ✅ Communication skills
-- ✅ System design ability
+- Clear thinking
+- Tradeoff awareness
+- Strong opinions with reasoning
+- Communication skills
 
 **The best candidates don't just explain what they built — they explain why they built it that way.**
 
 ---
 
-## Technical Foundations
+## A Note on Coding Interviews
 
-Before interviews, make sure you can explain these concepts clearly.
+The coding portion of AI engineering interviews typically follows traditional software engineering patterns - algorithms, system design, debugging. This module focuses on the conversation and communication aspects unique to AI roles.
 
-### RAG Implementation
-
-RAG is retrieval + generation. The core loop:
-
-1. **Chunk** documents into smaller pieces (500-1000 tokens)
-2. **Embed** chunks into vectors using an embedding model
-3. **Store** vectors in a database (Pinecone, pgvector, etc.)
-4. **Query** - embed the user's question, find similar chunks
-5. **Generate** - pass retrieved chunks to the LLM as context
-
-**Key interview points:**
-- Why chunk? (Context windows, relevance, cost)
-- Chunk overlap prevents cutting sentences mid-thought
-- Embedding models (OpenAI, Cohere) convert text → vectors
-- Cosine similarity finds "closest" vectors
-
-### Embeddings & Vectors (Brief)
-
-Vectors are just arrays of numbers: `[0.2, -0.5, 0.8, ...]`
-
-Embedding models learn to place similar concepts close together in vector space. "King" and "Queen" are closer than "King" and "Banana".
-
-For deeper understanding of the math behind LLMs and neural networks:
-- [3Blue1Brown: Neural Networks](https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi)
-- [3Blue1Brown: Transformers](https://www.youtube.com/watch?v=wjZofJX0v4M)
-
-### Structured Outputs
-
-Force the LLM to return valid JSON matching a schema:
-
-```typescript
-const schema = z.object({
-  agent: z.enum(['rag', 'linkedin', 'general']),
-  confidence: z.number(),
-});
-
-const response = await openai.chat.completions.create({
-  model: 'gpt-4o-mini',
-  messages: [...],
-  response_format: zodResponseFormat(schema, 'routing'),
-});
-```
-
-**Why it matters:** Reliable parsing, type safety, no regex hacks.
-
-### Practice Projects
-
-Solidify your understanding with these small projects:
-
-**[Cringe Influencer](https://github.com/projectshft/cringe-influencer)** - A small structured outputs project. Build a social media post generator with type-safe LLM responses.
+If you want help preparing for traditional coding interviews, reach out to brian@parsity.io.
 
 ---
 
 ## Ready to Start?
 
-Start with Your Signature Story - it's the most important section. Nail this, and you'll stand out in every interview.
+Start with Your Signature Story. Nail this, and you'll stand out in every interview.
