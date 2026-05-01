@@ -96,12 +96,12 @@ https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/ASSIGNMENTS.h
 - Fix tool-calling route for AI SDK v5
 - Fix LLM-as-judge test
 - Fix broken OpenAI documentation links
-- Remove internal navigation references
 - **LLM-as-Judge curriculum** - Clarified students implement from scratch (not copy code)
 - **Module 13.1** - Fixed "Helicone" → "LangSmith" typo
 - **Module 14.2** - Fixed "What's Next" from "Chat Interface" → "SQL Agent"
 - **Removed all "Due: Before Assignment X"** - From modules 5, 9, 15
 - **Fixed SQL Agent submission links** - Were TBD, now correct Typeform URLs
+- **Removed all internal .md links** - Won't work on Kajabi (modules 6, 18, 99)
 
 ### LOW-IMPACT
 

@@ -6,17 +6,17 @@ Copy-paste snippets for common AI patterns. No fluff, just code.
 
 ## Quick Navigation
 
-| Topic | File | What's Inside |
-|-------|------|---------------|
-| Embeddings & Search | [1-embeddings-and-search.md](./1-embeddings-and-search.md) | OpenAI embeddings, Pinecone setup, vector queries, reranking |
-| Structured Outputs | [2-structured-outputs.md](./2-structured-outputs.md) | AI SDK, OpenAI SDK, Gemini, common schemas |
-| Tool Calling | [3-tool-calling.md](./3-tool-calling.md) | Tool definitions, RAG as a tool, preventing loops |
-| Chunking | [4-chunking.md](./4-chunking.md) | Sentence chunking, metadata, markdown-aware |
-| Streaming | [5-streaming.md](./5-streaming.md) | Server streams, React client, streaming objects |
-| Human-in-the-Loop | [6-human-in-the-loop.md](./6-human-in-the-loop.md) | Approval flows, pending actions, destructive ops |
-| Router Agent | [7-router-agent.md](./7-router-agent.md) | Query routing, agent registry, multi-agent |
-| LangGraph | [8-langgraph.md](./8-langgraph.md) | State, nodes, conditional edges, memory |
-| Prompt Templates | [9-prompt-templates.md](./9-prompt-templates.md) | RAG, routing, classification, extraction |
+| Topic | What's Inside |
+|-------|---------------|
+| Embeddings & Search | OpenAI embeddings, Pinecone setup, vector queries, reranking |
+| Structured Outputs | AI SDK, OpenAI SDK, Gemini, common schemas |
+| Tool Calling | Tool definitions, RAG as a tool, preventing loops |
+| Chunking | Sentence chunking, metadata, markdown-aware |
+| Streaming | Server streams, React client, streaming objects |
+| Human-in-the-Loop | Approval flows, pending actions, destructive ops |
+| Router Agent | Query routing, agent registry, multi-agent |
+| LangGraph | State, nodes, conditional edges, memory |
+| Prompt Templates | RAG, routing, classification, extraction |
 
 ---
 

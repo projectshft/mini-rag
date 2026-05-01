@@ -19,12 +19,11 @@ This is designed to help you:
 ## Structure
 
 ### Start Here
-**[0-overview.md](./0-overview.md)** - Read this first to understand the approach
+**Overview** - Read the overview lesson first to understand the approach
 
 ---
 
 ### Your Signature Story (Most Important)
-**[1-your-signature-story.md](./1-your-signature-story.md)**
 
 **Goal:** Craft a clear, compelling story about your RAG project.
 
@@ -38,7 +37,6 @@ This is designed to help you:
 ---
 
 ### Strong Opinions & Tradeoffs
-**[2-strong-opinions-tradeoffs.md](./2-strong-opinions-tradeoffs.md)**
 
 **Goal:** Develop defensible positions on agents, frameworks, and RAG patterns.
 
@@ -57,7 +55,6 @@ This is designed to help you:
 ---
 
 ### RAG System Design
-**[3-rag-system-design.md](./3-rag-system-design.md)**
 
 **Goal:** Design RAG systems for different scenarios with clear reasoning.
 
@@ -74,7 +71,6 @@ This is designed to help you:
 ---
 
 ### Live Practice (Optional)
-**[4-live-practice.md](./4-live-practice.md)**
 
 **Goal:** Additional practice answering common questions out loud.
 
@@ -93,7 +89,7 @@ This is designed to help you:
 ## How to Use This
 
 ### Step 1: Read the Overview
-Start with [0-overview.md](./0-overview.md) to understand the approach and mindset.
+Start with the Overview lesson to understand the approach and mindset.
 
 ### Step 2: Complete Each Section in Order
 Work through each section sequentially. Each builds on the previous.
@@ -188,8 +184,8 @@ They ARE looking for:
 
 ## Ready to Start?
 
-1. Read [0-overview.md](./0-overview.md)
-2. Move to [Your Signature Story](./1-your-signature-story.md)
+1. Read the Overview lesson
+2. Move to Your Signature Story
 3. Complete the written assignment
 4. Record your video
 5. Continue to the next section

@@ -110,5 +110,3 @@ In the next lesson, you'll:
 
 Then you'll build the LinkedIn agent that uses this fine-tuned model!
 
-**→ Continue to:** [Running the Fine-Tuning Process](./2-running-fine-tuning.md)
-
