@@ -311,6 +311,6 @@ If "thanks" queries become a real cost problem, add a simple classifier **before
 
 Now that you understand both patterns, we'll continue building our RAG app with workflows. You've got tool-calling in your toolkit for when you truly need it.
 
-Next up: **Chat Interface** — connecting your agents to a real UI.
+Next up: **SQL Agent** — RAG without vectors, using structured database queries.
 
 ---

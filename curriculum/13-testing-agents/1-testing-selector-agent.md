@@ -412,10 +412,10 @@ If tests fail, review the "When Tests Fail" section above.
 Now you have:
 
 - ✅ Working agent system
-- ✅ Observability with Helicone
+- ✅ Observability with LangSmith
 - ✅ Test coverage for routing
 
-Next up: **Capstone Project** where you'll deploy your custom RAG system!
+Next up: **LLM-as-Judge testing** to evaluate response quality, then **SQL Agent** and the **Capstone Project**!
 
 ---
 
