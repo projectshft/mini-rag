@@ -41,7 +41,7 @@ const fewShotExamples = `
 Examples:
 
 User: "What are some good LinkedIn post ideas for developers?"
-Output: {"indexes": ["LinkedInPosts", "MediumArticles"], "query": "developer LinkedIn post ideas engagement"}
+Output: {"indexes": ["LinkedInPosts"], "query": "developer LinkedIn post ideas engagement"}
 
 User: "Find articles about machine learning trends"
 Output: {"indexes": ["MediumArticles", ""LinkedInPosts", "ScientificPapers"], "query": "machine learning trends recent developments"}
@@ -88,8 +88,6 @@ export async function POST(req: NextRequest) {
 					You will 0 - 4 indices from a vector database to search for content
 					If the user query is not related to AI, coding careers, or outside the scope of 
 					software and/or AI content then DO NOT pick an index.
-
-					MediumArticles and LinkedIn must ALWAYS be paired together.
 
 					Here are examples to help make that decisions
 					${JSON.stringify(fewShotExamples)}
