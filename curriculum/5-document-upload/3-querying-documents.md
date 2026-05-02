@@ -256,21 +256,24 @@ export async function POST(request: NextRequest) {
 
 ### Your Tasks
 
-**Add the following improvements:**
+**Extend this route with production-quality patterns:**
 
-1. **Add try/catch error handling**
+1. **Add Zod schema validation**
+    - Create a schema that validates `query` as a required string
+    - Make `topK` optional with a default value (e.g., 5)
+    - Parse the request body through your schema
+    - This mirrors what you did in `upload-document/route.ts`
+
+2. **Add try/catch error handling**
     - Wrap the function body in a try/catch block
-    - Log errors with `console.error`
-    - Return a 500 status code with error details
+    - Check for `ZodError` to return 400 for validation failures
+    - Return 500 for unexpected errors
+    - Log errors with `console.error` for debugging
 
-2. **Add input validation**
-    - Check if `query` exists and is a string
-    - Return a 400 status code if invalid
-    - Set a default value for `topK` (e.g., 5)
-
-3. **Add better error messages**
-    - Clear validation error messages
-    - Helpful error responses for debugging
+3. **Return appropriate status codes**
+    - 200 for successful queries
+    - 400 for invalid input (missing query, wrong types)
+    - 500 for server errors (Pinecone down, etc.)
 
 ### Step 3: Test Your Route
 

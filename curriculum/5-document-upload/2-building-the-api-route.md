@@ -425,3 +425,11 @@ Want to see a simpler version of the upload pipeline? Check out `/api/upload-tex
 
 The main difference: it skips the DataProcessor scraping step since it receives text directly from the user. This is useful when you want to upload documentation, articles, or any text content without needing a URL.
 
+---
+
+## Solution Walkthrough
+
+Watch this walkthrough of the document upload API route solution:
+
+<iframe src="https://share.descript.com/embed/vXKQ7RBncMc" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
