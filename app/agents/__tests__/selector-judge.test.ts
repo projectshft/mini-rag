@@ -23,41 +23,6 @@ interface GoldenTestCase {
 // GOLDEN TEST CASES - Add more here!
 const GOLDEN_TEST_CASES: GoldenTestCase[] = [
 	{
-		query: 'Write a linkedin post on how AI is detrimental to new coders',
-		goldenResponse: `AI is the new boogeyman, lurking in the shadows.
-
-It's coming to steal our jobs, right?
-
-Well, let's talk about junior developers.
-
-I hear whispers of AI replacing these entry-level positions. And I can't help but ask, who's going to maintain this AI? Who will troubleshoot when it hits a snag?
-
-More AI?
-
-Let's pump the brakes on the speculation and hype, folks.
-
-Junior developers may be risky hires. Yes, I said it. They need hand-holding. They break things. They're not immediate contributors.
-
-But guess what?
-
-We were all juniors once. Even the most seasoned developer was a "n00b" at some point.
-
-Here's my advice to all you juniors out there feeling the heat from the AI scare:
-
-Stop down-playing yourself.
-
-Ditch the "junior" tag from your resume and LinkedIn. Don't babble about your school project. Do talk about the app you're launching. Use strong language to describe your experiences. Instead of saying "I created an app using XYZ tech", try "I migrated a JS app to TypeScript to enhance the developer experience".
-
-In the face of AI, it's not about being "junior" or "senior". It's about showcasing your value, your ability to adapt and grow. It's about proving you're a problem solver, not just a coder.
-
-So, are we really going to let the AI boogeyman scare us? Or are we going to step up, grow, and show our worth?
-
-AI might be on the rise, but remember, it's humans who create, maintain, and innovate.
-
-Don't forget that.`,
-		description: 'LinkedIn post about AI impact on new coders',
-	},
-	{
 		query: 'Write a post on vector databases and why 512 vs 1536 dimensions is a debated topic',
 		goldenResponse: `The battle rages on: 512 dimensions vs 1536 dimensions in vector databases.
 

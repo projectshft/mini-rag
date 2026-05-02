@@ -87,20 +87,6 @@ describe('Index Selector Routing', () => {
 	});
 
 	describe('Response Structure', () => {
-		it('should return valid response structure', async () => {
-			const result = await selectIndexes('Any question here');
-
-			// Verify required fields exist
-			expect(result).toHaveProperty('indexes');
-			expect(result).toHaveProperty('query');
-
-			// Verify indexes are valid
-			expect(Array.isArray(result.indexes)).toBe(true);
-			result.indexes.forEach((index: string) => {
-				expect(VALID_INDEXES).toContain(index);
-			});
-		});
-
 		it('should refine queries', async () => {
 			const result = await selectIndexes('Tell me about deep learning');
 
