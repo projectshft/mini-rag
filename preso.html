@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>What the F*ck is an AI Engineer?</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0a0a0a;
+      color: #e5e5e5;
+      line-height: 1.6;
+    }
+
+    .slide {
+      min-height: 100vh;
+      padding: 4rem 2rem;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .slide.active { display: flex; }
+
+    h1 {
+      font-size: 3.5rem;
+      margin-bottom: 1.5rem;
+      color: #fff;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: #fff;
+      font-weight: 600;
+    }
+
+    h3 {
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: #a3a3a3;
+      font-weight: 500;
+    }
+
+    p, li {
+      font-size: 1.4rem;
+      line-height: 1.8;
+      color: #d4d4d4;
+    }
+
+    ul, ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    li { margin-bottom: 0.75rem; }
+
+    .highlight { color: #fbbf24; font-weight: 600; }
+    .red { color: #ef4444; }
+    .green { color: #22c55e; }
+    .blue { color: #3b82f6; }
+    .purple { color: #a855f7; }
+    .dim { color: #737373; }
+
+    .section-title {
+      font-size: 4rem;
+      text-align: center;
+      color: #fbbf24;
+    }
+
+    .code-block {
+      background: #171717;
+      border-radius: 12px;
+      padding: 1.5rem 2rem;
+      margin: 1.5rem 0;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 1rem;
+      overflow-x: auto;
+      border: 1px solid #262626;
+      white-space: pre;
+      line-height: 1.5;
+      color: #a3a3a3;
+    }
+
+    a { color: #3b82f6; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .nav {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      display: flex;
+      gap: 0.5rem;
+      z-index: 100;
+    }
+
+    .nav button {
+      background: #262626;
+      color: #fff;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+
+    .nav button:hover { background: #404040; }
+
+    .progress {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      background: #fbbf24;
+      transition: width 0.3s ease;
+    }
+
+    .slide-number {
+      position: fixed;
+      bottom: 2rem;
+      left: 2rem;
+      color: #525252;
+      font-size: 1rem;
+    }
+
+    .resource-link {
+      background: #1a1a2e;
+      padding: 1rem 1.5rem;
+      border-radius: 8px;
+      margin: 0.5rem 0;
+      border-left: 3px solid #3b82f6;
+    }
+
+    .skill-number {
+      display: inline-block;
+      background: #fbbf24;
+      color: #0a0a0a;
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 2rem;
+      font-weight: 700;
+      margin-right: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" id="progress"></div>
+  <div class="slide-number" id="slideNumber"></div>
+
+  <!-- Slide 1: Title -->
+  <div class="slide active">
+    <h1>What the F*ck is an AI Engineer?</h1>
+    <p class="dim" style="font-size: 1.5rem; margin-top: 2rem;">A learning roadmap for fullstack developers</p>
+  </div>
+
+  <!-- Slide 2: The Title -->
+  <div class="slide">
+    <h2>The Controversial Title</h2>
+    <p><span class="highlight">AI Engineer</span> - a term that makes some people cringe</p>
+    <p style="margin-top: 1.5rem;">What it actually means:</p>
+    <ul>
+      <li>Full-stack engineer</li>
+      <li>Who integrates LLMs into products</li>
+      <li>Builds retrieval systems</li>
+      <li>Designs agent workflows</li>
+    </ul>
+    <p class="highlight" style="margin-top: 1rem;">It's software engineering with a few new systems.</p>
+  </div>
+
+  <!-- Slide 3: Who is this bald guy? -->
+  <div class="slide">
+    <h2>Who is this bald guy?</h2>
+    <ul>
+      <li>Senior software engineer</li>
+      <li>Worked at <span class="highlight">two AI startups</span> (one acquired, one zero-to-one)</li>
+      <li>Built AI systems for major record labels</li>
+      <li>Designed AI engineering hiring process</li>
+      <li>Interviewed dozens of candidates</li>
+    </ul>
+    <p style="margin-top: 1.5rem;">I've seen the gaps. Now I'll show you how to fill them.</p>
+  </div>
+
+  <!-- Slide 4: The Opportunity -->
+  <div class="slide">
+    <h2>The Opportunity</h2>
+    <p><span class="highlight">Massive demand</span> for AI engineers</p>
+    <p><span class="highlight">Tiny talent pool</span> of people who actually know this stuff</p>
+    <p style="margin-top: 1.5rem;">The gap between "uses AI tools" and "builds AI systems" is huge.</p>
+    <p class="highlight" style="margin-top: 1.5rem; font-size: 1.6rem;">This is your roadmap to cross that gap.</p>
+  </div>
+
+  <!-- Slide 5: Section - The Learning Path -->
+  <div class="slide">
+    <h1 class="section-title">The Learning Path</h1>
+  </div>
+
+  <!-- Slide 6: Skills Overview -->
+  <div class="slide">
+    <h2>Skills You'll Gain</h2>
+    <ol style="list-style: none; margin-left: 0;">
+      <li><span class="skill-number">1</span> <strong>How LLMs Work</strong> - The fundamentals</li>
+      <li><span class="skill-number">2</span> <strong>Embeddings & Vectors</strong> - The math that powers search</li>
+      <li><span class="skill-number">3</span> <strong>Structured Outputs</strong> - Making LLMs reliable</li>
+      <li><span class="skill-number">4</span> <strong>RAG</strong> - Retrieval Augmented Generation</li>
+      <li><span class="skill-number">5</span> <strong>Agents</strong> - LLM + tools + control loops</li>
+      <li><span class="skill-number">6</span> <strong>Testing & Evals</strong> - LLM-as-judge, datasets</li>
+      <li><span class="skill-number">7</span> <strong>Observability</strong> - Tracing and debugging</li>
+    </ol>
+    <p style="margin-top: 1.5rem;">Let's break down how to learn each one.</p>
+  </div>
+
+  <!-- Slide 7: Section - How LLMs Work -->
+  <div class="slide">
+    <h1 class="section-title"><span class="skill-number" style="font-size: 2rem;">1</span> How LLMs Work</h1>
+  </div>
+
+  <!-- Slide 8: LLM Foundations -->
+  <div class="slide">
+    <h2>Understanding the Foundations</h2>
+    <p>You don't need a PhD. You need <span class="highlight">intuition</span>.</p>
+    <p style="margin-top: 1.5rem;"><strong>What to understand:</strong></p>
+    <ul>
+      <li>Neural networks at a high level</li>
+      <li>How transformers process text</li>
+      <li>Attention mechanisms (conceptually)</li>
+      <li>Why tokens matter</li>
+    </ul>
+    <p class="highlight" style="margin-top: 1rem;">This takes a few hours, not months.</p>
+  </div>
+
+  <!-- Slide 9: LLM Resources -->
+  <div class="slide">
+    <h2>Resources: How LLMs Work</h2>
+    <div class="resource-link">
+      <strong>3Blue1Brown</strong> (Free, visual, excellent)<br>
+      <a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDNU6R1_67000Dx_ZCJB-3pi">Neural Networks playlist</a><br>
+      <a href="https://www.youtube.com/watch?v=wjZofJX0v4M">But what is a GPT? (Transformers)</a>
+    </div>
+    <div class="resource-link">
+      <strong>Andrej Karpathy</strong> (Free, hands-on)<br>
+      <a href="https://www.youtube.com/watch?v=kCc8FmEb1nY">Let's build GPT from scratch</a>
+    </div>
+    <p style="margin-top: 1.5rem;"><span class="green">Goal:</span> Explain to a friend how a transformer turns text into predictions.</p>
+  </div>
+
+  <!-- Slide 10: Section - Embeddings -->
+  <div class="slide">
+    <h1 class="section-title"><span class="skill-number" style="font-size: 2rem;">2</span> Embeddings & Vectors</h1>
+  </div>
+
+  <!-- Slide 11: What Are Embeddings -->
+  <div class="slide">
+    <h2>What Are Embeddings?</h2>
+    <p>Text → Numbers that capture meaning</p>
+    <div class="code-block">"king" → [0.2, -0.5, 0.8, ...]</div>
+    <p>Similar concepts = similar vectors.</p>
+    <p class="highlight" style="margin-top: 1rem;">This is how semantic search works.</p>
+  </div>
+
+  <!-- Slide 12: Embeddings Resources -->
+  <div class="slide">
+    <h2>Resources: Embeddings</h2>
+    <div class="resource-link">
+      <strong>Concepts:</strong><br>
+      <a href="https://platform.openai.com/docs/guides/embeddings">OpenAI Embeddings Guide</a><br>
+      <a href="https://www.pinecone.io/learn/">Pinecone Learning Center</a>
+    </div>
+    <p style="margin-top: 1.5rem;"><strong>Hands-on:</strong></p>
+    <ul>
+      <li>Build a simple similarity search</li>
+      <li>Compare cosine similarity results</li>
+      <li>See how "king - man + woman ≈ queen" works</li>
+    </ul>
+    <p style="margin-top: 1rem;"><span class="green">Goal:</span> Implement vector similarity from scratch.</p>
+  </div>
+
+  <!-- Slide 13: Section - Structured Outputs -->
+  <div class="slide">
+    <h1 class="section-title"><span class="skill-number" style="font-size: 2rem;">3</span> Structured Outputs</h1>
+  </div>
+
+  <!-- Slide 14: Why Structured Outputs -->
+  <div class="slide">
+    <h2>Why Structured Outputs Matter</h2>
+    <p>LLMs return text. APIs need JSON.</p>
+    <p style="margin-top: 1.5rem;"><span class="red">The problem:</span></p>
+    <div class="code-block">"The user wants to search for React hooks"</div>
+    <p><span class="green">The solution:</span></p>
+    <div class="code-block">{ "agent": "rag", "query": "React hooks" }</div>
+    <p class="highlight">Force the model to return valid, typed responses.</p>
+  </div>
+
+  <!-- Slide 15: Structured Outputs Resources -->
+  <div class="slide">
+    <h2>Resources: Structured Outputs</h2>
+    <div class="resource-link">
+      <strong>Concepts:</strong><br>
+      <a href="https://platform.openai.com/docs/guides/structured-outputs">OpenAI Structured Outputs</a><br>
+      Zod schemas with <code>zodResponseFormat</code>
+    </div>
+    <div class="resource-link">
+      <strong>Practice Project:</strong><br>
+      <a href="https://github.com/projectshft/cringe-influencer">Cringe Influencer</a><br>
+      Build a social media post generator with typed LLM responses
+    </div>
+    <p style="margin-top: 1rem;"><span class="green">Goal:</span> Build something that treats an LLM like a typed API.</p>
+  </div>
+
+  <!-- Slide 16: Section - RAG -->
+  <div class="slide">
+    <h1 class="section-title"><span class="skill-number" style="font-size: 2rem;">4</span> RAG</h1>
+  </div>
+
+  <!-- Slide 17: RAG in 30 Seconds -->
+  <div class="slide">
+    <h2>RAG in 30 Seconds</h2>
+    <p>LLMs don't know your data. <span class="highlight">RAG fixes that.</span></p>
+    <ol style="margin-top: 1.5rem;">
+      <li><strong>Chunk</strong> documents into pieces</li>
+      <li><strong>Embed</strong> chunks into vectors</li>
+      <li><strong>Store</strong> vectors in a database</li>
+      <li><strong>Query</strong> - find relevant chunks</li>
+      <li><strong>Generate</strong> - LLM answers with context</li>
+    </ol>
+    <p class="highlight" style="margin-top: 1.5rem;">This is the #1 skill companies hire for.</p>
+  </div>
+
+  <!-- Slide 18: RAG Architecture -->
+  <div class="slide">
+    <h2>RAG Architecture</h2>
+    <div class="code-block">Documents → Chunking → Embeddings → Vector DB
+                                       ↓
+User Query → Query Embedding → Search → Top Results
+                                           ↓
+                                     LLM → Answer</div>
+    <p style="margin-top: 1.5rem;"><strong>Hands-on:</strong></p>
+    <ul>
+      <li>Build a document Q&A system</li>
+      <li>Experiment with chunk sizes</li>
+      <li>Compare retrieval strategies</li>
+    </ul>
+    <p><span class="green">Goal:</span> Build a working RAG system end-to-end.</p>
+  </div>
+
+  <!-- Slide 19: Section - Agents -->
+  <div class="slide">
+    <h1 class="section-title"><span class="skill-number" style="font-size: 2rem;">5</span> Agents</h1>
+  </div>
+
+  <!-- Slide 20: What Agents Are -->
+  <div class="slide">
+    <h2>What Agents Actually Are</h2>
+    <p>Not autonomous AI. Just:</p>
+    <ul>
+      <li>LLM</li>
+      <li>Tools (API calls)</li>
+      <li>Control loop</li>
+    </ul>
+    <p style="margin-top: 1.5rem;">The LLM decides which tool to call. That's it.</p>
+    <p class="highlight" style="margin-top: 1rem;">Most "agents" should be workflows (fixed steps, predictable).</p>
+  </div>
+
+  <!-- Slide 21: Agents Resources -->
+  <div class="slide">
+    <h2>Resources: Agents</h2>
+    <p><strong>Concepts:</strong></p>
+    <ul>
+      <li>Workflow vs autonomous agents</li>
+      <li>Tool calling patterns</li>
+      <li>Graceful degradation</li>
+    </ul>
+    <p style="margin-top: 1.5rem;"><strong>Key insight:</strong> Start with workflows. Add agent flexibility only when needed.</p>
+    <p style="margin-top: 1rem;"><span class="green">Goal:</span> Build a router that selects between multiple tools.</p>
+  </div>
+
+  <!-- Slide 22: Section - Testing -->
+  <div class="slide">
+    <h1 class="section-title"><span class="skill-number" style="font-size: 2rem;">6</span> Testing & Evals</h1>
+  </div>
+
+  <!-- Slide 23: The Testing Problem -->
+  <div class="slide">
+    <h2>The Testing Problem</h2>
+    <p><strong>Traditional:</strong> Input → Expected output</p>
+    <p><strong>LLMs:</strong> Input → <span class="red">Probabilistic output</span></p>
+    <p style="margin-top: 1.5rem;"><strong>New approaches:</strong></p>
+    <ul>
+      <li>Evaluation datasets</li>
+      <li><span class="highlight">LLM-as-judge</span> (model evaluates model)</li>
+      <li>Regression testing for prompts</li>
+    </ul>
+    <p style="margin-top: 1rem;"><span class="green">Goal:</span> Build an eval suite that catches regressions.</p>
+  </div>
+
+  <!-- Slide 24: Section - Observability -->
+  <div class="slide">
+    <h1 class="section-title"><span class="skill-number" style="font-size: 2rem;">7</span> Observability</h1>
+  </div>
+
+  <!-- Slide 25: Why Observability -->
+  <div class="slide">
+    <h2>Why Observability Matters</h2>
+    <p>Production AI systems drift:</p>
+    <ul>
+      <li>Models change</li>
+      <li>Prompts evolve</li>
+      <li>Data distributions shift</li>
+    </ul>
+    <p style="margin-top: 1.5rem;"><strong>What to track:</strong></p>
+    <ul>
+      <li>Every LLM call</li>
+      <li>Latency and costs</li>
+      <li>Error rates</li>
+    </ul>
+    <p style="margin-top: 1rem;"><strong>Tools:</strong> LangSmith, Langfuse, custom tracing</p>
+  </div>
+
+  <!-- Slide 26: Section - Putting It Together -->
+  <div class="slide">
+    <h1 class="section-title">Putting It Together</h1>
+  </div>
+
+  <!-- Slide 27: Learning Order -->
+  <div class="slide">
+    <h2>The Learning Order</h2>
+    <ol>
+      <li><strong>LLM Fundamentals</strong> - 3Blue1Brown videos <span class="dim">(few hours)</span></li>
+      <li><strong>Embeddings</strong> - Build similarity search <span class="dim">(1 day)</span></li>
+      <li><strong>Structured Outputs</strong> - Cringe Influencer project <span class="dim">(1 day)</span></li>
+      <li><strong>RAG</strong> - Document Q&A system <span class="dim">(1 week)</span></li>
+      <li><strong>Agents</strong> - Router + tools <span class="dim">(few days)</span></li>
+      <li><strong>Testing</strong> - LLM-as-judge eval suite <span class="dim">(few days)</span></li>
+      <li><strong>Observability</strong> - Add tracing <span class="dim">(1 day)</span></li>
+    </ol>
+    <p class="highlight" style="margin-top: 1.5rem;">Total: A few weeks of focused work.</p>
+  </div>
+
+  <!-- Slide 28: What Makes You Valuable -->
+  <div class="slide">
+    <h2>What Makes You Valuable</h2>
+    <p>Not just knowing the concepts.</p>
+    <p style="margin-top: 1.5rem;"><span class="highlight">Having opinions:</span></p>
+    <ul>
+      <li>When to use RAG vs fine-tuning</li>
+      <li>When to build agents vs workflows</li>
+      <li>When to use AI vs traditional code</li>
+      <li>When NOT to use AI</li>
+    </ul>
+    <p class="highlight" style="margin-top: 1.5rem;">The engineer who explains tradeoffs clearly wins.</p>
+  </div>
+
+  <!-- Slide 29: The Window -->
+  <div class="slide">
+    <h2>The Window</h2>
+    <p>Companies want AI. They don't know how to build it.</p>
+    <p style="margin-top: 1.5rem;">This window won't stay open forever:</p>
+    <ul>
+      <li>Tools are getting easier</li>
+      <li>More people are learning</li>
+      <li>The early mover advantage is <span class="highlight">now</span></li>
+    </ul>
+    <p class="highlight" style="margin-top: 2rem; font-size: 1.6rem;">The engineers who build real systems will always beat the ones who just talk about them.</p>
+  </div>
+
+  <!-- Slide 30: Let's Talk -->
+  <div class="slide">
+    <h2>Let's Talk</h2>
+    <p>Schedule a time to chat:</p>
+    <p style="margin-top: 1.5rem; font-size: 1.2rem;">
+      <a href="https://calendly.com/brianjenney83/15-minute-meeting-your-web-dev-roadmap-clone">calendly.com/brianjenney83</a>
+    </p>
+    <p style="margin-top: 2rem;">See if you're a good fit for the <span class="highlight">Parsity AI program</span>.</p>
+  </div>
+
+  <div class="nav">
+    <button onclick="prevSlide()">← Prev</button>
+    <button onclick="nextSlide()">Next →</button>
+  </div>
+
+  <script>
+    let current = 0;
+    const slides = document.querySelectorAll('.slide');
+    const progress = document.getElementById('progress');
+    const slideNumber = document.getElementById('slideNumber');
+
+    function showSlide(n) {
+      slides[current].classList.remove('active');
+      current = (n + slides.length) % slides.length;
+      slides[current].classList.add('active');
+      progress.style.width = ((current + 1) / slides.length * 100) + '%';
+      slideNumber.textContent = (current + 1) + ' / ' + slides.length;
+    }
+
+    function nextSlide() { showSlide(current + 1); }
+    function prevSlide() { showSlide(current - 1); }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+      if (e.key === 'ArrowLeft') prevSlide();
+    });
+
+    // Touch support
+    let touchStartX = 0;
+    document.addEventListener('touchstart', e => touchStartX = e.touches[0].clientX);
+    document.addEventListener('touchend', e => {
+      const diff = touchStartX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 50) diff > 0 ? nextSlide() : prevSlide();
+    });
+
+    showSlide(0);
+  </script>
+</body>
+</html>
