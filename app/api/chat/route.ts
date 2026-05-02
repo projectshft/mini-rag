@@ -3,10 +3,13 @@ import { NextRequest, NextResponse } from 'next/server';
 import { indexSchema, IndexType } from '@/app/agents/types';
 import { searchDocuments, WeaviateSearchResult } from '@/app/libs/weaviate';
 import { CohereClient } from 'cohere-ai';
-import { streamText } from 'ai';
+import * as ai from 'ai';
 import { openai } from '@ai-sdk/openai';
+import { Client } from 'langsmith';
+import { wrapAISDK } from 'langsmith/experimental/vercel';
 
-//const tracedModel = wrapAISDKModel(openai('gpt-4'));
+const client = new Client();
+const { streamText } = wrapAISDK(ai, { client });
 
 const cohere = new CohereClient({
 	token: process.env.COHERE_RERANKER_API_KEY,
@@ -177,7 +180,7 @@ STYLE RULES (extract from examples):
 - Personal anecdotes that lead to insights
 - No corporate speak
 `,
-			prompt: `TOPIC: ${query}
+			prompt: `User query: ${query}
 
 THE AUTHOR'S PREVIOUS POSTS (use their experiences and voice):
 ${context}

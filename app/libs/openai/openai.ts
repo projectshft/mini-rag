@@ -33,7 +33,10 @@
  */
 
 import OpenAI from 'openai';
+import { wrapSDK } from 'langsmith/wrappers';
 
-export const openaiClient = new OpenAI({
-	apiKey: process.env.OPENAI_API_KEY as string,
-});
+export const openaiClient = wrapSDK(
+	new OpenAI({
+		apiKey: process.env.OPENAI_API_KEY as string,
+	}),
+);

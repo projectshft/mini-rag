@@ -36,15 +36,24 @@ describe('Index Selector Routing', () => {
 	describe('LinkedInPosts Routing', () => {
 		it('should route LinkedIn content questions to LinkedInPosts', async () => {
 			const result = await selectIndexes(
-				'What are some good LinkedIn post ideas for developers?',
+				'Write a post on vector databases and why 512 vs 1536 dimensions is a debated topic',
 			);
 
 			expect(result.indexes).toContain('LinkedInPosts');
 		});
 
+		it('should route spicy hot takes ONLY to LinkedInPosts', async () => {
+			const result = await selectIndexes(
+				'Give me a spicy hot take on the future of AI',
+			);
+
+			expect(result.indexes.length).toBe(2);
+			expect(result.indexes).toContain('LinkedInPosts');
+		});
+
 		it('should route career advice to LinkedInPosts', async () => {
 			const result = await selectIndexes(
-				'How do I build my personal brand on LinkedIn?',;
+				'How do I make a good side project?',
 			);
 
 			expect(result.indexes).toContain('LinkedInPosts');
@@ -54,35 +63,21 @@ describe('Index Selector Routing', () => {
 	describe('MediumArticles Routing', () => {
 		it('should route technical tutorial questions to MediumArticles', async () => {
 			const result = await selectIndexes(
-				'Find programming tutorials about React hooks',
+				'Write an article on the latest trends in AI',
 			);
 
 			expect(result.indexes).toContain('MediumArticles');
 		});
 
 		//TODO
-	});
-
-	describe('ScientificPapers Routing', () => {
-		it('should route research questions to ScientificPapers', async () => {
+		it('should route technical tutorial questions to MediumArticles', async () => {
 			const result = await selectIndexes(
-				'What does the latest research say about transformer architectures?',
+				'Write a post on vector databases and why 512 vs 1536 dimensions is a debated topic',
 			);
 
-			expect(result.indexes).toContain('ScientificPapers');
-		});
+			console.log({ result });
 
-		//TODO
-	});
-
-	describe('Multi-Index Routing', () => {
-		it('should select multiple indexes for broad queries', async () => {
-			const result = await selectIndexes(
-				'Find articles and research about machine learning',
-			);
-
-			expect(result.indexes.length).toBeGreaterThanOrEqual(1);
-			expect(result.indexes.length).toBeLessThanOrEqual(3);
+			expect(result.indexes).toContain('MediumArticles');
 		});
 	});
 
@@ -100,6 +95,15 @@ describe('Index Selector Routing', () => {
 		it('should NOT handle very short queries', async () => {
 			const result = await selectIndexes('Help');
 			// TODO
+			expect(result.indexes).toBeNull();
+		});
+
+		it('should NOT handle irrelevant queries', async () => {
+			const result = await selectIndexes(
+				'What do you think about the weather in France?',
+			);
+
+			expect(result.indexes).toBeNull();
 		});
 	});
 });

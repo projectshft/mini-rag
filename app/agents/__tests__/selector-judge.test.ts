@@ -7,11 +7,11 @@
  * Students: Add more test cases to the GOLDEN_TEST_CASES array!
  */
 
-import { POST as selectAgent } from '@/app/api/select-agent/route';
-import { NextRequest } from 'next/server';
 import { openaiClient } from '@/app/libs/openai/openai';
 import { z } from 'zod';
 import { zodTextFormat } from 'openai/helpers/zod';
+
+const BASE_URL = process.env.TEST_API_URL || 'http://localhost:3000';
 
 // Test case definition with golden standard response
 interface GoldenTestCase {
@@ -22,6 +22,31 @@ interface GoldenTestCase {
 
 // GOLDEN TEST CASES - Add more here!
 const GOLDEN_TEST_CASES: GoldenTestCase[] = [
+	{
+		query: 'write a post on AI taking over junior developer jobs',
+		goldenResponse: `
+		The AI apocalypse is upon us, or so they say. 
+
+Are junior developers really going to be the first casualties?
+
+Here's the thing - AI is a tool, not a magical solution. It can automate tasks, but who is going to build and maintain AI? More AI? 🤔
+
+We're so busy heralding the end of junior jobs, we're forgetting who's going to step up when we need a senior dev to fix a critical issue.
+
+AI replacing junior devs is just hype and speculation. It's scaring off potential talent. We're forgetting the value of human creativity, problem-solving, and the ability to adapt. 
+
+Yes, junior developers are risky. They need hand-holding, they make mistakes. But here's the deal - nearly every developer starts as a "junior". And every "junior" learns and grows with experience.
+
+Instead of worrying about AI taking over, let's focus on empowering our junior developers. Give them the tools to grow, to learn, to become the senior devs of the future. 
+
+Remove 'junior', 'aspiring', and 'learning' from your resume and LinkedIn. Instead, talk about the app or website you're launching. Use strong language to showcase your experience. Sell the benefits of the features you've created. 
+
+In this rapidly evolving tech world, we all start as "juniors". But with the right attitude, we can all become "seniors". 
+
+So let's stop hyping the AI apocalypse and start focusing on nurturing our human talent. Because at the end of the day, it's the human element that makes technology truly powerful.
+`,
+		description: 'LinkedIn post about AI taking over junior developer jobs',
+	},
 	{
 		query: 'Write a post on vector databases and why 512 vs 1536 dimensions is a debated topic',
 		goldenResponse: `The battle rages on: 512 dimensions vs 1536 dimensions in vector databases.
@@ -58,7 +83,6 @@ So, roll up your sleeves and dive in!
 Good luck out there.`,
 		description: 'LinkedIn post about vector database dimensions debate',
 	},
-	// TODO: Students - Add more test cases!
 ];
 
 // Schema for the judge's evaluation
@@ -66,45 +90,69 @@ const judgeEvaluationSchema = z.object({
 	score: z.number().min(1).max(10).describe('Overall quality score 1-10'),
 	matchesGoldenStandard: z
 		.boolean()
-		.describe('Whether the response quality matches or exceeds the golden standard'),
+		.describe(
+			'Whether the response quality matches or exceeds the golden standard',
+		),
 	contentMatch: z.string().describe('How well the content/message matches'),
-	styleMatch: z.string().describe('How well the style/format matches (sentence length, line breaks, tone)'),
+	styleMatch: z
+		.string()
+		.describe(
+			'How well the style/format matches (sentence length, line breaks, tone)',
+		),
 	reasoning: z.string().describe('Brief explanation of the evaluation'),
 });
 
 describe('LLM-as-Judge: Response Quality', () => {
 	jest.setTimeout(60000);
 
-	const createRequest = (body: object): NextRequest => {
-		return { json: async () => body } as NextRequest;
+	// Helper to read streaming response
+	const readStreamResponse = async (response: Response): Promise<string> => {
+		const reader = response.body?.getReader();
+		if (!reader) throw new Error('No response body');
+
+		const decoder = new TextDecoder();
+		let content = '';
+
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			content += decoder.decode(value, { stream: true });
+		}
+
+		return content;
 	};
 
-	// Generate content using same approach as chat endpoint
+	// Generate content using actual API calls
 	const generateContent = async (query: string) => {
-		const selectRequest = createRequest({
-			messages: [{ role: 'user', content: query }],
-		});
-		const selectResponse = await selectAgent(selectRequest);
-		const { indexes, query: refinedQuery } = await selectResponse?.json();
-
-		const response = await openaiClient.responses.create({
-			model: 'gpt-4o-mini',
-			temperature: 1,
-			input: [
-				{
-					role: 'system',
-					content: `Write a linkedin post about the topic the user requests.
-Mimic the tone and style of a professional thought leader.
-NO EMOJIS!!!!`,
-				},
-				{
-					role: 'user',
-					content: refinedQuery,
-				},
-			],
+		// Call select-agent API
+		const selectResponse = await fetch(`${BASE_URL}/api/select-agent`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({
+				messages: [{ role: 'user', content: query }],
+			}),
 		});
 
-		return { indexes, refinedQuery, content: response.output_text };
+		if (!selectResponse.ok) {
+			throw new Error(`Select agent failed: ${selectResponse.status}`);
+		}
+
+		const { indexes, query: refinedQuery } = await selectResponse.json();
+
+		// Call chat API
+		const chatResponse = await fetch(`${BASE_URL}/api/chat`, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ indexes, query: refinedQuery }),
+		});
+
+		if (!chatResponse.ok) {
+			throw new Error(`Chat API failed: ${chatResponse.status}`);
+		}
+
+		const content = await readStreamResponse(chatResponse);
+
+		return { indexes, refinedQuery, content };
 	};
 
 	// LLM Judge compares actual vs golden standard
@@ -124,7 +172,7 @@ Evaluate both CONTENT (message, stance, topics covered) and STYLE (sentence leng
 
 Be strict but fair:
 - Score 7+ means production-ready, matches golden standard in both content and style
-- Score 5-6 means content is good but style doesn't match, or vice versa
+- Score 5-7 means content is good but style doesn't match, or vice versa
 - Score below 5 means significant gaps in both content and style`,
 				},
 				{
@@ -172,7 +220,10 @@ Judge how well the actual response matches the golden standard in:
 
 		console.log('\n--- Judge Evaluation ---');
 		console.log('Score:', evaluation?.score);
-		console.log('Matches Golden Standard:', evaluation?.matchesGoldenStandard);
+		console.log(
+			'Matches Golden Standard:',
+			evaluation?.matchesGoldenStandard,
+		);
 		console.log('Content Match:', evaluation?.contentMatch);
 		console.log('Style Match:', evaluation?.styleMatch);
 		console.log('Reasoning:', evaluation?.reasoning);
