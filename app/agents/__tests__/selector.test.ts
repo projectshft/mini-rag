@@ -44,7 +44,7 @@ describe('Index Selector Routing', () => {
 
 		it('should route career advice to LinkedInPosts', async () => {
 			const result = await selectIndexes(
-				'How do I build my personal brand on LinkedIn?',
+				'How do I build my personal brand on LinkedIn?',;
 			);
 
 			expect(result.indexes).toContain('LinkedInPosts');

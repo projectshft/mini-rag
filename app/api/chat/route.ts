@@ -6,6 +6,8 @@ import { CohereClient } from 'cohere-ai';
 import { streamText } from 'ai';
 import { openai } from '@ai-sdk/openai';
 
+//const tracedModel = wrapAISDKModel(openai('gpt-4'));
+
 const cohere = new CohereClient({
 	token: process.env.COHERE_RERANKER_API_KEY,
 });
@@ -28,11 +30,7 @@ interface TaggedResult extends WeaviateSearchResult {
  * Gets the main text content from a result, handling different property names
  */
 function getTextContent(result: TaggedResult): string {
-	return (
-		result.properties.text ||
-		result.properties.abstract ||
-		''
-	).trim();
+	return (result.properties.text || result.properties.abstract || '').trim();
 }
 
 async function rerankIndexResults(
@@ -41,9 +39,7 @@ async function rerankIndexResults(
 	topN: number,
 ): Promise<TaggedResult[]> {
 	// Filter out results with empty or whitespace-only text
-	const validResults = results.filter(
-		(r) => getTextContent(r).length > 0,
-	);
+	const validResults = results.filter((r) => getTextContent(r).length > 0);
 
 	if (validResults.length === 0) return [];
 
