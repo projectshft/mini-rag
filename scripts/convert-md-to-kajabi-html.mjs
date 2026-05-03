@@ -88,8 +88,21 @@ function findMarkdownFiles(dir) {
   return files;
 }
 
+// Files to exclude from preview (not actual lessons)
+const PREVIEW_EXCLUDE = [
+  'transcript.html',
+  'ASSIGNMENTS.html',
+  'README.html',
+  'kajabi-embed-template.html',
+];
+
+// Directories to exclude from preview
+const PREVIEW_EXCLUDE_DIRS = [
+  '99-cheat-codes',
+];
+
 // Recursively find all .html files in a directory
-function findHtmlFiles(dir) {
+function findHtmlFiles(dir, isRoot = true) {
   const files = [];
 
   const items = fs.readdirSync(dir);
@@ -99,8 +112,12 @@ function findHtmlFiles(dir) {
     const stat = fs.statSync(fullPath);
 
     if (stat.isDirectory()) {
-      files.push(...findHtmlFiles(fullPath));
+      // Skip excluded directories
+      if (PREVIEW_EXCLUDE_DIRS.includes(item)) continue;
+      files.push(...findHtmlFiles(fullPath, false));
     } else if (stat.isFile() && item.endsWith('.html')) {
+      // Skip excluded files
+      if (PREVIEW_EXCLUDE.includes(item)) continue;
       files.push(fullPath);
     }
   }
