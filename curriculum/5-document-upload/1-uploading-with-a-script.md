@@ -342,11 +342,3 @@ We'll explore automating this in the next section when we build the API route!
 ✅ How to upload with the script
 ✅ How to verify uploads worked
 
----
-
-## Additional Video: Uploading Documents
-
-Watch this walkthrough of the document upload process:
-
-<iframe src="https://share.descript.com/embed/vXKQ7RBncMc" width="640" height="360" frameborder="0" allowfullscreen></iframe>
-
