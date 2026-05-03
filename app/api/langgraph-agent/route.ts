@@ -9,7 +9,7 @@
  * - Result evaluation and iteration
  * - State management across steps
  *
- * See curriculum/10-langgraph/2-building-langgraph-agent.md for guidance
+ * See curriculum/10-ai-frameworks/2-building-langgraph-agent.md for guidance (DRAFT MODULE)
  */
 
 import { NextRequest, NextResponse } from 'next/server';
