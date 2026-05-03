@@ -433,12 +433,6 @@ return topK.filter((r) => r.similarity >= threshold);
 
 ---
 
-## What's Next
-
-Now let's have fun with word math to really cement the concept!
-
----
-
 ## Video Solution Walkthrough
 
 Watch the solution explanation:

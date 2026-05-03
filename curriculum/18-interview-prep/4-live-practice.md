@@ -472,19 +472,6 @@ This is more preparation than 95% of candidates do.
 
 ---
 
-## What's Next?
-
-You've completed the interview prep curriculum. Now:
-
-1. **Apply to jobs** - You're ready
-2. **Keep practicing** - Do one video a week to stay sharp
-3. **Iterate** - After each interview, note what you stumbled on and practice that
-4. **Share** - Help other students by reviewing their videos
-
-**Good luck! You've got this.**
-
----
-
 ## Additional Resources
 
 ### Mock Interview Services

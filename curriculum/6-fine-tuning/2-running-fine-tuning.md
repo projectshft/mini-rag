@@ -330,17 +330,6 @@ Extra $0.075 for significantly better quality!
 
 ---
 
-## What's Next
-
-Now that you have a fine-tuned model, time to build the LinkedIn agent that uses it!
-
-**Coming up:**
-- Implementing the LinkedIn agent
-- Integrating your fine-tuned model
-- Testing the agent in the full system
-
----
-
 ## Quick Reference
 
 ### Commands

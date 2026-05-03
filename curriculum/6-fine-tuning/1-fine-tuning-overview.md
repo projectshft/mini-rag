@@ -97,16 +97,4 @@ Understand when to use fine-tuning vs RAG, and what fine-tuning can do for your 
 - ❌ Inconsistent tone (multiple authors)
 - ❌ Low quality (errors, incomplete)
 
----
-
-## What's Next?
-
-In the next lesson, you'll:
-1. Examine the provided training data
-2. Run the fine-tuning script
-3. Monitor the training job
-4. Get your custom model ID
-5. Configure it in your app
-
-Then you'll build the LinkedIn agent that uses this fine-tuned model!
 

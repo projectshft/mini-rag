@@ -727,8 +727,3 @@ Each has different:
 ✅ When to use namespaces vs filtering vs separate indexes
 ✅ How to explain system architecture clearly
 
----
-
-## What's Next?
-
-Next, you'll practice answering common interview questions out loud - the final skill before real interviews.

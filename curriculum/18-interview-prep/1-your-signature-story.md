@@ -463,8 +463,3 @@ Here's a complete example following the framework:
 ✅ How to explain tradeoffs and decisions
 ✅ How to practice speaking out loud
 
----
-
-## What's Next?
-
-Next, you'll develop strong opinions on agents vs workflows, frameworks, and RAG patterns - the second most common interview topic.

@@ -250,8 +250,3 @@ Which pairs would have high cosine similarity?
 ✅ Cosine similarity measures angle between vectors
 ✅ This is how RAG finds relevant documents
 
----
-
-## What's Next
-
-Now let's implement similarity calculations and do some word math!

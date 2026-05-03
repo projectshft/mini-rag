@@ -467,10 +467,3 @@ Now you understand:
 -   ✅ Handling conversation context with message slicing
 -   ✅ Fallback logic and error handling
 
----
-
-## What's Next
-
-Great work! Your selector now routes requests using text parsing.
-
-In the next module, you'll learn how to upgrade this to use **structured outputs** with Zod schemas for guaranteed valid JSON responses every time.

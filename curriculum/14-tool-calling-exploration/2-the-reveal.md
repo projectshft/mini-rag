@@ -305,12 +305,3 @@ If "thanks" queries become a real cost problem, add a simple classifier **before
 
 6. **Workflows are testable, debuggable, and cheap.** That matters in production.
 
----
-
-## What's Next
-
-Now that you understand both patterns, we'll continue building our RAG app with workflows. You've got tool-calling in your toolkit for when you truly need it.
-
-Next up: **SQL Agent** — RAG without vectors, using structured database queries.
-
----

@@ -687,16 +687,6 @@ for await (const event of app.stream(input, config)) {
 
 ---
 
-## What's Next
-
-Now that you understand LangGraph fundamentals, explore:
-- **Tool Calling Module**: Alternative patterns for tool use (next module)
-- **Chat Interface**: Connect your agents to the UI
-- **Observability**: Track agent performance with Helicone
-- **Testing**: Write tests for your LangGraph agents
-
----
-
 ## Additional Resources
 
 - [LangGraph Tutorials](https://docs.langchain.com/oss/python/learn)

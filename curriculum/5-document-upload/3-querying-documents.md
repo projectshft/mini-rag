@@ -509,23 +509,6 @@ const highQuality = results.filter((doc) => doc.score > 0.8);
 
 ---
 
-## What's Next?
-
-Now that you can:
-
-1. ✅ Upload documents
-2. ✅ Query documents
-
-You're ready for:
-
-- **Agent Architecture** - Build intelligent routing
-- **RAG Agent** - Combine retrieval + generation
-- **Chat Interface** - Create user-facing app
-
-The foundation of your RAG system is complete!
-
----
-
 ## Assignment: Chunking + Sanitization
 
 Now it's time to apply what you've learned to a new problem.

@@ -402,19 +402,6 @@ Now that you understand the upload pipeline, consider these real-world challenge
 
 ---
 
-## What's Next?
-
-Awesome! You now have a way to add knowledge to your RAG system. But RAG also needs a way to retrieve that knowledge intelligently.
-
-That's where agents come in...
-
-**Coming up:**
-- Understanding agent architecture
-- Building an agent routing system
-- Creating specialized agents for different tasks
-
----
-
 ## Bonus: Understanding the Text Upload Route
 
 Want to see a simpler version of the upload pipeline? Check out `/api/upload-text/route.ts` - it's already implemented and shows the same flow without the web scraping complexity:

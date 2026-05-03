@@ -494,8 +494,3 @@ Even if you're not 100% confident, sound like you have a position.
 ✅ When to use agents vs workflows
 ✅ How to explain tradeoffs clearly
 
----
-
-## What's Next?
-
-Next, you'll design RAG systems for specific scenarios - the most common technical interview question.

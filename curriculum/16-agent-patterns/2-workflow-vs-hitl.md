@@ -475,19 +475,6 @@ export async function smartAgent(request: AgentRequest) {
 
 ---
 
-## What's Next?
-
-In the next lesson, you'll build a **human-in-the-loop agent** for SQL database operations:
-
-- AI generates SQL queries for influencer database
-- Shows you the plan and affected rows
-- Waits for your approval
-- Only executes if you approve
-
-You'll see firsthand when HITL is necessary and how to implement it.
-
----
-
 ## Key Takeaways
 
 ✅ **Workflow agents** (your RAG agent): Fast, autonomous, good for read-only operations

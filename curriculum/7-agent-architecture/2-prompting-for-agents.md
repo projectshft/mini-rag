@@ -481,15 +481,6 @@ Now you understand:
 
 ---
 
-## What's Next
-
-Now that you understand prompting fundamentals, you're ready to build the **agent architecture** in the next module. You'll:
-- Implement the selector agent using these prompting techniques
-- Create specialized agents (LinkedIn and RAG)
-- Build a routing system that ties everything together
-
----
-
 ## Quick Reference
 
 **Prompt Structure:**

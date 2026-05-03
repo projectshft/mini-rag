@@ -125,8 +125,3 @@ const response = await openaiClient.chat.completions.create(
 
 Play around with this - LangSmith is quickly becoming the defacto standard monitoring tool for AI projects.
 
----
-
-## What's Next?
-
-You now have observability into your RAG system. In the next section, we'll test our selector agent to ensure it routes queries correctly.

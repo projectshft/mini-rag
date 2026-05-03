@@ -206,8 +206,3 @@ Complete the `databaseSearchAgent` in `app/agents/databaseSearchAgent.ts`.
 4. **Many systems need both** - Your router can decide
 5. **Always use parameterized queries** - Prisma handles this automatically
 
----
-
-## What's Next?
-
-You now understand both retrieval approaches. Next up: **Capstone Project** — build a complete RAG application for a domain of your choice.

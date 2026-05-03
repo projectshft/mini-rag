@@ -273,13 +273,3 @@ Ask yourself:
     - Yes → Tool-Calling
     - No → Fixed Workflow
 
----
-
-## What's Next?
-
-In the next lesson, we'll compare:
-
-- **Workflow agents** (what you've already built)
-- **Human-in-the-loop agents** (what you'll build next)
-
-Understanding the tradeoffs will help you choose the right pattern for your use case.

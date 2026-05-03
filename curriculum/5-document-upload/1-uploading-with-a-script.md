@@ -350,8 +350,3 @@ Watch this walkthrough of the document upload process:
 
 <iframe src="https://share.descript.com/embed/vXKQ7RBncMc" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
----
-
-## What's Next
-
-Now that you can upload via script, let's build an API route so users can upload documents through the UI!

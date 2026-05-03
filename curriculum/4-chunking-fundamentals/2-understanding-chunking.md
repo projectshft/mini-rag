@@ -364,12 +364,6 @@ Learn: How it handles actual documentation text
 
 ---
 
-## What's Next
-
-The document upload pipeline uses your chunking implementation!
-
----
-
 ## Video Solution Walkthrough
 
 Watch the solution walkthrough for the chunking exercise:

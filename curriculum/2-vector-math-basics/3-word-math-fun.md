@@ -343,8 +343,3 @@ Be specific with your explanations—show you understand the geometry, not just 
 - [Video Submission](https://form.typeform.com/to/xIimMBMs)
 - [Code Submission](https://form.typeform.com/to/oftSQs08)
 
----
-
-## What's Next
-
-You now understand the math! Time to build the actual Pinecone integration.

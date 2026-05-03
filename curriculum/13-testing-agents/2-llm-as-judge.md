@@ -705,18 +705,6 @@ Your completed `app/agents/__tests__/llm-judge.test.ts` with:
 
 ---
 
-## What's Next?
-
-You now have:
-
-- ✅ Routing tests (selector tests)
-- ✅ Quality tests (LLM-as-judge)
-- ✅ Regression detection for model/prompt changes
-
-Next up: **Tool-Calling Exploration** — when to let the AI decide vs. using fixed workflows.
-
----
-
 ## Quick Reference
 
 ```bash

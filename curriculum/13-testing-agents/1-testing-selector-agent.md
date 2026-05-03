@@ -407,18 +407,6 @@ If tests fail, review the "When Tests Fail" section above.
 
 ---
 
-## What's Next?
-
-Now you have:
-
-- ✅ Working agent system
-- ✅ Observability with LangSmith
-- ✅ Test coverage for routing
-
-Next up: **LLM-as-Judge testing** to evaluate response quality, then **SQL Agent** and the **Capstone Project**!
-
----
-
 ## Quick Reference
 
 ```bash

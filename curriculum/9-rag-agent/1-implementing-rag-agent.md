@@ -209,12 +209,6 @@ Answer using the context. If insufficient, say so.`;
 
 ---
 
-## What's Next?
-
-Next, you'll learn about **re-ranking** - a technique to improve retrieval quality by intelligently filtering results.
-
----
-
 ## Assignment: Retrieval Quality + Query Preprocessing
 
 Now apply what you've learned about RAG to improve retrieval quality.
