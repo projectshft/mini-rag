@@ -74,7 +74,6 @@ Key points:
 
 -   [Vercel AI SDK - streamText](https://sdk.vercel.ai/docs/ai-core/stream-text)
 -   [OpenAI Fine-tuning Guide](https://platform.openai.com/docs/guides/fine-tuning)
--   [Using Fine-tuned Models](https://platform.openai.com/docs/guides/fine-tuning/use-a-fine-tuned-model)
 
 ## Testing
 
