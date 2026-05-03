@@ -295,7 +295,7 @@ Use the context above to answer the user's question. If the context doesn't cont
 
 ---
 
-## Assignment 3: Reranking + Score Thresholding
+## Assignment: Reranking + Score Thresholding
 
 Now apply what you've learned about reranking to build a more robust retrieval system.
 

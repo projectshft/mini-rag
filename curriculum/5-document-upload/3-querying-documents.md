@@ -526,7 +526,7 @@ The foundation of your RAG system is complete!
 
 ---
 
-## Assignment 1: Chunking + Sanitization
+## Assignment: Chunking + Sanitization
 
 Now it's time to apply what you've learned to a new problem.
 

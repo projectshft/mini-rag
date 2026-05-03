@@ -164,7 +164,7 @@ Prisma's query builder:
 
 ---
 
-## Assignment 4: SQL Agent
+## Assignment: SQL Agent
 
 ### Repository
 

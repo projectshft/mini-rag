@@ -215,7 +215,7 @@ Next, you'll learn about **re-ranking** - a technique to improve retrieval quali
 
 ---
 
-## Assignment 2: Retrieval Quality + Query Preprocessing
+## Assignment: Retrieval Quality + Query Preprocessing
 
 Now apply what you've learned about RAG to improve retrieval quality.
 

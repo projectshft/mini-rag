@@ -204,26 +204,29 @@ export async function POST(request: NextRequest) {
 }
 </code></pre>
 <h3>Your Tasks</h3>
-<p><strong>Add the following improvements:</strong></p>
+<p><strong>Extend this route with production-quality patterns:</strong></p>
 <ol>
+<li><p><strong>Add Zod schema validation</strong></p>
+<ul>
+<li>Create a schema that validates <code>query</code> as a required string</li>
+<li>Make <code>topK</code> optional with a default value (e.g., 5)</li>
+<li>Parse the request body through your schema</li>
+<li>This mirrors what you did in <code>upload-document/route.ts</code></li>
+</ul>
+</li>
 <li><p><strong>Add try/catch error handling</strong></p>
 <ul>
 <li>Wrap the function body in a try/catch block</li>
-<li>Log errors with <code>console.error</code></li>
-<li>Return a 500 status code with error details</li>
+<li>Check for <code>ZodError</code> to return 400 for validation failures</li>
+<li>Return 500 for unexpected errors</li>
+<li>Log errors with <code>console.error</code> for debugging</li>
 </ul>
 </li>
-<li><p><strong>Add input validation</strong></p>
+<li><p><strong>Return appropriate status codes</strong></p>
 <ul>
-<li>Check if <code>query</code> exists and is a string</li>
-<li>Return a 400 status code if invalid</li>
-<li>Set a default value for <code>topK</code> (e.g., 5)</li>
-</ul>
-</li>
-<li><p><strong>Add better error messages</strong></p>
-<ul>
-<li>Clear validation error messages</li>
-<li>Helpful error responses for debugging</li>
+<li>200 for successful queries</li>
+<li>400 for invalid input (missing query, wrong types)</li>
+<li>500 for server errors (Pinecone down, etc.)</li>
 </ul>
 </li>
 </ol>
@@ -420,7 +423,7 @@ const highQuality = results.filter((doc) =&gt; doc.score &gt; 0.8);
 </ul>
 <p>The foundation of your RAG system is complete!</p>
 <hr>
-<h2>Assignment 1: Chunking + Sanitization</h2>
+<h2>Assignment: Chunking + Sanitization</h2>
 <p>Now it&#39;s time to apply what you&#39;ve learned to a new problem.</p>
 <h3>Video Assignment (3-4 minutes)</h3>
 <p>Explain chunking strategy tradeoffs. How would you chunk these different document types:</p>
