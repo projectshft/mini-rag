@@ -1,3 +1,7 @@
+**DRAFT - This module is not yet part of the core curriculum**
+
+---
+
 # Common Agent Patterns
 
 As you build AI agents, you'll encounter recurring challenges and solutions. Understanding these patterns helps you choose the right approach for your use case.

@@ -1,3 +1,7 @@
+**DRAFT - This module is not yet part of the core curriculum**
+
+---
+
 # Workflow vs Human-in-the-Loop
 
 You've already built a **workflow agent**. Now let's understand when you need a **human-in-the-loop (HITL) agent** instead.

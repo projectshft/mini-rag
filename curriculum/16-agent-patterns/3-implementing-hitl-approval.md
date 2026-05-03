@@ -1,3 +1,7 @@
+**DRAFT - This module is not yet part of the core curriculum**
+
+---
+
 # Implementing Human-in-the-Loop Approval
 
 In this lesson, you'll see why human-in-the-loop is critical for destructive operations - and implement approval workflows for an influencer database agent.

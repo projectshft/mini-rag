@@ -1,3 +1,7 @@
+**DRAFT - This module is not yet part of the core curriculum**
+
+---
+
 # Introduction to LangGraph
 
 You've built RAG agents and explored tool-calling patterns. Now let's level up to **LangGraph** - a framework for building production-grade, stateful AI agents with complex workflows.

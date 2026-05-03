@@ -1,3 +1,7 @@
+**DRAFT - This module is not yet part of the core curriculum**
+
+---
+
 # Building a LangGraph Agent
 
 Now let's build a practical LangGraph agent. You'll create an API route that demonstrates stateful workflows, decision-making, and tool calling.
