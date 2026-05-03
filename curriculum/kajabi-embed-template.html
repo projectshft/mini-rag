@@ -1,0 +1,35 @@
+<!--
+KAJABI EMBED TEMPLATE
+=====================
+Copy this into a Kajabi custom code block and change LESSON_PATH.
+
+Example paths:
+  - 1-intro-to-rag/1-what-is-rag.html
+  - 2-vector-math-basics/1-vectors-and-embeddings.html
+  - 7-agent-architecture/4-upgrading-to-structured-outputs.html
+-->
+
+<div id="curriculum-content" style="font-family: inherit; line-height: 1.6;"></div>
+
+<script>
+(function() {
+  // CHANGE THIS PATH FOR EACH LESSON
+  const LESSON_PATH = '1-intro-to-rag/1-what-is-rag.html';
+
+  const BASE_URL = 'https://projectshft.github.io/mini-rag/curriculum';
+
+  fetch(`${BASE_URL}/${LESSON_PATH}`)
+    .then(response => {
+      if (!response.ok) throw new Error('Failed to load lesson');
+      return response.text();
+    })
+    .then(html => {
+      document.getElementById('curriculum-content').innerHTML = html;
+    })
+    .catch(error => {
+      document.getElementById('curriculum-content').innerHTML =
+        '<p style="color: red;">Error loading lesson. Please refresh the page.</p>';
+      console.error('Curriculum load error:', error);
+    });
+})();
+</script>

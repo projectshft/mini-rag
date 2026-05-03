@@ -1,0 +1,4 @@
+# GitHub Pages config - serves HTML files as-is
+include:
+  - "*.html"
+  - "**/*.html"
