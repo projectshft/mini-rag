@@ -301,6 +301,8 @@ Understanding word math helps you understand RAG:
 
 Now apply what you've learned by creating your own word math example and explaining the underlying concepts.
 
+**Why video assignments?** Recording yourself explaining concepts does three things: it forces you to truly internalize the material (you can't explain what you don't understand), it prepares you to teach your team (a skill that matters more than coding), and it prevents magical thinking—if you can't articulate *why* something works, you're just copying code.
+
 ### Video Assignment (3-4 minutes)
 
 Create a video that demonstrates your understanding of vector embeddings:
