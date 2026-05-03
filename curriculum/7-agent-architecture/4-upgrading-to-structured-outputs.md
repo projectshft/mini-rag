@@ -571,6 +571,6 @@ z.string().optional()               // Optional string
 ```
 
 **Further Reading:**
-- [OpenAI Structured Outputs Best Practices](https://platform.openai.com/docs/guides/structured-outputs/best-practices)
+- [OpenAI Structured Outputs Best Practices](https://platform.openai.com/docs/guides/structured-outputs#best-practices)
 - [Zod Type Inference Guide](https://zod.dev/?id=type-inference)
 - [JSON Schema vs Zod](https://zod.dev/?id=json-schema)
