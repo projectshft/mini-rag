@@ -72,17 +72,4 @@ And we'll do it all with **TypeScript** for type safety and better developer exp
 
 ---
 
-## Prerequisites Check
-
-Before we dive in, make sure you're comfortable with:
-
-- **TypeScript fundamentals** (we'll be using it throughout)
-- **Next.js and React** (our frontend framework)
-- **REST APIs** (we'll build several endpoints)
-- **Basic database concepts** (though vector databases are different!)
-
-Don't worry if you haven't worked with AI/ML before - we'll cover everything you need to know!
-
----
-
 Let's build.
