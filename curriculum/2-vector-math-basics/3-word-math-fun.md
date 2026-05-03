@@ -297,6 +297,52 @@ Understanding word math helps you understand RAG:
 
 ---
 
+## Assignment: Word Math + Vector Concepts
+
+Now apply what you've learned by creating your own word math example and explaining the underlying concepts.
+
+### Video Assignment (3-4 minutes)
+
+Create a video that demonstrates your understanding of vector embeddings:
+
+1. **Your word equation** - Present a creative word math equation you invented (not one from the examples)
+   - Show the equation: `A - B + C ≈ ?`
+   - Run it and show the result
+   - Explain why it works (or doesn't!)
+
+2. **Explain the math** - Using your example, explain:
+   - What does "subtracting" a word actually do to the vector?
+   - What does "adding" a word do?
+   - Why does cosine similarity find the "answer"?
+
+3. **Connect to RAG** - Explain how this same math powers document retrieval:
+   - How is a user query like one side of a word equation?
+   - Why does "similar vectors = similar meaning" enable search?
+
+Be specific with your explanations—show you understand the geometry, not just the code.
+
+### Code Assignment
+
+**Extend** `app/scripts/exercises/vector-word-arithmetic.ts` with your own creative examples:
+
+**Requirements:**
+- Add at least 2 original word equations that demonstrate different relationship types:
+  - Example types: profession→workplace, product→company, emotion→expression, hobby→equipment
+- For each equation, provide candidate words that make it interesting (include some "wrong" answers)
+- Add comments explaining why you expect each equation to work
+
+**What "done" looks like:**
+- Your equations run and produce results
+- You can explain why the results make sense (or why they surprised you)
+- Your video demonstrates understanding, not just code execution
+
+### Submit Your Work
+
+- [Video Submission](https://form.typeform.com/to/xIimMBMs)
+- [Code Submission](https://form.typeform.com/to/oftSQs08)
+
+---
+
 ## What's Next
 
 You now understand the math! Time to build the actual Pinecone integration.
