@@ -2,8 +2,8 @@
 <p>Now that you have Pinecone configured, it&#39;s time to fill your vector database with actual content! This is where your RAG system gets its knowledge.</p>
 <hr>
 <h2>Video Walkthrough</h2>
-<p>Watch this guide to building the API route:</p>
-<iframe src="https://share.descript.com/embed/tb6EgaRGjay" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+<p>Watch this introduction to the upload interface:</p>
+<iframe src="https://share.descript.com/embed/vXKQ7RBncMc" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
 <hr>
 <h2>What You&#39;ll Build</h2>
@@ -348,3 +348,7 @@ const id = `${chunk.metadata.url}-${chunk.metadata.chunkIndex}`;
 <li><strong>Same Pinecone upload</strong> - Uses <code>index.upsert()</code></li>
 </ol>
 <p>The main difference: it skips the DataProcessor scraping step since it receives text directly from the user. This is useful when you want to upload documentation, articles, or any text content without needing a URL.</p>
+<hr>
+<h2>Solution Walkthrough</h2>
+<p>Watch this walkthrough of the document upload API route implementation:</p>
+<iframe src="https://share.descript.com/embed/tb6EgaRGjay" width="640" height="360" frameborder="0" allowfullscreen></iframe>
