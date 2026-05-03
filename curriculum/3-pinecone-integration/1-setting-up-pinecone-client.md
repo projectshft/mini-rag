@@ -352,14 +352,6 @@ Excellent! You now have:
 - ✅ A `searchDocuments()` function ready to use
 - ✅ Understanding of embedding dimension trade-offs
 
-**Coming up in the next modules:**
-
-1. **Chunking Fundamentals**: Learn how to break documents into optimal chunks
-2. **Document Upload**: Build a system to add content to your vector database
-3. **Agent Architecture**: Create intelligent agents that route queries
-4. **RAG Agent**: Implement retrieval-augmented generation
-5. **Chat Interface**: Build a streaming UI for your RAG system
-
 ---
 
 ## Quick Reference

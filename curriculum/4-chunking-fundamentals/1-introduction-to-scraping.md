@@ -362,33 +362,6 @@ For RAG systems, quality matters:
 
 ---
 
-## Your Task: Think About Chunking
-
-Before moving to the next module, consider these questions:
-
-**Question 1:** How would you chunk a large legal document (10,000+ words)?
-
--   By sentence? Too granular?
--   By paragraph? What if paragraphs are huge?
--   By section? What if sections are small?
-
-**Question 2:** Would you even need to chunk a LinkedIn post?
-
--   Most posts are 1-3 paragraphs
--   Already concise
--   Chunking might make it worse?
-
-**Question 3:** What about chunking code documentation?
-
--   Function signatures
--   Code examples
--   Descriptions
--   How do they relate?
-
-**There's no perfect answer!** Chunking is an art and a science. In the next module, we'll explore a naive chunking strategy and you'll implement your own improvements.
-
----
-
 ## What Separates RAG Novices from Experts
 
 According to experienced practitioners:
