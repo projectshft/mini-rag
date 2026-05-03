@@ -368,15 +368,4 @@ All agents return streams, not complete responses:
 - Agent orchestration patterns
 - Common pitfalls and how to avoid them
 
-**Time:** ~20 minutes
-
 This article reinforces the concepts in this lesson with production examples from Anthropic.
-
----
-
-**Coming up:**
-
--   Building the LinkedIn agent with a fine-tuned model
--   Building the RAG agent with retrieval
--   Connecting everything to the UI
-

@@ -534,12 +534,10 @@ const response = await openai.responses.parse({
 **⭐ Prompt Engineering for Business Performance (Anthropic)**
 - **Link:** https://www.anthropic.com/news/prompt-engineering-for-business-performance
 - **Why:** Best practices for prompts, few-shot vs zero-shot, measuring quality
-- **Time:** ~10 minutes
 - **Key for:** Writing effective prompts for your agents
 
 ### Technical Documentation
 
 - [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering)
 - [Temperature and Top P Explained](https://platform.openai.com/docs/api-reference/chat/create#temperature)
-- [System Message Best Practices](https://platform.openai.com/docs/guides/prompt-engineering/strategy-write-clear-instructions)
 - [OpenAI Model Comparison](https://platform.openai.com/docs/models)

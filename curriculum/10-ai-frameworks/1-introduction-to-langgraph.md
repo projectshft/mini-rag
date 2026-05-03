@@ -505,8 +505,6 @@ You'll see firsthand how LangGraph differs from your current AI SDK agents.
 - [LangGraph vs OpenAI Agents SDK](https://particula.tech/blog/langgraph-vs-crewai-vs-openai-agents-sdk-2026) - Framework comparison
 - [Agent Orchestration in 2026](https://www.sitepoint.com/the-definitive-guide-to-agentic-design-patterns-in-2026/) - Design patterns
 
-**Time:** ~30 minutes of reading to reinforce concepts
-
 ---
 
 ## Key Takeaways

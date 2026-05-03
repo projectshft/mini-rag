@@ -356,7 +356,5 @@ Be specific with examples, not just general principles.
 - Latency vs accuracy trade-offs
 - Hybrid search strategies
 
-**Time:** ~15 minutes
-
 **Note:** This article uses Qdrant examples, but the concepts apply directly to Pinecone (which we use). The re-ranking principles are universal across vector databases.
 
