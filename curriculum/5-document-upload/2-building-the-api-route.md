@@ -8,7 +8,7 @@ Now that you have Pinecone configured, it's time to fill your vector database wi
 
 Watch this introduction to the upload interface:
 
-<iframe src="https://share.descript.com/embed/tb6EgaRGjay" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+<iframe src="https://share.descript.com/embed/vXKQ7RBncMc" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
 ---
 
@@ -418,5 +418,5 @@ The main difference: it skips the DataProcessor scraping step since it receives 
 
 Watch this walkthrough of the document upload API route implementation:
 
-<iframe src="https://share.descript.com/embed/vXKQ7RBncMc" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+<iframe src="https://share.descript.com/embed/tb6EgaRGjay" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
