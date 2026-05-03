@@ -43,3 +43,6 @@ __pycache__/
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# curriculum preview
+curriculum-preview.html
