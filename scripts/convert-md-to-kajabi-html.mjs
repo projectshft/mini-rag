@@ -105,8 +105,8 @@ function findHtmlFiles(dir) {
     }
   }
 
-  // Sort by path for consistent ordering
-  return files.sort();
+  // Natural sort: 1, 2, 10 instead of 1, 10, 2
+  return files.sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 }
 
 // Generate the preview HTML page
