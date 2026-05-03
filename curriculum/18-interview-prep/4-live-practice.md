@@ -73,7 +73,7 @@ In AI engineering interviews, you'll face three types of questions:
 
 ---
 
-## Video Assignment 1: Project Question
+## Video: Project Question
 
 Record yourself answering this question:
 
@@ -117,7 +117,7 @@ If I did this again, I would [change] because [reason]."
 
 ---
 
-## Video Assignment 2: Opinion Question
+## Video: Opinion Question
 
 Record yourself answering ONE of these questions (your choice):
 
@@ -159,7 +159,7 @@ So my position is [summary in one sentence]."
 
 ---
 
-## Video Assignment 3: Design Question
+## Video: Design Question
 
 Record yourself answering ONE of these questions (your choice):
 

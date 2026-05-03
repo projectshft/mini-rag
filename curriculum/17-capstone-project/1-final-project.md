@@ -1,4 +1,4 @@
-# Assignment 5: Capstone Project
+# Capstone Project
 
 Build a complete RAG application for a domain of your choice.
 
