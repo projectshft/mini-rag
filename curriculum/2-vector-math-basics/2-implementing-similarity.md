@@ -34,6 +34,26 @@ yarn install
 npm install
 ```
 
+### Set Up Environment Variables
+
+Before running any exercises, you need to configure your API keys:
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Open .env and add your OpenAI API key
+# Get one at: https://platform.openai.com/api-keys
+```
+
+Your `.env` file should have at minimum:
+
+```bash
+OPENAI_API_KEY=sk-your-key-here
+```
+
+**Important:** Never commit `.env` to git! It's already in `.gitignore` for your protection.
+
 ---
 
 ## What You'll Build

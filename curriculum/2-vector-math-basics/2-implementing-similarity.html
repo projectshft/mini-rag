@@ -20,6 +20,18 @@ yarn install
 # Or using npm
 npm install
 </code></pre>
+<h3>Set Up Environment Variables</h3>
+<p>Before running any exercises, you need to configure your API keys:</p>
+<pre><code class="language-bash"># Copy the example environment file
+cp .env.example .env
+
+# Open .env and add your OpenAI API key
+# Get one at: https://platform.openai.com/api-keys
+</code></pre>
+<p>Your <code>.env</code> file should have at minimum:</p>
+<pre><code class="language-bash">OPENAI_API_KEY=sk-your-key-here
+</code></pre>
+<p><strong>Important:</strong> Never commit <code>.env</code> to git! It&#39;s already in <code>.gitignore</code> for your protection.</p>
 <hr>
 <h2>What You&#39;ll Build</h2>
 <p>A <code>findTopSimilarDocuments</code> function that:</p>

@@ -523,3 +523,17 @@ Practice these using the same frameworks!
 - Retrieval strategy
 - Generation
 - Updates & maintenance
+
+---
+
+## Schedule a Mock Interview
+
+Want personalized feedback? Schedule a 1-on-1 mock interview session with an instructor.
+
+**What you'll get:**
+- 30-minute live mock interview
+- Real-time feedback on your answers
+- Tips specific to your delivery style
+- Confidence boost before your real interviews
+
+[Request a Mock Interview](https://form.typeform.com/to/qgQCwFoi)

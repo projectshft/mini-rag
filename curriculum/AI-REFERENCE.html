@@ -1,0 +1,325 @@
+<h1>AI Assistant Guide for RAG &amp; Agent Development</h1>
+<p>This file helps AI assistants (Claude, ChatGPT, Cursor, Copilot) write modern, production-quality RAG systems and agents using TypeScript.</p>
+<p><strong>Why this exists:</strong> Much of this material is new enough that AI tools haven&#39;t caught up. They often suggest outdated syntax, deprecated libraries, or patterns that don&#39;t match current best practices. This guide ensures you get correct, modern code.</p>
+<p><strong>How to use:</strong> Add this file to your project as <code>CLAUDE.md</code> or include it in your AI tool&#39;s context. Share with your team to boost productivity.</p>
+<hr>
+<h2>Stack &amp; Libraries</h2>
+<p>When building RAG systems and agents, use these libraries:</p>
+<table>
+<thead>
+<tr>
+<th>Purpose</th>
+<th>Library</th>
+<th>Import</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>LLM calls + streaming</td>
+<td><code>ai</code> (Vercel AI SDK)</td>
+<td><code>import { streamText, generateObject, tool } from &#39;ai&#39;</code></td>
+</tr>
+<tr>
+<td>OpenAI provider</td>
+<td><code>@ai-sdk/openai</code></td>
+<td><code>import { openai } from &#39;@ai-sdk/openai&#39;</code></td>
+</tr>
+<tr>
+<td>Schema validation</td>
+<td><code>zod</code></td>
+<td><code>import { z } from &#39;zod&#39;</code></td>
+</tr>
+<tr>
+<td>Vector database</td>
+<td><code>@pinecone-database/pinecone</code></td>
+<td><code>import { Pinecone } from &#39;@pinecone-database/pinecone&#39;</code></td>
+</tr>
+<tr>
+<td>Embeddings</td>
+<td><code>openai</code></td>
+<td><code>import OpenAI from &#39;openai&#39;</code></td>
+</tr>
+</tbody></table>
+<p><strong>Do NOT use:</strong></p>
+<ul>
+<li>LangChain for simple RAG (overcomplicated)</li>
+<li><code>openai</code> SDK for chat completions (use AI SDK instead)</li>
+<li>Manual JSON parsing for structured outputs (use Zod schemas)</li>
+</ul>
+<hr>
+<h2>Structured Outputs (Critical)</h2>
+<p>Always use Zod schemas with <code>generateObject</code> for structured LLM outputs. Never parse JSON manually.</p>
+<pre><code class="language-typescript">import { generateObject } from &#39;ai&#39;;
+import { openai } from &#39;@ai-sdk/openai&#39;;
+import { z } from &#39;zod&#39;;
+
+const schema = z.object({
+  agent: z.enum([&#39;rag&#39;, &#39;linkedin&#39;, &#39;general&#39;]),
+  query: z.string(),
+  confidence: z.number().min(0).max(1),
+});
+
+const result = await generateObject({
+  model: openai(&#39;gpt-4o-mini&#39;),
+  schema,
+  prompt: `Route this query: &quot;${userQuery}&quot;`,
+});
+
+// result.object is fully typed
+</code></pre>
+<p><strong>Key points:</strong></p>
+<ul>
+<li>Use <code>generateObject</code> not <code>chat.completions.create</code></li>
+<li>Schema is enforced by the model, not post-hoc parsing</li>
+<li>Always use <code>.describe()</code> on fields to guide the model</li>
+</ul>
+<hr>
+<h2>Streaming Responses</h2>
+<p>Use AI SDK&#39;s <code>streamText</code> for all streaming responses:</p>
+<pre><code class="language-typescript">import { streamText } from &#39;ai&#39;;
+import { openai } from &#39;@ai-sdk/openai&#39;;
+
+const result = streamText({
+  model: openai(&#39;gpt-4o&#39;),
+  system: &#39;You are a helpful assistant.&#39;,
+  messages,
+});
+
+return result.toDataStreamResponse();
+</code></pre>
+<p><strong>For React clients:</strong></p>
+<pre><code class="language-typescript">import { useChat } from &#39;@ai-sdk/react&#39;;
+
+const { messages, input, handleSubmit } = useChat({ api: &#39;/api/chat&#39; });
+</code></pre>
+<hr>
+<h2>RAG Pipeline Pattern</h2>
+<p>The correct RAG flow:</p>
+<ol>
+<li><strong>Embed query</strong> using OpenAI embeddings</li>
+<li><strong>Over-fetch</strong> from vector DB (get more than you need)</li>
+<li><strong>Filter nulls</strong> from results</li>
+<li><strong>Rerank</strong> using Pinecone or Cohere</li>
+<li><strong>Build context</strong> from top results</li>
+<li><strong>Stream response</strong> with context</li>
+</ol>
+<pre><code class="language-typescript">// 1. Embed
+const embedding = await openaiClient.embeddings.create({
+  model: &#39;text-embedding-3-small&#39;,
+  input: query,
+  dimensions: 512,
+});
+
+// 2. Over-fetch (get 20, keep 5)
+const results = await index.query({
+  vector: embedding.data[0].embedding,
+  topK: 20,
+  includeMetadata: true,
+});
+
+// 3. Filter nulls (CRITICAL - always do this)
+const docs = results.matches
+  .map(m =&gt; m.metadata?.text)
+  .filter(Boolean) as string[];
+
+// 4. Rerank
+const reranked = await pinecone.inference.rerank(
+  &#39;bge-reranker-v2-m3&#39;,
+  query,
+  docs,
+  { topN: 5, returnDocuments: true }
+);
+
+// 5. Build context
+const context = reranked.data
+  .map(r =&gt; r.document?.text)
+  .filter(Boolean)
+  .join(&#39;\n\n&#39;);
+
+// 6. Stream
+return streamText({
+  model: openai(&#39;gpt-4o&#39;),
+  system: `Answer based on this context:\n\n${context}`,
+  messages,
+});
+</code></pre>
+<hr>
+<h2>Tool Calling</h2>
+<p>Use AI SDK&#39;s <code>tool</code> helper for tool definitions:</p>
+<pre><code class="language-typescript">import { streamText, tool } from &#39;ai&#39;;
+import { z } from &#39;zod&#39;;
+
+const result = await streamText({
+  model: openai(&#39;gpt-4o&#39;),
+  toolChoice: &#39;auto&#39;,
+  maxSteps: 5, // CRITICAL: prevents infinite loops
+  tools: {
+    searchDocs: tool({
+      description: &#39;Search documentation for technical questions&#39;,
+      parameters: z.object({
+        query: z.string().describe(&#39;The search query&#39;),
+      }),
+      execute: async ({ query }) =&gt; {
+        // RAG pipeline here
+        return context;
+      },
+    }),
+  },
+  messages,
+});
+</code></pre>
+<p><strong>Key points:</strong></p>
+<ul>
+<li>Always set <code>maxSteps</code> to prevent infinite tool loops</li>
+<li>Use descriptive <code>description</code> fields</li>
+<li>Use <code>.describe()</code> on parameters</li>
+</ul>
+<hr>
+<h2>Agent Router Pattern</h2>
+<p>Route queries to specialized agents using structured outputs:</p>
+<pre><code class="language-typescript">const routingSchema = z.object({
+  agent: z.enum([&#39;rag&#39;, &#39;linkedin&#39;, &#39;general&#39;]),
+  refinedQuery: z.string().describe(&#39;Query optimized for the selected agent&#39;),
+});
+
+const routing = await generateObject({
+  model: openai(&#39;gpt-4o-mini&#39;), // Fast model for routing
+  schema: routingSchema,
+  prompt: `Route this query to the best agent:
+
+Query: &quot;${query}&quot;
+
+Agents:
+- rag: Technical documentation questions
+- linkedin: Professional content creation
+- general: General conversation`,
+});
+
+// Execute the selected agent
+const agent = agentRegistry[routing.object.agent];
+return agent(routing.object.refinedQuery);
+</code></pre>
+<hr>
+<h2>Common Mistakes to Avoid</h2>
+<h3>1. Not filtering nulls from vector search</h3>
+<pre><code class="language-typescript">// WRONG
+const docs = results.matches.map(m =&gt; m.metadata?.text);
+
+// CORRECT
+const docs = results.matches
+  .map(m =&gt; m.metadata?.text)
+  .filter(Boolean) as string[];
+</code></pre>
+<h3>2. Not setting maxSteps for tools</h3>
+<pre><code class="language-typescript">// WRONG - can loop forever
+streamText({ tools, messages });
+
+// CORRECT
+streamText({ tools, maxSteps: 5, messages });
+</code></pre>
+<h3>3. Using wrong embedding dimensions</h3>
+<pre><code class="language-typescript">// CORRECT - match your index dimensions
+const embedding = await openai.embeddings.create({
+  model: &#39;text-embedding-3-small&#39;,
+  input: query,
+  dimensions: 512, // Must match Pinecone index
+});
+</code></pre>
+<h3>4. Not handling empty results</h3>
+<pre><code class="language-typescript">if (docs.length === 0) {
+  return &quot;I couldn&#39;t find relevant information. Could you rephrase?&quot;;
+}
+</code></pre>
+<hr>
+<h2>Documentation References</h2>
+<p>For deeper understanding, refer to:</p>
+<table>
+<thead>
+<tr>
+<th>Topic</th>
+<th>Documentation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AI SDK</td>
+<td><a href="https://sdk.vercel.ai/docs">https://sdk.vercel.ai/docs</a></td>
+</tr>
+<tr>
+<td>Structured outputs</td>
+<td><a href="https://sdk.vercel.ai/docs/ai-sdk-core/generating-structured-data">https://sdk.vercel.ai/docs/ai-sdk-core/generating-structured-data</a></td>
+</tr>
+<tr>
+<td>Tool calling</td>
+<td><a href="https://sdk.vercel.ai/docs/ai-sdk-core/tools-and-tool-calling">https://sdk.vercel.ai/docs/ai-sdk-core/tools-and-tool-calling</a></td>
+</tr>
+<tr>
+<td>Streaming</td>
+<td><a href="https://sdk.vercel.ai/docs/ai-sdk-core/generating-text#streaming-text">https://sdk.vercel.ai/docs/ai-sdk-core/generating-text#streaming-text</a></td>
+</tr>
+<tr>
+<td>Pinecone</td>
+<td><a href="https://docs.pinecone.io">https://docs.pinecone.io</a></td>
+</tr>
+<tr>
+<td>Reranking</td>
+<td><a href="https://docs.pinecone.io/guides/inference/rerank">https://docs.pinecone.io/guides/inference/rerank</a></td>
+</tr>
+<tr>
+<td>OpenAI embeddings</td>
+<td><a href="https://platform.openai.com/docs/guides/embeddings">https://platform.openai.com/docs/guides/embeddings</a></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Quick Patterns</h2>
+<h3>Chunking text</h3>
+<pre><code class="language-typescript">const CHUNK_SIZE = 500;
+const OVERLAP = 50;
+// Split by sentences, group to chunk size, overlap for context
+</code></pre>
+<h3>Human-in-the-loop</h3>
+<pre><code class="language-typescript">// Store pending action with expiry
+// Return AWAITING_APPROVAL response
+// Handle approval/rejection in separate endpoint
+</code></pre>
+<h3>Multi-agent routing</h3>
+<pre><code class="language-typescript">// Use structured output to select agent
+// Registry pattern: Record&lt;AgentType, AgentHandler&gt;
+// Each agent returns StreamTextResult
+</code></pre>
+<hr>
+<h2>Model Selection</h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Model</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Routing/classification</td>
+<td><code>gpt-4o-mini</code></td>
+<td>Fast, cheap, good at classification</td>
+</tr>
+<tr>
+<td>RAG synthesis</td>
+<td><code>gpt-4o</code></td>
+<td>Better reasoning for complex queries</td>
+</tr>
+<tr>
+<td>Embeddings</td>
+<td><code>text-embedding-3-small</code></td>
+<td>Good quality, cost effective</td>
+</tr>
+<tr>
+<td>Reranking</td>
+<td><code>bge-reranker-v2-m3</code></td>
+<td>Best open reranker</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Environment Variables</h2>
+<pre><code class="language-bash">OPENAI_API_KEY=sk-...
+PINECONE_API_KEY=...
+PINECONE_INDEX=your-index-name
+</code></pre>
+<p>Always validate env vars exist at startup, not at request time.</p>

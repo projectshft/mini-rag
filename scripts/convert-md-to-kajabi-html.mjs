@@ -94,6 +94,7 @@ const PREVIEW_EXCLUDE = [
   'ASSIGNMENTS.html',
   'README.html',
   'kajabi-embed-template.html',
+  'AI-REFERENCE.html',
 ];
 
 // Directories to exclude from preview

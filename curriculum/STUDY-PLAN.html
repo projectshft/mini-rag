@@ -1,0 +1,400 @@
+<h1>6-Week Study Plan</h1>
+<p>Complete the RAG &amp; AI Agents curriculum in 6 weeks with ~30-45 minutes of daily study (weekdays only).</p>
+<p><strong>Structure:</strong> 5 weeks of learning + 1 week for capstone project (30 study days total)</p>
+<hr>
+<h2>Week 1: How to Learn &amp; Foundations</h2>
+<p><strong>Theme:</strong> Learning techniques and RAG concepts</p>
+<p><strong>Before Day 3:</strong> Set up your environment variables! Copy <code>.env.example</code> to <code>.env</code> and add your <code>OPENAI_API_KEY</code>. See Quick Reference below.</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Module</th>
+<th>Lesson</th>
+<th>Time</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>0</td>
+<td>How to Learn</td>
+<td>30 min</td>
+<td>Feynman Technique, video expectations, office hours</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1</td>
+<td>What is RAG</td>
+<td>30 min</td>
+<td>Watch videos, understand RAG vs fine-tuning</td>
+</tr>
+<tr>
+<td>3</td>
+<td>2</td>
+<td>Vectors and Embeddings</td>
+<td>45 min</td>
+<td>Video + quiz + <code>findTopSimilarDocuments()</code></td>
+</tr>
+<tr>
+<td>4</td>
+<td>2</td>
+<td>Word Math Fun</td>
+<td>45 min</td>
+<td>Code exercise: word arithmetic</td>
+</tr>
+<tr>
+<td>5</td>
+<td>3</td>
+<td>Setting Up Pinecone</td>
+<td>45 min</td>
+<td>OpenAI + Pinecone client setup</td>
+</tr>
+</tbody></table>
+<p><strong>Assignment Due:</strong> Vector math explanation video + word equation examples</p>
+<hr>
+<h2>Week 2: Infrastructure &amp; Data Pipeline</h2>
+<p><strong>Theme:</strong> Chunking, document upload, and fine-tuning</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Module</th>
+<th>Lesson</th>
+<th>Time</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>3-4</td>
+<td>Challenge + Scraping Intro</td>
+<td>45 min</td>
+<td>Embedding dimensions + data quality</td>
+</tr>
+<tr>
+<td>2</td>
+<td>4</td>
+<td>Understanding Chunking</td>
+<td>50 min</td>
+<td>Code exercise: <code>getLastWords()</code></td>
+</tr>
+<tr>
+<td>3</td>
+<td>5</td>
+<td>Uploading with a Script</td>
+<td>40 min</td>
+<td>Batch upload process</td>
+</tr>
+<tr>
+<td>4</td>
+<td>5</td>
+<td>Building the API Route</td>
+<td>50 min</td>
+<td>Code exercise: 9-step upload pipeline</td>
+</tr>
+<tr>
+<td>5</td>
+<td>5-6</td>
+<td>Querying + Fine-Tuning</td>
+<td>50 min</td>
+<td>Retrieval + when to fine-tune vs RAG</td>
+</tr>
+</tbody></table>
+<p><strong>Assignment Due:</strong> Chunking + Sanitization code submission</p>
+<hr>
+<h2>Week 3: Agent Architecture</h2>
+<p><strong>Theme:</strong> Building intelligent routing and agents</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Module</th>
+<th>Lesson</th>
+<th>Time</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>7</td>
+<td>Understanding Agent Systems</td>
+<td>45 min</td>
+<td>Agent pattern, routing concepts</td>
+</tr>
+<tr>
+<td>2</td>
+<td>7</td>
+<td>Prompting + Text Selector</td>
+<td>50 min</td>
+<td>Temperature, model selection, basic selector</td>
+</tr>
+<tr>
+<td>3</td>
+<td>7</td>
+<td>Structured Outputs</td>
+<td>50 min</td>
+<td>Code exercise: Zod schemas</td>
+</tr>
+<tr>
+<td>4</td>
+<td>7-8</td>
+<td>Graceful Degradation + LinkedIn</td>
+<td>50 min</td>
+<td>Fallback strategies + fine-tuned model</td>
+</tr>
+<tr>
+<td>5</td>
+<td>9</td>
+<td>RAG Agent</td>
+<td>45 min</td>
+<td>Code exercise: retrieval + generation</td>
+</tr>
+</tbody></table>
+<p><strong>Assignment Due:</strong> Agent selector with structured outputs</p>
+<hr>
+<h2>Week 4: RAG Deep Dive &amp; Interface</h2>
+<p><strong>Theme:</strong> Advanced retrieval and chat interface</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Module</th>
+<th>Lesson</th>
+<th>Time</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>9</td>
+<td>Implementing Reranking</td>
+<td>45 min</td>
+<td>Over-fetch and rerank pattern</td>
+</tr>
+<tr>
+<td>2</td>
+<td>9</td>
+<td>Sparse &amp; Dense Vectors</td>
+<td>40 min</td>
+<td>Hybrid search concepts</td>
+</tr>
+<tr>
+<td>3</td>
+<td>11</td>
+<td>Understanding the Interface</td>
+<td>50 min</td>
+<td>React streaming, state management</td>
+</tr>
+<tr>
+<td>4</td>
+<td>11</td>
+<td>Challenge</td>
+<td>50 min</td>
+<td>Add source references to chat</td>
+</tr>
+<tr>
+<td>5</td>
+<td>12</td>
+<td>Integrating LangSmith</td>
+<td>40 min</td>
+<td>Monitoring setup</td>
+</tr>
+</tbody></table>
+<p><strong>Assignment Due:</strong> RAG agent with reranking + video on retrieval quality</p>
+<hr>
+<h2>Week 5: Testing, Advanced &amp; Interview Prep</h2>
+<p><strong>Theme:</strong> Production readiness and career preparation</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Module</th>
+<th>Lesson</th>
+<th>Time</th>
+<th>Focus</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>13</td>
+<td>Testing Agents</td>
+<td>50 min</td>
+<td>Test cases + LLM as Judge</td>
+</tr>
+<tr>
+<td>2</td>
+<td>14</td>
+<td>Tool Calling</td>
+<td>50 min</td>
+<td>Concepts + implementation patterns</td>
+</tr>
+<tr>
+<td>3</td>
+<td>15</td>
+<td>SQL Agent</td>
+<td>45 min</td>
+<td>RAG without vectors</td>
+</tr>
+<tr>
+<td>4</td>
+<td>17-18</td>
+<td>Capstone + Signature Story</td>
+<td>50 min</td>
+<td>Project requirements + your narrative</td>
+</tr>
+<tr>
+<td>5</td>
+<td>18</td>
+<td>Interview Practice</td>
+<td>60 min</td>
+<td>Strong opinions + live practice videos</td>
+</tr>
+</tbody></table>
+<p><strong>Assignment Due:</strong> SQL Agent code + interview prep videos + capstone proposal</p>
+<hr>
+<h2>Week 6: Capstone Project</h2>
+<p><strong>Theme:</strong> Build something real</p>
+<table>
+<thead>
+<tr>
+<th>Day</th>
+<th>Focus</th>
+<th>Time</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1-2</td>
+<td>Implementation</td>
+<td>3-4 hours</td>
+</tr>
+<tr>
+<td>3-4</td>
+<td>Polish + Documentation</td>
+<td>2-3 hours</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Demo Video + Submission</td>
+<td>1-2 hours</td>
+</tr>
+</tbody></table>
+<p><strong>Choose your path:</strong></p>
+<ul>
+<li><strong>Option A (Extend):</strong> Add new agent + data source to class project</li>
+<li><strong>Option B (From Scratch):</strong> Build RAG system for your own domain</li>
+</ul>
+<p><strong>Deliverables:</strong></p>
+<ul>
+<li>Working RAG application</li>
+<li>README documentation</li>
+<li>5-7 minute demo video</li>
+<li>GitHub repository</li>
+</ul>
+<hr>
+<h2>Time Investment Summary</h2>
+<table>
+<thead>
+<tr>
+<th>Week</th>
+<th>Theme</th>
+<th>Total Time</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>How to Learn &amp; Foundations</td>
+<td>~3.5 hours</td>
+</tr>
+<tr>
+<td>2</td>
+<td>Infrastructure &amp; Data Pipeline</td>
+<td>~4 hours</td>
+</tr>
+<tr>
+<td>3</td>
+<td>Agent Architecture</td>
+<td>~4 hours</td>
+</tr>
+<tr>
+<td>4</td>
+<td>RAG Deep Dive &amp; Interface</td>
+<td>~3.5 hours</td>
+</tr>
+<tr>
+<td>5</td>
+<td>Testing, Advanced &amp; Interview Prep</td>
+<td>~4.5 hours</td>
+</tr>
+<tr>
+<td>6</td>
+<td>Capstone</td>
+<td>~8-10 hours</td>
+</tr>
+</tbody></table>
+<p><strong>Total:</strong> ~28-30 hours over 6 weeks (30 study days)</p>
+<hr>
+<h2>Tips for Success</h2>
+<h3>Daily Habits</h3>
+<ul>
+<li><strong>Same time each day</strong> - builds consistency</li>
+<li><strong>No distractions</strong> - 30 focused minutes beats 60 distracted minutes</li>
+<li><strong>Take notes</strong> - especially on concepts you&#39;d explain to someone else</li>
+</ul>
+<h3>Weekly Rhythm</h3>
+<ul>
+<li><strong>Monday-Wednesday:</strong> New content</li>
+<li><strong>Thursday:</strong> Practice/exercises</li>
+<li><strong>Friday:</strong> Review + record Feynman video</li>
+</ul>
+<h3>When You&#39;re Stuck</h3>
+<ul>
+<li><strong>Check the cheat codes</strong> (Module 99) for quick patterns</li>
+<li><strong>Re-watch the video</strong> - often catches what you missed reading</li>
+<li><strong>Office hours</strong> - bring specific questions, not &quot;I don&#39;t get it&quot;</li>
+</ul>
+<h3>Code Exercises</h3>
+<ul>
+<li><strong>Read the TODOs carefully</strong> - they guide you step by step</li>
+<li><strong>Run tests early</strong> - <code>yarn test</code> shows what&#39;s expected</li>
+<li><strong>Compare to reference</strong> - curriculum branch has complete implementations</li>
+</ul>
+<hr>
+<h2>Modules NOT in This Plan</h2>
+<p>These modules are marked as <strong>DRAFT</strong> and not part of the core curriculum:</p>
+<ul>
+<li><strong>Module 10:</strong> AI Frameworks (LangGraph)</li>
+<li><strong>Module 16:</strong> Agent Patterns (Advanced HITL)</li>
+</ul>
+<p>You may explore these after completing the core curriculum if interested.</p>
+<hr>
+<h2>Quick Reference</h2>
+<p><strong>Environment Setup (do this first!):</strong></p>
+<pre><code class="language-bash"># Copy the example environment file
+cp .env.example .env
+
+# Edit .env and add your API keys:
+# - OPENAI_API_KEY (required for all exercises)
+# - PINECONE_API_KEY (required for RAG exercises)
+# - See .env.example for all available options
+</code></pre>
+<p><strong>Run tests:</strong></p>
+<pre><code class="language-bash">yarn test:selector    # Agent routing tests
+yarn test:chunking    # Chunking tests
+yarn test            # All tests
+</code></pre>
+<p><strong>Start development:</strong></p>
+<pre><code class="language-bash">yarn dev             # Start Next.js server
+</code></pre>
+<p><strong>Run exercises:</strong></p>
+<pre><code class="language-bash">npx ts-node app/scripts/exercises/vector-similarity.ts
+npx ts-node app/scripts/exercises/vector-word-arithmetic.ts
+</code></pre>
+<p><strong>Key files to implement:</strong></p>
+<ul>
+<li><code>app/libs/chunking.ts</code> - Week 2</li>
+<li><code>app/api/upload-document/route.ts</code> - Week 2</li>
+<li><code>app/api/select-agent/route.ts</code> - Week 3</li>
+<li><code>app/agents/linkedin.ts</code> - Week 3</li>
+<li><code>app/agents/rag.ts</code> - Week 3-4</li>
+</ul>
