@@ -1,106 +1,12 @@
-# Week 6: Interview Prep + Capstone (Days 36-45)
+# Week 6: Capstone Project (Days 36-45)
 
-**Theme:** Career preparation and final project
+**Theme:** Build something real
 
-**Assignments:** Interview Prep (Due Day 45), Capstone (Due Day 45)
-
----
-
-## Day 36: Interview Playbook + Signature Story
-
-**Time:** 60 min | **Type:** Read + Practice
-
-### Learning Objectives
-- Craft your signature story
-- Know how to present RAG experience
-- Prepare for common interview questions
-
-### Content
-1. [Interview Playbook](../18-interview-prep/1-interview-playbook.md)
-2. [Signature Story](../18-interview-prep/2-signature-story.md)
-
-### Assignment Assigned
-**Interview Prep** is now assigned. Record videos explaining your work.
-
-### Exercise
-Write your signature story:
-
-1. What problem did you solve?
-2. What approach did you take?
-3. What did you learn?
-4. What would you do differently?
-
-Practice telling it in 2 minutes.
-
-### Key Takeaways
-- Signature story = your "tell me about yourself" answer
-- Focus on impact and learning, not just implementation
-- Practice out loud until it's natural
+**Assignment:** Capstone (Due Day 45)
 
 ---
 
-## Day 37: Strong Opinions + Tradeoffs
-
-**Time:** 60 min | **Type:** Read + Practice
-
-### Learning Objectives
-- Develop informed opinions on RAG tradeoffs
-- Articulate technical decisions clearly
-- Handle pushback in interviews
-
-### Content
-1. [Strong Opinions](../18-interview-prep/3-strong-opinions.md)
-2. [Tradeoff Discussions](../18-interview-prep/4-tradeoffs.md)
-
-### Exercise
-Prepare opinions on:
-
-1. When to use RAG vs fine-tuning
-2. Chunking strategy tradeoffs
-3. Vector DB vs SQL for retrieval
-4. When reranking is worth the cost
-
-Practice explaining each in 60 seconds.
-
-### Key Takeaways
-- Interviewers want to see you think, not just execute
-- "It depends" is fine if you explain what it depends on
-- Show you understand tradeoffs, not just happy paths
-
----
-
-## Day 38: RAG System Design
-
-**Time:** 60 min | **Type:** Practice
-
-### Learning Objectives
-- Design a RAG system from scratch
-- Consider scale, cost, and maintenance
-- Present architecture clearly
-
-### Content
-1. [System Design Practice](../18-interview-prep/5-system-design.md)
-
-### Exercise
-Design a RAG system for:
-- A legal document search engine
-- A customer support chatbot
-- A code documentation assistant
-
-For each, consider:
-- Data pipeline (ingestion, chunking, embedding)
-- Retrieval strategy
-- Generation approach
-- Observability and testing
-
-### Key Takeaways
-- Start with requirements and constraints
-- Draw boxes and arrows to clarify thinking
-- Address scale and failure modes
-
----
-
-## Day 39: Capstone: Project Kickoff
+## Day 36: Capstone Kickoff
 
 **Time:** 90 min | **Type:** Project
 
@@ -138,38 +44,78 @@ For each, consider:
 
 ---
 
-## Day 40: Capstone: Implementation
+## Day 37: Implementation - Data Pipeline
 
 **Time:** 120 min | **Type:** Project
 
 ### Focus
-Build the core functionality of your capstone.
+Build the data ingestion pipeline.
 
-### Implementation Checklist
-- [ ] Data ingestion working
-- [ ] Chunking strategy implemented
-- [ ] Vectors uploaded to storage
-- [ ] Basic retrieval working
-- [ ] Agent responding to queries
+### Checklist
+- [ ] Data source identified and accessible
+- [ ] Scraping/loading script working
+- [ ] Chunking strategy chosen and implemented
+- [ ] Text sanitization in place
 
 ### Tips
-- Get end-to-end working first, then polish
-- Use existing code as reference
-- Don't over-engineer - MVP first
+- Start with a small dataset to test the pipeline
+- Verify chunks look reasonable before embedding
+- Log everything for debugging
 
 ---
 
-## Day 41: Assignment 5 Work (Interview Videos)
+## Day 38: Implementation - Vector Storage
 
-**Time:** 90 min | **Type:** Assignment
+**Time:** 120 min | **Type:** Project
 
 ### Focus
-Record interview practice videos.
+Get documents into your vector database.
 
-### Videos to Record
-1. **Signature Story** (2-3 min): Your background and RAG project experience
-2. **Technical Deep Dive** (3-4 min): Explain a challenging technical decision
-3. **Tradeoff Discussion** (2-3 min): RAG vs fine-tuning, or similar tradeoff
+### Checklist
+- [ ] Embeddings generating correctly
+- [ ] Vectors uploading to Pinecone (or your chosen DB)
+- [ ] Metadata structured for filtering
+- [ ] Basic query returning results
+
+### Tips
+- Test retrieval with known queries
+- Check similarity scores make sense
+- Verify metadata is searchable
+
+---
+
+## Day 39: Implementation - Agent
+
+**Time:** 120 min | **Type:** Project
+
+### Focus
+Build the agent that uses your RAG pipeline.
+
+### Checklist
+- [ ] Agent prompt written
+- [ ] Retrieval integrated
+- [ ] Response generation working
+- [ ] Basic conversation flow tested
+
+### Tips
+- Start with a simple prompt, iterate
+- Test edge cases (no results, ambiguous queries)
+- Add reranking if retrieval quality needs improvement
+
+---
+
+## Day 40: Implementation - Polish
+
+**Time:** 120 min | **Type:** Project
+
+### Focus
+Refine and improve your implementation.
+
+### Checklist
+- [ ] Error handling in place
+- [ ] Edge cases covered
+- [ ] Response quality improved
+- [ ] Code cleaned up
 
 ### Also: Submit Assignment 4
 **SQL Agent** is due today.
@@ -178,51 +124,87 @@ Record interview practice videos.
 
 ---
 
-## Day 42: REST
-
-Take a break before the final push.
-
----
-
-## Day 43: Capstone: Implementation + Polish
-
-**Time:** 120 min | **Type:** Project
-
-### Focus
-Complete implementation and add polish.
-
-### Polish Checklist
-- [ ] Error handling in place
-- [ ] Edge cases covered
-- [ ] UI/UX improvements (if applicable)
-- [ ] Code cleaned up
-- [ ] README written
-
-### Tips
-- Focus on demo-able features
-- Remove debug code
-- Test with diverse queries
-
----
-
-## Day 44: Capstone: Demo Video Recording
+## Day 41: Documentation + Testing
 
 **Time:** 90 min | **Type:** Project
 
 ### Focus
-Record your 5-7 minute demo video.
+Document your project and add tests.
 
-### Video Structure
+### Checklist
+- [ ] README written with setup instructions
+- [ ] Architecture documented
+- [ ] Key decisions explained
+- [ ] Basic tests added
+
+### README Template
+```markdown
+# Project Name
+
+## What it does
+[One paragraph]
+
+## Architecture
+[Diagram or description]
+
+## Setup
+[Step-by-step instructions]
+
+## Usage
+[How to run it]
+
+## Key Decisions
+[Why you made the choices you made]
+```
+
+---
+
+## Day 42: REST
+
+Take a break before recording.
+
+---
+
+## Day 43: Demo Prep
+
+**Time:** 90 min | **Type:** Project
+
+### Focus
+Prepare for your demo video.
+
+### Prep Checklist
+- [ ] Demo script written
+- [ ] Key features identified
+- [ ] Example queries prepared
+- [ ] Edge cases to show selected
+
+### Demo Structure (5-7 minutes)
 1. **Problem** (30 sec): What problem does this solve?
 2. **Architecture** (1 min): How is it built?
 3. **Demo** (3-4 min): Show it working
 4. **Learnings** (1 min): What did you learn?
 5. **Future** (30 sec): What would you add?
 
-### Tips
+---
+
+## Day 44: Demo Video Recording
+
+**Time:** 120 min | **Type:** Project
+
+### Focus
+Record your demo video.
+
+### Recording Tips
 - Practice once before recording
 - Show happy path AND edge cases
 - Speak to the camera like a colleague
+- It's okay to do multiple takes
+
+### Technical Setup
+- Screen recording with audio
+- Clean desktop, hide notifications
+- Use a quiet environment
+- Test audio levels first
 
 ---
 
@@ -232,12 +214,15 @@ Record your 5-7 minute demo video.
 
 ### Submissions Due
 
-**Assignment 5: Interview Prep**
-- [Video Submission](https://form.typeform.com/to/YOUR_FORM_ID)
-
-**Assignment 6: Capstone**
+**Assignment 5: Capstone**
 - [Final Video](https://form.typeform.com/to/SF6b6edL)
 - [Code Submission](https://form.typeform.com/to/TXjlfrlr)
+
+### Final Checklist
+- [ ] Code pushed to GitHub
+- [ ] README complete
+- [ ] Demo video uploaded
+- [ ] Submission forms filled
 
 ### Bonus: MCP Integration (Optional)
 
@@ -253,11 +238,12 @@ This is bonus content - skip if you're tight on time.
 
 ## Week 6 Checklist
 
-- [ ] Signature story practiced
-- [ ] Technical opinions articulated
-- [ ] Capstone project completed
+- [ ] Capstone project chosen
+- [ ] Data pipeline built
+- [ ] Agent implemented
+- [ ] Documentation written
 - [ ] Demo video recorded
-- [ ] All assignments submitted
+- [ ] Final submission complete
 - [ ] Course complete!
 
 ---
@@ -266,18 +252,18 @@ This is bonus content - skip if you're tight on time.
 
 You've completed the RAG & AI Agents curriculum.
 
-**What you've learned:**
+**What you've built:**
 - Vector embeddings and similarity search
 - Document chunking and ingestion pipelines
 - Agent architecture and routing
 - RAG implementation with reranking
 - Testing strategies for LLM applications
-- Interview preparation for AI roles
+- A complete capstone project
 
 **Next steps:**
 - Apply these skills at work
 - Build more RAG applications
-- Explore advanced topics (Module 10, 16, 19)
+- Explore advanced topics (LangGraph, MCP)
 - Help others learn
 
 Good luck!

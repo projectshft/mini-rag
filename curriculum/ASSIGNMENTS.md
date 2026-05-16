@@ -1,6 +1,6 @@
 # Assignments
 
-6 assignments over 45 days, one per week.
+5 assignments over 45 days.
 
 ---
 
@@ -12,8 +12,7 @@
 | 2 | Agent Selector | Day 19 | Day 27 | Structured Outputs |
 | 3 | RAG + Reranking | Day 23 | Day 34 | Retrieval Quality |
 | 4 | SQL Agent | Day 33 | Day 41 | Alternative Retrieval |
-| 5 | Interview Prep | Day 36 | Day 45 | Communication |
-| 6 | Capstone | Day 39 | Day 45 | Full Integration |
+| 5 | Capstone | Day 36 | Day 45 | Full Integration |
 
 ---
 
@@ -80,23 +79,9 @@
 
 ---
 
-## Assignment 5: Interview Prep
+## Assignment 5: Capstone Project
 
 **Assigned:** Day 36 | **Due:** Day 45
-
-**Videos to Record:**
-1. **Signature Story** (2-3 min): Your background and RAG project experience
-2. **Technical Deep Dive** (3-4 min): Explain a challenging technical decision
-3. **Tradeoff Discussion** (2-3 min): RAG vs fine-tuning, or similar tradeoff
-
-**Submit:**
-- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
-
----
-
-## Assignment 6: Capstone Project
-
-**Assigned:** Day 39 | **Due:** Day 45
 
 Build a complete RAG application for a domain of your choice.
 

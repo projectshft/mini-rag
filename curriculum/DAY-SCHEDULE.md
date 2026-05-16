@@ -17,7 +17,7 @@ Complete the RAG & AI Agents curriculum in 45 days with 1-2 hours of daily study
 | 3 | Agent Architecture | 15-21 | Agent Selector (Due Day 27) |
 | 4 | RAG Agent | 22-28 | RAG + Reranking (Due Day 34) |
 | 5 | Testing & Tools | 29-35 | SQL Agent (Due Day 41) |
-| 6 | Interview + Capstone | 36-45 | Interview Prep (Day 45), Capstone (Day 45) |
+| 6 | Capstone | 36-45 | Capstone (Due Day 45) |
 
 **Total:** 45 days, 39 working days, ~42 hours
 
@@ -30,7 +30,7 @@ Complete the RAG & AI Agents curriculum in 45 days with 1-2 hours of daily study
 - [Week 3: Agent Architecture](./days/week-3.md) (Days 15-21)
 - [Week 4: RAG Agent](./days/week-4.md) (Days 22-28)
 - [Week 5: Testing & Tools](./days/week-5.md) (Days 29-35)
-- [Week 6: Interview + Capstone](./days/week-6-final.md) (Days 36-45)
+- [Week 6: Capstone](./days/week-6-final.md) (Days 36-45)
 
 ---
 
@@ -42,8 +42,7 @@ Complete the RAG & AI Agents curriculum in 45 days with 1-2 hours of daily study
 | 2 | Agent Selector | Day 19 | Day 27 | Structured Outputs |
 | 3 | RAG + Reranking | Day 23 | Day 34 | Retrieval Quality |
 | 4 | SQL Agent | Day 33 | Day 41 | Alternative Retrieval |
-| 5 | Interview Prep | Day 36 | Day 45 | Communication |
-| 6 | Capstone | Day 39 | Day 45 | Full Integration |
+| 5 | Capstone | Day 36 | Day 45 | Full Integration |
 
 See [ASSIGNMENTS.md](./ASSIGNMENTS.md) for submission links.
 
