@@ -1,21 +1,15 @@
-**DRAFT - This module is not yet part of the core curriculum**
+# LangGraph Concepts: Graphs, Nodes & State
 
----
-
-# Introduction to LangGraph
-
-You've built RAG agents and explored tool-calling patterns. Now let's level up to **LangGraph** - a framework for building production-grade, stateful AI agents with complex workflows.
+In the previous lesson, you built a working agent with `createReactAgent`. Now let's understand **what's happening under the hood** - the graph-based architecture that powers LangGraph.
 
 ---
 
 ## What You'll Learn
 
-This module covers:
-- What LangGraph is and why it's useful
 - Core concepts: graphs, nodes, edges, and state
-- When to use LangGraph vs AI SDK
-- Building a stateful agent with LangGraph
-- Practical patterns for production agents
+- How `createReactAgent` works internally
+- When prebuilt agents aren't enough
+- The mental model for custom graph design
 
 ---
 

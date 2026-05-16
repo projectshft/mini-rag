@@ -59,7 +59,26 @@ Code with implementations removed and detailed TODOs for students to complete.
 
 ## Curriculum Structure
 
-The curriculum is organized in `curriculum/`:
+### Day-Based Schedule (Recommended)
+
+The curriculum follows a **45-day schedule** with 6 days on, 1 rest day:
+
+- **[DAY-SCHEDULE.md](curriculum/DAY-SCHEDULE.md)** - Main day-by-day guide
+- **[curriculum/days/](curriculum/days/)** - Weekly guides (week-1.md through week-6-final.md)
+- **[ASSIGNMENTS.md](curriculum/ASSIGNMENTS.md)** - 6 assignments with day-based due dates
+
+| Week | Theme | Days |
+|------|-------|------|
+| 1 | Foundations | 1-7 |
+| 2 | Data Pipeline | 8-14 |
+| 3 | Agent Architecture | 15-21 |
+| 4 | RAG Agent | 22-28 |
+| 5 | Testing & Tools | 29-35 |
+| 6 | Interview + Capstone | 36-45 |
+
+### Module Reference
+
+The day-based schedule references lessons from these modules in `curriculum/`:
 
 1. **How to Learn** (`0-how-to-learn/`)
 2. **Intro to RAG** (`1-intro-to-rag/`)
@@ -78,15 +97,16 @@ The curriculum is organized in `curriculum/`:
     - Basic implementation
     - Reranking
     - Sparse and dense vectors
-11. **AI Frameworks** (`10-ai-frameworks/`) ⚠️ DRAFT
+11. **AI Frameworks** (`10-ai-frameworks/`) - LangGraph (Week 5 Extension)
 12. **Chat Interface** (`11-chat-interface/`)
 13. **Observability** (`12-observability/`)
 14. **Testing Agents** (`13-testing-agents/`)
 15. **Tool Calling** (`14-tool-calling-exploration/`)
 16. **SQL Agent** (`15-sql-agent/`)
-17. **Agent Patterns** (`16-agent-patterns/`) ⚠️ DRAFT
+17. **Agent Patterns** (`16-agent-patterns/`) ⚠️ DRAFT - Not in core path
 18. **Capstone Project** (`17-capstone-project/`)
 19. **Interview Prep** (`18-interview-prep/`)
+20. **MCP Integration** (`19-mcp-integration/`) - Day 45 bonus
 
 ---
 
@@ -187,7 +207,6 @@ LANGSMITH_PROJECT="your-project-name"
 
 The following modules are in draft state and should NOT be referenced from other curriculum materials:
 
--   **`10-ai-frameworks/`** - LangGraph content (draft)
 -   **`16-agent-patterns/`** - Agent patterns content (draft)
 
 When writing or editing curriculum:

@@ -149,6 +149,22 @@ Complete the RAG & AI Agents curriculum in 6 weeks with ~30-45 minutes of daily 
 
 ---
 
+## Bonus: MCP Integration (Optional)
+
+**Module 19: Exposing RAG Over MCP**
+
+After completing the core curriculum, explore how to expose your RAG system via the Model Context Protocol:
+
+| Topic | Time | Focus |
+|-------|------|-------|
+| MCP Fundamentals | 30 min | Protocol concepts, server architecture |
+| Building the Server | 45 min | Code exercise: expose RAG as MCP tools |
+| Client Integration | 30 min | Connect to Claude Code, Cursor, or Inspector |
+
+**Bonus Challenge:** Design an MCP server for your company's workflows.
+
+---
+
 ## Modules NOT in This Plan
 
 These modules are marked as **DRAFT** and not part of the core curriculum:
