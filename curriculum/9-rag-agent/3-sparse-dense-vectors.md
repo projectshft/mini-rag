@@ -76,24 +76,43 @@ Search query: "How to prevent re-renders in React?"
 
 ## Pinecone Implementation
 
-Pinecone supports hybrid search natively:
+Pinecone supports hybrid search natively. The key insight: **you don't create these vectors yourself**. Models generate them for you.
 
 ```javascript
-// Upsert with both dense and sparse vectors
+import { Pinecone } from '@pinecone-database/pinecone';
+import OpenAI from 'openai';
+
+const pinecone = new Pinecone();
+const openai = new OpenAI();
+
+// 1. Generate dense embedding from OpenAI
+const embeddingResponse = await openai.embeddings.create({
+  model: 'text-embedding-3-small',
+  input: 'Your document text here'
+});
+const denseVector = embeddingResponse.data[0].embedding; // [0.12, 0.45, 0.23, ...]
+
+// 2. Generate sparse vector from Pinecone's encoder
+const index = pinecone.index('your-index');
+const sparseResponse = await pinecone.inference.embed(
+  'pinecone-sparse-english-v0',
+  ['Your document text here'],
+  { inputType: 'passage' }
+);
+const sparseVector = sparseResponse.data[0].sparseValues; // { indices: [...], values: [...] }
+
+// 3. Upsert with BOTH vectors - models generated these, not you
 await index.upsert([{
-  id: 'doc1',
-  values: [0.1, 0.2, ...], // Dense embedding
-  sparseValues: {
-    indices: [5, 10, 15],
-    values: [0.5, 0.3, 0.2]
-  },
+  id: 'doc-1',
+  values: denseVector,              // From OpenAI
+  sparseValues: sparseVector,       // From Pinecone encoder
   metadata: { text: '...' }
 }]);
 
-// Query with hybrid search
+// 4. Query with hybrid search
 const results = await index.query({
-  vector: denseEmbedding,
-  sparseVector: sparseVector,
+  vector: queryDenseVector,
+  sparseVector: querySparseVector,
   topK: 10,
   alpha: 0.5 // 0 = pure sparse, 1 = pure dense, 0.5 = balanced
 });
