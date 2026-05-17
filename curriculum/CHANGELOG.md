@@ -9,3 +9,4 @@
   - Explained hybrid search as parallel retrieval with score combination
   - Added real-world domains: e-commerce, medical, legal, enterprise docs, codebases
   - Added hands-on demo commands using Pinecone hybrid search
+  - Full code example showing embedding generation (OpenAI + Pinecone encoder) so students see vectors come from models, not hand-coded
