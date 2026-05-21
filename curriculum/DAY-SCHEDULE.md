@@ -1,146 +1,199 @@
 # Day-Based Curriculum Schedule
 
-Complete the RAG & AI Agents curriculum in 45 days with 1-2 hours of daily study.
+Complete the RAG & AI Agents curriculum in 42 days with 1-2 hours of daily study.
 
-**Structure:** 6 weeks of learning (6 days on, 1 rest day) + final push to capstone
+**Structure:** 6 weeks of learning (6 days on, 1 rest day)
 
 **Pace:** Working engineers using AI tools - focused, practical, no fluff
 
 ---
 
-## Overview
+## Week 1: Foundations (Days 1-7)
 
-| Week | Theme | Days | Assignment |
-|------|-------|------|------------|
-| 1 | Foundations | 1-7 | Document Upload (Due Day 13) |
-| 2 | Data Pipeline | 8-14 | - |
-| 3 | Agent Architecture | 15-21 | Agent Selector (Due Day 27) |
-| 4 | RAG Agent | 22-28 | RAG + Reranking (Due Day 34) |
-| 5 | Testing & Tools | 29-35 | SQL Agent (Due Day 41) |
-| 6 | Capstone | 36-45 | Capstone (Due Day 45) |
+### Day 1
+- [0-how-to-learn/1-feynman-technique.html](0-how-to-learn/1-feynman-technique.html)
+- [1-intro-to-rag/1-what-is-rag.html](1-intro-to-rag/1-what-is-rag.html)
 
-**Total:** 45 days, 39 working days, ~42 hours
+### Day 2
+- [2-vector-math-basics/1-vectors-and-embeddings.html](2-vector-math-basics/1-vectors-and-embeddings.html)
+
+### Day 3
+- [2-vector-math-basics/2-implementing-similarity.html](2-vector-math-basics/2-implementing-similarity.html)
+
+### Day 4
+- [2-vector-math-basics/3-word-math-fun.html](2-vector-math-basics/3-word-math-fun.html)
+
+### Day 5
+- [3-pinecone-integration/1-setting-up-pinecone-client.html](3-pinecone-integration/1-setting-up-pinecone-client.html)
+
+### Day 6
+- [4-chunking-fundamentals/1-introduction-to-scraping.html](4-chunking-fundamentals/1-introduction-to-scraping.html)
+
+### Day 7
+**REST**
 
 ---
 
-## Weekly Guides
+## Week 2: Data Pipeline (Days 8-14)
 
-- [Week 1: Foundations](./days/week-1.md) (Days 1-7)
-- [Week 2: Data Pipeline](./days/week-2.md) (Days 8-14)
-- [Week 3: Agent Architecture](./days/week-3.md) (Days 15-21)
-- [Week 4: RAG Agent](./days/week-4.md) (Days 22-28)
-- [Week 5: Testing & Tools](./days/week-5.md) (Days 29-35)
-- [Week 6: Capstone](./days/week-6-final.md) (Days 36-45)
+### Day 8
+- [4-chunking-fundamentals/2-understanding-chunking.html](4-chunking-fundamentals/2-understanding-chunking.html)
+
+### Day 9
+- [5-document-upload/1-uploading-with-a-script.html](5-document-upload/1-uploading-with-a-script.html)
+
+### Day 10
+- [5-document-upload/2-building-the-api-route.html](5-document-upload/2-building-the-api-route.html)
+
+### Day 11
+- [5-document-upload/3-querying-documents.html](5-document-upload/3-querying-documents.html)
+
+### Day 12
+- [6-fine-tuning/1-fine-tuning-overview.html](6-fine-tuning/1-fine-tuning-overview.html)
+
+### Day 13
+- [6-fine-tuning/2-running-fine-tuning.html](6-fine-tuning/2-running-fine-tuning.html)
+
+**Assignment 1 Due:** Document Upload
+
+### Day 14
+**REST**
+
+---
+
+## Week 3: Agent Architecture (Days 15-21)
+
+### Day 15
+- [7-agent-architecture/1-understanding-agent-systems.html](7-agent-architecture/1-understanding-agent-systems.html)
+
+### Day 16
+- [7-agent-architecture/2-prompting-for-agents.html](7-agent-architecture/2-prompting-for-agents.html)
+
+### Day 17
+- [7-agent-architecture/3-implementing-selector-text-based.html](7-agent-architecture/3-implementing-selector-text-based.html)
+
+### Day 18
+- [7-agent-architecture/4-upgrading-to-structured-outputs.html](7-agent-architecture/4-upgrading-to-structured-outputs.html)
+
+### Day 19
+- [7-agent-architecture/5-graceful-degradation.html](7-agent-architecture/5-graceful-degradation.html)
+
+### Day 20
+- [8-linkedin-agent/1-implementing-linkedin-agent.html](8-linkedin-agent/1-implementing-linkedin-agent.html)
+
+### Day 21
+**REST**
+
+---
+
+## Week 4: RAG Agent (Days 22-28)
+
+### Day 22
+- [9-rag-agent/1-implementing-rag-agent.html](9-rag-agent/1-implementing-rag-agent.html)
+
+### Day 23
+- [9-rag-agent/2-implementing-reranking.html](9-rag-agent/2-implementing-reranking.html)
+
+### Day 24
+- [9-rag-agent/3-sparse-dense-vectors.html](9-rag-agent/3-sparse-dense-vectors.html)
+
+### Day 25
+- [11-chat-interface/1-understanding-the-interface.html](11-chat-interface/1-understanding-the-interface.html)
+
+### Day 26
+- [12-observability/1-integrating-langsmith.html](12-observability/1-integrating-langsmith.html)
+
+### Day 27
+**Assignment 2 Due:** RAG Agent
+
+### Day 28
+**REST**
+
+---
+
+## Week 5: Testing & Tools (Days 29-35)
+
+### Day 29
+- [13-testing-agents/1-testing-selector-agent.html](13-testing-agents/1-testing-selector-agent.html)
+
+### Day 30
+- [13-testing-agents/2-llm-as-judge.html](13-testing-agents/2-llm-as-judge.html)
+
+### Day 31
+- [14-tool-calling-exploration/1-tool-calling-concepts.html](14-tool-calling-exploration/1-tool-calling-concepts.html)
+
+### Day 32
+- [14-tool-calling-exploration/2-the-reveal.html](14-tool-calling-exploration/2-the-reveal.html)
+
+### Day 33
+- [15-sql-agent/1-rag-without-vectors.html](15-sql-agent/1-rag-without-vectors.html)
+
+### Day 34
+**Assignment 3 Due:** Reranking
+
+### Day 35
+**REST**
+
+---
+
+## Week 6: Capstone (Days 36-42)
+
+### Day 36
+- [17-capstone-project/1-final-project.html](17-capstone-project/1-final-project.html)
+
+**Submit Capstone Proposal**
+
+### Day 37
+Capstone Development
+
+### Day 38
+Capstone Development
+
+**Assignment 4 Due:** SQL Agent
+
+### Day 39
+Capstone Development
+
+### Day 40
+Capstone Polish & Documentation
+
+### Day 41
+Capstone Demo Recording
+
+### Day 42
+**REST / Buffer**
+
+**Assignment 5 Due:** Capstone (Final Submission)
+
+---
+
+## Bonus Content
+
+### LangGraph Extension (Optional)
+- [10-ai-frameworks/2-langgraph-concepts.html](10-ai-frameworks/2-langgraph-concepts.html)
+- [10-ai-frameworks/3-custom-state-graphs.html](10-ai-frameworks/3-custom-state-graphs.html)
 
 ---
 
 ## Assignment Schedule
 
-| # | Name | Assigned | Due | Focus |
-|---|------|----------|-----|-------|
-| 1 | Document Upload | Day 6 | Day 13 | Chunking + Upload Route |
-| 2 | Agent Selector | Day 19 | Day 27 | Structured Outputs |
-| 3 | RAG + Reranking | Day 23 | Day 34 | Retrieval Quality |
-| 4 | SQL Agent | Day 33 | Day 41 | Alternative Retrieval |
-| 5 | Capstone | Day 36 | Day 45 | Full Integration |
+| # | Name | Due |
+|---|------|-----|
+| 1 | Document Upload | Day 13 |
+| 2 | RAG Agent | Day 27 |
+| 3 | Reranking | Day 34 |
+| 4 | SQL Agent | Day 38 |
+| 5 | Capstone | Day 42 |
 
 See [ASSIGNMENTS.md](./ASSIGNMENTS.md) for submission links.
-
----
-
-## Daily Time Budget
-
-| Day Type | Duration |
-|----------|----------|
-| Read/Watch | 45-60 min |
-| Hands-on | 60-90 min |
-| Assignment | 60-90 min |
-| REST | 0 min |
-
----
-
-## Environment Setup
-
-**Do this before Day 3:**
-
-```bash
-# Copy the example environment file
-cp .env.example .env
-
-# Edit .env and add your API keys:
-# - OPENAI_API_KEY (required for all exercises)
-# - PINECONE_API_KEY (required for RAG exercises)
-# - See .env.example for all available options
-```
 
 ---
 
 ## Quick Commands
 
 ```bash
-# Run tests
 yarn test:selector    # Agent routing tests
 yarn test:chunking    # Chunking tests
 yarn test             # All tests
-
-# Start development
 yarn dev              # Start Next.js server
-
-# Run exercises
-npx ts-node app/scripts/exercises/vector-similarity.ts
-npx ts-node app/scripts/exercises/vector-word-arithmetic.ts
 ```
-
----
-
-## Key Files to Implement
-
-| Week | Files |
-|------|-------|
-| 1-2 | `app/libs/chunking.ts`, `app/api/upload-document/route.ts` |
-| 3 | `app/api/select-agent/route.ts`, `app/agents/linkedin.ts` |
-| 4 | `app/agents/rag.ts` |
-| 5 | `app/agents/__tests__/*.ts`, SQL Agent repo |
-
----
-
-## Tips for Success
-
-### Daily Habits
-- **Same time each day** - builds consistency
-- **No distractions** - 60 focused minutes beats 90 distracted minutes
-- **Take notes** - especially on concepts you'd explain to someone else
-
-### When You're Stuck
-- **Check the cheat codes** (Module 99) for quick patterns
-- **Re-watch the video** - often catches what you missed reading
-- **Office hours** - bring specific questions, not "I don't get it"
-
-### Code Exercises
-- **Read the TODOs carefully** - they guide you step by step
-- **Run tests early** - `yarn test` shows what's expected
-- **Compare to reference** - curriculum branch has complete implementations
-
----
-
-## Modules NOT in Core Path
-
-These modules are **optional/bonus** and not part of the 45-day schedule:
-
-- **Module 16:** Agent Patterns (Advanced HITL) - Draft, excluded
-- **Module 19:** MCP Integration - Day 45 bonus if time permits
-
-## Week 5 Extension: LangGraph
-
-**Module 10: AI Frameworks** is recommended for students who want deeper coverage of agent orchestration.
-
-| Lesson | Content | Time |
-|--------|---------|------|
-| 1 | [ReAct Agent Quick Start](./10-ai-frameworks/1-react-agent-quick-start.md) | 45 min |
-| 2 | [LangGraph Concepts](./10-ai-frameworks/2-langgraph-concepts.md) | 60 min |
-| 3 | [Custom State Graphs](./10-ai-frameworks/3-custom-state-graphs.md) | 90 min |
-
-Do this content:
-- During Week 5 rest day (Day 35)
-- After completing the main curriculum
-- When you need more control than `createReactAgent` provides

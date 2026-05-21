@@ -1,24 +1,22 @@
 # Assignments
 
-5 assignments over 45 days.
+5 assignments over 42 days.
 
 ---
 
 ## Assignment Schedule
 
-| # | Name | Assigned | Due | Focus |
-|---|------|----------|-----|-------|
-| 1 | Document Upload | Day 6 | Day 13 | Chunking + Upload Route |
-| 2 | Agent Selector | Day 19 | Day 27 | Structured Outputs |
-| 3 | RAG + Reranking | Day 23 | Day 34 | Retrieval Quality |
-| 4 | SQL Agent | Day 33 | Day 41 | Alternative Retrieval |
-| 5 | Capstone | Day 36 | Day 45 | Full Integration |
+| # | Name | Due |
+|---|------|-----|
+| 1 | Document Upload | Day 13 |
+| 2 | RAG Agent | Day 27 |
+| 3 | Reranking | Day 34 |
+| 4 | SQL Agent | Day 38 |
+| 5 | Capstone | Day 42 |
 
 ---
 
-## Assignment 1: Document Upload
-
-**Assigned:** Day 6 | **Due:** Day 13
+## Document Upload
 
 **Video (3-4 minutes):** Explain chunking strategy tradeoffs for medical records, Confluence docs, and Twitter posts.
 
@@ -32,22 +30,7 @@
 
 ---
 
-## Assignment 2: Agent Selector
-
-**Assigned:** Day 19 | **Due:** Day 27
-
-**Code:** Implement structured output routing with Zod schemas and proper fallbacks.
-
-**Files:** `app/api/select-agent/route.ts`
-
-**Submit:**
-- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
-
----
-
-## Assignment 3: RAG + Reranking
-
-**Assigned:** Day 23 | **Due:** Day 34
+## RAG Agent
 
 **Video (3-4 minutes):** Explain how you evaluate retrieval quality - chunk sizing, retrieval accuracy, similarity thresholds, and metrics.
 
@@ -61,9 +44,21 @@
 
 ---
 
-## Assignment 4: SQL Agent
+## Reranking
 
-**Assigned:** Day 33 | **Due:** Day 41
+**Video (3-5 minutes):** Explain the two-stage retrieval pattern - when to rerank, when to skip, stage cutoffs, and cost analysis.
+
+**Code:** Complete the TODOs in reranking, then add score thresholding (minimum confidence, filter low results, graceful "I don't know" responses).
+
+**Files:** `app/agents/rag.ts` (reranking section)
+
+**Submit:**
+- [Video Submission](https://form.typeform.com/to/pwjkAruL)
+- [Code Submission](https://form.typeform.com/to/q3mEuSmX)
+
+---
+
+## SQL Agent
 
 **Video (3-4 minutes):** Explain SQL query types (filtering, aggregation, joins, full-text search), pgvector, and when SQL beats dedicated vector DBs.
 
@@ -79,21 +74,13 @@
 
 ---
 
-## Assignment 5: Capstone Project
-
-**Assigned:** Day 36 | **Due:** Day 45
+## Capstone Project
 
 Build a complete RAG application for a domain of your choice.
 
 **Option A:** Extend the existing RAG project with a new data source and agent
 
 **Option B:** Build your own RAG system from scratch
-
-**Deliverables:**
-- Working RAG application
-- README documentation
-- 5-7 minute demo video
-- GitHub repository
 
 **Proposal Submit:**
 - [Proposal Video](https://form.typeform.com/to/Z9JApCkF)
@@ -105,9 +92,7 @@ Build a complete RAG application for a domain of your choice.
 
 ---
 
-## Practice Exercises (Not Graded)
-
-### LLM-as-Judge
+## LLM-as-Judge (Practice)
 
 **Code:** Implement the LLM-as-judge test pattern to evaluate agent routing quality.
 
@@ -115,21 +100,3 @@ Build a complete RAG application for a domain of your choice.
 
 **Submit:**
 - [Code Submission](https://form.typeform.com/to/FNEjXTwk)
-
----
-
-## Bonus: MCP Integration
-
-**Available:** Day 45 (if time permits)
-
-**Video (3-4 minutes):** Explain what MCP is and why you'd expose RAG over it. Explain it like you're talking to a colleague who hasn't heard of MCP.
-
-**Code:** Get your MCP server running and demonstrate it with at least one client (Inspector, CLI client, or IDE integration).
-
-**Files:** `mcp/rag-server.ts`, `app/lib/rag.ts`
-
-**Bonus Challenge:** Design (don't build) an MCP server for your company. What tools would you expose? What security considerations apply?
-
-**Submit:**
-- [Video Submission](https://form.typeform.com/to/YOUR_FORM_ID)
-- [Code Submission](https://form.typeform.com/to/YOUR_FORM_ID)
