@@ -1,5 +1,7 @@
 # Sparse and Dense Vectors in RAG
 
+Watch the video walkthrough: [Hybrid Search Demo](https://share.descript.com/view/xBNE7qZquyD)
+
 ---
 
 ## Hands-On Demo
@@ -64,13 +66,26 @@ That's why modern RAG systems often use hybrid retrieval, especially for domains
 
 ---
 
-## Example
+## Example: Why This Matters
 
-Search query: "How to prevent re-renders in React?"
+The demo uses documents that are **semantically almost identical** but have different identifiers. This is where hybrid search shines.
 
-- **Dense vectors** find: Documents about React performance, memoization, optimization
-- **Sparse vectors** find: Documents mentioning "re-render", "React.memo", "useMemo"
-- **Hybrid** combines both for comprehensive results
+**Search query:** "What is SKU-7292?"
+
+| Method | Result | Why |
+|--------|--------|-----|
+| **Dense** | Returns wrong SKU or nothing | All Nike shoes look the same semantically |
+| **Hybrid** | Returns SKU-7292 as #1 | Sparse boosts the exact SKU match |
+
+**More examples from the demo:**
+
+| Query | Dense Problem | Hybrid Solution |
+|-------|---------------|-----------------|
+| "PostgreSQL 16.1 security fix" | Returns 15.2 or 14.9 (all similar patches) | Exact version match |
+| "Error E-4002" | Returns E-4001 (all connection errors) | Exact error code |
+| "Order ORD-2024-78433" | Returns wrong order | Exact order number |
+
+The key insight: **documents must be semantically similar but have different identifiers** to see hybrid's value. If documents are already semantically distinct, dense search works fine.
 
 ---
 

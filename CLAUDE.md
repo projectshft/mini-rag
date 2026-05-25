@@ -83,6 +83,8 @@ The curriculum is organized in `curriculum/`:
 13. **Observability** (`12-observability/`)
 14. **Testing Agents** (`13-testing-agents/`)
 15. **Tool Calling** (`14-tool-calling-exploration/`)
+    - Tool calling concepts
+    - MCP basics (draft)
 16. **SQL Agent** (`15-sql-agent/`)
 17. **Agent Patterns** (`16-agent-patterns/`) ⚠️ DRAFT
 18. **Capstone Project** (`17-capstone-project/`)

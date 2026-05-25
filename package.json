@@ -19,7 +19,8 @@
 		"exercise:vectors": "npx ts-node app/scripts/exercises/vector-similarity.ts",
 		"exercise:vectors:test": "npx ts-node app/scripts/exercises/vector-similarity-test.ts",
 		"exercise:word-math": "npx ts-node app/scripts/exercises/vector-word-arithmetic.ts",
-		"convert-curriculum": "node scripts/convert-md-to-kajabi-html.mjs"
+		"convert-curriculum": "node scripts/convert-md-to-kajabi-html.mjs",
+		"mcp:rag": "npx ts-node mcp/rag-server.ts"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [
@@ -27,6 +28,7 @@
 		]
 	},
 	"dependencies": {
+		"@modelcontextprotocol/sdk": "^1.0.0",
 		"@ai-sdk/openai": "^2.0.19",
 		"@ai-sdk/react": "^2.0.22",
 		"@langchain/core": "^0.3.29",

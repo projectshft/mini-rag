@@ -1,0 +1,8 @@
+{
+	"mcpServers": {
+		"rag": {
+			"command": "npx",
+			"args": ["ts-node", "mcp/rag-server.ts"]
+		}
+	}
+}
