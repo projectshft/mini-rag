@@ -27,8 +27,9 @@ const DEMO_DIMENSIONS = 512;
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
 
-// Sample documents about React
+// Sample documents - designed to show when sparse vs dense matters
 const documents = [
+  // Exact term matching scenarios
   {
     id: 'hybrid-demo-1',
     text: 'React.memo is a higher-order component that prevents re-renders when props are unchanged.',
@@ -48,6 +49,58 @@ const documents = [
   {
     id: 'hybrid-demo-5',
     text: 'Redux is a state management library often used with React applications.',
+  },
+  // Version number scenarios - sparse catches exact versions
+  {
+    id: 'hybrid-demo-6',
+    text: 'React 18 introduced automatic batching for all state updates, not just event handlers.',
+  },
+  {
+    id: 'hybrid-demo-7',
+    text: 'React 17 added no new features but prepared the foundation for gradual upgrades.',
+  },
+  {
+    id: 'hybrid-demo-8',
+    text: 'The latest version of the library includes concurrent rendering features.',
+  },
+  // Acronym scenarios - sparse catches exact acronyms
+  {
+    id: 'hybrid-demo-9',
+    text: 'SSR (Server-Side Rendering) improves SEO and initial page load performance.',
+  },
+  {
+    id: 'hybrid-demo-10',
+    text: 'Rendering on the server before sending HTML to the browser helps search engines.',
+  },
+  {
+    id: 'hybrid-demo-11',
+    text: 'CSR (Client-Side Rendering) runs JavaScript in the browser to build the page.',
+  },
+  // Code pattern scenarios - sparse catches exact syntax
+  {
+    id: 'hybrid-demo-12',
+    text: 'Use useCallback to memoize functions passed as props to child components.',
+  },
+  {
+    id: 'hybrid-demo-13',
+    text: 'The useEffect hook runs side effects after render, like fetching data or subscriptions.',
+  },
+  {
+    id: 'hybrid-demo-14',
+    text: 'Side effects in functional components should be handled properly to avoid memory leaks.',
+  },
+  // Error message scenarios - sparse catches exact error text
+  {
+    id: 'hybrid-demo-15',
+    text: 'Error: "Cannot read property of undefined" usually means accessing a null object.',
+  },
+  {
+    id: 'hybrid-demo-16',
+    text: 'Null reference errors happen when you try to use something that does not exist.',
+  },
+  {
+    id: 'hybrid-demo-17',
+    text: 'Error: "ENOENT: no such file or directory" means the file path is wrong.',
   },
 ];
 
@@ -185,56 +238,127 @@ async function runSearch() {
 
   const index = pinecone.Index(DEMO_INDEX_NAME);
 
-  // Search 1: Semantic query
-  const query1 = 'How to prevent re-renders in React?';
-  console.log('\n--- Query 1 (semantic):', query1, '---\n');
+  // Helper to run and display a comparison
+  async function compareSearch(query: string, exactTerm?: string) {
+    console.log(`\n${'─'.repeat(50)}`);
+    console.log(`QUERY: "${query}"`);
+    if (exactTerm) console.log(`Looking for exact term: "${exactTerm}"`);
+    console.log('─'.repeat(50));
 
-  const [q1Embedding] = await createHybridEmbeddings([query1], 'query');
+    const [embedding] = await createHybridEmbeddings([query], 'query');
 
-  console.log('DENSE ONLY:');
-  const denseResults1 = await index.query({ vector: q1Embedding.dense, topK: 3, includeMetadata: true });
-  for (const match of denseResults1.matches) {
-    console.log(`  [${match.score?.toFixed(3)}] ${match.metadata?.text}`);
+    console.log('\n  DENSE ONLY (semantic meaning):');
+    const denseResults = await index.query({ vector: embedding.dense, topK: 3, includeMetadata: true });
+    for (const match of denseResults.matches) {
+      const text = match.metadata?.text as string;
+      const hasExact = exactTerm ? text?.toLowerCase().includes(exactTerm.toLowerCase()) : false;
+      console.log(`    [${match.score?.toFixed(3)}] ${hasExact ? '✓ ' : '  '}${text?.substring(0, 70)}...`);
+    }
+
+    console.log('\n  HYBRID (semantic + keywords):');
+    const hybridResults = await index.query({
+      vector: embedding.dense,
+      sparseVector: embedding.sparse,
+      topK: 3,
+      includeMetadata: true,
+    });
+    for (const match of hybridResults.matches) {
+      const text = match.metadata?.text as string;
+      const hasExact = exactTerm ? text?.toLowerCase().includes(exactTerm.toLowerCase()) : false;
+      console.log(`    [${match.score?.toFixed(3)}] ${hasExact ? '✓ ' : '  '}${text?.substring(0, 70)}...`);
+    }
+
+    if (exactTerm) console.log(`\n  ✓ = contains "${exactTerm}"`);
   }
 
-  console.log('\nHYBRID (dense + sparse):');
-  const hybridResults1 = await index.query({
-    vector: q1Embedding.dense,
-    sparseVector: q1Embedding.sparse,
-    topK: 3,
-    includeMetadata: true,
-  });
-  for (const match of hybridResults1.matches) {
-    console.log(`  [${match.score?.toFixed(3)}] ${match.metadata?.text}`);
-  }
+  // ============================================================
+  // EXAMPLE 1: Version Numbers
+  // Dense: "React 18" and "React 17" are semantically similar
+  // Sparse: Boosts exact "18" match
+  // ============================================================
+  console.log('\n' + '='.repeat(60));
+  console.log('EXAMPLE 1: VERSION NUMBERS');
+  console.log('Why it matters: Dense treats "React 18" and "React 17" as similar.');
+  console.log('Sparse boosts the exact version number.');
+  console.log('='.repeat(60));
 
-  // Search 2: Exact term query
-  const query2 = 'React.memo';
-  console.log('\n--- Query 2 (exact term):', query2, '---\n');
+  await compareSearch('What changed in React 18?', 'react 18');
 
-  const [q2Embedding] = await createHybridEmbeddings([query2], 'query');
+  // ============================================================
+  // EXAMPLE 2: Acronyms
+  // Dense: "SSR" might match "rendering on server" semantically
+  // Sparse: Boosts exact "SSR" acronym
+  // ============================================================
+  console.log('\n' + '='.repeat(60));
+  console.log('EXAMPLE 2: ACRONYMS');
+  console.log('Why it matters: Dense understands "SSR" means server rendering.');
+  console.log('But if you search "SSR", you probably want docs that use that term.');
+  console.log('='.repeat(60));
 
-  console.log('DENSE ONLY:');
-  const denseResults2 = await index.query({ vector: q2Embedding.dense, topK: 3, includeMetadata: true });
-  for (const match of denseResults2.matches) {
-    const hasExact = (match.metadata?.text as string)?.includes('React.memo');
-    console.log(`  [${match.score?.toFixed(3)}] ${hasExact ? '* ' : '  '}${match.metadata?.text}`);
-  }
+  await compareSearch('What is SSR?', 'ssr');
 
-  console.log('\nHYBRID (dense + sparse):');
-  const hybridResults2 = await index.query({
-    vector: q2Embedding.dense,
-    sparseVector: q2Embedding.sparse,
-    topK: 3,
-    includeMetadata: true,
-  });
-  for (const match of hybridResults2.matches) {
-    const hasExact = (match.metadata?.text as string)?.includes('React.memo');
-    console.log(`  [${match.score?.toFixed(3)}] ${hasExact ? '* ' : '  '}${match.metadata?.text}`);
-  }
+  // ============================================================
+  // EXAMPLE 3: Exact Hook Names
+  // Dense: All hooks are semantically similar
+  // Sparse: Boosts exact "useEffect" match
+  // ============================================================
+  console.log('\n' + '='.repeat(60));
+  console.log('EXAMPLE 3: EXACT CODE TERMS');
+  console.log('Why it matters: "useEffect" and "useMemo" are semantically similar hooks.');
+  console.log('Sparse ensures you get the exact hook you searched for.');
+  console.log('='.repeat(60));
 
-  console.log('\n* = contains exact term "React.memo"');
-  console.log('\nNotice: Hybrid search gives higher scores to exact term matches!');
+  await compareSearch('How does useEffect work?', 'useeffect');
+
+  // ============================================================
+  // EXAMPLE 4: Error Messages
+  // Dense: All errors are semantically similar
+  // Sparse: Boosts exact error text match
+  // ============================================================
+  console.log('\n' + '='.repeat(60));
+  console.log('EXAMPLE 4: ERROR MESSAGES');
+  console.log('Why it matters: Users paste exact error text.');
+  console.log('Dense sees "all errors are similar". Sparse finds the exact match.');
+  console.log('='.repeat(60));
+
+  await compareSearch('Cannot read property of undefined', 'cannot read property');
+
+  // ============================================================
+  // EXAMPLE 5: Semantic Query (where dense shines)
+  // Dense: Understands "stop re-rendering" = "prevent re-renders" = "memoization"
+  // Sparse: Doesn't help much here
+  // ============================================================
+  console.log('\n' + '='.repeat(60));
+  console.log('EXAMPLE 5: SEMANTIC QUERY (where dense shines)');
+  console.log('Why it matters: User asks about "stopping re-renders".');
+  console.log('Dense understands this means memoization, React.memo, etc.');
+  console.log('='.repeat(60));
+
+  await compareSearch('How do I stop my component from re-rendering?');
+
+  // ============================================================
+  // SUMMARY
+  // ============================================================
+  console.log('\n' + '='.repeat(60));
+  console.log('SUMMARY: WHEN TO USE WHAT');
+  console.log('='.repeat(60));
+  console.log(`
+  DENSE (semantic) is best when:
+    • User describes a concept in their own words
+    • Synonyms matter ("fast" = "performant" = "quick")
+    • Intent matters more than exact words
+
+  SPARSE (keyword) is best when:
+    • User searches for exact terms (React.memo, useEffect)
+    • Version numbers matter (React 18 vs React 17)
+    • Acronyms matter (SSR, CSR, API)
+    • Error messages (exact match needed)
+
+  HYBRID is best when:
+    • You don't know what the user will search
+    • You want the best of both worlds
+    • Production RAG systems (almost always)
+  `);
 }
 
 async function cleanup() {
@@ -268,10 +392,10 @@ async function runAll() {
   console.log('DEMO COMPLETE');
   console.log('='.repeat(60));
   console.log('\nKey takeaways:');
-  console.log('  1. Dense vectors capture semantic meaning');
-  console.log('  2. Sparse vectors preserve exact keywords');
-  console.log('  3. Hybrid search combines both for better results');
-  console.log('  4. Use dotproduct metric for hybrid indexes');
+  console.log('  1. Dense vectors: semantic meaning ("fast" = "quick" = "performant")');
+  console.log('  2. Sparse vectors: exact keywords (React 18 ≠ React 17)');
+  console.log('  3. Hybrid combines both - use for production RAG');
+  console.log('  4. Use dotproduct metric (not cosine) for hybrid indexes');
   console.log('\nRun "cleanup" command to remove demo data.');
 }
 
