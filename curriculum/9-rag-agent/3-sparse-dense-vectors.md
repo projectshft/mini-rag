@@ -28,29 +28,19 @@ The demo uses real production tools:
 
 ## The Problem
 
-Dense search and sparse/BM25 search solve different retrieval problems.
+Dense search and sparse search solve different retrieval problems.
 
-**Dense search** uses embeddings to understand semantic meaning. It's good at finding conceptually similar content, even if the exact words differ. For example, a query for "light summer sandwich" may retrieve picnic sandwiches or turkey sandwiches because the meanings are related.
+**Dense vectors** are what you've been using - embeddings with many dimensions (512, 1536, 3072, etc.) that capture semantic meaning. Because there are so many dimensions, they capture nuance well. "King" matches "monarch," "car" matches "automobile."
 
-**Sparse search** (often BM25-based) focuses on exact words and important terms. It gives higher weight to rare or distinguishing words like SKUs, acronyms, medication names, or specific phrases. For example, searching "SKU 1234" will strongly favor documents containing the exact token "1234."
+The problem? Technical terms get fuzzy. Search for `useState` and you might get results about `useContext` or general state management - semantically similar, but not what you wanted.
 
----
-
-## How BM25 Works
-
-BM25 works using three main ideas:
-
-1. **Term frequency** - How often a term appears in a document
-2. **Inverse document frequency** - How rare the term is across all documents
-3. **Document length normalization** - Whether the document is unusually long
-
-Rare and highly specific words receive much higher importance than common words.
+**Sparse vectors** are mostly zeros. They represent exact keywords - Pinecone's encoder looks at your text, identifies important words, and assigns weights to just those terms. Everything else is zero. This means `useState` maps to documents that actually contain `useState`.
 
 ---
 
 ## Hybrid Search
 
-In hybrid search, dense retrieval and sparse/BM25 retrieval usually run in parallel:
+In hybrid search, dense retrieval and sparse retrieval run in parallel:
 
 - **Dense retrieval** finds semantically relevant documents
 - **Sparse retrieval** finds lexically relevant documents
@@ -145,6 +135,19 @@ const results = await index.query({
 **Stick with dense-only when:**
 - You're just getting started (keep it simple)
 - Your content is conversational without critical exact-match terms
+
+---
+
+## Alternative: Metadata Filtering
+
+Hybrid search isn't the only way to improve exact-match retrieval. **Metadata filtering** can also help - store important identifiers (SKUs, order numbers, versions) as metadata, then filter on them at query time.
+
+Trade-offs:
+- Metadata filtering requires knowing what to filter on ahead of time
+- You need to extract keywords from user queries to match against metadata
+- It's more restrictive but more precise
+
+You could even combine both approaches: hybrid search + metadata filtering for maximum precision.
 
 ---
 
