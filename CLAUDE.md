@@ -89,6 +89,11 @@ The curriculum is organized in `curriculum/`:
 17. **Agent Patterns** (`16-agent-patterns/`) ⚠️ DRAFT
 18. **Capstone Project** (`17-capstone-project/`)
 19. **Interview Prep** (`18-interview-prep/`)
+20. **MCP Integration** (`19-mcp-integration/`)
+21. **Security** (`20-security/`)
+    - LLM/RAG security fundamentals
+    - Prompt injection defense
+    - Data poisoning prevention
 
 ---
 
