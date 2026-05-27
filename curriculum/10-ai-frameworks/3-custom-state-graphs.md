@@ -1,10 +1,18 @@
-**DRAFT - This module is not yet part of the core curriculum**
+# Custom State Graphs: Beyond createReactAgent
+
+When `createReactAgent` isn't enough, you build custom graphs. This lesson shows you how to create workflows with **conditional routing**, **iteration loops**, and **custom state management**.
 
 ---
 
-# Building a LangGraph Agent
+## When You Need Custom Graphs
 
-Now let's build a practical LangGraph agent. You'll create an API route that demonstrates stateful workflows, decision-making, and tool calling.
+`createReactAgent` handles most tool-calling scenarios. Build a custom `StateGraph` when you need:
+
+- **Conditional branching** - Different paths based on analysis
+- **Iteration loops** - Search → evaluate → refine → search again
+- **Human-in-the-loop** - Pause for approval
+- **Custom state** - Beyond just messages
+- **Multi-step workflows** - Complex orchestration
 
 ---
 
@@ -17,9 +25,9 @@ A **Research Assistant Agent** that:
 - Maintains conversation state
 - Can pause and resume workflows
 
-**Key Difference from Your Current Agents:**
-- Your RAG agent: Always searches, fixed workflow
-- This LangGraph agent: Decides when to search, can loop and refine
+**Why Custom Graph?**
+- `createReactAgent`: LLM decides everything
+- Custom graph: You control the flow with explicit routing
 
 ---
 

@@ -59,7 +59,26 @@ Code with implementations removed and detailed TODOs for students to complete.
 
 ## Curriculum Structure
 
-The curriculum is organized in `curriculum/`:
+### Day-Based Schedule (Recommended)
+
+The curriculum follows a **42-day schedule** with 6 days on, 1 rest day:
+
+- **[DAY-SCHEDULE.md](curriculum/DAY-SCHEDULE.md)** - Main day-by-day guide
+- **[curriculum/days/](curriculum/days/)** - Weekly guides
+- **[ASSIGNMENTS.md](curriculum/ASSIGNMENTS.md)** - 5 assignments with day-based due dates
+
+| Week | Theme | Days | Assignment Due |
+|------|-------|------|----------------|
+| 1 | Foundations | 1-7 | - |
+| 2 | Data Pipeline | 8-14 | Document Upload (Day 13) |
+| 3 | Agent Architecture | 15-21 | - |
+| 4 | RAG Agent | 22-28 | RAG Agent (Day 27) |
+| 5 | Testing & Tools | 29-35 | Reranking (Day 34) |
+| 6 | Capstone | 36-42 | SQL Agent (Day 38), Capstone (Day 42) |
+
+### Module Reference
+
+The day-based schedule references lessons from these modules in `curriculum/`:
 
 1. **How to Learn** (`0-how-to-learn/`)
 2. **Intro to RAG** (`1-intro-to-rag/`)
@@ -78,7 +97,7 @@ The curriculum is organized in `curriculum/`:
     - Basic implementation
     - Reranking
     - Sparse and dense vectors
-11. **AI Frameworks** (`10-ai-frameworks/`) ⚠️ DRAFT
+11. **AI Frameworks** (`10-ai-frameworks/`) - LangGraph (Week 5 Extension)
 12. **Chat Interface** (`11-chat-interface/`)
 13. **Observability** (`12-observability/`)
 14. **Testing Agents** (`13-testing-agents/`)
@@ -86,7 +105,7 @@ The curriculum is organized in `curriculum/`:
     - Tool calling concepts
     - MCP basics (draft)
 16. **SQL Agent** (`15-sql-agent/`)
-17. **Agent Patterns** (`16-agent-patterns/`) ⚠️ DRAFT
+17. **Agent Patterns** (`16-agent-patterns/`) ⚠️ DRAFT - Not in core path
 18. **Capstone Project** (`17-capstone-project/`)
 19. **Interview Prep** (`18-interview-prep/`)
 20. **MCP Integration** (`19-mcp-integration/`)
@@ -194,7 +213,6 @@ LANGSMITH_PROJECT="your-project-name"
 
 The following modules are in draft state and should NOT be referenced from other curriculum materials:
 
--   **`10-ai-frameworks/`** - LangGraph content (draft)
 -   **`16-agent-patterns/`** - Agent patterns content (draft)
 
 When writing or editing curriculum:

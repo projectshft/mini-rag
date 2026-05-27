@@ -1,5 +1,19 @@
 # Assignments
 
+5 assignments over 42 days.
+
+---
+
+## Assignment Schedule
+
+| # | Name | Due |
+|---|------|-----|
+| 1 | Document Upload | Day 13 |
+| 2 | RAG Agent | Day 27 |
+| 3 | Reranking | Day 34 |
+| 4 | SQL Agent | Day 38 |
+| 5 | Capstone | Day 42 |
+
 ---
 
 ## Document Upload
@@ -13,7 +27,6 @@
 **Submit:**
 - [Video Submission](https://form.typeform.com/to/NdVcsThQ)
 - [Code Submission](https://form.typeform.com/to/A0pGKPqU)
-
 
 ---
 
@@ -29,7 +42,6 @@
 - [Video Submission](https://form.typeform.com/to/VcNBEHNA)
 - [Code Submission](https://form.typeform.com/to/EWWcsorL)
 
-
 ---
 
 ## Reranking
@@ -43,7 +55,6 @@
 **Submit:**
 - [Video Submission](https://form.typeform.com/to/pwjkAruL)
 - [Code Submission](https://form.typeform.com/to/q3mEuSmX)
-
 
 ---
 
@@ -60,7 +71,6 @@
 **Submit:**
 - [Video Submission](https://form.typeform.com/to/QR9Vohg0)
 - [Code Submission](https://form.typeform.com/to/FNEjXTwk)
-
 
 ---
 
