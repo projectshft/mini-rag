@@ -1,0 +1,113 @@
+<h1>What is MCP?</h1>
+<p>Model Context Protocol (MCP) is an open standard that lets AI assistants connect to external tools and data sources.</p>
+<hr>
+<h2>The Problem MCP Solves</h2>
+<p>Without MCP, every AI integration is custom:</p>
+<pre><code>Your App ──(custom API)──&gt; Claude
+Your App ──(different API)──&gt; GPT
+Your App ──(another API)──&gt; Gemini
+</code></pre>
+<p>With MCP, you build once:</p>
+<pre><code>Your App ──(MCP)──&gt; Any AI Assistant
+</code></pre>
+<hr>
+<h2>How It Works</h2>
+<p>MCP has three parts:</p>
+<ol>
+<li><strong>Server</strong> - Your code that exposes tools</li>
+<li><strong>Client</strong> - The AI assistant (Claude Desktop, Cursor, etc.)</li>
+<li><strong>Protocol</strong> - JSON-RPC messages between them</li>
+</ol>
+<pre><code>┌─────────────┐     JSON-RPC      ┌─────────────┐
+│   Claude    │ ◄──────────────► │  MCP Server │
+│   Desktop   │                   │  (your code)│
+└─────────────┘                   └─────────────┘
+</code></pre>
+<hr>
+<h2>What You Can Expose</h2>
+<p>MCP servers can expose:</p>
+<ul>
+<li><strong>Tools</strong> - Functions the AI can call (search, create, update)</li>
+<li><strong>Resources</strong> - Data the AI can read (files, database records)</li>
+<li><strong>Prompts</strong> - Pre-built prompt templates</li>
+</ul>
+<p>For RAG, you typically expose <strong>tools</strong> like:</p>
+<ul>
+<li><code>search_documents</code> - Query your vector database</li>
+<li><code>get_document</code> - Fetch a specific document</li>
+<li><code>list_sources</code> - Show available data sources</li>
+</ul>
+<hr>
+<h2>Why This Matters for RAG</h2>
+<p>Instead of building a chat UI, you can:</p>
+<ol>
+<li>Expose your RAG as an MCP server</li>
+<li>Users query it directly from Claude Desktop or Cursor</li>
+<li>The AI calls your tools automatically</li>
+</ol>
+<pre><code>User: &quot;What&#39;s the refund policy?&quot;
+         │
+         ▼
+Claude Desktop calls your MCP tool
+         │
+         ▼
+Your server queries Pinecone
+         │
+         ▼
+Claude gets context and responds
+</code></pre>
+<hr>
+<h2>MCP vs API</h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>REST API</th>
+<th>MCP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Client</td>
+<td>Your app</td>
+<td>AI assistant</td>
+</tr>
+<tr>
+<td>Integration</td>
+<td>Custom per AI</td>
+<td>Universal</td>
+</tr>
+<tr>
+<td>Discovery</td>
+<td>Docs/OpenAPI</td>
+<td>Built-in</td>
+</tr>
+<tr>
+<td>Context</td>
+<td>Manual</td>
+<td>AI manages</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Tools We&#39;ll Build</h2>
+<p>In the next lesson, you&#39;ll build a minimal MCP server that exposes your RAG system:</p>
+<pre><code class="language-typescript">// Tools your MCP server will expose
+{
+  name: &quot;search_knowledge_base&quot;,
+  description: &quot;Search the knowledge base for relevant documents&quot;,
+  parameters: {
+    query: { type: &quot;string&quot;, description: &quot;Search query&quot; },
+    limit: { type: &quot;number&quot;, description: &quot;Max results&quot; }
+  }
+}
+</code></pre>
+<p>Then you&#39;ll connect it to Claude Desktop and query your data directly from the chat interface.</p>
+<hr>
+<h2>Prerequisites</h2>
+<ul>
+<li>Working RAG system (from previous modules)</li>
+<li>Node.js 18+</li>
+<li>Claude Desktop or Cursor installed</li>
+</ul>
+<hr>
+<h2>Next Steps</h2>
+<p><a href="./2-building-mcp-server.md">Build Your First MCP Server →</a></p>

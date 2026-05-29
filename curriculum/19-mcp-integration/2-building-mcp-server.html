@@ -1,0 +1,226 @@
+<h1>Building Your First MCP Server</h1>
+<p>Build a minimal MCP server that exposes your RAG system to Claude Desktop or Cursor.</p>
+<hr>
+<h2>Setup</h2>
+<p>Install the MCP SDK:</p>
+<pre><code class="language-bash">npm install @modelcontextprotocol/sdk
+</code></pre>
+<hr>
+<h2>Minimal MCP Server</h2>
+<p>Create <code>mcp/rag-server.ts</code>:</p>
+<pre><code class="language-typescript">import { Server } from &#39;@modelcontextprotocol/sdk/server/index.js&#39;;
+import { StdioServerTransport } from &#39;@modelcontextprotocol/sdk/server/stdio.js&#39;;
+import {
+	CallToolRequestSchema,
+	ListToolsRequestSchema,
+} from &#39;@modelcontextprotocol/sdk/types.js&#39;;
+
+// Your existing RAG function
+import { searchDocuments } from &#39;../app/lib/rag&#39;;
+
+const server = new Server(
+	{ name: &#39;rag-server&#39;, version: &#39;1.0.0&#39; },
+	{ capabilities: { tools: {} } },
+);
+
+// List available tools
+server.setRequestHandler(ListToolsRequestSchema, async () =&gt; ({
+	tools: [
+		{
+			name: &#39;search_knowledge_base&#39;,
+			description: &#39;Search the knowledge base for relevant information&#39;,
+			inputSchema: {
+				type: &#39;object&#39;,
+				properties: {
+					query: {
+						type: &#39;string&#39;,
+						description: &#39;The search query&#39;,
+					},
+					limit: {
+						type: &#39;number&#39;,
+						description: &#39;Maximum number of results (default: 5)&#39;,
+					},
+				},
+				required: [&#39;query&#39;],
+			},
+		},
+	],
+}));
+
+// Handle tool calls
+server.setRequestHandler(CallToolRequestSchema, async (request) =&gt; {
+	if (request.params.name === &#39;search_knowledge_base&#39;) {
+		const { query, limit = 5 } = request.params.arguments as {
+			query: string;
+			limit?: number;
+		};
+
+		try {
+			const results = await searchDocuments(query, limit);
+
+			return {
+				content: [
+					{
+						type: &#39;text&#39;,
+						text: JSON.stringify(results, null, 2),
+					},
+				],
+			};
+		} catch (error) {
+			return {
+				content: [
+					{
+						type: &#39;text&#39;,
+						text: `Error searching: ${error}`,
+					},
+				],
+				isError: true,
+			};
+		}
+	}
+
+	throw new Error(`Unknown tool: ${request.params.name}`);
+});
+
+// Start the server
+async function main() {
+	const transport = new StdioServerTransport();
+	await server.connect(transport);
+	console.error(&#39;RAG MCP Server running on stdio&#39;);
+}
+
+main().catch(console.error);
+</code></pre>
+<hr>
+<h2>The RAG Function</h2>
+<p>Your <code>searchDocuments</code> function (from previous modules):</p>
+<pre><code class="language-typescript">// app/lib/rag.ts
+import { Pinecone } from &#39;@pinecone-database/pinecone&#39;;
+import OpenAI from &#39;openai&#39;;
+
+const pinecone = new Pinecone();
+const openai = new OpenAI();
+
+export async function searchDocuments(query: string, limit: number = 5) {
+	// 1. Embed the query
+	const embedding = await openai.embeddings.create({
+		model: &#39;text-embedding-3-small&#39;,
+		input: query,
+	});
+
+	// 2. Search Pinecone
+	const index = pinecone.Index(process.env.PINECONE_INDEX!);
+	const results = await index.query({
+		vector: embedding.data[0].embedding,
+		topK: limit,
+		includeMetadata: true,
+	});
+
+	// 3. Return formatted results
+	return results.matches.map((match) =&gt; ({
+		score: match.score,
+		text: match.metadata?.text,
+		source: match.metadata?.source,
+	}));
+}
+</code></pre>
+<hr>
+<h2>Connecting to Claude Desktop</h2>
+<ol>
+<li>Build your server:</li>
+</ol>
+<pre><code class="language-bash">npx tsc mcp/rag-server.ts --outDir dist/mcp --esModuleInterop
+</code></pre>
+<ol start="2">
+<li>Find your Claude Desktop config:</li>
+</ol>
+<pre><code class="language-bash"># macOS
+~/Library/Application Support/Claude/claude_desktop_config.json
+
+# Windows
+%APPDATA%\Claude\claude_desktop_config.json
+</code></pre>
+<ol start="3">
+<li>Add your server:</li>
+</ol>
+<pre><code class="language-json">{
+	&quot;mcpServers&quot;: {
+		&quot;rag&quot;: {
+			&quot;command&quot;: &quot;node&quot;,
+			&quot;args&quot;: [&quot;/path/to/your/project/dist/mcp/rag-server.js&quot;],
+			&quot;env&quot;: {
+				&quot;OPENAI_API_KEY&quot;: &quot;your-key&quot;,
+				&quot;PINECONE_API_KEY&quot;: &quot;your-key&quot;,
+				&quot;PINECONE_INDEX&quot;: &quot;your-index&quot;
+			}
+		}
+	}
+}
+</code></pre>
+<ol start="4">
+<li><p>Restart Claude Desktop</p>
+</li>
+<li><p>You should see the RAG tools available in the tools menu</p>
+</li>
+</ol>
+<hr>
+<h2>Connecting to Cursor</h2>
+<ol>
+<li><p>Open Cursor Settings → MCP</p>
+</li>
+<li><p>Add server configuration:</p>
+</li>
+</ol>
+<pre><code class="language-json">{
+	&quot;rag&quot;: {
+		&quot;command&quot;: &quot;node&quot;,
+		&quot;args&quot;: [&quot;/path/to/your/project/dist/mcp/rag-server.js&quot;]
+	}
+}
+</code></pre>
+<ol start="3">
+<li>Cursor will now have access to your RAG tools</li>
+</ol>
+<hr>
+<h2>Testing Your Server</h2>
+<p>Use the MCP Inspector to test without Claude:</p>
+<pre><code class="language-bash">npx @modelcontextprotocol/inspector node dist/mcp/rag-server.js
+</code></pre>
+<p>This opens a web UI where you can:</p>
+<ul>
+<li>See available tools</li>
+<li>Call tools with test inputs</li>
+<li>View responses</li>
+</ul>
+<hr>
+<h2>Example Conversation</h2>
+<p>Once connected, you can ask Claude:</p>
+<pre><code>User: Search my knowledge base for information about chunking strategies
+
+Claude: I&#39;ll search your knowledge base for that.
+[Calls search_knowledge_base with query: &quot;chunking strategies&quot;]
+
+Based on your knowledge base, here&#39;s what I found about chunking strategies:
+
+1. Fixed-size chunking splits documents into equal-sized pieces...
+2. Semantic chunking preserves meaning by splitting at natural boundaries...
+3. Overlap between chunks prevents losing context at boundaries...
+</code></pre>
+<hr>
+<h2>What&#39;s Next</h2>
+<p>You now have a working MCP server. Ideas to extend it:</p>
+<ul>
+<li>Add more tools (get_document, list_sources)</li>
+<li>Add authentication</li>
+<li>Expose resources (not just tools)</li>
+<li>Build custom prompts</li>
+</ul>
+<hr>
+<h2>Key Takeaways</h2>
+<ol>
+<li>MCP lets AI assistants call your code directly</li>
+<li>You define tools with schemas (like OpenAPI)</li>
+<li>The AI decides when to call your tools</li>
+<li>Works with Claude Desktop, Cursor, and other MCP clients</li>
+<li>Your RAG becomes a reusable component</li>
+</ol>
