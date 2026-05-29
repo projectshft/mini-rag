@@ -1,0 +1,492 @@
+<h1>Exposing RAG Over MCP</h1>
+<p>You&#39;ve built a RAG system. Now let&#39;s make it accessible to any AI tool through the Model Context Protocol.</p>
+<hr>
+<h2>Video Walkthrough</h2>
+<!-- Descript embed placeholder -->
+
+<hr>
+<h2>What You&#39;ll Learn</h2>
+<ul>
+<li>What MCP is and why it matters</li>
+<li>How to create an MCP server that exposes your RAG pipeline</li>
+<li>Security considerations when exposing AI tools</li>
+<li>How to connect your MCP server to Claude Code, Cursor, or other tools</li>
+</ul>
+<hr>
+<h2>What is MCP?</h2>
+<p><strong>Model Context Protocol (MCP)</strong> is an open standard for connecting AI assistants to external tools and data sources. Think of it as a universal adapter—instead of building custom integrations for every AI tool, you build one MCP server and it works everywhere.</p>
+<pre><code>┌─────────────────┐     ┌─────────────┐     ┌──────────────┐
+│  Claude Code    │     │             │     │              │
+│  Cursor         │────▶│ MCP Server  │────▶│  Your RAG    │
+│  Any MCP Client │     │             │     │  Pipeline    │
+└─────────────────┘     └─────────────┘     └──────────────┘
+</code></pre>
+<h3>Why MCP for RAG?</h3>
+<p>Without MCP, if you want your RAG system in Claude Code AND Cursor AND your company&#39;s internal tool, you&#39;d build three separate integrations. With MCP:</p>
+<ol>
+<li><strong>Build once, use everywhere</strong> - One server, many clients</li>
+<li><strong>Standardized interface</strong> - Tools describe themselves with schemas</li>
+<li><strong>Local-first</strong> - Runs on your machine, your data stays private</li>
+<li><strong>Composable</strong> - Combine multiple MCP servers (RAG + database + calendar)</li>
+</ol>
+<hr>
+<h2>Architecture Overview</h2>
+<p>Here&#39;s what we&#39;re building:</p>
+<pre><code>┌────────────────────────────────────────────────────────┐
+│                    MCP Server                          │
+│  ┌──────────────────────────────────────────────────┐ │
+│  │  Tool: search_knowledge_base                     │ │
+│  │  - Takes: query (string)                         │ │
+│  │  - Returns: relevant context from your documents │ │
+│  └──────────────────────────────────────────────────┘ │
+│  ┌──────────────────────────────────────────────────┐ │
+│  │  Tool: ask_rag                                   │ │
+│  │  - Takes: question (string)                      │ │
+│  │  - Returns: AI-generated answer with sources     │ │
+│  └──────────────────────────────────────────────────┘ │
+└────────────────────────────────────────────────────────┘
+         │                              │
+         ▼                              ▼
+┌─────────────────┐           ┌─────────────────┐
+│    Pinecone     │           │     OpenAI      │
+│  (Vector Store) │           │   (Embeddings   │
+│                 │           │    + LLM)       │
+└─────────────────┘           └─────────────────┘
+</code></pre>
+<hr>
+<h2>Setting Up Your MCP Server</h2>
+<h3>Step 1: Install Dependencies</h3>
+<pre><code class="language-bash">yarn add @modelcontextprotocol/sdk zod
+</code></pre>
+<h3>Step 2: Create the Server</h3>
+<p>Create a new file <code>mcp/rag-server.ts</code>:</p>
+<pre><code class="language-typescript">import { McpServer } from &quot;@modelcontextprotocol/sdk/server/mcp.js&quot;;
+import { StdioServerTransport } from &quot;@modelcontextprotocol/sdk/server/stdio.js&quot;;
+import { z } from &quot;zod&quot;;
+import { queryPinecone, generateAnswer } from &quot;../app/lib/rag&quot;;
+
+// Create the MCP server
+const server = new McpServer({
+  name: &quot;rag-server&quot;,
+  version: &quot;1.0.0&quot;,
+});
+
+// Tool 1: Search the knowledge base (retrieval only)
+server.tool(
+  &quot;search_knowledge_base&quot;,
+  &quot;Search your document knowledge base for relevant information&quot;,
+  {
+    query: z.string().describe(&quot;The search query&quot;),
+    topK: z.number().optional().default(5).describe(&quot;Number of results&quot;),
+  },
+  async ({ query, topK }) =&gt; {
+    const results = await queryPinecone(query, topK);
+
+    return {
+      content: [
+        {
+          type: &quot;text&quot;,
+          text: JSON.stringify(results, null, 2),
+        },
+      ],
+    };
+  }
+);
+
+// Tool 2: Ask the RAG system (retrieval + generation)
+server.tool(
+  &quot;ask_rag&quot;,
+  &quot;Ask a question and get an AI-generated answer based on your documents&quot;,
+  {
+    question: z.string().describe(&quot;The question to answer&quot;),
+  },
+  async ({ question }) =&gt; {
+    const context = await queryPinecone(question, 5);
+    const answer = await generateAnswer(question, context);
+
+    return {
+      content: [
+        {
+          type: &quot;text&quot;,
+          text: answer,
+        },
+      ],
+    };
+  }
+);
+
+// Start the server
+async function main() {
+  const transport = new StdioServerTransport();
+  await server.connect(transport);
+  console.error(&quot;RAG MCP Server running on stdio&quot;);
+}
+
+main().catch(console.error);
+</code></pre>
+<h3>Step 3: Add the RAG Helper Functions</h3>
+<p>If you don&#39;t already have these exported, create <code>app/lib/rag.ts</code>:</p>
+<pre><code class="language-typescript">import { Pinecone } from &quot;@pinecone-database/pinecone&quot;;
+import OpenAI from &quot;openai&quot;;
+
+const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+const index = pinecone.index(process.env.PINECONE_INDEX!);
+
+export async function queryPinecone(query: string, topK: number = 5) {
+  // Generate embedding for the query
+  const embeddingResponse = await openai.embeddings.create({
+    model: &quot;text-embedding-3-small&quot;,
+    input: query,
+  });
+  const queryEmbedding = embeddingResponse.data[0].embedding;
+
+  // Search Pinecone
+  const results = await index.query({
+    vector: queryEmbedding,
+    topK,
+    includeMetadata: true,
+  });
+
+  return results.matches.map((match) =&gt; ({
+    score: match.score,
+    text: match.metadata?.text,
+    source: match.metadata?.source,
+  }));
+}
+
+export async function generateAnswer(
+  question: string,
+  context: Array&lt;{ text?: string; source?: string; score?: number }&gt;
+) {
+  const contextText = context
+    .map((c, i) =&gt; `[${i + 1}] ${c.text}`)
+    .join(&quot;\n\n&quot;);
+
+  const response = await openai.chat.completions.create({
+    model: &quot;gpt-4o-mini&quot;,
+    messages: [
+      {
+        role: &quot;system&quot;,
+        content: `You are a helpful assistant. Answer questions based on the provided context.
+                  Cite sources using [1], [2], etc. If the context doesn&#39;t contain
+                  relevant information, say so.`,
+      },
+      {
+        role: &quot;user&quot;,
+        content: `Context:\n${contextText}\n\nQuestion: ${question}`,
+      },
+    ],
+  });
+
+  return response.choices[0].message.content;
+}
+</code></pre>
+<h3>Step 4: Add a Build Script</h3>
+<p>Add to your <code>package.json</code>:</p>
+<pre><code class="language-json">{
+  &quot;scripts&quot;: {
+    &quot;mcp:build&quot;: &quot;tsc mcp/rag-server.ts --outDir mcp/dist --esModuleInterop --moduleResolution node&quot;,
+    &quot;mcp:start&quot;: &quot;node mcp/dist/rag-server.js&quot;
+  }
+}
+</code></pre>
+<p>Or for quick testing without compilation:</p>
+<pre><code class="language-json">{
+  &quot;scripts&quot;: {
+    &quot;mcp:dev&quot;: &quot;npx tsx mcp/rag-server.ts&quot;
+  }
+}
+</code></pre>
+<hr>
+<h2>Security Considerations</h2>
+<p>Before exposing your RAG system over MCP, consider these security points:</p>
+<h3>1. Local Execution</h3>
+<p>MCP servers typically run locally on your machine. This means:</p>
+<ul>
+<li>✅ Your data doesn&#39;t leave your machine (unless you call external APIs)</li>
+<li>✅ No need for authentication—if someone has access to run the server, they already have access to your machine</li>
+<li>⚠️ Environment variables (API keys) are accessible to the MCP process</li>
+</ul>
+<h3>2. What Gets Exposed</h3>
+<p>Think about what your tools return:</p>
+<pre><code class="language-typescript">// Be careful about exposing sensitive metadata
+return {
+  text: match.metadata?.text,
+  source: match.metadata?.source,
+  // Don&#39;t accidentally expose:
+  // internalId: match.metadata?.internalId,
+  // author: match.metadata?.author,
+};
+</code></pre>
+<h3>3. Input Validation</h3>
+<p>Always validate inputs, even from trusted clients:</p>
+<pre><code class="language-typescript">server.tool(
+  &quot;search_knowledge_base&quot;,
+  &quot;Search documents&quot;,
+  {
+    query: z.string().min(1).max(1000), // Limit query length
+    topK: z.number().int().min(1).max(20), // Reasonable bounds
+  },
+  async ({ query, topK }) =&gt; {
+    // Safe to use validated inputs
+  }
+);
+</code></pre>
+<h3>4. Rate Limiting (For Shared Servers)</h3>
+<p>If deploying a shared MCP server, implement rate limiting:</p>
+<pre><code class="language-typescript">const requestCounts = new Map&lt;string, number&gt;();
+
+function checkRateLimit(clientId: string, limit: number = 100): boolean {
+  const count = requestCounts.get(clientId) || 0;
+  if (count &gt;= limit) return false;
+  requestCounts.set(clientId, count + 1);
+  return true;
+}
+</code></pre>
+<hr>
+<h2>Connecting to AI Tools</h2>
+<p>Now the fun part—using your MCP server with real AI tools.</p>
+<h3>Option 1: Claude Code</h3>
+<p>If you have Claude Code, add your server to the configuration:</p>
+<p><strong>macOS/Linux:</strong> <code>~/.claude/claude_code_config.json</code>
+<strong>Windows:</strong> <code>%APPDATA%\claude-code\claude_code_config.json</code></p>
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;rag&quot;: {
+      &quot;command&quot;: &quot;npx&quot;,
+      &quot;args&quot;: [&quot;tsx&quot;, &quot;/path/to/your/mcp/rag-server.ts&quot;],
+      &quot;env&quot;: {
+        &quot;OPENAI_API_KEY&quot;: &quot;your-key&quot;,
+        &quot;PINECONE_API_KEY&quot;: &quot;your-key&quot;,
+        &quot;PINECONE_INDEX&quot;: &quot;your-index&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<p>Then in Claude Code, your RAG tools will be available:</p>
+<pre><code>You: Search my knowledge base for information about vector embeddings
+
+Claude: I&#39;ll search your knowledge base for that.
+[Uses search_knowledge_base tool]
+Here&#39;s what I found in your documents...
+</code></pre>
+<h3>Option 2: Cursor</h3>
+<p>Cursor supports MCP servers through its settings:</p>
+<ol>
+<li>Open Cursor Settings (<code>Cmd+,</code> or <code>Ctrl+,</code>)</li>
+<li>Search for &quot;MCP&quot;</li>
+<li>Add your server configuration:</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;mcp.servers&quot;: {
+    &quot;rag&quot;: {
+      &quot;command&quot;: &quot;npx&quot;,
+      &quot;args&quot;: [&quot;tsx&quot;, &quot;/path/to/your/mcp/rag-server.ts&quot;],
+      &quot;env&quot;: {
+        &quot;OPENAI_API_KEY&quot;: &quot;your-key&quot;,
+        &quot;PINECONE_API_KEY&quot;: &quot;your-key&quot;,
+        &quot;PINECONE_INDEX&quot;: &quot;your-index&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<h3>Option 3: MCP Inspector (Free)</h3>
+<p>The MCP Inspector is a free debugging tool that lets you test your server without any IDE:</p>
+<pre><code class="language-bash"># Install globally
+npm install -g @modelcontextprotocol/inspector
+
+# Run your server with the inspector
+mcp-inspector npx tsx mcp/rag-server.ts
+</code></pre>
+<p>This opens a web UI where you can:</p>
+<ul>
+<li>See all available tools</li>
+<li>Test tool calls with custom inputs</li>
+<li>View responses and debug issues</li>
+</ul>
+<h3>Option 4: Simple CLI Client</h3>
+<p>For the simplest possible testing, create a CLI client:</p>
+<pre><code class="language-typescript">// mcp/test-client.ts
+import { Client } from &quot;@modelcontextprotocol/sdk/client/index.js&quot;;
+import { StdioClientTransport } from &quot;@modelcontextprotocol/sdk/client/stdio.js&quot;;
+import { spawn } from &quot;child_process&quot;;
+
+async function main() {
+  // Start the server process
+  const serverProcess = spawn(&quot;npx&quot;, [&quot;tsx&quot;, &quot;mcp/rag-server.ts&quot;], {
+    stdio: [&quot;pipe&quot;, &quot;pipe&quot;, &quot;inherit&quot;],
+    env: process.env,
+  });
+
+  const transport = new StdioClientTransport({
+    reader: serverProcess.stdout!,
+    writer: serverProcess.stdin!,
+  });
+
+  const client = new Client({ name: &quot;test-client&quot;, version: &quot;1.0.0&quot; }, {});
+  await client.connect(transport);
+
+  // List available tools
+  const tools = await client.listTools();
+  console.log(&quot;Available tools:&quot;, tools);
+
+  // Test the search tool
+  const result = await client.callTool({
+    name: &quot;search_knowledge_base&quot;,
+    arguments: { query: &quot;What is RAG?&quot;, topK: 3 },
+  });
+
+  console.log(&quot;Search result:&quot;, result);
+
+  await client.close();
+  serverProcess.kill();
+}
+
+main();
+</code></pre>
+<p>Run it:</p>
+<pre><code class="language-bash">npx tsx mcp/test-client.ts
+</code></pre>
+<hr>
+<h2>Testing Your Server</h2>
+<h3>Manual Testing</h3>
+<ol>
+<li><p>Start your server in one terminal:</p>
+<pre><code class="language-bash">yarn mcp:dev
+</code></pre>
+</li>
+<li><p>In another terminal, use the inspector:</p>
+<pre><code class="language-bash">mcp-inspector --server &quot;npx tsx mcp/rag-server.ts&quot;
+</code></pre>
+</li>
+<li><p>Test each tool:</p>
+<ul>
+<li><code>search_knowledge_base</code> with query &quot;your test query&quot;</li>
+<li><code>ask_rag</code> with question &quot;What does my documentation say about X?&quot;</li>
+</ul>
+</li>
+</ol>
+<h3>Automated Testing</h3>
+<p>Create <code>mcp/__tests__/rag-server.test.ts</code>:</p>
+<pre><code class="language-typescript">import { describe, it, expect, beforeAll, afterAll } from &quot;@jest/globals&quot;;
+import { Client } from &quot;@modelcontextprotocol/sdk/client/index.js&quot;;
+import { StdioClientTransport } from &quot;@modelcontextprotocol/sdk/client/stdio.js&quot;;
+import { spawn, ChildProcess } from &quot;child_process&quot;;
+
+describe(&quot;RAG MCP Server&quot;, () =&gt; {
+  let client: Client;
+  let serverProcess: ChildProcess;
+
+  beforeAll(async () =&gt; {
+    serverProcess = spawn(&quot;npx&quot;, [&quot;tsx&quot;, &quot;mcp/rag-server.ts&quot;], {
+      stdio: [&quot;pipe&quot;, &quot;pipe&quot;, &quot;inherit&quot;],
+      env: process.env,
+    });
+
+    const transport = new StdioClientTransport({
+      reader: serverProcess.stdout!,
+      writer: serverProcess.stdin!,
+    });
+
+    client = new Client({ name: &quot;test&quot;, version: &quot;1.0.0&quot; }, {});
+    await client.connect(transport);
+  });
+
+  afterAll(async () =&gt; {
+    await client.close();
+    serverProcess.kill();
+  });
+
+  it(&quot;should list tools&quot;, async () =&gt; {
+    const { tools } = await client.listTools();
+    expect(tools).toHaveLength(2);
+    expect(tools.map((t) =&gt; t.name)).toContain(&quot;search_knowledge_base&quot;);
+    expect(tools.map((t) =&gt; t.name)).toContain(&quot;ask_rag&quot;);
+  });
+
+  it(&quot;should search the knowledge base&quot;, async () =&gt; {
+    const result = await client.callTool({
+      name: &quot;search_knowledge_base&quot;,
+      arguments: { query: &quot;test query&quot;, topK: 3 },
+    });
+
+    expect(result.content).toBeDefined();
+    expect(result.content[0].type).toBe(&quot;text&quot;);
+  });
+});
+</code></pre>
+<hr>
+<h2>What You Learned</h2>
+<ul>
+<li>✅ MCP is a standard protocol for connecting AI tools to external systems</li>
+<li>✅ An MCP server exposes &quot;tools&quot; that AI assistants can call</li>
+<li>✅ Your RAG pipeline can be exposed as <code>search_knowledge_base</code> and <code>ask_rag</code> tools</li>
+<li>✅ Security involves validating inputs and being careful about what data you expose</li>
+<li>✅ Multiple AI tools (Claude Code, Cursor, Inspector) can connect to the same MCP server</li>
+</ul>
+<hr>
+<h2>Bonus Challenge: MCP at Your Company</h2>
+<p>Think about your company&#39;s AI tools and workflows:</p>
+<h3>Questions to Consider</h3>
+<ol>
+<li><p><strong>What AI tools does your company use?</strong></p>
+<ul>
+<li>Internal chatbots?</li>
+<li>Code assistants?</li>
+<li>Documentation search?</li>
+</ul>
+</li>
+<li><p><strong>What data sources would be valuable to expose?</strong></p>
+<ul>
+<li>Internal documentation</li>
+<li>Customer support knowledge base</li>
+<li>Code repositories</li>
+<li>Database queries</li>
+</ul>
+</li>
+<li><p><strong>What workflow could MCP improve?</strong></p>
+<ul>
+<li>&quot;Search our internal docs&quot; without leaving your IDE</li>
+<li>&quot;Query our analytics database&quot; from a chat interface</li>
+<li>&quot;Find relevant Jira tickets&quot; while coding</li>
+</ul>
+</li>
+</ol>
+<h3>Mini-Project: Design an MCP Server</h3>
+<p>Sketch out an MCP server for your company. Don&#39;t build it—just design it:</p>
+<pre><code class="language-typescript">// What tools would you expose?
+server.tool(&quot;search_internal_docs&quot;, &quot;...&quot;, schema, handler);
+server.tool(&quot;query_analytics&quot;, &quot;...&quot;, schema, handler);
+server.tool(&quot;find_related_tickets&quot;, &quot;...&quot;, schema, handler);
+
+// What security considerations apply?
+// - Who should have access?
+// - What data can be exposed?
+// - Do you need audit logging?
+</code></pre>
+<h3>Reflection Questions</h3>
+<ol>
+<li>What&#39;s the most repetitive information-gathering task in your workflow?</li>
+<li>Could an MCP tool reduce context-switching between applications?</li>
+<li>What would need to change at your company to deploy an MCP server?</li>
+</ol>
+<hr>
+<h2>Resources</h2>
+<ul>
+<li><strong><a href="https://spec.modelcontextprotocol.io/">MCP Specification</a></strong> - The official protocol documentation</li>
+<li><strong><a href="https://github.com/modelcontextprotocol/typescript-sdk">MCP TypeScript SDK</a></strong> - The SDK we used in this lesson</li>
+<li><strong><a href="https://github.com/modelcontextprotocol/inspector">MCP Inspector</a></strong> - Free debugging tool</li>
+<li><strong><a href="https://docs.anthropic.com/en/docs/claude-code/mcp">Claude Code MCP Docs</a></strong> - Claude Code integration guide</li>
+</ul>
+<hr>
+<h2>Assignment</h2>
+<p><strong>Video:</strong> Record yourself explaining what MCP is and why you&#39;d expose RAG over it. Explain it like you&#39;re talking to a colleague who hasn&#39;t heard of MCP.</p>
+<p><strong>Code:</strong> Get your MCP server running and demonstrate it with at least one client (Inspector, CLI client, or a full IDE integration).</p>
+<p><strong>Submit:</strong></p>
+<ul>
+<li><a href="https://form.typeform.com/to/YOUR_FORM_ID">Video Submission</a></li>
+<li><a href="https://form.typeform.com/to/YOUR_FORM_ID">Code Submission</a></li>
+</ul>
