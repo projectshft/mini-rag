@@ -48,9 +48,9 @@
 
 **Video (3-5 minutes):** Explain the two-stage retrieval pattern - when to rerank, when to skip, stage cutoffs, and cost analysis.
 
-**Code:** Complete the TODOs in reranking, then add score thresholding (minimum confidence, filter low results, graceful "I don't know" responses).
+**Code:** Extend your RAG agent with reranking and score thresholding (minimum confidence, filter low results, graceful "I don't know" responses).
 
-**Files:** `app/agents/rag.ts` (reranking section)
+**Files:** `app/agents/rag.ts` (add reranking to your ragAgent function)
 
 **Submit:**
 - [Video Submission](https://form.typeform.com/to/pwjkAruL)
