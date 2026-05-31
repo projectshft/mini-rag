@@ -1,10 +1,32 @@
 /**
- * Fine-Tuning Training Data Upload Script
+ * ⚠️  DEPRECATED - Fine-Tuning Training Data Upload Script
+ *
+ * ============================================================================
+ * DEPRECATION NOTICE (May 7, 2026)
+ * ============================================================================
+ *
+ * OpenAI has limited access to fine-tuning and will eventually deprecate it
+ * fully. This script is now a HISTORICAL ARTIFACT showing how fine-tuning
+ * used to be performed.
+ *
+ * DO NOT RUN THIS SCRIPT - it will fail due to API restrictions.
+ *
+ * Instead, use our pre-trained model:
+ *   OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
+ *
+ * WHY KEEP THIS FILE?
+ * - Educational reference for understanding the fine-tuning workflow
+ * - Fine-tuning is still available on other platforms (Hugging Face, Anthropic, Cohere)
+ * - The concepts remain valuable even if OpenAI no longer supports it
+ *
+ * ============================================================================
+ * ORIGINAL DOCUMENTATION (Historical Reference)
+ * ============================================================================
  *
  * This script uploads training data to OpenAI and creates a fine-tuning job to create
  * a custom model based on gpt-4o-mini-2024-07-18.
  *
- * WORKFLOW:
+ * WORKFLOW (when it was functional):
  * 1. Run this script to upload training data and start fine-tuning
  * 2. Monitor the fine-tuning job until completion (can take minutes to hours)
  * 3. Once complete, OpenAI will provide a fine-tuned model ID (format: ft:gpt-4o-mini-2024-07-18:personal::XXXXXXXX)
@@ -15,7 +37,7 @@
  * - After this script completes fine-tuning, you MUST update the fine-tuned model ID in config.ts
  * - Replace 'ft:gpt-4o-mini-2024-07-18:personal::BMIy4PLt' with your new model ID
  *
- * USAGE:
+ * USAGE (no longer functional):
  * 1. Ensure OPENAI_API_KEY is set in your environment
  * 2. Run: yarn train
  * 3. Monitor the job via the provided dashboard link
@@ -86,6 +108,23 @@ async function createFineTuningJob(fileId: string): Promise<void> {
 }
 
 async function main() {
+	// DEPRECATION CHECK - Prevent accidental execution
+	console.error('\n⚠️  ============================================================');
+	console.error('⚠️  DEPRECATED: OpenAI fine-tuning is no longer available');
+	console.error('⚠️  ============================================================');
+	console.error('⚠️');
+	console.error('⚠️  As of May 7, 2026, OpenAI has limited access to fine-tuning.');
+	console.error('⚠️  This script is now a historical artifact for educational purposes.');
+	console.error('⚠️');
+	console.error('⚠️  Use our pre-trained model instead:');
+	console.error('⚠️    OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ');
+	console.error('⚠️');
+	console.error('⚠️  Add this to your .env.local file and restart your dev server.');
+	console.error('⚠️  ============================================================\n');
+	process.exit(1);
+
+	// Original code preserved below for reference
+	// eslint-disable-next-line no-unreachable
 	if (!process.env.OPENAI_API_KEY) {
 		console.error('Please set OPENAI_API_KEY environment variable');
 		process.exit(1);
