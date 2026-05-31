@@ -86,7 +86,7 @@ The day-based schedule references lessons from these modules in `curriculum/`:
 4. **Pinecone Integration** (`3-pinecone-integration/`)
 5. **Chunking Fundamentals** (`4-chunking-fundamentals/`)
 6. **Document Upload** (`5-document-upload/`)
-7. **Fine-tuning** (`6-fine-tuning/`)
+7. **Fine-tuning** (`6-fine-tuning/`) ⚠️ DEPRECATED - Conceptual only, uses pre-trained model
 8. **Agent Architecture** (`7-agent-architecture/`)
     - Understanding agents
     - Prompting strategies
@@ -176,7 +176,7 @@ Create `.env` or `.env.local`:
 ```bash
 # OpenAI
 OPENAI_API_KEY=sk-...
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:...  # Optional
+OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ  # Pre-trained model (see note below)
 
 # Pinecone
 PINECONE_API_KEY=...
@@ -188,6 +188,18 @@ LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 LANGSMITH_API_KEY=lsv2_pt_...
 LANGSMITH_PROJECT="your-project-name"
 ```
+
+### Fine-Tuning Deprecation Note (May 2026)
+
+OpenAI has deprecated fine-tuning access. Students should use the **pre-trained model** above for the LinkedIn agent exercises:
+
+```
+OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
+```
+
+- Students **do not** run `yarn train` — the script is now disabled
+- The fine-tuning module (`6-fine-tuning/`) teaches concepts using the scripts as historical artifacts
+- This module may be fully deprecated in a future curriculum update
 
 ---
 

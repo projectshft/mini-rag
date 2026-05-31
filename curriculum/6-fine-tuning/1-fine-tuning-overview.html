@@ -1,6 +1,19 @@
 <h1>Fine-Tuning Overview</h1>
 <p>Understand when to use fine-tuning vs RAG, and what fine-tuning can do for your application.</p>
 <hr>
+<blockquote>
+<p><strong>Important Update (May 2026)</strong></p>
+<p>As of May 7, 2026, OpenAI has limited access to fine-tuning and announced plans to eventually deprecate it fully. This change reflects the industry&#39;s recognition that <strong>&quot;context is all you really need&quot;</strong> — modern models like GPT-4o and Claude have become so capable that few-shot prompting and RAG can achieve results that previously required fine-tuning.</p>
+<p><strong>What this means for this course:</strong></p>
+<ul>
+<li>You will <strong>not</strong> run fine-tuning scripts yourself</li>
+<li>We provide a <strong>pre-trained model</strong> (<code>ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ</code>) for the LinkedIn agent exercises</li>
+<li>Focus on <strong>understanding the concepts</strong> — the scripts are now historical artifacts showing how fine-tuning worked</li>
+<li>Fine-tuning remains valuable knowledge because <strong>other providers</strong> (Anthropic, Cohere, open-source models via Hugging Face) still offer it</li>
+</ul>
+<p>The concepts in this module prepare you for the LinkedIn agent implementation, where you&#39;ll use our pre-trained model.</p>
+</blockquote>
+<hr>
 <h2>Video Walkthrough</h2>
 <iframe src="https://share.descript.com/embed/n9XnMJvmku2" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
@@ -122,3 +135,56 @@
 <li>❌ Inconsistent tone (multiple authors)</li>
 <li>❌ Low quality (errors, incomplete)</li>
 </ul>
+<hr>
+<h2>Why Learn This If It&#39;s Deprecated?</h2>
+<p>Even though OpenAI has deprecated fine-tuning, understanding it remains valuable:</p>
+<h3>1. Context for Industry Decisions</h3>
+<p>Modern models like GPT-4o and Claude 3.5 are so capable that <strong>&quot;context is all you really need&quot;</strong> for most use cases. Few-shot prompting and RAG now achieve what previously required fine-tuning.</p>
+<p>This shift is why OpenAI deprecated fine-tuning — not because the technique is flawed, but because it&#39;s no longer necessary for most applications.</p>
+<h3>2. Fine-Tuning Still Exists Elsewhere</h3>
+<table>
+<thead>
+<tr>
+<th>Provider</th>
+<th>Fine-Tuning Status</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>OpenAI</td>
+<td>Deprecated (May 2026)</td>
+</tr>
+<tr>
+<td>Anthropic</td>
+<td>Available for enterprise</td>
+</tr>
+<tr>
+<td>Cohere</td>
+<td>Available via Command models</td>
+</tr>
+<tr>
+<td>Hugging Face</td>
+<td>Full support for open-source models</td>
+</tr>
+<tr>
+<td>Together AI</td>
+<td>API-based fine-tuning</td>
+</tr>
+</tbody></table>
+<h3>3. Interview &amp; Architecture Knowledge</h3>
+<p>You may be asked:</p>
+<ul>
+<li>&quot;When would you fine-tune vs use RAG?&quot;</li>
+<li>&quot;How does fine-tuning work technically?&quot;</li>
+<li>&quot;What are the tradeoffs?&quot;</li>
+</ul>
+<p>Understanding the concepts prepares you for these discussions.</p>
+<h3>4. Historical Context</h3>
+<p>Many production systems still run on fine-tuned models. Knowing how they were created helps you:</p>
+<ul>
+<li>Maintain legacy systems</li>
+<li>Understand cost structures</li>
+<li>Make migration decisions</li>
+</ul>
+<hr>
+<h2>What&#39;s Next</h2>
+<p>In the next lesson, you&#39;ll examine the fine-tuning code as an artifact and configure your environment to use our pre-trained model.</p>

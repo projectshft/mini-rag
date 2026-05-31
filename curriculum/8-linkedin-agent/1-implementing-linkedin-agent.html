@@ -1,5 +1,11 @@
 <h1>LinkedIn Agent</h1>
-<p>Now that we have your fine-tuned model, we&#39;ll implement an agent that uses it to respond in your personal LinkedIn style with streaming responses.</p>
+<p>Now we&#39;ll implement an agent that uses a fine-tuned model to respond in a professional LinkedIn style with streaming responses.</p>
+<hr>
+<blockquote>
+<p><strong>Note on Fine-Tuning</strong></p>
+<p>Due to OpenAI&#39;s deprecation of fine-tuning (May 2026), you will use our <strong>pre-trained model</strong> instead of creating your own. This model was fine-tuned on LinkedIn post examples and demonstrates how fine-tuned models improve style consistency.</p>
+<p>The concepts remain the same — you&#39;re just using a provided model instead of training one yourself.</p>
+</blockquote>
 <hr>
 <h2>Video Walkthrough</h2>
 <p>Watch this guide to implementing the LinkedIn agent:</p>
@@ -9,17 +15,17 @@
 <h2>What You&#39;ll Build</h2>
 <p>An agent that:</p>
 <ul>
-<li>Uses your fine-tuned model</li>
+<li>Uses a pre-trained fine-tuned model</li>
 <li>Streams responses for a better user experience</li>
-<li>Responds in your personal conversational style</li>
+<li>Responds in a professional LinkedIn conversational style</li>
 </ul>
 <h2>Implementation Steps</h2>
 <p>The agent implementation is in <code>app/agents/linkedin.ts</code>.</p>
-<h3>1. Configure Your Fine-Tuned Model</h3>
-<p>Add your fine-tuned model ID to your <code>.env.local</code>:</p>
-<pre><code class="language-bash">OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:your-org:your-model:id
+<h3>1. Configure the Pre-Trained Model</h3>
+<p>Add the pre-trained model ID to your <code>.env.local</code>:</p>
+<pre><code class="language-bash">OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
 </code></pre>
-<p>You can find this ID in your OpenAI dashboard under Fine-tuning, or from the API response when you created the fine-tune.</p>
+<p>This is a model we&#39;ve already fine-tuned for the course. It writes in a professional LinkedIn style.</p>
 <h3>2. Implement the Agent</h3>
 <p>Your agent needs to:</p>
 <ol>

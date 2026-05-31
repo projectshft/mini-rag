@@ -1,18 +1,35 @@
 <h1>Running the Fine-Tuning Process</h1>
-<p>Time to train your own model! This section walks you through creating a fine-tuned model that writes like you.</p>
+<p>Learn how fine-tuning works by examining the code and data formats that were used to create custom models.</p>
+<hr>
+<blockquote>
+<p><strong>Important: Historical Context</strong></p>
+<p>As of May 7, 2026, OpenAI has limited access to fine-tuning. The scripts in this lesson are <strong>artifacts</strong> showing how fine-tuning used to be performed. You will <strong>not</strong> run these scripts yourself.</p>
+<p><strong>Instead, you will:</strong></p>
+<ul>
+<li>Study the code to understand the workflow</li>
+<li>Examine the training data format (JSONL)</li>
+<li>Use our <strong>pre-trained model</strong> for the LinkedIn agent</li>
+</ul>
+<p><strong>Why learn this anyway?</strong></p>
+<ul>
+<li>Fine-tuning is not limited to OpenAI — Anthropic, Cohere, and open-source models (via Hugging Face, Axolotl, etc.) still support it</li>
+<li>Understanding the process helps you evaluate when fine-tuning vs RAG vs prompting is appropriate</li>
+<li>Many production systems still use fine-tuned models</li>
+</ul>
+</blockquote>
 <hr>
 <h2>Video Walkthrough</h2>
-<p>Watch this guide to running the fine-tuning process:</p>
+<p>Watch this guide to understand the fine-tuning process:</p>
 <iframe src="https://share.descript.com/embed/nub6vmvmL3a" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
 <hr>
-<h2>What You&#39;ll Do</h2>
+<h2>What You&#39;ll Learn</h2>
 <ol>
 <li>Examine the training data format</li>
-<li>Run the training script</li>
-<li>Monitor the fine-tuning job</li>
-<li>Get your model ID</li>
-<li>Configure your app</li>
+<li>Understand how the training script works</li>
+<li>Learn about monitoring fine-tuning jobs</li>
+<li>Know what a model ID looks like</li>
+<li>Configure your app with a pre-trained model</li>
 </ol>
 <hr>
 <h2>Understanding the Training Script</h2>
@@ -67,18 +84,21 @@
 </code></pre>
 <p>This is what the model learns! Should be in YOUR style, tone, and approach.</p>
 <hr>
-<h2>Running the Training Script</h2>
-<h3>Prerequisites</h3>
+<h2>Understanding the Training Script (Artifact)</h2>
+<blockquote>
+<p><strong>Note:</strong> This script is no longer runnable due to OpenAI&#39;s fine-tuning deprecation. Study it to understand the workflow.</p>
+</blockquote>
+<h3>What the Script Needed</h3>
 <p><strong>1. OpenAI API Key</strong></p>
 <pre><code class="language-bash"># In your .env.local
 OPENAI_API_KEY=sk-your-key-here
 </code></pre>
-<p><strong>2. Training Data</strong><br>Make sure <code>app/scripts/data/linkedin_training.jsonl</code> exists and has content.</p>
-<h3>Run the Script</h3>
-<pre><code class="language-bash">yarn train
+<p><strong>2. Training Data</strong><br>The training data file: <code>app/scripts/data/linkedin_training.jsonl</code></p>
+<h3>How It Was Run</h3>
+<pre><code class="language-bash">yarn train  # No longer functional
 </code></pre>
-<p>This runs: <code>npx ts-node app/scripts/upload-training-data.ts</code></p>
-<h3>Expected Output</h3>
+<p>This ran: <code>npx ts-node app/scripts/upload-training-data.ts</code></p>
+<h3>What the Output Looked Like</h3>
 <pre><code class="language-bash">Uploading training file...
 File uploaded successfully: file-abc123xyz
 
@@ -94,9 +114,9 @@ https://platform.openai.com/finetune/ftjob-abc123?filter=all
 </code></pre>
 <p><strong>Key Information:</strong></p>
 <ul>
-<li><strong>File ID</strong>: Confirms upload succeeded</li>
-<li><strong>Job ID</strong>: Use this to track progress</li>
-<li><strong>Dashboard Link</strong>: Click to monitor in real-time</li>
+<li><strong>File ID</strong>: Confirmed upload succeeded</li>
+<li><strong>Job ID</strong>: Used to track progress</li>
+<li><strong>Dashboard Link</strong>: For monitoring in real-time</li>
 </ul>
 <hr>
 <h2>Monitoring Your Fine-Tuning Job</h2>
@@ -118,23 +138,23 @@ Time Remaining: ~8 minutes
 <h3>Status Meanings</h3>
 <p><strong><code>running</code></strong>: Training in progress - be patient!<br><strong><code>succeeded</code></strong>: Complete! You have a model ready.<br><strong><code>failed</code></strong>: Something went wrong (check error message)<br><strong><code>cancelled</code></strong>: Job was stopped</p>
 <hr>
-<h2>When Training Completes</h2>
-<h3>Getting Your Model ID</h3>
-<p><strong>In the Dashboard:</strong></p>
-<pre><code>Status: succeeded
-Fine-tuned model: ft:gpt-4o-mini-2024-07-18:org:model-name:abc123
+<h2>Using the Pre-Trained Model</h2>
+<p>Since you cannot run fine-tuning yourself, we provide a pre-trained model for the LinkedIn agent exercises.</p>
+<h3>Our Pre-Trained Model ID</h3>
+<pre><code>ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
 </code></pre>
-<p><strong>Copy that full model ID!</strong></p>
+<p>This model was fine-tuned on LinkedIn post examples and writes in a professional LinkedIn style.</p>
 <h3>Add to Your Environment</h3>
 <p>Update your <code>.env.local</code>:</p>
 <pre><code class="language-bash">OPENAI_API_KEY=sk-your-key-here
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:org:model-name:abc123
+OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
 </code></pre>
 <p><strong>Important:</strong></p>
 <ul>
-<li>Use the FULL model ID (starts with <code>ft:</code>)</li>
+<li>Use this exact model ID — it&#39;s already fine-tuned and ready</li>
 <li>Include the entire string (organization, name, and hash)</li>
 <li>Restart your dev server after updating</li>
+<li><strong>Note:</strong> This model may be deprecated in the future as part of OpenAI&#39;s full deprecation of fine-tuning</li>
 </ul>
 <hr>
 <h2>Understanding What Happened</h2>
@@ -228,12 +248,12 @@ Extra $0.075 for significantly better quality!
 </code></pre>
 <hr>
 <h2>What You Learned</h2>
-<p>✅ How to prepare training data in JSONL format<br>✅ How to run the fine-tuning script<br>✅ How to monitor training progress<br>✅ How to get and configure your model ID<br>✅ What happens during the training process</p>
+<p>✅ How training data is prepared in JSONL format<br>✅ How the fine-tuning script worked (as an artifact)<br>✅ How training jobs were monitored<br>✅ How to configure your app with a pre-trained model<br>✅ What happens during the training process internally</p>
 <hr>
 <h2>Quick Reference</h2>
 <h3>Commands</h3>
-<pre><code class="language-bash"># Run training script
-yarn train
+<pre><code class="language-bash"># The training script is no longer functional
+# yarn train  # DEPRECATED - OpenAI fine-tuning limited
 
 # Check environment
 cat .env.local | grep OPENAI
@@ -242,13 +262,25 @@ cat .env.local | grep OPENAI
 yarn dev
 </code></pre>
 <h3>File Locations</h3>
-<pre><code>Training script: app/scripts/upload-training-data.ts
-Training data: app/scripts/data/linkedin_training.jsonl
+<pre><code>Training script (artifact): app/scripts/upload-training-data.ts
+Training data (reference): app/scripts/data/linkedin_training.jsonl
 Environment: .env.local
 </code></pre>
+<h3>Pre-Trained Model</h3>
+<p>Use this model ID in your <code>.env.local</code>:</p>
+<pre><code>OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
+</code></pre>
+<h3>Fine-Tuning Elsewhere</h3>
+<p>While OpenAI has deprecated fine-tuning, you can still fine-tune models on other platforms:</p>
+<ul>
+<li><strong>Hugging Face</strong>: Fine-tune open-source models (Llama, Mistral, etc.)</li>
+<li><strong>Anthropic</strong>: Claude fine-tuning for enterprise customers</li>
+<li><strong>Cohere</strong>: Command models with fine-tuning support</li>
+<li><strong>Together AI</strong>: Fine-tune open-source models via API</li>
+</ul>
 <h3>Useful Links</h3>
 <ul>
-<li>OpenAI Fine-Tuning Dashboard: <a href="https://platform.openai.com/finetune">https://platform.openai.com/finetune</a></li>
-<li>OpenAI Playground: <a href="https://platform.openai.com/playground">https://platform.openai.com/playground</a></li>
-<li>Fine-Tuning Docs: <a href="https://platform.openai.com/docs/guides/fine-tuning">https://platform.openai.com/docs/guides/fine-tuning</a></li>
+<li>OpenAI Fine-Tuning Docs (historical): <a href="https://platform.openai.com/docs/guides/fine-tuning">https://platform.openai.com/docs/guides/fine-tuning</a></li>
+<li>Hugging Face Training: <a href="https://huggingface.co/docs/transformers/training">https://huggingface.co/docs/transformers/training</a></li>
+<li>Axolotl (popular fine-tuning tool): <a href="https://github.com/OpenAccess-AI-Collective/axolotl">https://github.com/OpenAccess-AI-Collective/axolotl</a></li>
 </ul>

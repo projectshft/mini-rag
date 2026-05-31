@@ -1,6 +1,14 @@
 # LinkedIn Agent
 
-Now that we have your fine-tuned model, we'll implement an agent that uses it to respond in your personal LinkedIn style with streaming responses.
+Now we'll implement an agent that uses a fine-tuned model to respond in a professional LinkedIn style with streaming responses.
+
+---
+
+> **Note on Fine-Tuning**
+>
+> Due to OpenAI's deprecation of fine-tuning (May 2026), you will use our **pre-trained model** instead of creating your own. This model was fine-tuned on LinkedIn post examples and demonstrates how fine-tuned models improve style consistency.
+>
+> The concepts remain the same — you're just using a provided model instead of training one yourself.
 
 ---
 
@@ -16,23 +24,23 @@ Watch this guide to implementing the LinkedIn agent:
 
 An agent that:
 
--   Uses your fine-tuned model
+-   Uses a pre-trained fine-tuned model
 -   Streams responses for a better user experience
--   Responds in your personal conversational style
+-   Responds in a professional LinkedIn conversational style
 
 ## Implementation Steps
 
 The agent implementation is in `app/agents/linkedin.ts`.
 
-### 1. Configure Your Fine-Tuned Model
+### 1. Configure the Pre-Trained Model
 
-Add your fine-tuned model ID to your `.env.local`:
+Add the pre-trained model ID to your `.env.local`:
 
 ```bash
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:your-org:your-model:id
+OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
 ```
 
-You can find this ID in your OpenAI dashboard under Fine-tuning, or from the API response when you created the fine-tune.
+This is a model we've already fine-tuned for the course. It writes in a professional LinkedIn style.
 
 ### 2. Implement the Agent
 
