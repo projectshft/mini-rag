@@ -1,12 +1,12 @@
 # AI-Powered Content Generation and RAG
 
-A full-stack TypeScript application demonstrating modern AI techniques including RAG (Retrieval Augmented Generation), fine-tuning, agents, and LLM observability with automated web scraping capabilities.
+A full-stack TypeScript application demonstrating modern AI techniques including RAG (Retrieval Augmented Generation), few-shot prompting, agents, and LLM observability with automated web scraping capabilities.
 
 ## Features
 
 -   **Multi-Agent System**: 2 specialized agents for different content types:
 
-    -   LinkedIn Agent: Uses a fine-tuned GPT-4 model for professional content to post on LinkedIn
+    -   LinkedIn Agent: Uses few-shot prompting with real example posts for professional content to post on LinkedIn
     -   RAG Agent: Leverages Pinecone vector database for RAG-based content analysis
 
 -   **Web Scraping**:
@@ -17,7 +17,7 @@ A full-stack TypeScript application demonstrating modern AI techniques including
 
 -   **Training Pipeline**:
 
-    -   Scripts for fine-tuning data preparation
+    -   Scripts for fine-tuning data preparation (historical artifacts — fine-tuning is deprecated)
     -   Cost estimation tools
     -   Training job management
 

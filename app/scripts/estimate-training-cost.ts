@@ -5,8 +5,8 @@
  * This script is preserved for educational purposes and can still
  * estimate costs for reference, though you cannot run actual fine-tuning.
  *
- * Use our pre-trained model instead:
- *   OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
+ * Instead, the LinkedIn agent now uses few-shot prompting:
+ *   see app/agents/example-posts.ts and data/brian_posts.csv
  */
 
 import fs from 'fs';
