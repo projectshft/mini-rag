@@ -1,0 +1,407 @@
+<h1>LangGraph ReAct Agent: Quick Start</h1>
+<p>Get a production-ready agent with tool calling in under 50 lines of code.</p>
+<hr>
+<h2>Video Walkthrough</h2>
+<!-- Descript embed placeholder -->
+
+<hr>
+<h2>What You&#39;ll Learn</h2>
+<ul>
+<li>How to create a ReAct agent using LangGraph&#39;s prebuilt patterns</li>
+<li>Defining tools with <code>@langchain/core/tools</code></li>
+<li>Streaming responses with <code>streamEvents()</code></li>
+<li>When this approach is enough vs when you need custom graphs</li>
+</ul>
+<hr>
+<h2>The Fastest Path to Tool-Calling Agents</h2>
+<p>LangGraph has two ways to build agents:</p>
+<ol>
+<li><strong><code>createReactAgent</code></strong> - Prebuilt, batteries-included (this lesson)</li>
+<li><strong>Custom <code>StateGraph</code></strong> - Build from scratch when you need control (next lesson)</li>
+</ol>
+<p>Most production agents use <code>createReactAgent</code>. It handles:</p>
+<ul>
+<li>Tool execution loops</li>
+<li>Message state management</li>
+<li>Streaming</li>
+<li>Error handling</li>
+</ul>
+<p>You only need custom graphs for complex workflows like human-in-the-loop or multi-agent systems.</p>
+<hr>
+<h2>Architecture</h2>
+<pre><code>User Message
+      ↓
+┌─────────────────────────────────────────┐
+│           createReactAgent              │
+│  ┌─────────────────────────────────┐   │
+│  │  LLM decides: answer or tool?   │   │
+│  └─────────────────────────────────┘   │
+│         ↓              ↓                │
+│      Answer      Call Tool(s)           │
+│         ↓              ↓                │
+│       Done       Execute &amp; Loop Back    │
+└─────────────────────────────────────────┘
+</code></pre>
+<p>The ReAct pattern (Reason + Act) lets the LLM decide when to use tools and when to respond directly.</p>
+<hr>
+<h2>Step 1: Install Dependencies</h2>
+<pre><code class="language-bash">yarn add @langchain/langgraph @langchain/openai @langchain/core
+</code></pre>
+<hr>
+<h2>Step 2: Define Your Tools</h2>
+<p>Tools are functions the agent can call. Use <code>tool()</code> from <code>@langchain/core/tools</code>:</p>
+<pre><code class="language-typescript">// libs/tools/search-docs.ts
+import { tool } from &quot;@langchain/core/tools&quot;;
+import { z } from &quot;zod&quot;;
+import { queryPinecone } from &quot;@/app/lib/rag&quot;;
+
+export const searchDocsTool = tool(
+  async ({ query, topK }) =&gt; {
+    const results = await queryPinecone(query, topK);
+
+    if (results.length === 0) {
+      return &quot;No relevant documents found.&quot;;
+    }
+
+    return results
+      .map((r, i) =&gt; `[${i + 1}] ${r.text}`)
+      .join(&quot;\n\n&quot;);
+  },
+  {
+    name: &quot;searchDocs&quot;,
+    description: &quot;Search the knowledge base for relevant information&quot;,
+    schema: z.object({
+      query: z.string().describe(&quot;The search query&quot;),
+      topK: z.number().optional().default(5).describe(&quot;Number of results&quot;),
+    }),
+  }
+);
+</code></pre>
+<p><strong>Key Points:</strong></p>
+<ul>
+<li>First argument: the async function that executes</li>
+<li><code>name</code>: what the LLM sees and calls</li>
+<li><code>description</code>: helps the LLM know when to use it</li>
+<li><code>schema</code>: Zod schema for input validation</li>
+</ul>
+<hr>
+<h2>Step 3: Create More Tools</h2>
+<p>Add tools for different capabilities:</p>
+<pre><code class="language-typescript">// libs/tools/get-context.ts
+import { tool } from &quot;@langchain/core/tools&quot;;
+import { z } from &quot;zod&quot;;
+
+export const getBusinessContextTool = tool(
+  async ({ contextType }) =&gt; {
+    // Fetch relevant business context
+    const contexts: Record&lt;string, string&gt; = {
+      pricing: &quot;Basic: $29/mo, Pro: $99/mo, Enterprise: custom&quot;,
+      features: &quot;RAG, Agents, Fine-tuning, Observability&quot;,
+      support: &quot;Email support for all plans, Slack for Pro+&quot;,
+    };
+
+    return contexts[contextType] || &quot;Context not found&quot;;
+  },
+  {
+    name: &quot;getBusinessContext&quot;,
+    description: &quot;Get business information like pricing, features, or support details&quot;,
+    schema: z.object({
+      contextType: z.enum([&quot;pricing&quot;, &quot;features&quot;, &quot;support&quot;]),
+    }),
+  }
+);
+</code></pre>
+<pre><code class="language-typescript">// libs/tools/index.ts
+export { searchDocsTool } from &quot;./search-docs&quot;;
+export { getBusinessContextTool } from &quot;./get-context&quot;;
+</code></pre>
+<hr>
+<h2>Step 4: Create the Agent</h2>
+<p>This is the core - combine LLM + tools into a ReAct agent:</p>
+<pre><code class="language-typescript">// app/actions/chat-agent.ts
+&quot;use server&quot;;
+
+import { createReactAgent } from &quot;@langchain/langgraph/prebuilt&quot;;
+import { ChatOpenAI } from &quot;@langchain/openai&quot;;
+import { searchDocsTool } from &quot;@/libs/tools/search-docs&quot;;
+import { getBusinessContextTool } from &quot;@/libs/tools/get-context&quot;;
+
+const SYSTEM_PROMPT = `
+You are a helpful assistant with access to tools.
+
+## Tool Usage Guidelines
+- Use searchDocs when the user asks questions that might be in the knowledge base
+- Use getBusinessContext for pricing, features, or support questions
+- If a tool fails, explain the issue and provide what help you can
+
+## Response Style
+- Be concise and direct
+- Cite sources when using search results
+- Admit when you don&#39;t know something
+`.trim();
+
+const llm = new ChatOpenAI({
+  model: &quot;gpt-4o&quot;,
+  streaming: true,
+});
+
+export const chatAgent = createReactAgent({
+  llm,
+  tools: [searchDocsTool, getBusinessContextTool],
+  // System prompt is passed with each invocation
+});
+
+export { SYSTEM_PROMPT };
+</code></pre>
+<p>That&#39;s it. <strong>Under 30 lines</strong> for a working agent.</p>
+<hr>
+<h2>Step 5: Create the API Route</h2>
+<p>Stream responses to your frontend:</p>
+<pre><code class="language-typescript">// app/api/chat/route.ts
+import { HumanMessage, AIMessage, SystemMessage } from &quot;@langchain/core/messages&quot;;
+import { chatAgent, SYSTEM_PROMPT } from &quot;@/app/actions/chat-agent&quot;;
+
+export async function POST(req: Request) {
+  const encoder = new TextEncoder();
+
+  try {
+    const { messages } = await req.json();
+
+    // Convert to LangChain message format
+    const lcMessages = [
+      new SystemMessage(SYSTEM_PROMPT),
+      ...messages.map((m: { role: string; content: string }) =&gt;
+        m.role === &quot;user&quot;
+          ? new HumanMessage(m.content)
+          : new AIMessage(m.content)
+      ),
+    ];
+
+    const stream = new ReadableStream({
+      async start(controller) {
+        const enqueue = (obj: object) =&gt;
+          controller.enqueue(encoder.encode(JSON.stringify(obj) + &quot;\n&quot;));
+
+        try {
+          const eventStream = chatAgent.streamEvents(
+            { messages: lcMessages },
+            { version: &quot;v2&quot; }
+          );
+
+          for await (const event of eventStream) {
+            // Stream LLM tokens
+            if (event.event === &quot;on_chat_model_stream&quot;) {
+              const content = event.data?.chunk?.content;
+              if (typeof content === &quot;string&quot; &amp;&amp; content) {
+                enqueue({ type: &quot;text&quot;, content });
+              }
+            }
+
+            // Show tool usage
+            if (event.event === &quot;on_tool_start&quot;) {
+              enqueue({ type: &quot;tool&quot;, name: event.name });
+            }
+          }
+        } catch (error) {
+          enqueue({
+            type: &quot;error&quot;,
+            message: error instanceof Error ? error.message : &quot;Unknown error&quot;,
+          });
+        } finally {
+          controller.close();
+        }
+      },
+    });
+
+    return new Response(stream, {
+      headers: { &quot;Content-Type&quot;: &quot;application/x-ndjson&quot; },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify({ error: &quot;Failed to process&quot; }), {
+      status: 500,
+    });
+  }
+}
+</code></pre>
+<hr>
+<h2>Step 6: Test It</h2>
+<h3>Test with curl</h3>
+<pre><code class="language-bash">curl -X POST http://localhost:3000/api/chat \
+  -H &quot;Content-Type: application/json&quot; \
+  -d &#39;{&quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is RAG?&quot;}]}&#39;
+</code></pre>
+<p><strong>Expected output (newline-delimited JSON):</strong></p>
+<pre><code class="language-json">{&quot;type&quot;:&quot;tool&quot;,&quot;name&quot;:&quot;searchDocs&quot;}
+{&quot;type&quot;:&quot;text&quot;,&quot;content&quot;:&quot;RAG&quot;}
+{&quot;type&quot;:&quot;text&quot;,&quot;content&quot;:&quot; (Retrieval&quot;}
+{&quot;type&quot;:&quot;text&quot;,&quot;content&quot;:&quot;-Augmented&quot;}
+{&quot;type&quot;:&quot;text&quot;,&quot;content&quot;:&quot; Generation)&quot;}
+{&quot;type&quot;:&quot;text&quot;,&quot;content&quot;:&quot; is...&quot;}
+</code></pre>
+<h3>Test tool routing</h3>
+<pre><code class="language-bash"># Should use searchDocs
+curl ... -d &#39;{&quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;How do embeddings work?&quot;}]}&#39;
+
+# Should use getBusinessContext
+curl ... -d &#39;{&quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;What is the pricing?&quot;}]}&#39;
+
+# Should answer directly (no tools)
+curl ... -d &#39;{&quot;messages&quot;: [{&quot;role&quot;: &quot;user&quot;, &quot;content&quot;: &quot;Hello!&quot;}]}&#39;
+</code></pre>
+<hr>
+<h2>Understanding streamEvents</h2>
+<p>The <code>streamEvents()</code> method emits different event types:</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>When</th>
+<th>Use For</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>on_chat_model_start</code></td>
+<td>LLM begins generating</td>
+<td>Show &quot;thinking&quot; indicator</td>
+</tr>
+<tr>
+<td><code>on_chat_model_stream</code></td>
+<td>Each token generated</td>
+<td>Stream text to UI</td>
+</tr>
+<tr>
+<td><code>on_chat_model_end</code></td>
+<td>LLM finished</td>
+<td>Clean up</td>
+</tr>
+<tr>
+<td><code>on_tool_start</code></td>
+<td>Tool called</td>
+<td>Show &quot;Searching...&quot;</td>
+</tr>
+<tr>
+<td><code>on_tool_end</code></td>
+<td>Tool finished</td>
+<td>Log results</td>
+</tr>
+</tbody></table>
+<pre><code class="language-typescript">for await (const event of agent.streamEvents(input, { version: &quot;v2&quot; })) {
+  switch (event.event) {
+    case &quot;on_chat_model_stream&quot;:
+      // Stream token to client
+      break;
+    case &quot;on_tool_start&quot;:
+      // Show tool indicator
+      break;
+  }
+}
+</code></pre>
+<hr>
+<h2>Adding LangSmith Observability</h2>
+<p>Track all agent runs with LangSmith:</p>
+<pre><code class="language-typescript">// Set environment variables
+// LANGSMITH_TRACING=true
+// LANGSMITH_API_KEY=lsv2_pt_...
+// LANGSMITH_PROJECT=my-project
+
+// Then pass run metadata
+const eventStream = chatAgent.streamEvents(
+  { messages: lcMessages },
+  {
+    version: &quot;v2&quot;,
+    runName: &quot;chat-agent&quot;,
+    metadata: { userId: &quot;user_123&quot; },
+  }
+);
+</code></pre>
+<p>Every tool call, LLM invocation, and decision is logged automatically.</p>
+<hr>
+<h2>When createReactAgent Is Enough</h2>
+<p>Use <code>createReactAgent</code> for:</p>
+<ul>
+<li><strong>Standard tool-calling agents</strong> - Most common use case</li>
+<li><strong>Chat interfaces with capabilities</strong> - Search, lookup, calculations</li>
+<li><strong>RAG with multiple data sources</strong> - Different tools for different sources</li>
+<li><strong>Streaming responses</strong> - Built-in support</li>
+<li><strong>Production deployments</strong> - Battle-tested pattern</li>
+</ul>
+<hr>
+<h2>When You Need Custom Graphs</h2>
+<p>Move to custom <code>StateGraph</code> (next lesson) when you need:</p>
+<ul>
+<li><strong>Human-in-the-loop</strong> - Pause for approval before actions</li>
+<li><strong>Complex branching</strong> - Different paths based on analysis</li>
+<li><strong>Multi-agent coordination</strong> - Agents calling other agents</li>
+<li><strong>Custom state management</strong> - Beyond messages</li>
+<li><strong>Iterative refinement</strong> - Search → evaluate → search again</li>
+</ul>
+<p>Most teams start with <code>createReactAgent</code> and only move to custom graphs when they hit a limitation.</p>
+<hr>
+<h2>Common Patterns</h2>
+<h3>Pattern 1: Multiple Search Tools</h3>
+<pre><code class="language-typescript">const agent = createReactAgent({
+  llm,
+  tools: [
+    searchDocsTool,      // Internal docs
+    searchWebTool,       // Web search
+    searchDatabaseTool,  // SQL queries
+  ],
+});
+</code></pre>
+<p>The LLM decides which source to query based on the question.</p>
+<h3>Pattern 2: Tool Error Handling</h3>
+<pre><code class="language-typescript">export const searchDocsTool = tool(
+  async ({ query }) =&gt; {
+    try {
+      const results = await queryPinecone(query);
+      return formatResults(results);
+    } catch (error) {
+      // Return error message instead of throwing
+      return `Search failed: ${error.message}. Please try a different query.`;
+    }
+  },
+  { name: &quot;searchDocs&quot;, ... }
+);
+</code></pre>
+<h3>Pattern 3: Context from Previous Tools</h3>
+<p>The agent maintains message history, so tool results are available for subsequent reasoning:</p>
+<pre><code>User: &quot;What&#39;s our pricing and how does it compare to competitors?&quot;
+
+Agent thinks: I need pricing info
+→ Calls getBusinessContext(&quot;pricing&quot;)
+→ Gets: &quot;Basic: $29/mo, Pro: $99/mo...&quot;
+
+Agent thinks: Now I need competitor info
+→ Calls searchDocs(&quot;competitor pricing comparison&quot;)
+→ Gets: search results
+
+Agent: Combines both tool results into final answer
+</code></pre>
+<hr>
+<h2>What You Learned</h2>
+<ul>
+<li><strong><code>createReactAgent</code></strong> is the fastest path to tool-calling agents</li>
+<li><strong>Tools</strong> are defined with <code>tool()</code> from <code>@langchain/core/tools</code></li>
+<li><strong><code>streamEvents()</code></strong> provides fine-grained control over streaming</li>
+<li><strong>Most production agents</strong> use this prebuilt pattern</li>
+<li><strong>Custom graphs</strong> are for advanced workflows (next lesson)</li>
+</ul>
+<hr>
+<h2>Challenge: Add a Third Tool</h2>
+<p>Create a tool that the agent can use alongside the existing ones:</p>
+<p>Ideas:</p>
+<ul>
+<li><code>calculateTool</code> - Math operations</li>
+<li><code>getCurrentTimeTool</code> - Date/time queries</li>
+<li><code>summarizeTool</code> - Summarize long text</li>
+</ul>
+<p>Test that the agent correctly chooses between all three tools.</p>
+<hr>
+<h2>What&#39;s Next</h2>
+<p>In the next lesson, you&#39;ll learn when and how to build <strong>custom StateGraphs</strong> for:</p>
+<ul>
+<li>Human-in-the-loop workflows</li>
+<li>Complex branching logic</li>
+<li>Multi-step refinement loops</li>
+<li>Custom state management</li>
+</ul>

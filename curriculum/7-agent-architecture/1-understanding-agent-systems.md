@@ -65,7 +65,7 @@ User Question
 │   Agent     │   Decides which agent to use
 └─────────────┘
     ↓
-    ├→ LinkedIn Agent (fine-tuned model)
+    ├→ LinkedIn Agent (few-shot prompting)
     ├→ RAG Agent (retrieval + GPT-4o)
     └→ ... more agents
     ↓

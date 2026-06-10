@@ -1,0 +1,236 @@
+<h1>MCP: Tool Calling as a Protocol</h1>
+<p>Model Context Protocol (MCP) is an open standard that lets AI assistants call your tools directly.</p>
+<p>Think of it as: <strong>Tool calling, but standardized across all AI clients.</strong></p>
+<hr>
+<h2>The Connection</h2>
+<p>You already know tool calling:</p>
+<pre><code class="language-typescript">// Tool definition (from previous lessons)
+{
+  name: &quot;search_documents&quot;,
+  description: &quot;Search the knowledge base&quot;,
+  parameters: {
+    query: { type: &quot;string&quot; }
+  }
+}
+</code></pre>
+<p>MCP is the same concept, but instead of defining tools in your app, you expose them as a <strong>server</strong> that any AI client can connect to.</p>
+<pre><code>Your App + Tools ──(API call)──&gt; Your App handles it
+
+Your MCP Server ──(protocol)──&gt; Claude Desktop calls it
+                              &gt; Claude Code calls it
+                              &gt; Cursor calls it
+                              &gt; Any MCP client calls it
+</code></pre>
+<hr>
+<h2>Why MCP?</h2>
+<p>Without MCP:</p>
+<ul>
+<li>Build a chat UI</li>
+<li>Handle tool calls yourself</li>
+<li>Rebuild for each AI provider</li>
+</ul>
+<p>With MCP:</p>
+<ul>
+<li>Expose tools once</li>
+<li>Users access via Claude Desktop, Claude Code, Cursor, etc.</li>
+<li>No UI needed - AI handles everything</li>
+</ul>
+<hr>
+<h2>Our RAG MCP Server</h2>
+<p>We&#39;ve built a minimal MCP server at <code>mcp/rag-server.ts</code> that exposes:</p>
+<ul>
+<li><code>search_knowledge_base</code> - Query your Pinecone vectors</li>
+<li><code>list_sources</code> - Show index stats</li>
+</ul>
+<pre><code class="language-bash"># Install dependencies first
+yarn install
+
+# Run the server (for testing)
+yarn mcp:rag
+</code></pre>
+<hr>
+<h2>Setup: Claude Code</h2>
+<p>Add <code>.mcp.json</code> to your project root:</p>
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;rag&quot;: {
+      &quot;command&quot;: &quot;npx&quot;,
+      &quot;args&quot;: [&quot;ts-node&quot;, &quot;mcp/rag-server.ts&quot;]
+    }
+  }
+}
+</code></pre>
+<p>Then restart Claude Code (or start a new session). You&#39;ll be prompted to approve the MCP server. Once approved, the tools will appear when you ask questions about your knowledge base.</p>
+<p><strong>Docs:</strong> <a href="https://docs.anthropic.com/en/docs/claude-code/mcp">https://docs.anthropic.com/en/docs/claude-code/mcp</a></p>
+<hr>
+<h2>Setup: Claude Desktop</h2>
+<ol>
+<li><p>Find your config file:</p>
+<ul>
+<li><strong>macOS:</strong> <code>~/Library/Application Support/Claude/claude_desktop_config.json</code></li>
+<li><strong>Windows:</strong> <code>%APPDATA%\Claude\claude_desktop_config.json</code></li>
+</ul>
+</li>
+<li><p>Add your server:</p>
+</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;rag&quot;: {
+      &quot;command&quot;: &quot;npx&quot;,
+      &quot;args&quot;: [&quot;ts-node&quot;, &quot;/full/path/to/mini_rag/mcp/rag-server.ts&quot;],
+      &quot;env&quot;: {
+        &quot;OPENAI_API_KEY&quot;: &quot;your-key&quot;,
+        &quot;PINECONE_API_KEY&quot;: &quot;your-key&quot;,
+        &quot;PINECONE_INDEX&quot;: &quot;your-index&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<ol start="3">
+<li><p>Restart Claude Desktop</p>
+</li>
+<li><p>Your tools appear in the 🔧 tools menu</p>
+</li>
+</ol>
+<p><strong>Docs:</strong> <a href="https://modelcontextprotocol.io/quickstart/user">https://modelcontextprotocol.io/quickstart/user</a></p>
+<hr>
+<h2>Setup: Cursor</h2>
+<ol>
+<li><p>Open Cursor Settings → MCP (or <code>Cmd+Shift+P</code> → &quot;MCP: Edit Configuration&quot;)</p>
+</li>
+<li><p>Add your server:</p>
+</li>
+</ol>
+<pre><code class="language-json">{
+  &quot;mcpServers&quot;: {
+    &quot;rag&quot;: {
+      &quot;command&quot;: &quot;npx&quot;,
+      &quot;args&quot;: [&quot;ts-node&quot;, &quot;/full/path/to/mini_rag/mcp/rag-server.ts&quot;],
+      &quot;env&quot;: {
+        &quot;OPENAI_API_KEY&quot;: &quot;your-key&quot;,
+        &quot;PINECONE_API_KEY&quot;: &quot;your-key&quot;,
+        &quot;PINECONE_INDEX&quot;: &quot;your-index&quot;
+      }
+    }
+  }
+}
+</code></pre>
+<ol start="3">
+<li>Restart Cursor</li>
+</ol>
+<p><strong>Docs:</strong> <a href="https://docs.cursor.com/context/model-context-protocol">https://docs.cursor.com/context/model-context-protocol</a></p>
+<hr>
+<h2>Testing Without a Client</h2>
+<p>Use the MCP Inspector to test your server directly:</p>
+<pre><code class="language-bash">npx @modelcontextprotocol/inspector npx ts-node mcp/rag-server.ts
+</code></pre>
+<p>This opens a web UI where you can:</p>
+<ul>
+<li>See available tools</li>
+<li>Call tools with test inputs</li>
+<li>View responses</li>
+</ul>
+<hr>
+<h2>The Server Code</h2>
+<p>Here&#39;s what the server does (<code>mcp/rag-server.ts</code>):</p>
+<pre><code class="language-typescript">import { Server } from &#39;@modelcontextprotocol/sdk/server/index.js&#39;;
+import { StdioServerTransport } from &#39;@modelcontextprotocol/sdk/server/stdio.js&#39;;
+
+const server = new Server(
+  { name: &#39;rag-knowledge-base&#39;, version: &#39;1.0.0&#39; },
+  { capabilities: { tools: {} } }
+);
+
+// List tools (same schema as OpenAI tool calling)
+server.setRequestHandler(ListToolsRequestSchema, async () =&gt; ({
+  tools: [
+    {
+      name: &#39;search_knowledge_base&#39;,
+      description: &#39;Search for relevant documents&#39;,
+      inputSchema: {
+        type: &#39;object&#39;,
+        properties: {
+          query: { type: &#39;string&#39;, description: &#39;Search query&#39; },
+        },
+        required: [&#39;query&#39;],
+      },
+    },
+  ],
+}));
+
+// Handle tool calls
+server.setRequestHandler(CallToolRequestSchema, async (request) =&gt; {
+  const { query } = request.params.arguments;
+  const results = await searchPinecone(query);
+  return { content: [{ type: &#39;text&#39;, text: JSON.stringify(results) }] };
+});
+
+// Start server on stdio
+const transport = new StdioServerTransport();
+await server.connect(transport);
+</code></pre>
+<hr>
+<h2>Tool Calling vs MCP</h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Tool Calling</th>
+<th>MCP</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Where tools live</td>
+<td>In your app</td>
+<td>Separate server</td>
+</tr>
+<tr>
+<td>Who calls them</td>
+<td>Your app via API</td>
+<td>AI client directly</td>
+</tr>
+<tr>
+<td>Build UI?</td>
+<td>Yes</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Reusable?</td>
+<td>Per app</td>
+<td>Any MCP client</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>When to Use MCP</h2>
+<p><strong>Use MCP when:</strong></p>
+<ul>
+<li>You want to expose RAG to Claude Desktop/Code/Cursor users</li>
+<li>Building internal tools for AI-assisted workflows</li>
+<li>You don&#39;t want to build a chat UI</li>
+</ul>
+<p><strong>Stick with regular tool calling when:</strong></p>
+<ul>
+<li>Building a custom chat interface</li>
+<li>Need full control over the UX</li>
+<li>Integrating into an existing app</li>
+</ul>
+<hr>
+<h2>Key Takeaway</h2>
+<p>MCP = Tool calling, but:</p>
+<ul>
+<li>Standardized protocol</li>
+<li>Works with any MCP client</li>
+<li>Your tools become reusable components</li>
+</ul>
+<p>You already understand the hard part (tool schemas, handling calls). MCP just changes where those tools live.</p>
+<hr>
+<h2>Resources</h2>
+<ul>
+<li><strong>MCP Specification:</strong> <a href="https://modelcontextprotocol.io">https://modelcontextprotocol.io</a></li>
+<li><strong>Claude Desktop Setup:</strong> <a href="https://modelcontextprotocol.io/quickstart/user">https://modelcontextprotocol.io/quickstart/user</a></li>
+<li><strong>Claude Code Setup:</strong> <a href="https://docs.anthropic.com/en/docs/claude-code/mcp">https://docs.anthropic.com/en/docs/claude-code/mcp</a></li>
+<li><strong>Cursor Setup:</strong> <a href="https://docs.cursor.com/context/model-context-protocol">https://docs.cursor.com/context/model-context-protocol</a></li>
+<li><strong>MCP Inspector:</strong> <code>npx @modelcontextprotocol/inspector</code></li>
+</ul>

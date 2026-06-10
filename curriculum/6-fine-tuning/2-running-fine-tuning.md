@@ -11,7 +11,7 @@ Learn how fine-tuning works by examining the code and data formats that were use
 > **Instead, you will:**
 > - Study the code to understand the workflow
 > - Examine the training data format (JSONL)
-> - Use our **pre-trained model** for the LinkedIn agent
+> - Build the LinkedIn agent with **few-shot prompting** instead (Module 8) — fine-tuned models, including the one previously provided for this course, can no longer be used
 >
 > **Why learn this anyway?**
 > - Fine-tuning is not limited to OpenAI — Anthropic, Cohere, and open-source models (via Hugging Face, Axolotl, etc.) still support it
@@ -34,7 +34,7 @@ Watch this guide to understand the fine-tuning process:
 2. Understand how the training script works
 3. Learn about monitoring fine-tuning jobs
 4. Know what a model ID looks like
-5. Configure your app with a pre-trained model
+5. See what replaced fine-tuning for this course: few-shot prompting
 
 ---
 
@@ -196,32 +196,13 @@ curl https://api.openai.com/v1/fine_tuning/jobs/ftjob-abc123 \
 
 ---
 
-## Using the Pre-Trained Model
+## What Replaced It: Few-Shot Prompting
 
-Since you cannot run fine-tuning yourself, we provide a pre-trained model for the LinkedIn agent exercises.
+Since fine-tuned models can no longer be used (including the one previously provided for this course), the LinkedIn agent now uses **few-shot prompting**: real example posts are embedded directly in the prompt, and a standard model (`gpt-4o`) imitates their style.
 
-### Our Pre-Trained Model ID
+The repo includes `data/brian_posts.csv` — 850+ real LinkedIn posts with engagement stats. In Module 8 you'll pick a few examples from it (or from any creator whose style you like) and wire them into the agent.
 
-```
-ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
-```
-
-This model was fine-tuned on LinkedIn post examples and writes in a professional LinkedIn style.
-
-### Add to Your Environment
-
-Update your `.env.local`:
-
-```bash
-OPENAI_API_KEY=sk-your-key-here
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
-```
-
-**Important:**
-- Use this exact model ID — it's already fine-tuned and ready
-- Include the entire string (organization, name, and hash)
-- Restart your dev server after updating
-- **Note:** This model may be deprecated in the future as part of OpenAI's full deprecation of fine-tuning
+This is the modern pattern: the examples in the prompt do the work that training data used to do, with no training cost, no custom model to maintain, and instant iteration.
 
 ---
 
@@ -344,7 +325,7 @@ Extra $0.075 for significantly better quality!
 ✅ How training data is prepared in JSONL format
 ✅ How the fine-tuning script worked (as an artifact)
 ✅ How training jobs were monitored
-✅ How to configure your app with a pre-trained model
+✅ Why few-shot prompting replaced fine-tuning for the LinkedIn agent
 ✅ What happens during the training process internally
 
 ---
@@ -359,9 +340,6 @@ Extra $0.075 for significantly better quality!
 
 # Check environment
 cat .env.local | grep OPENAI
-
-# Restart dev server (after adding model ID)
-yarn dev
 ```
 
 ### File Locations
@@ -369,14 +347,7 @@ yarn dev
 ```
 Training script (artifact): app/scripts/upload-training-data.ts
 Training data (reference): app/scripts/data/linkedin_training.jsonl
-Environment: .env.local
-```
-
-### Pre-Trained Model
-
-Use this model ID in your `.env.local`:
-```
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
+Example posts for few-shot prompting: data/brian_posts.csv
 ```
 
 ### Fine-Tuning Elsewhere

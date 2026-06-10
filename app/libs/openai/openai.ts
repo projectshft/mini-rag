@@ -13,7 +13,7 @@
  *
  * 2. AGENT SPECIALIZATION:
  *    - Different agents handle different types of queries
- *    - LinkedIn agent: Uses fine-tuned model for professional content
+ *    - LinkedIn agent: Uses few-shot prompting for professional content
  *    - News agent: Uses RAG (vector search) for current events
  *    - General agent: Fallback for everything else
  *

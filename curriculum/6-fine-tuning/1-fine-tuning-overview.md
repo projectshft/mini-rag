@@ -10,11 +10,11 @@ Understand when to use fine-tuning vs RAG, and what fine-tuning can do for your 
 >
 > **What this means for this course:**
 > - You will **not** run fine-tuning scripts yourself
-> - We provide a **pre-trained model** (`ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ`) for the LinkedIn agent exercises
+> - The LinkedIn agent now uses **few-shot prompting** — real example posts embedded in the prompt — instead of a fine-tuned model
 > - Focus on **understanding the concepts** — the scripts are now historical artifacts showing how fine-tuning worked
 > - Fine-tuning remains valuable knowledge because **other providers** (Anthropic, Cohere, open-source models via Hugging Face) still offer it
 >
-> The concepts in this module prepare you for the LinkedIn agent implementation, where you'll use our pre-trained model.
+> The concepts in this module prepare you for the LinkedIn agent implementation, where you'll achieve the same style consistency with few-shot prompting.
 
 ---
 
@@ -51,7 +51,7 @@ Understand when to use fine-tuning vs RAG, and what fine-tuning can do for your 
 | **Speed** | Fast (no retrieval) | Slightly slower (retrieval step) |
 
 **In this course:**
-- **LinkedIn Agent** uses fine-tuning → Your professional voice and style
+- **LinkedIn Agent** uses few-shot prompting → A specific voice and style, no training required
 - **RAG Agent** uses retrieval → Current technical documentation
 
 ---
@@ -153,6 +153,6 @@ Many production systems still run on fine-tuned models. Knowing how they were cr
 
 ## What's Next
 
-In the next lesson, you'll examine the fine-tuning code as an artifact and configure your environment to use our pre-trained model.
+In the next lesson, you'll examine the fine-tuning code as an artifact and see how few-shot prompting replaces it in the LinkedIn agent.
 
 

@@ -1,14 +1,14 @@
 # LinkedIn Agent
 
-Now we'll implement an agent that uses a fine-tuned model to respond in a professional LinkedIn style with streaming responses.
+Now we'll implement an agent that uses **few-shot prompting** to respond in a specific LinkedIn voice with streaming responses.
 
 ---
 
 > **Note on Fine-Tuning**
 >
-> Due to OpenAI's deprecation of fine-tuning (May 2026), you will use our **pre-trained model** instead of creating your own. This model was fine-tuned on LinkedIn post examples and demonstrates how fine-tuned models improve style consistency.
+> This agent was originally built on a fine-tuned model. OpenAI deprecated fine-tuning (May 2026), so we now use **few-shot prompting** instead: we show the model a handful of real example posts in the prompt and ask it to imitate their style.
 >
-> The concepts remain the same — you're just using a provided model instead of training one yourself.
+> This is how style transfer is done with modern models anyway — "context is all you really need." The fine-tuning module (`6-fine-tuning/`) covers the old approach conceptually.
 
 ---
 
@@ -18,71 +18,110 @@ Watch this guide to implementing the LinkedIn agent:
 
 <iframe src="https://share.descript.com/embed/oSYwAxsn4AO" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
+> The video shows the original fine-tuned model version. The agent structure (system prompt + `streamText()`) is the same — only the model and the style examples have changed.
+
 ---
 
 ## What You'll Build
 
 An agent that:
 
--   Uses a pre-trained fine-tuned model
+-   Uses **few-shot prompting** to lock in a writing style — no custom model needed
 -   Streams responses for a better user experience
--   Responds in a professional LinkedIn conversational style
+-   Writes LinkedIn posts in a voice you choose
+
+## How Few-Shot Prompting Works
+
+Instead of training a model on hundreds of examples (fine-tuning), you paste a few examples directly into the prompt and tell the model to imitate them:
+
+-   **Clear instructions** — what the post should achieve and what to imitate (tone, structure, formatting)
+-   **A few example posts** — 3-5 is plenty; the model infers the voice from them
+-   **The user's request** — the topic for the new post
+
+This is faster to iterate on than fine-tuning: change an example, re-run, done.
 
 ## Implementation Steps
 
 The agent implementation is in `app/agents/linkedin.ts`.
 
-### 1. Configure the Pre-Trained Model
+### 1. Pick Your Example Posts
 
-Add the pre-trained model ID to your `.env.local`:
+The repo includes `data/brian_posts.csv` — 850+ real LinkedIn posts from Brian with engagement stats (impressions, reactions, comments).
 
-```bash
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
-```
+Three of those posts are already wired up as defaults in `app/agents/example-posts.ts`. You can:
 
-This is a model we've already fine-tuned for the course. It writes in a professional LinkedIn style.
+-   **Keep the defaults** — they're high-engagement posts with three different formats (story, list, short take)
+-   **Pick your own from the CSV** — sort by `numImpressions` to find what performed best
+-   **Use a creator you like** — paste in posts from anyone whose style you want to copy
+
+Whatever you choose, pick examples with **different formats** so the model learns the voice, not a single template.
 
 ### 2. Implement the Agent
 
 Your agent needs to:
 
-1. **Get the model ID** from environment variables (`process.env.OPENAI_FINETUNED_MODEL`)
-2. **Build a system prompt** that defines the agent's role as a LinkedIn copywriter
-3. **Use `prompt`** to provide the user's original request and refined query as context
+1. **Build an examples block** from the posts in `app/agents/example-posts.ts`
+2. **Build a system prompt** that tells the model to imitate the style (not the content) of the examples
+3. **Include the user's request** — the original query and refined query from the selector agent
 4. **Use `streamText()`** from the Vercel AI SDK to stream the response
 
 The TODOs in `app/agents/linkedin.ts` guide you through each step.
 
 ## Key Concepts
 
-### Streaming Responses with Prompt
+### Few-Shot Prompting with Streaming
 
-Using `streamText()` provides a better user experience by showing the response as it's generated. Here's the solution:
+Here's the solution:
 
 ```typescript
+import { EXAMPLE_POSTS } from './example-posts';
+
+const examples = EXAMPLE_POSTS.map(
+	(post, i) => `--- Example Post ${i + 1} ---\n${post}`
+).join('\n\n');
+
+const systemPrompt = `You are a professional LinkedIn copywriter who creates high-engagement posts.
+
+Study the example posts below and match their voice, tone, structure, and formatting (short punchy lines, line breaks between thoughts, occasional lists and emphasis). Do NOT copy their content — only their style.
+
+${examples}
+
+Original user request: "${request.originalQuery}"
+Refined query: "${request.query}"
+
+Use the refined query to understand the user's intent and write a new LinkedIn post on that topic in the style of the examples.`;
+
 return streamText({
-	model: openai(process.env.OPENAI_FINETUNED_MODEL!),
-	system: 'You are a professional linkedin copywriter to create high engagement linkedin posts',
-	prompt: `
-    Original User Request: ${_request.originalQuery}
-    Refined Query: ${_request.query}
-  `,
+	model: openai('gpt-4o'),
+	system: systemPrompt,
+	messages: request.messages,
 });
 ```
 
 Key points:
 
 -   Return the `streamText()` result directly (no need to call additional methods or await)
--   Use **`prompt`** (not `messages`) to provide context - this is simpler for single-turn agent responses
--   The `prompt` includes both the original user request and the refined query from the selector agent
--   The `system` parameter sets the agent's role and behavior
--   The fine-tuned model is passed using `openai(process.env.OPENAI_FINETUNED_MODEL!)`
+-   The **examples go in the system prompt** — the model treats them as style reference, not conversation history
+-   "Imitate the style, not the content" matters — without it, the model will recycle topics from the examples
+-   A standard model (`gpt-4o`) replaces the fine-tuned model — the examples do the work the training data used to do
+
+### Tuning the Output
+
+If the output doesn't sound right:
+
+-   **Add more examples** — 1-2 more posts can sharpen the voice
+-   **Vary your examples** — if all your examples are stories, the model will always tell stories
+-   **Tighten the instructions** — e.g. "keep it under 150 words", "end with a question"
+
+### When Would Fine-Tuning Still Make Sense?
+
+Conceptually (covered in `6-fine-tuning/`): an extremely niche domain few examples can't capture, very high-volume generation where prompt tokens cost more than training, or a style that drifts with few-shot. For a personal LinkedIn agent, few-shot prompting wins on every axis that matters: speed, cost, and iteration time.
 
 ## Resources
 
 -   [Vercel AI SDK - streamText](https://sdk.vercel.ai/docs/ai-core/stream-text)
--   [OpenAI Fine-tuning Guide](https://platform.openai.com/docs/guides/fine-tuning)
+-   [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering)
 
 ## Testing
 
-Once implemented, the selector agent will route requests to generate LinkedIn posts to this LinkedIn agent automatically.
+Once implemented, the selector agent will route requests to generate LinkedIn posts to this LinkedIn agent automatically. Try the same topic with different example posts swapped in — the change in voice should be obvious.

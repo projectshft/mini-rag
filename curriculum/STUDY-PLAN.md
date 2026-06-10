@@ -49,7 +49,7 @@ Complete the RAG & AI Agents curriculum in 6 weeks with ~30-45 minutes of daily 
 | 1 | 7 | Understanding Agent Systems | 45 min | Agent pattern, routing concepts |
 | 2 | 7 | Prompting + Text Selector | 50 min | Temperature, model selection, basic selector |
 | 3 | 7 | Structured Outputs | 50 min | Code exercise: Zod schemas |
-| 4 | 7-8 | Graceful Degradation + LinkedIn | 50 min | Fallback strategies + fine-tuned model |
+| 4 | 7-8 | Graceful Degradation + LinkedIn | 50 min | Fallback strategies + few-shot prompting |
 | 5 | 9 | RAG Agent | 45 min | Code exercise: retrieval + generation |
 
 **Assignment Due:** Agent selector with structured outputs
