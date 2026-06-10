@@ -30,7 +30,6 @@ PINECONE_API_KEY=your_pinecone_key_here
 LANGSMITH_TRACING=true
 LANGSMITH_API_KEY=your_langsmith_key_here
 PINECONE_INDEX=your_index_name
-OPENAI_FINETUNED_MODEL=your_finetuned_model_id (optional)
 ```
 
 ### Recommended Learning Resources
@@ -184,28 +183,15 @@ This will scrape URLs, chunk the content, generate embeddings, and upload to Pin
 
 -   Learn: [Chunking Strategies](https://www.pinecone.io/learn/chunking-strategies/), [Text Embeddings](https://platform.openai.com/docs/guides/embeddings/use-cases)
 
-**Step 4: Train Your LinkedIn Agent**
+**Step 4: Give Your LinkedIn Agent a Voice**
 
-Fine-tune a model on Brian's LinkedIn posts:
+The LinkedIn agent uses **few-shot prompting** — example posts embedded in the prompt — instead of a fine-tuned model (OpenAI deprecated fine-tuning in May 2026).
 
-```bash
-# Generate training data from posts
-yarn tsx app/scripts/generate-training-data.ts
+Pick your example posts in `app/agents/example-posts.ts`. Defaults come from `data/brian_posts.csv` (850+ of Brian's real posts with engagement stats) — swap in different posts from the CSV, or paste in posts from any creator whose style you want to copy.
 
-# (Optional) Estimate cost before training
-yarn tsx app/scripts/estimate-training-cost.ts
+The old fine-tuning scripts in `app/scripts/` are kept as historical artifacts — do not run them.
 
-# Upload to OpenAI and start fine-tuning job
-yarn tsx app/scripts/upload-training-data.ts
-```
-
-Once training completes (~10-20 mins), add the model ID to `.env`:
-
-```bash
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::YOUR_ID
-```
-
--   Learn: [OpenAI Fine-Tuning Guide](https://platform.openai.com/docs/guides/fine-tuning), [When to Fine-Tune vs RAG](https://platform.openai.com/docs/guides/fine-tuning/when-to-use-fine-tuning)
+-   Learn: [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering), [When to Fine-Tune vs RAG](https://platform.openai.com/docs/guides/fine-tuning/when-to-use-fine-tuning)
 
 **Step 5: Fix All The TODOs**
 

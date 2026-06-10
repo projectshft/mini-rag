@@ -11,8 +11,8 @@
  *
  * DO NOT RUN THIS SCRIPT - it will fail due to API restrictions.
  *
- * Instead, use our pre-trained model:
- *   OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ
+ * Instead, the LinkedIn agent now uses few-shot prompting:
+ *   see app/agents/example-posts.ts and data/brian_posts.csv
  *
  * WHY KEEP THIS FILE?
  * - Educational reference for understanding the fine-tuning workflow
@@ -116,10 +116,8 @@ async function main() {
 	console.error('⚠️  As of May 7, 2026, OpenAI has limited access to fine-tuning.');
 	console.error('⚠️  This script is now a historical artifact for educational purposes.');
 	console.error('⚠️');
-	console.error('⚠️  Use our pre-trained model instead:');
-	console.error('⚠️    OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::COAiNLWZ');
-	console.error('⚠️');
-	console.error('⚠️  Add this to your .env.local file and restart your dev server.');
+	console.error('⚠️  The LinkedIn agent now uses few-shot prompting instead:');
+	console.error('⚠️    see app/agents/example-posts.ts and data/brian_posts.csv');
 	console.error('⚠️  ============================================================\n');
 	process.exit(1);
 
