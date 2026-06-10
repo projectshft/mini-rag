@@ -4,7 +4,7 @@
 <blockquote>
 <p><strong>Note on Fine-Tuning</strong></p>
 <p>This agent was originally built on a fine-tuned model. OpenAI deprecated fine-tuning (May 2026), so we now use <strong>few-shot prompting</strong> instead: we show the model a handful of real example posts in the prompt and ask it to imitate their style.</p>
-<p>This is how style transfer is done with modern models anyway — &quot;context is all you really need.&quot; The fine-tuning module (<code>6-fine-tuning/</code>) covers the old approach conceptually.</p>
+<p>This is how style transfer is done with modern models anyway — &quot;context is all you really need.&quot; The fine-tuning module covers the old approach conceptually.</p>
 </blockquote>
 <hr>
 <h2>Video Walkthrough</h2>
@@ -56,7 +56,7 @@
 <pre><code class="language-typescript">import { EXAMPLE_POSTS } from &#39;./example-posts&#39;;
 
 const examples = EXAMPLE_POSTS.map(
-	(post, i) =&gt; `--- Example Post ${i + 1} ---\n${post}`
+	(post, i) =&gt; `--- Example Post ${i + 1} ---\n${post}`,
 ).join(&#39;\n\n&#39;);
 
 const systemPrompt = `You are a professional LinkedIn copywriter who creates high-engagement posts.
@@ -91,7 +91,7 @@ return streamText({
 <li><strong>Tighten the instructions</strong> — e.g. &quot;keep it under 150 words&quot;, &quot;end with a question&quot;</li>
 </ul>
 <h3>When Would Fine-Tuning Still Make Sense?</h3>
-<p>Conceptually (covered in <code>6-fine-tuning/</code>): an extremely niche domain few examples can&#39;t capture, very high-volume generation where prompt tokens cost more than training, or a style that drifts with few-shot. For a personal LinkedIn agent, few-shot prompting wins on every axis that matters: speed, cost, and iteration time.</p>
+<p>An extremely niche domain few examples can&#39;t capture, very high-volume generation where prompt tokens cost more than training, or a style that drifts with few-shot. For a personal LinkedIn agent, few-shot prompting wins on every axis that matters: speed, cost, and iteration time.</p>
 <h2>Resources</h2>
 <ul>
 <li><a href="https://sdk.vercel.ai/docs/ai-core/stream-text">Vercel AI SDK - streamText</a></li>
