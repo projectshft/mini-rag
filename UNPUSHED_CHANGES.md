@@ -1,122 +1,93 @@
-# Site Update - May 1, 2026
+# Site Update - June 11, 2026
 
-## Files to Update (Copy-Paste List)
-
-```
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/0-how-to-learn/1-feynman-technique.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/1-intro-to-rag/1-what-is-rag.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/2-vector-math-basics/1-vectors-and-embeddings.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/2-vector-math-basics/2-implementing-similarity.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/2-vector-math-basics/3-word-math-fun.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/3-pinecone-integration/1-setting-up-pinecone-client.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/4-chunking-fundamentals/1-introduction-to-scraping.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/4-chunking-fundamentals/2-understanding-chunking.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/5-document-upload/1-uploading-with-a-script.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/5-document-upload/2-building-the-api-route.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/5-document-upload/3-querying-documents.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/6-fine-tuning/1-fine-tuning-overview.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/6-fine-tuning/2-running-fine-tuning.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/1-understanding-agent-systems.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/2-prompting-for-agents.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/3-implementing-selector-text-based.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/4-upgrading-to-structured-outputs.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/7-agent-architecture/5-graceful-degradation.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/8-linkedin-agent/1-implementing-linkedin-agent.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/9-rag-agent/1-implementing-rag-agent.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/9-rag-agent/2-implementing-reranking.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/9-rag-agent/3-sparse-dense-vectors.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/9-rag-agent/sparse-dense-presentation.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/11-chat-interface/1-understanding-the-interface.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/12-observability/1-integrating-langsmith.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/13-testing-agents/1-testing-selector-agent.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/13-testing-agents/2-llm-as-judge.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/14-tool-calling-exploration/1-tool-calling-concepts.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/14-tool-calling-exploration/2-the-reveal.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/15-sql-agent/1-rag-without-vectors.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/17-capstone-project/1-final-project.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/0-overview.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/1-your-signature-story.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/2-strong-opinions-tradeoffs.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/3-rag-system-design.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/4-live-practice.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/18-interview-prep/README.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/0-index.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/1-embeddings-and-search.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/2-structured-outputs.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/3-tool-calling.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/4-chunking.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/5-streaming.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/6-human-in-the-loop.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/7-router-agent.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/8-langgraph.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/99-cheat-codes/9-prompt-templates.html
-https://github.com/projectshft/mini-rag/blob/curriculum/curriculum/ASSIGNMENTS.html
-```
-
-**Skip (Draft):** 10-ai-frameworks, 16-agent-patterns
+Delta since the last site update (May 1, 2026). Publish the lesson HTML to the
+day it belongs to. **Never publish the schedule** (STUDY-PLAN, DAY-SCHEDULE,
+days/week-*) — those are internal only.
 
 ---
 
-## Student Branch Changes (student-todo-exercises)
+## PRIMARY: Fine-tuning deprecation (modules 6 & 8)
 
-- **LinkedIn Agent TODO** - Added missing step about `prompt` parameter (not `messages`)
+OpenAI limited fine-tuning access (May 7, 2026). The course now teaches it as a
+concept only — students no longer run the scripts, and the LinkedIn agent uses
+**few-shot prompting** instead of a fine-tuned model.
 
----
+| Day | Lesson HTML |
+|-----|-------------|
+| Day 12 | `6-fine-tuning/1-fine-tuning-overview.html` |
+| Day 13 | `6-fine-tuning/2-running-fine-tuning.html` |
+| Day 20 | `8-linkedin-agent/1-implementing-linkedin-agent.html` |
 
-## What Changed (Last 6 Weeks)
-
-### HIGH-IMPACT
-
-1. **New Assignment Structure** - 5 coding assignments (replaced weekly homework)
-   - Assignment 1: Document Upload
-   - Assignment 2: Selector Agent
-   - Assignment 3: RAG Agent
-   - Assignment 4: SQL Agent
-   - Assignment 5: Capstone
-
-2. **Observability: Helicone → LangSmith** - Complete migration in module 12
-
-3. **Curriculum Reorganization**
-   - Deleted: 4-pinecone-integration, 4.5-chunking-fundamentals (duplicates)
-   - Moved tool-calling to module 14
-   - Renumbered: agent-patterns (16), capstone (17), interview-prep (18)
-
-4. **Solutions Removed** - From document upload module (before Assignment 1)
-
-5. **New Content**
-   - 0-how-to-learn/1-feynman-technique.html
-   - 7-agent-architecture/5-graceful-degradation.html
-   - 14-tool-calling-exploration/ (new module)
-   - 17-capstone-project - "Finding Your Use Case" section
-   - 9-rag-agent/sparse-dense-presentation.html
-
-### MEDIUM-IMPACT
-
-- Fix select-agent to use `responses.parse` pattern
-- Fix tool-calling route for AI SDK v5
-- Fix LLM-as-judge test
-- Fix broken OpenAI documentation links
-- **LLM-as-Judge curriculum** - Clarified students implement from scratch (not copy code)
-- **Module 13.1** - Fixed "Helicone" → "LangSmith" typo
-- **Module 14.2** - Fixed "What's Next" from "Chat Interface" → "SQL Agent"
-- **Removed all "Due: Before Assignment X"** - From modules 5, 9, 15
-- **Fixed SQL Agent submission links** - Were TBD, now correct Typeform URLs
-- **Removed all internal .md links** - Won't work on Kajabi (modules 6, 18, 99)
-
-### LOW-IMPACT
-
-- Removed outdated "Our Learning Path" from intro
-- Added curriculum-guide.txt
-- Added hybrid-search-demo.ts script
+What changed:
+- Module 6 page 1 — adds the deprecation notice + "Why Learn This If It's
+  Deprecated?" section ("context is all you really need"; other providers still
+  offer it). Removes "run the fine-tuning script" / "build the LinkedIn agent
+  that uses this fine-tuned model."
+- Module 6 page 2 — scripts reframed as historical artifacts.
+- Module 8 — LinkedIn agent rewritten to use few-shot prompting (real example
+  posts in the prompt); redundant fine-tuned-models link removed; wording polished.
 
 ---
 
-## Commit History
+## Other lessons that changed (publish to their day)
 
-**May 1:** Curriculum alignment verification, LLM-as-Judge clarification, What's Next fixes
-**April 26-27:** Hybrid search demo, curriculum cleanup, removed learning path
-**April 20-23:** Link fixes, graceful degradation, solutions removed, HTML regeneration
-**April 17-18:** Removed duplicate modules, chunking fixes
-**April 4-11:** New assignment structure, module/week references removed
-**March 26-30:** Helicone → LangSmith, curriculum reorder, link fixes
-**March 17-25:** Feynman technique, tool-calling, LLM-as-judge, code fixes
+| Day | Lesson HTML |
+|-----|-------------|
+| Day 1  | `1-intro-to-rag/1-what-is-rag.html` |
+| Day 2  | `2-vector-math-basics/1-vectors-and-embeddings.html` |
+| Day 3  | `2-vector-math-basics/2-implementing-similarity.html` |
+| Day 4  | `2-vector-math-basics/3-word-math-fun.html` |
+| Day 5  | `3-pinecone-integration/1-setting-up-pinecone-client.html` |
+| Day 6  | `4-chunking-fundamentals/1-introduction-to-scraping.html` |
+| Day 8  | `4-chunking-fundamentals/2-understanding-chunking.html` |
+| Day 9  | `5-document-upload/1-uploading-with-a-script.html` |
+| Day 10 | `5-document-upload/2-building-the-api-route.html` |
+| Day 11 | `5-document-upload/3-querying-documents.html` |
+| Day 15 | `7-agent-architecture/1-understanding-agent-systems.html` |
+| Day 16 | `7-agent-architecture/2-prompting-for-agents.html` |
+| Day 17 | `7-agent-architecture/3-implementing-selector-text-based.html` |
+| Day 18 | `7-agent-architecture/4-upgrading-to-structured-outputs.html` |
+| Day 22 | `9-rag-agent/1-implementing-rag-agent.html` |
+| Day 23 | `9-rag-agent/2-implementing-reranking.html` |
+| Day 24 | `9-rag-agent/3-sparse-dense-vectors.html` (heavily rewritten to match video) |
+| Day 25 | `11-chat-interface/1-understanding-the-interface.html` |
+| Day 26 | `12-observability/1-integrating-langsmith.html` |
+| Day 29 | `13-testing-agents/1-testing-selector-agent.html` |
+| Day 30 | `13-testing-agents/2-llm-as-judge.html` |
+| Day 32 | `14-tool-calling-exploration/2-the-reveal.html` |
+| Day 36 | `17-capstone-project/1-final-project.html` |
+| Day 42 | `10-ai-frameworks/2-langgraph-concepts.html` |
+| Day 42 | `10-ai-frameworks/3-custom-state-graphs.html` |
+
+Also updated: `ASSIGNMENTS.html`, `AI-REFERENCE.html`.
+
+---
+
+## New content NOT yet placed on a day
+
+These lessons changed/are new but aren't in the day schedule yet — confirm the
+day before publishing:
+
+- `14-tool-calling-exploration/3-mcp-basics.html` (new)
+- `10-ai-frameworks/1-react-agent-quick-start.html` (new; replaces deleted intro)
+- **New module 19 — MCP integration:** `19-mcp-integration/1-what-is-mcp.html`,
+  `1-exposing-rag-over-mcp.html`, `2-building-mcp-server.html`
+- **New module 20 — Security:** `20-security/1-llm-rag-security.html`
+- **Module 18 interview-prep** pages 1-4 updated (no longer in the Week 6 plan)
+
+---
+
+## Deletions (remove from site if currently published)
+
+- `10-ai-frameworks/1-introduction-to-langgraph.html` → replaced by `1-react-agent-quick-start.html`
+- `10-ai-frameworks/2-building-langgraph-agent.html` → replaced by `2-langgraph-concepts.html` + `3-custom-state-graphs.html`
+
+---
+
+## Still draft — do NOT publish
+
+- `16-agent-patterns/*` (all three pages marked DRAFT)
+
+---
+
+_Previous full-site list (May 1, 2026) is in git history: `git show f9c8577:UNPUSHED_CHANGES.md`._
