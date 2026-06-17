@@ -291,7 +291,72 @@ async function invokeModel(prompt: string) {
 
 ---
 
-## 6. Security Checklist
+## 6. Hands-On Challenge: Poison the Knowledge Base
+
+Reading about indirect prompt injection is one thing. Watching an agent get
+hijacked by a document it retrieved is another. In this challenge you'll run a
+small script where a **poisoned document** sits in the knowledge base. When the
+agent retrieves it to answer an innocent question ("What's the vacation
+policy?"), hidden instructions inside the document try to trick the agent into
+making an unauthorized API call that exfiltrates data.
+
+You'll run two agents against the same poisoned document:
+
+- **Naive agent** — no defenses. Watch it get owned.
+- **Guarded agent** — a realistic (but not airtight) system prompt, plus a
+  sanitizer **you** implement.
+
+The script uses the same Vercel AI SDK (`ai` + `@ai-sdk/openai`) you've used all
+course, so there's no new framework to learn.
+
+### Setup
+
+Grab the script from the gist and save it into your project (your student
+branch) as `experiments/prompt-injection-test.ts`:
+
+**→ [Prompt Injection Challenge script (gist)](https://gist.github.com/BrianJenney/0d77d98fd1961a8ff5e9bef718e50e30)**
+
+Nothing extra to install — your app already depends on `ai`, `@ai-sdk/openai`,
+`zod`, and `dotenv`. Just make sure your `.env` has an `OPENAI_API_KEY`.
+
+### Run it
+
+```bash
+npx tsx experiments/prompt-injection-test.ts
+```
+
+The script tests four injection strategies (hidden HTML comment, fake "system
+override", instructions disguised as data, and a role-hijack with fake
+`<system>` tags). Because the model is **non-deterministic**, it runs each
+strategy several times — a guardrail that blocks an attack 2-of-3 times is *not*
+a working guardrail, so a strategy is marked vulnerable if it leaks even once.
+Watch for the `🚨 API CALL EXECUTED 🚨` banner and read the **FINAL RESULTS
+MATRIX** at the end.
+
+### Your task
+
+When you first run it, the naive agent leaks on every strategy, and the
+realistic prompt guardrail **still leaks on most of them**. A good system prompt
+is necessary but not sufficient.
+
+1. Implement `sanitizeRetrievedContent()` (currently a no-op) to strip the
+   injection out of the retrieved document *before* it reaches the model — HTML
+   comments, fake role/system tags and their contents, and the instruction
+   blocks aimed at the assistant.
+2. Get the guarded agent to **0 leaks across all trials** on **all** strategies
+   — without touching the naive agent or the system prompts.
+3. **Bonus:** add a fifth poisoned document that beats your sanitizer. You'll
+   find naive keyword filtering is brittle — this is the real lesson: prompt
+   injection defense is a moving target, not a one-time fix.
+
+> This ties together everything in this module: the document is the **untrusted
+> input** (§3), the system prompt is the **guardrail** (§4), and
+> `sanitizeRetrievedContent()` is your **ingestion-time defense** (§3). The
+> prompt alone won't save you — defense in depth will.
+
+---
+
+## 7. Security Checklist
 
 Use this checklist when deploying RAG applications:
 
@@ -318,7 +383,7 @@ Use this checklist when deploying RAG applications:
 
 ---
 
-## 7. Further Reading
+## 8. Further Reading
 
 - [OWASP Top 10 for LLM Applications](https://owasp.org/www-project-top-10-for-large-language-model-applications/) - Industry-standard vulnerability list
 - [AWS Bedrock Security Documentation](https://docs.aws.amazon.com/bedrock/latest/userguide/security.html) - Encryption, IAM, and infrastructure security

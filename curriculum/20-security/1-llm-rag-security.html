@@ -264,7 +264,34 @@ async function invokeModel(prompt: string) {
 }
 </code></pre>
 <hr>
-<h2>6. Security Checklist</h2>
+<h2>6. Hands-On Challenge: Poison the Knowledge Base</h2>
+<p>Reading about indirect prompt injection is one thing. Watching an agent get<br>hijacked by a document it retrieved is another. In this challenge you&#39;ll run a<br>small script where a <strong>poisoned document</strong> sits in the knowledge base. When the<br>agent retrieves it to answer an innocent question (&quot;What&#39;s the vacation<br>policy?&quot;), hidden instructions inside the document try to trick the agent into<br>making an unauthorized API call that exfiltrates data.</p>
+<p>You&#39;ll run two agents against the same poisoned document:</p>
+<ul>
+<li><strong>Naive agent</strong> — no defenses. Watch it get owned.</li>
+<li><strong>Guarded agent</strong> — a realistic (but not airtight) system prompt, plus a<br>sanitizer <strong>you</strong> implement.</li>
+</ul>
+<p>The script uses the same Vercel AI SDK (<code>ai</code> + <code>@ai-sdk/openai</code>) you&#39;ve used all<br>course, so there&#39;s no new framework to learn.</p>
+<h3>Setup</h3>
+<p>Grab the script from the gist and save it into your project (your student<br>branch) as <code>experiments/prompt-injection-test.ts</code>:</p>
+<p><strong>→ <a href="https://gist.github.com/BrianJenney/0d77d98fd1961a8ff5e9bef718e50e30">Prompt Injection Challenge script (gist)</a></strong></p>
+<p>Nothing extra to install — your app already depends on <code>ai</code>, <code>@ai-sdk/openai</code>,<br><code>zod</code>, and <code>dotenv</code>. Just make sure your <code>.env</code> has an <code>OPENAI_API_KEY</code>.</p>
+<h3>Run it</h3>
+<pre><code class="language-bash">npx tsx experiments/prompt-injection-test.ts
+</code></pre>
+<p>The script tests four injection strategies (hidden HTML comment, fake &quot;system<br>override&quot;, instructions disguised as data, and a role-hijack with fake<br><code>&lt;system&gt;</code> tags). Because the model is <strong>non-deterministic</strong>, it runs each<br>strategy several times — a guardrail that blocks an attack 2-of-3 times is <em>not</em><br>a working guardrail, so a strategy is marked vulnerable if it leaks even once.<br>Watch for the <code>🚨 API CALL EXECUTED 🚨</code> banner and read the <strong>FINAL RESULTS<br>MATRIX</strong> at the end.</p>
+<h3>Your task</h3>
+<p>When you first run it, the naive agent leaks on every strategy, and the<br>realistic prompt guardrail <strong>still leaks on most of them</strong>. A good system prompt<br>is necessary but not sufficient.</p>
+<ol>
+<li>Implement <code>sanitizeRetrievedContent()</code> (currently a no-op) to strip the<br>injection out of the retrieved document <em>before</em> it reaches the model — HTML<br>comments, fake role/system tags and their contents, and the instruction<br>blocks aimed at the assistant.</li>
+<li>Get the guarded agent to <strong>0 leaks across all trials</strong> on <strong>all</strong> strategies<br>— without touching the naive agent or the system prompts.</li>
+<li><strong>Bonus:</strong> add a fifth poisoned document that beats your sanitizer. You&#39;ll<br>find naive keyword filtering is brittle — this is the real lesson: prompt<br>injection defense is a moving target, not a one-time fix.</li>
+</ol>
+<blockquote>
+<p>This ties together everything in this module: the document is the <strong>untrusted<br>input</strong> (§3), the system prompt is the <strong>guardrail</strong> (§4), and<br><code>sanitizeRetrievedContent()</code> is your <strong>ingestion-time defense</strong> (§3). The<br>prompt alone won&#39;t save you — defense in depth will.</p>
+</blockquote>
+<hr>
+<h2>7. Security Checklist</h2>
 <p>Use this checklist when deploying RAG applications:</p>
 <h3>Ingestion Pipeline</h3>
 <ul>
@@ -291,7 +318,7 @@ async function invokeModel(prompt: string) {
 <li><input disabled="" type="checkbox"> Least privilege IAM roles</li>
 </ul>
 <hr>
-<h2>7. Further Reading</h2>
+<h2>8. Further Reading</h2>
 <ul>
 <li><a href="https://owasp.org/www-project-top-10-for-large-language-model-applications/">OWASP Top 10 for LLM Applications</a> - Industry-standard vulnerability list</li>
 <li><a href="https://docs.aws.amazon.com/bedrock/latest/userguide/security.html">AWS Bedrock Security Documentation</a> - Encryption, IAM, and infrastructure security</li>
