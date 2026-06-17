@@ -65,6 +65,40 @@ const result = await streamText({
 </ol>
 <p>The AI orchestrated the entire flow. You just defined the tools.</p>
 <hr>
+<h2>It&#39;s Not Magic: The Schema Tells the AI What to Send</h2>
+<p>A common confusion: <em>how does the AI know to call <code>webSearch({ query: &quot;Tokyo population 2024&quot; })</code> with a <code>query</code> field that&#39;s a string?</em> It feels like the model is reading your mind. It isn&#39;t.</p>
+<p>Three things you wrote get serialized and handed to the model as part of its prompt <strong>before it ever responds</strong>:</p>
+<ol>
+<li><strong>The tool&#39;s <code>name</code></strong> (<code>webSearch</code>) — what to call.</li>
+<li><strong>The <code>description</code></strong> (<code>&#39;Search the web for current information&#39;</code>) — <em>when</em> to call it.</li>
+<li><strong>The <code>parameters</code> Zod schema</strong> — <em>what arguments to pass and their exact shape</em>.</li>
+</ol>
+<p>That Zod schema isn&#39;t just runtime validation for your code. The SDK converts it into a <a href="https://json-schema.org/">JSON Schema</a> that&#39;s sent to the model. So when you write:</p>
+<pre><code class="language-typescript">parameters: z.object({
+  query: z.string().describe(&#39;The search query&#39;),
+}),
+</code></pre>
+<p>…the model literally receives a description that says, in effect:</p>
+<pre><code class="language-json">{
+  &quot;name&quot;: &quot;webSearch&quot;,
+  &quot;description&quot;: &quot;Search the web for current information&quot;,
+  &quot;parameters&quot;: {
+    &quot;type&quot;: &quot;object&quot;,
+    &quot;properties&quot;: {
+      &quot;query&quot;: { &quot;type&quot;: &quot;string&quot;, &quot;description&quot;: &quot;The search query&quot; }
+    },
+    &quot;required&quot;: [&quot;query&quot;]
+  }
+}
+</code></pre>
+<p>The model reads that, sees it must produce an object with a string field named <code>query</code>, and generates exactly that. The argument names, their types, and which are required all come straight from your schema.</p>
+<p>This is why two habits matter:</p>
+<ul>
+<li><strong><code>.describe()</code> on every field.</strong> That text is the model&#39;s only hint about <em>what</em> should go in the field. <code>z.string().describe(&#39;Math expression like &quot;14000000 / 8300000&quot;&#39;)</code> produces far better arguments than a bare <code>z.string()</code>.</li>
+<li><strong>Schema = contract.</strong> If you mark a field required, the model is told it&#39;s required. If you use an enum, the model is told the only valid values. You&#39;re not hoping the AI guesses right — you&#39;re telling it the shape up front, and validating that it complied.</li>
+</ul>
+<p>The &quot;decision&quot; the AI makes is <em>which</em> tool and <em>what values</em>. The <em>structure</em> of the call is something you defined and the model was handed.</p>
+<hr>
 <h2>The Key Insight</h2>
 <p>With tool-calling, you define <strong>what</strong> tools exist. The AI decides <strong>when</strong> to use them.</p>
 <pre><code>Traditional Code:    You → decide order → call functions → return result

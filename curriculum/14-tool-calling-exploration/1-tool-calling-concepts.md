@@ -75,6 +75,51 @@ The AI orchestrated the entire flow. You just defined the tools.
 
 ---
 
+## It's Not Magic: The Schema Tells the AI What to Send
+
+A common confusion: *how does the AI know to call `webSearch({ query: "Tokyo population 2024" })` with a `query` field that's a string?* It feels like the model is reading your mind. It isn't.
+
+Three things you wrote get serialized and handed to the model as part of its prompt **before it ever responds**:
+
+1. **The tool's `name`** (`webSearch`) — what to call.
+2. **The `description`** (`'Search the web for current information'`) — *when* to call it.
+3. **The `parameters` Zod schema** — *what arguments to pass and their exact shape*.
+
+That Zod schema isn't just runtime validation for your code. The SDK converts it into a [JSON Schema](https://json-schema.org/) that's sent to the model. So when you write:
+
+```typescript
+parameters: z.object({
+  query: z.string().describe('The search query'),
+}),
+```
+
+…the model literally receives a description that says, in effect:
+
+```json
+{
+  "name": "webSearch",
+  "description": "Search the web for current information",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "query": { "type": "string", "description": "The search query" }
+    },
+    "required": ["query"]
+  }
+}
+```
+
+The model reads that, sees it must produce an object with a string field named `query`, and generates exactly that. The argument names, their types, and which are required all come straight from your schema.
+
+This is why two habits matter:
+
+- **`.describe()` on every field.** That text is the model's only hint about *what* should go in the field. `z.string().describe('Math expression like "14000000 / 8300000"')` produces far better arguments than a bare `z.string()`.
+- **Schema = contract.** If you mark a field required, the model is told it's required. If you use an enum, the model is told the only valid values. You're not hoping the AI guesses right — you're telling it the shape up front, and validating that it complied.
+
+The "decision" the AI makes is *which* tool and *what values*. The *structure* of the call is something you defined and the model was handed.
+
+---
+
 ## The Key Insight
 
 With tool-calling, you define **what** tools exist. The AI decides **when** to use them.
