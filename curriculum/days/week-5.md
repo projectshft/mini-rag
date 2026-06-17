@@ -18,6 +18,8 @@
 - [15-sql-agent/1-rag-without-vectors.html](../15-sql-agent/1-rag-without-vectors.html)
 
 ## Day 34
+- [20-security/1-llm-rag-security.html](../20-security/1-llm-rag-security.html)
+
 **Assignment 3 Due:** Reranking
 
 ## Day 35

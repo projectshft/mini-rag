@@ -129,6 +129,8 @@ Complete the RAG & AI Agents curriculum in 42 days with 1-2 hours of daily study
 - [15-sql-agent/1-rag-without-vectors.html](15-sql-agent/1-rag-without-vectors.html)
 
 ### Day 34
+- [20-security/1-llm-rag-security.html](20-security/1-llm-rag-security.html)
+
 **Assignment 3 Due:** Reranking
 
 ### Day 35
