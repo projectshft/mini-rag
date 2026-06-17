@@ -269,26 +269,32 @@ async function invokeModel(prompt: string) {
 <p>You&#39;ll run two agents against the same poisoned document:</p>
 <ul>
 <li><strong>Naive agent</strong> — no defenses. Watch it get owned.</li>
-<li><strong>Guarded agent</strong> — a realistic (but not airtight) system prompt, plus a<br>sanitizer <strong>you</strong> implement.</li>
+<li><strong>Guarded agent</strong> — defended by a system prompt <strong>and</strong> a sanitizer that<br><strong>you</strong> write. Both start empty, so right now it&#39;s just as vulnerable as the<br>naive agent. Your job is to harden it.</li>
 </ul>
 <p>The script uses the same Vercel AI SDK (<code>ai</code> + <code>@ai-sdk/openai</code>) you&#39;ve used all<br>course, so there&#39;s no new framework to learn.</p>
-<h3>Setup</h3>
-<p>Grab the script from the gist and save it into your project (your student<br>branch) as <code>experiments/prompt-injection-test.ts</code>:</p>
-<p><strong>→ <a href="https://gist.github.com/BrianJenney/0d77d98fd1961a8ff5e9bef718e50e30">Prompt Injection Challenge script (gist)</a></strong></p>
-<p>Nothing extra to install — your app already depends on <code>ai</code>, <code>@ai-sdk/openai</code>,<br><code>zod</code>, and <code>dotenv</code>. Just make sure your <code>.env</code> has an <code>OPENAI_API_KEY</code>.</p>
-<h3>Run it</h3>
-<pre><code class="language-bash">npx tsx experiments/prompt-injection-test.ts
+<h3>Step 1 — Find the script</h3>
+<p>It&#39;s already in your repo at:</p>
+<pre><code>app/scripts/exercises/prompt-injection-test.ts
 </code></pre>
-<p>The script tests four injection strategies (hidden HTML comment, fake &quot;system<br>override&quot;, instructions disguised as data, and a role-hijack with fake<br><code>&lt;system&gt;</code> tags). Because the model is <strong>non-deterministic</strong>, it runs each<br>strategy several times — a guardrail that blocks an attack 2-of-3 times is <em>not</em><br>a working guardrail, so a strategy is marked vulnerable if it leaks even once.<br>Watch for the <code>🚨 API CALL EXECUTED 🚨</code> banner and read the <strong>FINAL RESULTS<br>MATRIX</strong> at the end.</p>
-<h3>Your task</h3>
-<p>When you first run it, the naive agent leaks on every strategy, and the<br>realistic prompt guardrail <strong>still leaks on most of them</strong>. A good system prompt<br>is necessary but not sufficient.</p>
+<p>(A reference copy also lives in <a href="https://gist.github.com/BrianJenney/0d77d98fd1961a8ff5e9bef718e50e30">this gist</a>.)</p>
+<h3>Step 2 — Make sure you can run it</h3>
+<p>Nothing extra to install — your app already depends on <code>ai</code>, <code>@ai-sdk/openai</code>,<br><code>zod</code>, and <code>dotenv</code>. Just confirm your <code>.env</code> has a valid <code>OPENAI_API_KEY</code>, then<br>run:</p>
+<pre><code class="language-bash">yarn exercise:injection
+</code></pre>
+<p>(That runs <code>npx tsx app/scripts/exercises/prompt-injection-test.ts</code>. We use <code>tsx</code><br>rather than <code>ts-node</code> here because the <code>ai</code> SDK ships as ESM.)</p>
+<h3>Step 3 — Read the first run</h3>
+<p>The script attacks each agent with four injection strategies (hidden HTML<br>comment, fake &quot;system override&quot;, instructions disguised as data, and a<br>role-hijack with fake <code>&lt;system&gt;</code> tags). Each strategy runs <strong>3 times</strong>, because<br>the model is non-deterministic — a defense that blocks an attack 2-of-3 times is<br><strong>not</strong> a working defense, so a strategy is marked <strong>VULN</strong> if it leaks even<br>once.</p>
+<p>Watch for the <code>🚨 API CALL EXECUTED 🚨</code> banner (that&#39;s an attack succeeding) and<br>read the <strong>FINAL RESULTS MATRIX</strong> at the end. On the first run, <strong>both</strong> agents<br>leak on every strategy — the guarded agent has no defenses yet.</p>
+<h3>Step 4 — Your task</h3>
+<p>Open the script and find the two clearly-marked <code>TODO</code> spots. Build <strong>both</strong><br>layers of defense:</p>
 <ol>
-<li>Implement <code>sanitizeRetrievedContent()</code> (currently a no-op) to strip the<br>injection out of the retrieved document <em>before</em> it reaches the model — HTML<br>comments, fake role/system tags and their contents, and the instruction<br>blocks aimed at the assistant.</li>
-<li>Get the guarded agent to <strong>0 leaks across all trials</strong> on <strong>all</strong> strategies<br>— without touching the naive agent or the system prompts.</li>
-<li><strong>Bonus:</strong> add a fifth poisoned document that beats your sanitizer. You&#39;ll<br>find naive keyword filtering is brittle — this is the real lesson: prompt<br>injection defense is a moving target, not a one-time fix.</li>
+<li><strong>Write the guardrail prompt.</strong> Fill in <code>GUARDED_PROMPT</code> (currently identical<br>to the naive prompt). Add rules telling the model how to treat instructions<br>found inside retrieved documents, and when — if ever — it may call a tool like<br><code>makeApiCall</code>. Re-run and see how far a good prompt alone gets you.</li>
+<li><strong>Write the sanitizer.</strong> Implement <code>sanitizeRetrievedContent()</code> (currently a<br>no-op) to strip the injection out of the retrieved document <em>before</em> it<br>reaches the model — HTML comments, fake role/system tags and their contents,<br>and the instruction blocks aimed at the assistant.</li>
+<li><strong>Hit the goal:</strong> the guarded agent must reach <strong>0 leaks across all 3 trials,<br>on all 4 strategies</strong>. Do <strong>not</strong> weaken the naive agent or edit the attacks.<br>You&#39;ll find you need <em>both</em> the prompt and the sanitizer — that&#39;s the whole<br>point: <strong>defense in depth</strong>.</li>
+<li><strong>Bonus:</strong> add a fifth poisoned document that beats your own defenses. A<br>strong prompt and a keyword filter both turn out to be brittle — prompt<br>injection defense is a moving target, not a one-time fix.</li>
 </ol>
 <blockquote>
-<p>This ties together everything in this module: the document is the <strong>untrusted<br>input</strong> (§3), the system prompt is the <strong>guardrail</strong> (§4), and<br><code>sanitizeRetrievedContent()</code> is your <strong>ingestion-time defense</strong> (§3). The<br>prompt alone won&#39;t save you — defense in depth will.</p>
+<p>How this maps to the rest of the module: the retrieved document is the<br><strong>untrusted input</strong> (Section 3), your <code>GUARDED_PROMPT</code> is the <strong>prompt-level<br>guardrail</strong> (Section 4), and <code>sanitizeRetrievedContent()</code> is your<br><strong>ingestion-time defense</strong> (Section 3). No single layer is enough on its own.</p>
 </blockquote>
 <hr>
 <h2>7. Security Checklist</h2>
