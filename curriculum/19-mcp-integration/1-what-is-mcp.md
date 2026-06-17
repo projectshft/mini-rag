@@ -48,6 +48,7 @@ MCP servers can expose:
 - **Prompts** - Pre-built prompt templates
 
 For RAG, you typically expose **tools** like:
+
 - `search_documents` - Query your vector database
 - `get_document` - Fetch a specific document
 - `list_sources` - Show available data sources
@@ -79,12 +80,12 @@ Claude gets context and responds
 
 ## MCP vs API
 
-| Aspect | REST API | MCP |
-|--------|----------|-----|
-| Client | Your app | AI assistant |
-| Integration | Custom per AI | Universal |
-| Discovery | Docs/OpenAPI | Built-in |
-| Context | Manual | AI manages |
+| Aspect      | REST API      | MCP          |
+| ----------- | ------------- | ------------ |
+| Client      | Your app      | AI assistant |
+| Integration | Custom per AI | Universal    |
+| Discovery   | Docs/OpenAPI  | Built-in     |
+| Context     | Manual        | AI manages   |
 
 ---
 
@@ -113,9 +114,3 @@ Then you'll connect it to Claude Desktop and query your data directly from the c
 - Working RAG system (from previous modules)
 - Node.js 18+
 - Claude Desktop or Cursor installed
-
----
-
-## Next Steps
-
-[Build Your First MCP Server →](./2-building-mcp-server.md)

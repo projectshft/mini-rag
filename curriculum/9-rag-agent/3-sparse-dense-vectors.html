@@ -96,34 +96,36 @@ const openai = new OpenAI();
 
 // 1. Generate dense embedding from OpenAI
 const embeddingResponse = await openai.embeddings.create({
-  model: &#39;text-embedding-3-small&#39;,
-  input: &#39;Your document text here&#39;
+	model: &#39;text-embedding-3-small&#39;,
+	input: &#39;Your document text here&#39;,
 });
 const denseVector = embeddingResponse.data[0].embedding; // [0.12, 0.45, 0.23, ...]
 
 // 2. Generate sparse vector from Pinecone&#39;s encoder
 const index = pinecone.index(&#39;your-index&#39;);
 const sparseResponse = await pinecone.inference.embed(
-  &#39;pinecone-sparse-english-v0&#39;,
-  [&#39;Your document text here&#39;],
-  { inputType: &#39;passage&#39; }
+	&#39;pinecone-sparse-english-v0&#39;,
+	[&#39;Your document text here&#39;],
+	{ inputType: &#39;passage&#39; },
 );
 const sparseVector = sparseResponse.data[0].sparseValues; // { indices: [...], values: [...] }
 
 // 3. Upsert with BOTH vectors - models generated these, not you
-await index.upsert([{
-  id: &#39;doc-1&#39;,
-  values: denseVector,              // From OpenAI
-  sparseValues: sparseVector,       // From Pinecone encoder
-  metadata: { text: &#39;...&#39; }
-}]);
+await index.upsert([
+	{
+		id: &#39;doc-1&#39;,
+		values: denseVector, // From OpenAI
+		sparseValues: sparseVector, // From Pinecone encoder
+		metadata: { text: &#39;...&#39; },
+	},
+]);
 
 // 4. Query with hybrid search
 const results = await index.query({
-  vector: queryDenseVector,
-  sparseVector: querySparseVector,
-  topK: 10,
-  alpha: 0.5 // 0 = pure sparse, 1 = pure dense, 0.5 = balanced
+	vector: queryDenseVector,
+	sparseVector: querySparseVector,
+	topK: 10,
+	alpha: 0.5, // 0 = pure sparse, 1 = pure dense, 0.5 = balanced
 });
 </code></pre>
 <hr>
