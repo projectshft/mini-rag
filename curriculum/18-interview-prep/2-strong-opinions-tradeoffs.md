@@ -50,20 +50,9 @@ For any tool, pattern, or approach, have:
 
 ## 🎥 Video: Taking a Position Under Pressure
 
-> **[VIDEO PLACEHOLDER]**
->
-> **Title:** "How to Sound Opinionated (Without Being Wrong)"
->
-> **Content:**
-> - Demonstrate answering "What do you think about autonomous agents?" two ways:
->   1. Weak: hedging, "it depends", no actual position
->   2. Strong: clear position, tradeoffs acknowledged, specific use cases
-> - Show the "I prefer X because... but I'd use Y when..." pattern in action
-> - Bonus: handle a pushback ("But what about [counter-example]?") and show how to engage without backing down
->
-> **Duration:** 4-5 minutes
->
-> **Why this video:** Mid-level devs often know the right answer but deliver it like a question. This video shows the subtle confidence shift that senior engineers need.
+Watch the video walkthrough: [Having Strong Opinions in AI Interviews](https://share.descript.com/view/0JA4vNMQTj5)
+
+In this video, Brian argues that in AI interviews — where the rules aren't written yet — having *an* opinion matters more than having a safe one. He works through several hot topics you should be ready to defend: **vectors vs. SQL**, **agents vs. workflows**, **evals / LLM-as-judge**, **chunking strategies**, and **AI coding**. Watch how he avoids knee-jerk textbook answers, asks clarifying questions, and uses each one as a chance to teach.
 
 ---
 

@@ -407,21 +407,11 @@ Cut ruthlessly. Focus on the framework.
 
 ---
 
-## 🎥 Video: Signature Story Example (Weak vs Strong)
+## 🎥 Video: Telling a Powerful Story (Problem, Agitate, Solve)
 
-> **[VIDEO PLACEHOLDER]**
->
-> **Title:** "Signature Story: What Makes the Difference"
->
-> **Content:**
-> - Live demonstration of a weak signature story (~1 min) - rambling, no structure, implementation-first
-> - Replay with commentary on what went wrong
-> - Live demonstration of a strong signature story (~2 min) - using the PASR framework
-> - Key moments to highlight: the problem setup, the tradeoff explanation, the "what I learned" close
->
-> **Duration:** 5-7 minutes
->
-> **Why this video:** Senior engineers know _what_ to say but struggle with _how_ to say it. Seeing the contrast between weak/strong delivery is impossible to convey in text.
+Watch the video walkthrough: [Telling Your Signature Story](https://share.descript.com/view/RfrRrXBdw8R)
+
+In this video, Brian breaks down why most engineers nail the technical rounds but fall apart in the behavioral rounds — and walks through the **Problem, Agitate, Solve** sales framework using a real project (matching record labels with TikTok influencers). Watch for what makes a *bad* story (no context, no arc, "I had to learn TypeScript") versus a strong one that demonstrates depth, authority, and leadership.
 
 ---
 
