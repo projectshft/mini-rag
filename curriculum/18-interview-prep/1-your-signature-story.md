@@ -2,6 +2,12 @@
 
 This is the most important skill in AI interviews. You need one clear, compelling story about a project you've built.
 
+## Video Walkthrough
+
+Watch this walkthrough of the Problem, Agitate, Solve storytelling framework:
+
+<iframe src="https://share.descript.com/embed/RfrRrXBdw8R" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
 ---
 
 ## What You'll Build
@@ -407,14 +413,6 @@ Cut ruthlessly. Focus on the framework.
 
 ---
 
-## 🎥 Video: Telling a Powerful Story (Problem, Agitate, Solve)
-
-Watch the video walkthrough: [Telling Your Signature Story](https://share.descript.com/view/RfrRrXBdw8R)
-
-In this video, Brian breaks down why most engineers nail the technical rounds but fall apart in the behavioral rounds — and walks through the **Problem, Agitate, Solve** sales framework using a real project (matching record labels with TikTok influencers). Watch for what makes a *bad* story (no context, no arc, "I had to learn TypeScript") versus a strong one that demonstrates depth, authority, and leadership.
-
----
-
 ## Example Story
 
 Here's a complete example following the framework:
@@ -442,14 +440,4 @@ Here's a complete example following the framework:
 ### What I Learned
 
 "If I did this again, I'd implement structured outputs for citations from day one. I initially had GPT return freeform text, then had to parse out timestamps and video titles, which was error-prone. JSON mode would have saved me a week of debugging."
-
-
----
-
-## What You Learned
-
-✅ How to structure a compelling project story
-✅ The Problem → Agitate → Solve → Reflect framework
-✅ How to explain tradeoffs and decisions
-✅ How to practice speaking out loud
 

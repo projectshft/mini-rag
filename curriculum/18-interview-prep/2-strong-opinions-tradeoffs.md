@@ -2,6 +2,12 @@
 
 Most candidates describe. Strong candidates take positions and defend them.
 
+## Video Walkthrough
+
+Watch this breakdown of forming and defending strong opinions in AI interviews:
+
+<iframe src="https://share.descript.com/embed/0JA4vNMQTj5" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
 ---
 
 ## What You'll Build
@@ -45,14 +51,6 @@ For any tool, pattern, or approach, have:
 2. **Your reasoning** - Why do you prefer it?
 3. **Tradeoffs** - What are you giving up?
 4. **Use cases** - When would you choose differently?
-
----
-
-## 🎥 Video: Taking a Position Under Pressure
-
-Watch the video walkthrough: [Having Strong Opinions in AI Interviews](https://share.descript.com/view/0JA4vNMQTj5)
-
-In this video, Brian argues that in AI interviews — where the rules aren't written yet — having *an* opinion matters more than having a safe one. He works through several hot topics you should be ready to defend: **vectors vs. SQL**, **agents vs. workflows**, **evals / LLM-as-judge**, **chunking strategies**, and **AI coding**. Watch how he avoids knee-jerk textbook answers, asks clarifying questions, and uses each one as a chance to teach.
 
 ---
 
