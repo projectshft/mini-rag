@@ -61,21 +61,23 @@ For any tool, pattern, or approach, have:
 
 ## Opinion 1: Agents vs Structured Workflows
 
-This is the most common interview question. You must have a clear answer.
+This is the most common question you'll get. The intro already showed the shape of a good answer - the part most people whiff on is the follow-up: "Okay, so when *would* you actually reach for an agent?"
 
 ### The Question
 
 "Do you prefer autonomous agents or structured workflows?"
 
-### Strong Answer Template
+### A realistic weak answer
 
-"In most production systems, I prefer [structured workflows / autonomous agents] because [reasoning]. However, I'd use [the other option] when [specific use case]."
+"Agents are more powerful, so I'd lean agent." Confident, but it ignores that most production problems have a known shape, and it has no answer for the follow-up.
 
-### Example Answer
+### A stronger answer
 
-"In most production systems, I prefer structured workflows because they're predictable, testable, and easier to debug. When an LLM call fails, I know exactly where it happened and can replay it. With autonomous agents, the execution path changes every time, making debugging harder.
+"For most production work I prefer a workflow. If I'm routing a customer-service question - classify it, then send it to the right place - that's a known outcome with a handful of paths, and I want every step testable with good and bad examples.
 
-However, I'd use autonomous agents for research tasks or open-ended exploration where I don't know the workflow upfront. If I'm building a system to research market trends, an autonomous agent makes sense because the information gathering steps aren't predetermined."
+An agent earns its keep when 'done' is subjective. Think of a coding assistant refactoring a service: there's no fixed set of steps, and 'finished' is a judgment call. So you let it loop - pick from its tools, do some work, check its own progress, and decide when it's done. That autonomy is the whole point, but it's also why it's harder to test and debug. So: workflow by default, an agent when the task is genuinely open-ended."
+
+Why it lands: you picked a side, then showed you understand the *other* side well enough to know exactly when you'd switch.
 
 ---
 
@@ -199,9 +201,13 @@ The key question I always ask first is:
 
 **The Question:** "How do you chunk documents for RAG?"
 
-**Weak answer:** "I use 500-token chunks with 50-token overlap."
+There's rarely one right answer here - usually just a wrong one (a fixed number you can't justify). Within the acceptable range a lot of answers work, so think out loud about the data instead of naming a number.
 
-**Strong answer:** "It depends on the content type. For structured documents like API docs, I chunk by semantic boundaries - sections, function definitions, or paragraphs. For unstructured content like transcripts, I use fixed-size chunks with overlap. The key is aligning chunks with meaningful units, not arbitrary sizes."
+**A weak answer:** "I use 500-token chunks with 50-token overlap." Fine, but it's a reflex, not a decision.
+
+**A stronger answer:** "Depends on the content. For FAQs I'd ask where they live - PDFs, Confluence, a webpage? - and how short they are. If they're tight Q&A pairs, I might embed the question and answer together so a user's question lands right on the answer, and keep the source and last-updated date as metadata. For something structured like API docs, I chunk on semantic boundaries - sections or function definitions. The point is to align chunks with meaningful units, not arbitrary sizes."
+
+The move here: naming the tools in your belt - embedding Q+A, metadata, semantic boundaries - shows range even before you commit to one.
 
 ---
 
@@ -209,9 +215,9 @@ The key question I always ask first is:
 
 **The Question:** "Do you use re-ranking in your RAG systems?"
 
-**Weak answer:** "Yes, it improves results."
+**A weak answer:** "Yes, it improves results."
 
-**Strong answer:** "Yes, for anything beyond a prototype. Initial vector search casts a wide net - it's recall-focused. Re-ranking with a cross-encoder significantly improves precision by understanding the relationship between query and context. It adds latency, but the quality improvement is worth it for production systems."
+**A stronger answer:** "For anything past a prototype, yes. Initial vector search is recall-focused - it casts a wide net. A cross-encoder re-ranker then reads each query-document pair and reorders for precision. It costs a little latency and money, but for production that precision is usually worth it. For a quick internal tool, I might skip it."
 
 ---
 
@@ -250,13 +256,9 @@ The tradeoff is:
 
 "How do you choose which model to use?"
 
-### Strong Answer Template
+### A stronger answer
 
-"I design systems so I can swap models easily. For [task type], I use [model] because [reasoning]. For [different task], I use [different model]."
-
-### Example Answer
-
-"I design systems so models are configurable, not hardcoded. For complex reasoning tasks like analyzing user intent or generating creative content, I use GPT-4 or Claude Opus because accuracy matters more than cost. For simple classification or structured extraction, I use GPT-4o-mini because it's 20x cheaper and fast enough for those tasks. I've seen projects blow their budget using GPT-4 for tasks that GPT-3.5 could handle."
+"First, I make the model swappable - configurable, not hardcoded - because this stuff changes monthly and I don't want to be locked in. Then I match the model to the job. Heavy reasoning or anything user-facing and open-ended, I reach for a top-tier model where accuracy beats cost. High-volume classification or structured extraction, I drop to something small and cheap - often 20x cheaper and plenty good for that. I've watched projects torch their budget running a frontier model on a task a mini could've handled. Picking the model is a cheap decision to revisit, so I start cheap and upgrade only where quality actually suffers."
 
 ---
 
@@ -312,9 +314,9 @@ I [do / don't] fine-tune models because:
 
 "How do you debug LLM failures?"
 
-### Strong Answer
+### A stronger answer
 
-"I include observability from day one because LLM systems fail silently. I use tools like Helicone or LangSmith to track every request - inputs, outputs, latency, and costs. When a user reports a bad answer, I can replay the exact prompt and context that generated it. Without observability, debugging LLMs is guesswork."
+"I add observability from day one, because LLM systems fail silently - you get a bad answer, not an error. I wire in something like LangSmith or Helicone to capture every request: input, output, latency, cost. When someone reports a bad answer, I can replay the exact prompt and context that produced it. I also like giving users a thumbs up/down so I get a real signal on quality and can iterate on it. Without that, debugging an LLM is just guessing."
 
 ### What to Monitor
 
@@ -422,8 +424,8 @@ So my position is: start with workflows, add agents only when needed."
 
 Don't say "it depends" without then picking a default position.
 
-❌ "It depends on the use case" (cop-out)
-✅ "It depends, but I default to structured workflows unless I have a specific reason to use agents" (takes position)
+- Cop-out: "It depends on the use case"
+- Takes a position: "It depends, but I default to structured workflows unless I have a specific reason to use agents"
 
 ### Tip 2: Use "I Prefer" Language
 
@@ -456,23 +458,23 @@ Shows:
 
 ### Mistake 1: No Position
 
-❌ "Both are good, depends on the use case"
-✅ "I default to X, but use Y when Z"
+- Weak: "Both are good, depends on the use case"
+- Strong: "I default to X, but use Y when Z"
 
 ### Mistake 2: No Reasoning
 
-❌ "I prefer vector search because it's better"
-✅ "I prefer vector search for unstructured docs because it matches on meaning, not just keywords"
+- Weak: "I prefer vector search because it's better"
+- Strong: "I prefer vector search for unstructured docs because it matches on meaning, not just keywords"
 
 ### Mistake 3: Ignoring Tradeoffs
 
-❌ "Agents are great because they're autonomous"
-✅ "Agents give you autonomy but you lose predictability and debuggability"
+- Weak: "Agents are great because they're autonomous"
+- Strong: "Agents give you autonomy but you lose predictability and debuggability"
 
 ### Mistake 4: Sounding Uncertain
 
-❌ "I think maybe workflows might be better sometimes?"
-✅ "I prefer workflows for production systems"
+- Weak: "I think maybe workflows might be better sometimes?"
+- Strong: "I prefer workflows for production systems"
 
 Even if you're not 100% confident, sound like you have a position.
 
