@@ -43,7 +43,7 @@ This is designed to help you:
 **Deliverables:**
 - Written opinions on:
   - Agents vs Workflows
-  - LangChain vs LangGraph
+  - Vector Search vs SQL
   - RAG Patterns (Chunking + Re-Ranking)
   - Model Selection
   - Observability

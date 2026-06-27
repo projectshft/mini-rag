@@ -51,7 +51,7 @@ In AI engineering interviews, you'll face three types of questions:
 
 ### 2. Opinion Questions (30% of interview)
 - What do you think about autonomous agents?
-- When would you use LangChain vs LangGraph?
+- When would you use vector search vs SQL?
 - How do you evaluate models?
 
 **What they're testing:**
@@ -123,7 +123,7 @@ Record yourself answering ONE of these questions (your choice):
 
 **Option A:** "What do you think about autonomous agents vs structured workflows?"
 
-**Option B:** "When would you use LangChain vs LangGraph?"
+**Option B:** "When would you use vector search vs SQL?"
 
 **Option C:** "How do you choose which model to use for a task?"
 

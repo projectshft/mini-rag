@@ -15,7 +15,7 @@ Watch this breakdown of forming and defending strong opinions in AI interviews:
 By the end of this section, you'll have:
 
 - Defensible positions on agents vs workflows
-- Opinions on LangChain vs LangGraph
+- Opinions on vector search vs SQL
 - Framework for evaluating any tool or pattern
 - A video recording explaining your strongest opinion
 
@@ -124,45 +124,44 @@ The key tradeoff is:
 
 ---
 
-## Opinion 2: LangChain vs LangGraph
+## Opinion 2: Vector Search vs SQL
 
 ### The Question
 
-"What do you think about LangChain and LangGraph?"
+"How would you approach retrieval for this data - vector search, or something else?"
+
+The trap is jumping straight to embeddings and `1536` vs `512` dimensions. Strong candidates take a step back and ask where the data already lives.
 
 ### Strong Answer Template
 
-"I think [tool] is better for [use case] because [reasoning]. I'd use [other tool] when [different use case]."
+"It depends on where the data is and how exact the retrieval needs to be. I'd use [approach] because [reasoning], and pair it with [other approach] when [different use case]."
 
-### Framework Comparison
+### When to Use Each
 
-**LangChain** - Best for:
-- Simple chains and prompt management
-- Rapid prototyping
-- Sequential operations
-- Getting started quickly
-
-Downsides:
-- Can become complex with many steps
-- Harder to visualize flow
-- More imperative style
-
-**LangGraph** - Best for:
-- Complex, branching workflows
-- State management across steps
-- Conditional logic
-- Human-in-the-loop patterns
+**Vector search** - Best for:
+- Semantic / fuzzy matching ("find docs *about* this", not exact terms)
+- Unstructured text where keywords miss synonyms and paraphrases
+- "More like this" retrieval
 
 Downsides:
-- Steeper learning curve
-- More boilerplate for simple cases
-- Requires graph thinking
+- Semantic similarity isn't always the *highest quality* match
+- No hard guarantees - can surface plausible-but-wrong results
+- Costs embeddings + a vector store
+
+**SQL / structured filters** - Best for:
+- Data that already lives in a relational store
+- Exact constraints (date ranges, status, owner, jurisdiction)
+- Domains where precision is non-negotiable (legal, medical, finance)
+
+Downsides:
+- No semantic understanding - misses synonyms and intent
+- You have to know what to filter on
 
 ### Example Answer
 
-"For simple RAG workflows, I prefer LangChain because it's straightforward - chain together embeddings, retrieval, and generation in 20 lines of code. No need for the complexity of graphs.
+"Before reaching for embeddings, I'd ask where the data is. If it's already in SQL or Mongo, sometimes the best move is just giving an agent query access to it - no vector store needed.
 
-But for multi-step agent systems with branching logic, I use LangGraph. For example, if I'm building a system that routes to different agents based on user intent, then potentially loops back for clarification, the graph structure makes the flow explicit. With LangChain, that would be buried in nested if statements."
+For something like legal or medical documents, pure vector search worries me because semantic similarity doesn't guarantee an exact match. I'd pair vector search with hard metadata filters - so I get the semantic recall, but I can still constrain by date, jurisdiction, or document type. Vector search isn't always the answer; it's one tool with real tradeoffs."
 
 ---
 
@@ -171,20 +170,20 @@ But for multi-step agent systems with branching logic, I use LangGraph. For exam
 Write your position:
 
 ```markdown
-## LangChain vs LangGraph: My Opinion
+## Vector Search vs SQL: My Opinion
 
 For [use case], I prefer _________________ because:
 
 - [Reason 1]
 - [Reason 2]
 
-For [different use case], I prefer _________________ because:
+For [different use case], I'd pair it with _________________ because:
 
 - [Reason 1]
 - [Reason 2]
 
-The key difference is:
-[When complexity justifies switching]
+The key question I always ask first is:
+[Where does the data live, and how exact does retrieval need to be?]
 ```
 
 ---
@@ -357,7 +356,7 @@ Without observability, the problem is:
 Complete all five opinion sections above:
 
 1. Agents vs Workflows
-2. LangChain vs LangGraph
+2. Vector Search vs SQL
 3. RAG Patterns (Chunking + Re-Ranking)
 4. Model Selection
 5. Observability
@@ -457,8 +456,8 @@ Shows:
 
 ### Mistake 2: No Reasoning
 
-❌ "I prefer LangGraph because it's better"
-✅ "I prefer LangGraph for complex flows because the graph structure makes branching logic explicit"
+❌ "I prefer vector search because it's better"
+✅ "I prefer vector search for unstructured docs because it matches on meaning, not just keywords"
 
 ### Mistake 3: Ignoring Tradeoffs
 
