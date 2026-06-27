@@ -430,16 +430,6 @@ Create a single document with:
 
 ---
 
-## What You Learned
-
-✅ How to practice out loud effectively
-✅ The three main interview question types
-✅ How to structure answers without reading notes
-✅ Your verbal tics and pacing patterns
-✅ What it feels like to explain your work on camera
-
----
-
 ## You're Ready
 
 You now have:

@@ -471,12 +471,3 @@ Shows:
 
 Even if you're not 100% confident, sound like you have a position.
 
----
-
-## What You Learned
-
-✅ How to take and defend technical positions
-✅ Framework for evaluating tools and patterns
-✅ When to use agents vs workflows
-✅ How to explain tradeoffs clearly
-

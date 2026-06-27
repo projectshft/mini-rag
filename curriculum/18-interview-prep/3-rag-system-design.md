@@ -699,12 +699,3 @@ Each has different:
 - Accuracy requirements
 - Cost constraints
 
----
-
-## What You Learned
-
-✅ Framework for designing any RAG system
-✅ How to match chunking strategy to content type
-✅ When to use namespaces vs filtering vs separate indexes
-✅ How to explain system architecture clearly
-
