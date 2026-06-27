@@ -36,6 +36,33 @@ Use the **Problem → Agitate → Solve → Reflect** framework.
 
 ---
 
+## What the Interviewer Is Really Asking
+
+"Tell me about a project you worked on" is deceptively hard. The interviewer isn't checking that you've shipped *something* - they're looking for evidence of four things:
+
+- **Technical capability** - can you do real engineering work?
+- **Leadership** - do you drive decisions, or just take tickets?
+- **Impact** - did your work matter to the business or users?
+- **Potential** - could you tackle a similar problem *at their company*?
+
+That last one is the whole point. Pick a project that lets them imagine you solving their problems.
+
+---
+
+## Pick a Project Worth Talking About
+
+Before you write anything, pick the right project. The best stories involve a real technical achievement, not just "I built a CRUD app." Strong material usually falls into one of these buckets:
+
+- **Optimizations** - speeding up a slow query or endpoint, with numbers to back it up ("cut p95 latency from 5s to 800ms")
+- **A new process** - automating something painful (e.g. auto-fixing lint in CI, adding evals to catch regressions)
+- **Greenfield features** - building a new capability from scratch
+- **Migrations** - porting between frameworks, databases, or model providers
+- **Hairy bugs** - a critical, hard-to-diagnose issue that needed a real fix (not "I fixed a button color")
+
+If your only project so far is your capstone, that's fine - just make sure you can point to a real problem inside it (scaling ingestion, a retrieval-quality issue, a tricky chunking decision) rather than narrating the happy path.
+
+---
+
 ## The Framework
 
 ### 1. What Did You Build?

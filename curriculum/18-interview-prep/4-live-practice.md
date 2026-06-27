@@ -301,7 +301,7 @@ If your answer is stream-of-consciousness:
 - You get lost
 - Hard to follow
 
-**Fix:** Use the frameworks from Modules 1-3. Structure makes answers easy to follow.
+**Fix:** Use the frameworks from the earlier sections. Structure makes answers easy to follow.
 
 ---
 
