@@ -95,7 +95,7 @@ They ARE looking for:
 
 The coding portion of AI engineering interviews typically follows traditional software engineering patterns - algorithms, system design, debugging. This module focuses on the conversation and communication aspects unique to AI roles.
 
-If you want help preparing for traditional coding interviews, reach out to brian@parsity.io.
+If you want help preparing for traditional coding interviews, ask in the course Slack.
 
 ---
 
