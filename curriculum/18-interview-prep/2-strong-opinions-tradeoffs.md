@@ -23,23 +23,28 @@ By the end of this section, you'll have:
 
 ## Why Opinions Matter
 
-**The problem:**
+This is a strange time to be interviewing for AI roles. The rules haven't been written yet, and anyone who tells you they have probably doesn't know what they're talking about. That's exactly why this is *not* the time to play it safe with your opinions.
 
-Interviewers ask: "What do you think about autonomous agents?"
+The weak answer isn't "I don't know" - almost nobody freezes up that badly. The weak answer is the **knee-jerk textbook response**:
 
-Weak candidates say:
-- "They're interesting" (says nothing)
-- "I've heard they're good" (no opinion)
-- "I don't know much about them" (unprepared)
+> "What do you think about autonomous agents?"
+>
+> "Oh yeah, agents are the future. You'd always want an agent for something like this."
 
-Strong candidates say:
-- "I prefer structured workflows over autonomous agents for production systems because they're more predictable and easier to debug. I'd only use autonomous agents for research tasks where the workflow isn't known upfront."
+That sounds confident, but it says nothing. It's the answer everyone gives because it's the answer ChatGPT gives. The moment you sound like ChatGPT, the interviewer can't relate to you and can't tell whether you actually understand the tradeoffs.
 
-**What changed?**
-- ✅ Clear position
-- ✅ Reasoning
-- ✅ Specific use cases
-- ✅ Demonstrates practical experience
+A stronger answer takes a position, asks a question, and earns its conclusion:
+
+> "Honestly, I'm a bit against reaching for an agent here. What you're describing sounds more like a workflow - there's a clear outcome and a handful of known paths to get there. A true agent is autonomous; it takes a fuzzy task and decides its own steps, which is powerful but hard to debug and test. I'd save that for something genuinely open-ended, like a coding assistant refactoring a service. For this, I'd build a workflow so every step is testable. But it depends - what does 'done' look like for this feature?"
+
+Notice what that does:
+
+- **Takes a real position** (even a slightly contrarian one) instead of the safe default
+- **Asks a clarifying question** instead of assuming the problem
+- **Teaches a little** - defines agent vs. workflow without condescending
+- **Earns the conclusion** with tradeoffs, not buzzwords
+
+A contrarian, well-reasoned take can backfire with the occasional interviewer who just wants a yes-man. You can't control that. What you *can* control is having thought it through - which beats a textbook answer every time.
 
 ---
 
