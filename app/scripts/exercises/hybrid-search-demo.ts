@@ -27,80 +27,75 @@ const DEMO_DIMENSIONS = 512;
 const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
 
-// Sample documents - designed to show when sparse vs dense matters
+// Sample documents - made-up data designed to show when sparse vs dense matters.
+// Each group is semantically near-identical but has a distinct identifier, so
+// dense search struggles to separate them and sparse (keyword) search wins.
 const documents = [
-  // Exact term matching scenarios
+  // Product SKUs - all Nike running shoes, so they look alike semantically.
+  // Only sparse can pin the exact SKU the user typed.
   {
-    id: 'hybrid-demo-1',
-    text: 'React.memo is a higher-order component that prevents re-renders when props are unchanged.',
+    id: 'sku-7292',
+    text: 'Nike Air Zoom Pegasus 40 running shoe, mens, black/white. Product code SKU-7292.',
   },
   {
-    id: 'hybrid-demo-2',
-    text: 'The useState hook lets you add state to functional components in React.',
+    id: 'sku-7293',
+    text: 'Nike Air Zoom Pegasus 40 running shoe, mens, blue/grey. Product code SKU-7293.',
   },
   {
-    id: 'hybrid-demo-3',
-    text: 'Performance optimization in React involves memoization and careful state management.',
+    id: 'sku-8146',
+    text: 'Nike Pegasus Trail 4 running shoe, mens, olive green. Product code SKU-8146.',
   },
   {
-    id: 'hybrid-demo-4',
-    text: 'useMemo caches expensive calculations between re-renders to improve performance.',
+    id: 'sku-6501',
+    text: 'Nike Revolution 7 running shoe, womens, pink foam. Product code SKU-6501.',
+  },
+  // Software versions - patch notes read alike; sparse boosts the exact version.
+  {
+    id: 'pg-16-1',
+    text: 'PostgreSQL 16.1 patched a security vulnerability in the query planner and fixed several minor bugs.',
   },
   {
-    id: 'hybrid-demo-5',
-    text: 'Redux is a state management library often used with React applications.',
-  },
-  // Version number scenarios - sparse catches exact versions
-  {
-    id: 'hybrid-demo-6',
-    text: 'React 18 introduced automatic batching for all state updates, not just event handlers.',
+    id: 'pg-15-2',
+    text: 'PostgreSQL 15.2 fixed a bug in logical replication and improved error handling.',
   },
   {
-    id: 'hybrid-demo-7',
-    text: 'React 17 added no new features but prepared the foundation for gradual upgrades.',
+    id: 'pg-14-9',
+    text: 'PostgreSQL 14.9 addressed a memory leak in autovacuum and other stability issues.',
+  },
+  // Error codes - every connection error looks the same to dense search.
+  {
+    id: 'err-e4002',
+    text: 'Error E-4002: connection pool exhausted. Increase the pool size or add retry logic.',
   },
   {
-    id: 'hybrid-demo-8',
-    text: 'The latest version of the library includes concurrent rendering features.',
-  },
-  // Acronym scenarios - sparse catches exact acronyms
-  {
-    id: 'hybrid-demo-9',
-    text: 'SSR (Server-Side Rendering) improves SEO and initial page load performance.',
+    id: 'err-e4001',
+    text: 'Error E-4001: connection refused. Verify the database host and port are correct.',
   },
   {
-    id: 'hybrid-demo-10',
-    text: 'Rendering on the server before sending HTML to the browser helps search engines.',
+    id: 'err-e4003',
+    text: 'Error E-4003: connection timeout. The server did not respond within the timeout window.',
+  },
+  // API route versions - same resource, different version string.
+  {
+    id: 'api-v1-users',
+    text: 'GET /api/v1/users returns a paginated list of users with basic fields.',
   },
   {
-    id: 'hybrid-demo-11',
-    text: 'CSR (Client-Side Rendering) runs JavaScript in the browser to build the page.',
+    id: 'api-v2-users',
+    text: 'GET /api/v2/users adds filtering, sorting, and expanded user fields to the response.',
   },
-  // Code pattern scenarios - sparse catches exact syntax
+  // Order numbers - nearly identical status lines; sparse pins the exact order.
   {
-    id: 'hybrid-demo-12',
-    text: 'Use useCallback to memoize functions passed as props to child components.',
-  },
-  {
-    id: 'hybrid-demo-13',
-    text: 'The useEffect hook runs side effects after render, like fetching data or subscriptions.',
+    id: 'ord-78433',
+    text: 'Order ORD-2024-78433 shipped on March 3 and is expected to arrive within two days.',
   },
   {
-    id: 'hybrid-demo-14',
-    text: 'Side effects in functional components should be handled properly to avoid memory leaks.',
-  },
-  // Error message scenarios - sparse catches exact error text
-  {
-    id: 'hybrid-demo-15',
-    text: 'Error: "Cannot read property of undefined" usually means accessing a null object.',
+    id: 'ord-78432',
+    text: 'Order ORD-2024-78432 is being prepared for shipment from the warehouse.',
   },
   {
-    id: 'hybrid-demo-16',
-    text: 'Null reference errors happen when you try to use something that does not exist.',
-  },
-  {
-    id: 'hybrid-demo-17',
-    text: 'Error: "ENOENT: no such file or directory" means the file path is wrong.',
+    id: 'ord-91055',
+    text: 'Order ORD-2024-91055 was delivered and the customer left a five-star review.',
   },
 ];
 
@@ -272,69 +267,56 @@ async function runSearch() {
   }
 
   // ============================================================
-  // EXAMPLE 1: Version Numbers
-  // Dense: "React 18" and "React 17" are semantically similar
-  // Sparse: Boosts exact "18" match
+  // EXAMPLE 1: Product SKUs
+  // Dense: every Nike running shoe looks alike semantically
+  // Sparse: boosts the exact SKU the user typed
   // ============================================================
   console.log('\n' + '='.repeat(60));
-  console.log('EXAMPLE 1: VERSION NUMBERS');
-  console.log('Why it matters: Dense treats "React 18" and "React 17" as similar.');
-  console.log('Sparse boosts the exact version number.');
+  console.log('EXAMPLE 1: PRODUCT SKUs');
+  console.log('Why it matters: all Nike running shoes look alike semantically.');
+  console.log('Dense often returns the wrong SKU. Sparse boosts the exact one.');
   console.log('='.repeat(60));
 
-  await compareSearch('What changed in React 18?', 'react 18');
+  await compareSearch('What is SKU-7292?', 'SKU-7292');
 
   // ============================================================
-  // EXAMPLE 2: Acronyms
-  // Dense: "SSR" might match "rendering on server" semantically
-  // Sparse: Boosts exact "SSR" acronym
+  // EXAMPLE 2: Version Numbers
+  // Dense: PostgreSQL patch notes are all semantically similar
+  // Sparse: boosts the exact version (16.1 vs 15.2 vs 14.9)
   // ============================================================
   console.log('\n' + '='.repeat(60));
-  console.log('EXAMPLE 2: ACRONYMS');
-  console.log('Why it matters: Dense understands "SSR" means server rendering.');
-  console.log('But if you search "SSR", you probably want docs that use that term.');
+  console.log('EXAMPLE 2: VERSION NUMBERS');
+  console.log('Why it matters: patch notes read alike, so dense may return 15.2 or 14.9.');
+  console.log('Sparse boosts the exact version. Often the same results, higher confidence.');
   console.log('='.repeat(60));
 
-  await compareSearch('What is SSR?', 'ssr');
+  await compareSearch('What was fixed in PostgreSQL 16.1?', '16.1');
 
   // ============================================================
-  // EXAMPLE 3: Exact Hook Names
-  // Dense: All hooks are semantically similar
-  // Sparse: Boosts exact "useEffect" match
+  // EXAMPLE 3: Error Codes
+  // Dense: every connection error is semantically similar
+  // Sparse: pins the exact code the user pasted
   // ============================================================
   console.log('\n' + '='.repeat(60));
-  console.log('EXAMPLE 3: EXACT CODE TERMS');
-  console.log('Why it matters: "useEffect" and "useMemo" are semantically similar hooks.');
-  console.log('Sparse ensures you get the exact hook you searched for.');
+  console.log('EXAMPLE 3: ERROR CODES');
+  console.log('Why it matters: every connection error reads the same to dense search.');
+  console.log('Sparse pins the exact code the user pasted.');
   console.log('='.repeat(60));
 
-  await compareSearch('How does useEffect work?', 'useeffect');
+  await compareSearch('How do I fix error E-4002?', 'E-4002');
 
   // ============================================================
-  // EXAMPLE 4: Error Messages
-  // Dense: All errors are semantically similar
-  // Sparse: Boosts exact error text match
+  // EXAMPLE 4: Order Numbers
+  // Dense: status lines are near-identical
+  // Sparse: you need THIS order, not a semantically similar one
   // ============================================================
   console.log('\n' + '='.repeat(60));
-  console.log('EXAMPLE 4: ERROR MESSAGES');
-  console.log('Why it matters: Users paste exact error text.');
-  console.log('Dense sees "all errors are similar". Sparse finds the exact match.');
+  console.log('EXAMPLE 4: ORDER NUMBERS');
+  console.log('Why it matters: you need THIS order, not a semantically similar one.');
+  console.log('Sparse boosts the exact order number to the top.');
   console.log('='.repeat(60));
 
-  await compareSearch('Cannot read property of undefined', 'cannot read property');
-
-  // ============================================================
-  // EXAMPLE 5: Semantic Query (where dense shines)
-  // Dense: Understands "stop re-rendering" = "prevent re-renders" = "memoization"
-  // Sparse: Doesn't help much here
-  // ============================================================
-  console.log('\n' + '='.repeat(60));
-  console.log('EXAMPLE 5: SEMANTIC QUERY (where dense shines)');
-  console.log('Why it matters: User asks about "stopping re-renders".');
-  console.log('Dense understands this means memoization, React.memo, etc.');
-  console.log('='.repeat(60));
-
-  await compareSearch('How do I stop my component from re-rendering?');
+  await compareSearch('Where is order ORD-2024-78433?', 'ORD-2024-78433');
 
   // ============================================================
   // SUMMARY
@@ -349,10 +331,10 @@ async function runSearch() {
     • Intent matters more than exact words
 
   SPARSE (keyword) is best when:
-    • User searches for exact terms (React.memo, useEffect)
-    • Version numbers matter (React 18 vs React 17)
-    • Acronyms matter (SSR, CSR, API)
-    • Error messages (exact match needed)
+    • User searches for exact identifiers (SKU-7292, ORD-2024-78433)
+    • Version numbers matter (PostgreSQL 16.1 vs 15.2)
+    • Error codes matter (E-4002 vs E-4001)
+    • Exact terminology must be preserved
 
   HYBRID is best when:
     • You don't know what the user will search
@@ -393,7 +375,7 @@ async function runAll() {
   console.log('='.repeat(60));
   console.log('\nKey takeaways:');
   console.log('  1. Dense vectors: semantic meaning ("fast" = "quick" = "performant")');
-  console.log('  2. Sparse vectors: exact keywords (React 18 ≠ React 17)');
+  console.log('  2. Sparse vectors: exact identifiers (SKU-7292 ≠ SKU-7293)');
   console.log('  3. Hybrid combines both - use for production RAG');
   console.log('  4. Use dotproduct metric (not cosine) for hybrid indexes');
   console.log('\nRun "cleanup" command to remove demo data.');
