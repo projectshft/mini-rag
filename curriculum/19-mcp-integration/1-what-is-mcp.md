@@ -106,11 +106,3 @@ In the next lesson, you'll build a minimal MCP server that exposes your RAG syst
 ```
 
 Then you'll connect it to Claude Desktop and query your data directly from the chat interface.
-
----
-
-## Prerequisites
-
-- Working RAG system (from previous modules)
-- Node.js 18+
-- Claude Desktop or Cursor installed

@@ -1,0 +1,103 @@
+<h1>Build It: &quot;Ask My Docs&quot; MCP Server</h1>
+<p>You&#39;ve seen what MCP is and how a server is wired up. Now build a small, real one — a single-tool server that lets <strong>any</strong> MCP client (Claude Code, Cursor, the Inspector) search the knowledge base you already loaded into Pinecone, straight from your editor.</p>
+<p>Timebox: ~1 hour. One file, one tool.</p>
+<hr>
+<h2>The Project</h2>
+<p><strong>Goal:</strong> Expose your Pinecone index as one MCP tool, <code>search_docs</code>, and query it from a real client.</p>
+<pre><code>You (in Claude Code): &quot;search my docs for chunking strategies&quot;
+        │
+        ▼
+  search_docs tool  ──►  embed query  ──►  Pinecone  ──►  top matches back to the chat
+</code></pre>
+<p>That&#39;s the whole project. No UI, no API route, no auth. One tool that does retrieval.</p>
+<hr>
+<h2>Step 1 — Install</h2>
+<pre><code class="language-bash">yarn add @modelcontextprotocol/sdk zod
+</code></pre>
+<h2>Step 2 — Write the server</h2>
+<p>Create <code>mcp/rag-server.ts</code>. It&#39;s self-contained on purpose — it talks to Pinecone and OpenAI directly so you don&#39;t have to refactor your app to export anything.</p>
+<pre><code class="language-typescript">import { McpServer } from &#39;@modelcontextprotocol/sdk/server/mcp.js&#39;;
+import { StdioServerTransport } from &#39;@modelcontextprotocol/sdk/server/stdio.js&#39;;
+import { Pinecone } from &#39;@pinecone-database/pinecone&#39;;
+import OpenAI from &#39;openai&#39;;
+import { z } from &#39;zod&#39;;
+
+const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+const index = pinecone.index(process.env.PINECONE_INDEX!);
+
+const server = new McpServer({ name: &#39;rag-server&#39;, version: &#39;1.0.0&#39; });
+
+server.tool(
+	&#39;search_docs&#39;,
+	&#39;Search the knowledge base for relevant document chunks&#39;,
+	{
+		query: z.string().min(1).max(1000).describe(&#39;What to search for&#39;),
+		topK: z
+			.number()
+			.int()
+			.min(1)
+			.max(20)
+			.default(5)
+			.describe(&#39;Number of results&#39;),
+	},
+	async ({ query, topK }) =&gt; {
+		const embed = await openai.embeddings.create({
+			model: &#39;text-embedding-3-small&#39;,
+			input: query,
+		});
+
+		const { matches } = await index.query({
+			vector: embed.data[0].embedding,
+			topK,
+			includeMetadata: true,
+		});
+
+		const results = matches.map((m) =&gt; ({
+			score: m.score,
+			text: m.metadata?.text,
+			source: m.metadata?.source,
+		}));
+
+		return {
+			content: [{ type: &#39;text&#39;, text: JSON.stringify(results, null, 2) }],
+		};
+	},
+);
+
+const transport = new StdioServerTransport();
+await server.connect(transport);
+console.error(&#39;rag-server running on stdio&#39;);
+</code></pre>
+<blockquote>
+<p>Note: <code>console.log</code> would corrupt the protocol — MCP uses stdout for JSON-RPC. Log to <code>stderr</code> (<code>console.error</code>) only.</p>
+</blockquote>
+<h2>Step 3 — Test it before touching any client</h2>
+<p>The Inspector is the fastest feedback loop:</p>
+<pre><code class="language-bash">npx @modelcontextprotocol/inspector npx tsx mcp/rag-server.ts
+</code></pre>
+<p>Open the web UI it prints, pick <code>search_docs</code>, and run a query you know is in your index. You should get matches back with scores. If you don&#39;t, fix it here — not inside Claude.</p>
+<h2>Step 4 — Connect a real client</h2>
+<p><strong>Claude Code</strong> — add to <code>~/.claude.json</code> (or run <code>claude mcp add</code>):</p>
+<pre><code class="language-json">{
+	&quot;mcpServers&quot;: {
+		&quot;rag&quot;: {
+			&quot;command&quot;: &quot;npx&quot;,
+			&quot;args&quot;: [&quot;tsx&quot;, &quot;/absolute/path/to/mcp/rag-server.ts&quot;],
+			&quot;env&quot;: {
+				&quot;OPENAI_API_KEY&quot;: &quot;sk-...&quot;,
+				&quot;PINECONE_API_KEY&quot;: &quot;...&quot;,
+				&quot;PINECONE_INDEX&quot;: &quot;rag-tutorial&quot;
+			}
+		}
+	}
+}
+</code></pre>
+<p>Restart, then ask: <em>&quot;Use search_docs to find what my notes say about reranking.&quot;</em></p>
+<p>Cursor and Claude Desktop take the same block — see <code>1-exposing-rag-over-mcp.md</code> for their config paths.</p>
+<hr>
+<h2>Done when</h2>
+<ul>
+<li><input disabled="" type="checkbox"> The Inspector lists <code>search_docs</code> and returns real matches from your index.</li>
+<li><input disabled="" type="checkbox"> One MCP client (Claude Code / Cursor / Desktop) calls the tool and answers from your docs.</li>
+</ul>

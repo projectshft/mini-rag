@@ -124,6 +124,8 @@ Complete the RAG & AI Agents curriculum in 42 days with 1-2 hours of daily study
 
 ### Day 32
 - [14-tool-calling-exploration/2-the-reveal.html](14-tool-calling-exploration/2-the-reveal.html)
+- [19-mcp-integration/1-what-is-mcp.html](19-mcp-integration/1-what-is-mcp.html)
+- [19-mcp-integration/3-build-an-mcp-project.html](19-mcp-integration/3-build-an-mcp-project.html) — build a RAG MCP server and connect it to Claude
 
 ### Day 33
 - [15-sql-agent/1-rag-without-vectors.html](15-sql-agent/1-rag-without-vectors.html)

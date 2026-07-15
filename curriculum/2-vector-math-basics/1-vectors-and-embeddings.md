@@ -206,8 +206,8 @@ For beautiful visual explanations:
 
 **AI Accelerator Compendium (Interactive Guides):**
 
-- [Vectors](https://projectshft.github.io/ai-accelerator-compendium/vectors.html) - Interactive visualization of vectors and their properties
-- [Dot Products](https://projectshft.github.io/ai-accelerator-compendium/dot-products.html) - Visual explanation of dot products and similarity
+- [Vectors](https://projectshft.github.io/ai-accelerator-compendium/vectors/index.html) - Interactive visualization of vectors and their properties
+- [Dot Products](https://projectshft.github.io/ai-accelerator-compendium/dot-products/index.html) - Visual explanation of dot products and similarity
 
 **Bonus - Dive Deeper:**
 - [LLMs](https://projectshft.github.io/ai-accelerator-compendium/mini-llm/index.html) - How large language models work

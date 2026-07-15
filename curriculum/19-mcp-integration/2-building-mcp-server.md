@@ -9,7 +9,7 @@ Build a minimal MCP server that exposes your RAG system to Claude Desktop or Cur
 Install the MCP SDK:
 
 ```bash
-npm install @modelcontextprotocol/sdk
+yarn (or npm) install @modelcontextprotocol/sdk
 ```
 
 ---
