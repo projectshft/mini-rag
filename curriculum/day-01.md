@@ -33,8 +33,7 @@ After this program, you might be the **only person** on your team who understand
 
 - **Weekly office hours** — invite arrives via Slack. Bring AI-specific questions: architecture decisions, embeddings, RAG vs fine-tuning.
 - **Async questions** — can't make it? [Submit a question](https://form.typeform.com/to/EwCKfAN6) anytime; it gets answered in the next session or directly.
-- **Your mentor** — for technical concepts: debugging, code issues, implementation help.
-- **Slack** — post your assignments and work-in-progress for feedback.
+- **Your mentor + Slack** — your two biggest levers. The full playbook for using them well (and what to do if you don't have a mentor yet) is in [Start Here](/learn/day-00) — if you skipped it, go back; it's 20 minutes that changes how the next six weeks go.
 
 ### Break things. Extend things. Rewrite things.
 

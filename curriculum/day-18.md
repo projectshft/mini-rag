@@ -114,6 +114,28 @@ const agentSelectionSchema = z.object({
 - Throws descriptive errors if validation fails
 - Composes schemas (`agentSelectionSchema` uses `agentTypeSchema`)
 
+Build the schema yourself before you scroll further:
+
+```blanks
+{
+  "title": "Complete the selector's zod schemas",
+  "note": "Every blank is a real decision — pick what you'd actually write.",
+  "code": "export const messageSchema = z.object({\n  role: z.___1___(['user', 'assistant', 'system']),\n  content: z.___2___(),\n});\n\nexport const agentTypeSchema = z.enum(['linkedin', 'rag']);\n\nconst agentSelectionSchema = z.___3___({\n  agent: ___4___,\n  query: z.string(),\n});",
+  "blanks": [
+    { "options": ["enum", "string", "literal"], "answer": "enum", "explain": "role must be one of exactly three values — that's an enum. z.string() would accept 'banana' as a role." },
+    { "options": ["string", "text", "any"], "answer": "string", "explain": "Free-form text is z.string(). z.any() throws away the type safety you came here for; z.text() doesn't exist." },
+    { "options": ["object", "schema", "shape"], "answer": "object", "explain": "A schema with named fields is z.object({...})." },
+    { "options": ["agentTypeSchema", "z.string()", "'linkedin' | 'rag'"], "answer": "agentTypeSchema", "explain": "Compose schemas — reuse the enum you already defined. z.string() would let the model route to an agent that doesn't exist; the union syntax is TypeScript types, not zod." }
+  ]
+}
+```
+
+And here's the whole day in one live call — the selector returning schema-constrained JSON, using your class key:
+
+```try-it
+{ "kind": "structured-output", "title": "The selector, live", "description": "Sends your message through a real selector with a strict JSON schema ({ agent, confidence, reasoning }). Try to phrase something that breaks it — the schema won't let it." }
+```
+
 **Example validation:**
 
 ```typescript

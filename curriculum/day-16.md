@@ -210,6 +210,27 @@ const response = await openai.chat.completions.create({
 
 "Write a LinkedIn post" should **always** route to the LinkedIn agent. You want predictable, reliable routing — no randomness in production agent selection.
 
+Prove you'd set the dial right for each job:
+
+```blanks
+{
+  "title": "Set the temperature for each call",
+  "note": "Same API, three very different jobs. Pick the value you'd ship.",
+  "code": "// The selector: route a message to exactly one agent\nawait openai.chat.completions.create({\n  model: 'gpt-4o-mini',\n  temperature: ___1___,\n  messages: selectorMessages,\n});\n\n// The docs Q&A answer, grounded in retrieved chunks\nawait openai.chat.completions.create({\n  model: 'gpt-4o-mini',\n  temperature: ___2___,\n  messages: ragMessages,\n});\n\n// Brainstorming 10 LinkedIn hook variations\nawait openai.chat.completions.create({\n  model: 'gpt-4o-mini',\n  temperature: ___3___,\n  messages: hookMessages,\n});",
+  "blanks": [
+    { "options": ["0.1", "1.0", "1.8"], "answer": "0.1", "explain": "Routing is classification — 'Write a LinkedIn post' must route the same way every time. Low temperature = deterministic decisions." },
+    { "options": ["0.0", "0.7", "2.0"], "answer": "0.7", "explain": "Grounded Q&A wants natural phrasing without inventing beyond the context — the balanced middle. At 0.0 answers get robotic; at 2.0 they drift from the retrieved facts." },
+    { "options": ["0.2", "0.9", "1.7"], "answer": "1.7", "explain": "Brainstorming variations is the one place you WANT the flattened probability distribution — diversity is the goal, and a human picks the winner." }
+  ]
+}
+```
+
+Then feel it — same prompt, both ends of the dial, real API calls:
+
+```try-it
+{ "kind": "temperature", "title": "Same prompt, two temperatures", "description": "Runs your prompt twice through your class key: once at 0.0, once at 1.4. Run it a few times and watch which side changes." }
+```
+
 ## Model selection: which model when?
 
 | Model           | Speed  | Cost      | Best for                                  |

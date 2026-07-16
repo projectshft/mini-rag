@@ -102,6 +102,12 @@ Note that the user in this flow did nothing wrong. That's what makes data poison
 ]
 ```
 
+Before we build the defenses, watch the attack actually work — live, against a real model, with your key:
+
+```try-it
+{ "kind": "injection", "title": "Poison a retrieval, watch the model obey", "description": "Your question gets answered with a retrieved document that has an instruction hidden inside it. Sometimes the model obeys the injection, sometimes it doesn't — run it several times. That inconsistency is the threat model." }
+```
+
 ## 3. Ingestion-level defense (the "Gatekeeper")
 
 Prevent poisoned documents from ever reaching your vector database.

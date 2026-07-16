@@ -14,6 +14,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 
 **Week 1 — Foundations (Days 1–7)**
 
+- Day 0 — [Start Here — How to Win This Program](day-00.md)
 - Day 1 — [How to Learn + What is RAG](day-01.md)
 - Day 2 — [Vectors and Embeddings](day-02.md)
 - Day 3 — [Implementing Similarity](day-03.md)

@@ -158,6 +158,12 @@ vector-search | Watch a query find its nearest neighbors
 ]
 ```
 
+Don't take the diagram's word for it — embed two real sentences with your class key and watch the geometry:
+
+```try-it
+{ "kind": "embedding-similarity", "title": "Feel the meaning-space", "description": "Embeds both texts with text-embedding-3-small and computes their cosine similarity. Try synonyms, paraphrases, opposites, and totally unrelated sentences — then try 'bank of the river' vs 'bank account'." }
+```
+
 ## Why 512 dimensions?
 
 Embeddings have many dimensions (512, 1536, 3072):

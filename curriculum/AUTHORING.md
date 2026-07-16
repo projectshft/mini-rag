@@ -167,7 +167,45 @@ replies land. Rules for writing good ones:
 must be mutually exclusive (no two rights that both fit one left). Correct
 matches lock in on check; wrong ones return to the pool.
 
-### 7. Mermaid — diagrams
+### 7. Blanks — fill-in-the-blank code
+
+```` ```blanks ````
+```json
+{
+  "title": "Complete the selector's zod schema",
+  "note": "Every blank is a real decision.",
+  "code": "const schema = z.___1___({\n  agent: z.enum(['linkedin', 'rag'])\n});",
+  "blanks": [
+    { "options": ["object", "schema", "shape"], "answer": "object", "explain": "…" }
+  ]
+}
+```
+`___N___` markers (1-indexed) in `code` become slots; each blank gets 3
+option pills. Great for config values (temperature), schema shapes, and
+API parameters — anywhere the wrong choice is a *plausible* wrong choice.
+`explain` shows only when the student got that blank wrong.
+
+### 8. Try-it — live API calls with the student's class key
+
+```` ```try-it ````
+```json
+{ "kind": "temperature", "title": "Same prompt, two temperatures", "description": "…" }
+```
+Runs a real, tiny OpenAI call through the class LiteLLM proxy using the
+key the student got by email (stored in their browser only; the server
+relays it for exactly one call). Kinds:
+
+- `embedding-similarity` — embed two texts, show cosine similarity
+- `temperature` — same prompt at 0.0 and 1.4, side by side
+- `structured-output` — the selector with a strict JSON schema, live
+- `injection` — a poisoned retrieved document; the model sometimes obeys it
+
+Models and token caps are pinned server-side (`app/api/lms/try/route.ts`)
+— add new kinds there first, then reference them in lessons. Requires
+`LITELLM_PROXY_URL` on the deployment; the widget degrades to a clear
+error message when unset.
+
+### 9. Mermaid — diagrams
 
 Standard ```` ```mermaid ```` fences render as diagrams.
 

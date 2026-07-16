@@ -10,6 +10,8 @@ import { AiPrompt } from './AiPrompt';
 import { OrderSteps } from './OrderSteps';
 import { Scenario } from './Scenario';
 import { MatchPairs } from './MatchPairs';
+import { FillBlanks } from './FillBlanks';
+import { TryIt } from './TryIt';
 
 // Client-side render of a day's markdown body. remark-gfm gives tables
 // and task lists; rehype-raw renders the embedded HTML (Descript video
@@ -23,8 +25,10 @@ import { MatchPairs } from './MatchPairs';
 //   ```order     → tap-the-steps-in-order exercise (see OrderSteps.tsx)
 //   ```scenario  → workplace what-do-you-say exercise (JSON; see Scenario.tsx)
 //   ```match     → tap-to-match pairs exercise (JSON; see MatchPairs.tsx)
+//   ```blanks    → fill-in-the-blank code exercise (JSON; see FillBlanks.tsx)
+//   ```try-it    → live API playground using the student's class key (JSON; see TryIt.tsx)
 
-const ISLAND_RE = /language-(mermaid|quiz|visual|ai-prompt|order|scenario|match)\b/;
+const ISLAND_RE = /language-(mermaid|quiz|visual|ai-prompt|order|scenario|match|blanks|try-it)\b/;
 
 const components: Components = {
 	// react-markdown wraps every fence in <pre><code>. For the interactive
@@ -61,6 +65,12 @@ const components: Components = {
 		}
 		if (className?.includes('language-match')) {
 			return <MatchPairs source={source} />;
+		}
+		if (className?.includes('language-blanks')) {
+			return <FillBlanks source={source} />;
+		}
+		if (className?.includes('language-try-it')) {
+			return <TryIt source={source} />;
 		}
 		return <code className={className}>{children}</code>;
 	},
