@@ -3,6 +3,7 @@
 import { clerkClient } from '@clerk/nextjs/server';
 import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/lms/admin';
+import { lmsPrisma } from '@/lib/lms/prisma';
 
 /** Invite a student by email — Clerk sends the magic-link/code email. */
 export async function inviteStudent(formData: FormData) {
@@ -40,6 +41,21 @@ export async function unbanStudent(formData: FormData) {
 	const client = await clerkClient();
 	await client.users.unbanUser(userId);
 	revalidatePath('/admin');
+}
+
+/** Lock/unlock the interview-prep section for one student. */
+export async function setInterviewAccess(formData: FormData) {
+	await requireAdmin();
+	const studentId = String(formData.get('studentId') ?? '');
+	const unlock = String(formData.get('unlock') ?? '') === 'true';
+	if (!studentId) return;
+
+	await lmsPrisma.student.update({
+		where: { id: studentId },
+		data: { interviewUnlockedAt: unlock ? new Date() : null },
+	});
+	revalidatePath('/admin');
+	revalidatePath('/learn');
 }
 
 /** Cancel a pending invitation. */

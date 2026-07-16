@@ -24,6 +24,9 @@ model Student {
   email       String           @unique // cached from Clerk for the matrix
   invitedAt   DateTime         @default(now())
   firstSeenAt DateTime? // set on first authenticated /learn hit
+  // Interview-prep gate: null = locked (default). The admin unlocks each
+  // student near the end of the program via the /admin toggle.
+  interviewUnlockedAt DateTime?
   progress    LessonProgress[]
 
   @@map("students")

@@ -6,6 +6,7 @@ import {
 	revokeStudent,
 	unbanStudent,
 	revokeInvitation,
+	setInterviewAccess,
 } from './actions';
 
 export const dynamic = 'force-dynamic';
@@ -110,6 +111,12 @@ export default async function AdminPage() {
 											{d.day}
 										</th>
 									))}
+									<th
+										className='whitespace-nowrap border-l-2 border-zinc-200 px-3 py-2 text-center font-semibold text-zinc-400'
+										title='Interview-prep section: locked until you unlock it per student'
+									>
+										🎤 Interview
+									</th>
 									<th className='px-3 py-2 text-right font-semibold text-zinc-400'>
 										Access
 									</th>
@@ -151,6 +158,30 @@ export default async function AdminPage() {
 													/>
 												</td>
 											))}
+											<td className='whitespace-nowrap border-l-2 border-zinc-100 px-3 py-2 text-center'>
+												<form action={setInterviewAccess} className='inline'>
+													<input type='hidden' name='studentId' value={s.id} />
+													<input
+														type='hidden'
+														name='unlock'
+														value={s.interviewUnlockedAt ? 'false' : 'true'}
+													/>
+													<button
+														className={`cursor-pointer rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors ${
+															s.interviewUnlockedAt
+																? 'bg-violet-100 text-violet-700 hover:bg-violet-200'
+																: 'bg-zinc-100 text-zinc-400 hover:bg-zinc-200'
+														}`}
+														title={
+															s.interviewUnlockedAt
+																? 'Interview prep is UNLOCKED for this student — click to lock'
+																: 'Interview prep is locked — click to unlock'
+														}
+													>
+														{s.interviewUnlockedAt ? 'Unlocked' : 'Locked'}
+													</button>
+												</form>
+											</td>
 											<td className='whitespace-nowrap px-3 py-2 text-right'>
 												{banned ? (
 													<form action={unbanStudent} className='inline'>

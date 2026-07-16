@@ -1,13 +1,19 @@
 import Link from 'next/link';
-import { getDays, getWeeks } from '@/lib/lms/curriculum';
-import { ensureStudent, getCompletedSlugs } from '@/lib/lms/progress';
+import { getDays, getInterviewLessons, getWeeks } from '@/lib/lms/curriculum';
+import {
+	ensureStudent,
+	getCompletedSlugs,
+	isInterviewUnlocked,
+} from '@/lib/lms/progress';
 
 export default async function LearnPage() {
 	const userId = await ensureStudent();
-	const [weeks, days, completed] = await Promise.all([
+	const [weeks, days, interviewLessons, completed, interviewUnlocked] = await Promise.all([
 		getWeeks(),
 		getDays(),
+		getInterviewLessons(),
 		userId ? getCompletedSlugs(userId) : Promise.resolve(new Set<string>()),
+		userId ? isInterviewUnlocked(userId) : Promise.resolve(false),
 	]);
 
 	const total = days.length;
@@ -124,6 +130,71 @@ export default async function LearnPage() {
 						</section>
 					);
 				})}
+
+				{interviewLessons.length > 0 && (
+					<section>
+						<div className='flex items-baseline justify-between'>
+							<h2 className='text-lg font-bold tracking-tight text-zinc-900'>
+								Bonus — Interview Prep
+							</h2>
+							{interviewUnlocked ? (
+								<span className='text-xs font-medium text-zinc-400'>
+									{interviewLessons.filter((l) => completed.has(l.slug)).length}/
+									{interviewLessons.length} done
+								</span>
+							) : (
+								<span className='text-xs font-medium text-zinc-400'>🔒 locked</span>
+							)}
+						</div>
+						{interviewUnlocked ? (
+							<ul className='mt-3 divide-y divide-zinc-100 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm'>
+								{interviewLessons.map((lesson, i) => {
+									const isDone = completed.has(lesson.slug);
+									return (
+										<li key={lesson.slug}>
+											<Link
+												href={`/learn/${lesson.slug}`}
+												className='flex items-center gap-3 px-4 py-3 transition-colors hover:bg-indigo-50/40'
+											>
+												<span
+													className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+														isDone
+															? 'bg-emerald-500 text-white'
+															: 'border border-zinc-200 bg-white text-zinc-500'
+													}`}
+													aria-hidden
+												>
+													{isDone ? '✓' : i + 1}
+												</span>
+												<span className='min-w-0 flex-1'>
+													<span className='block truncate text-sm font-medium text-zinc-800'>
+														{lesson.title}
+													</span>
+													{lesson.time && (
+														<span className='block text-xs text-zinc-400'>
+															{lesson.time}
+														</span>
+													)}
+												</span>
+											</Link>
+										</li>
+									);
+								})}
+							</ul>
+						) : (
+							<div className='mt-3 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/60 px-5 py-6 text-center'>
+								<p className='text-sm font-medium text-zinc-500'>
+									🔒 The AI Engineering Interview Playbook
+								</p>
+								<p className='mt-1 text-xs text-zinc-400'>
+									{interviewLessons.length} sessions — signature stories, tradeoff
+									opinions, RAG system design, live practice. Your instructor unlocks
+									this near the end of the program.
+								</p>
+							</div>
+						)}
+					</section>
+				)}
 			</div>
 		</div>
 	);

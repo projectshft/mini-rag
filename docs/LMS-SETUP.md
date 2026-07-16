@@ -56,6 +56,10 @@ yarn dev
   `AUTHORING.md` documents the format and the interactive blocks).
 - Assignments: Typeform links stay inline in the day files (no in-app
   submission in this version). Feedback happens in Slack.
+- Interview prep (`curriculum/interview-NN.md`): gated per student.
+  Locked by default; unlock each student with the 🎤 toggle in `/admin`
+  near the end of the program. State lives in
+  `Student.interviewUnlockedAt` (null = locked).
 
 ## Editing the curriculum
 - One file per study day: `curriculum/day-NN.md` (see `curriculum/AUTHORING.md`

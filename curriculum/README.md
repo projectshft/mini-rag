@@ -85,6 +85,18 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 Submission stays on Typeform (links live inline in the day files).
 Post your work in Slack for feedback.
 
+## Interview prep
+
+Bonus section, **gated per student** — locked by default, unlocked from
+`/admin` (the 🎤 toggle) near the end of the program. Same file format as
+day files, but no "Day N —" title prefix.
+
+- [The AI Engineering Interview Playbook](interview-01.md)
+- [Your Signature Story](interview-02.md)
+- [Strong Opinions on Tradeoffs](interview-03.md)
+- [RAG System Design Interviews](interview-04.md)
+- [Live Practice](interview-05.md)
+
 ## Code
 
 Students work in this repo's **`student-todo-exercises`** branch — starter

@@ -36,6 +36,16 @@ export type WeekEntry =
 	| { kind: 'day'; dayInfo: Day }
 	| { kind: 'rest'; dayInfo: RestDay };
 
+// A bonus interview-prep lesson (slug "interview-NN"). Listed in README's
+// "## Interview prep" section; gated per-student by Student.interviewUnlockedAt.
+export type InterviewLesson = {
+	slug: string;
+	title: string;
+	time: string;
+	body: string;
+	order: number;
+};
+
 export type Week = {
 	week: number; // 1..6
 	name: string; // e.g. "Week 1 — Foundations (Days 1–7)"
@@ -176,6 +186,66 @@ export const getDay = cache(async (slug: string): Promise<Day | null> => {
 	const days = await getDays();
 	return days.find((d) => d.slug === slug) ?? null;
 });
+
+// A lesson link inside the "## Interview prep" section: "- [title](interview-01.md)"
+const INTERVIEW_LINK_RE = /^-\s*\[([^\]]+)\]\((interview-[A-Za-z0-9._-]+)\.md\)/;
+
+/**
+ * The gated interview-prep lessons, in README "## Interview prep" order.
+ * Empty array if the section (or its files) don't exist.
+ */
+export const getInterviewLessons = cache(async (): Promise<InterviewLesson[]> => {
+	let readme = '';
+	try {
+		readme = await fs.readFile(path.join(CURRICULUM_DIR, 'README.md'), 'utf-8');
+	} catch {
+		return [];
+	}
+
+	const start = readme.search(/^##\s+Interview prep\s*$/m);
+	if (start === -1) return [];
+	const rest = readme.slice(start + 1);
+	const end = rest.search(/^##\s+/m);
+	const section = end === -1 ? rest : rest.slice(0, end);
+
+	const lessons: InterviewLesson[] = [];
+	for (const rawLine of section.split('\n')) {
+		const link = INTERVIEW_LINK_RE.exec(rawLine.trim());
+		if (!link) continue;
+		let raw: string;
+		try {
+			raw = await fs.readFile(path.join(CURRICULUM_DIR, `${link[2]}.md`), 'utf-8');
+		} catch {
+			continue;
+		}
+		const title = TITLE_RE.exec(raw)?.[1]?.trim() || link[1].trim();
+		const timeMatch = TIME_RE.exec(raw);
+		const time = timeMatch?.[1]?.trim() ?? '';
+		let body = raw;
+		if (timeMatch) {
+			body = raw.slice(timeMatch.index + timeMatch[0].length);
+		} else {
+			const titleMatch = TITLE_RE.exec(raw);
+			if (titleMatch) body = raw.slice(titleMatch.index + titleMatch[0].length);
+		}
+		lessons.push({
+			slug: link[2],
+			title,
+			time,
+			body: body.replace(/^\s+/, ''),
+			order: lessons.length,
+		});
+	}
+	return lessons;
+});
+
+/** A single interview lesson by slug, or null. */
+export const getInterviewLesson = cache(
+	async (slug: string): Promise<InterviewLesson | null> => {
+		const lessons = await getInterviewLessons();
+		return lessons.find((l) => l.slug === slug) ?? null;
+	}
+);
 
 /** The curriculum grouped for display: the six weeks, days + rest days in order. */
 export const getWeeks = cache(async (): Promise<Week[]> => {

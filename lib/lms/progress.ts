@@ -21,6 +21,15 @@ export async function ensureStudent(): Promise<string | null> {
 	return userId;
 }
 
+/** Whether this student's interview-prep section has been unlocked by an admin. */
+export async function isInterviewUnlocked(userId: string): Promise<boolean> {
+	const student = await lmsPrisma.student.findUnique({
+		where: { id: userId },
+		select: { interviewUnlockedAt: true },
+	});
+	return Boolean(student?.interviewUnlockedAt);
+}
+
 /** Set of day slugs this student has marked done. */
 export async function getCompletedSlugs(userId: string): Promise<Set<string>> {
 	const rows = await lmsPrisma.lessonProgress.findMany({
