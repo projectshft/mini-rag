@@ -325,6 +325,16 @@ const highOverlap = chunkText(text, 500, 150, 'test');
 - How much overlap do you actually need?
 - What happens with very short documents? Very long ones?
 
+```order
+title: Put the full ingestion pipeline in order
+---
+Collect the raw text (scrape a page or accept an upload)
+Clean and normalize it (strip HTML, fix whitespace)
+Split it into sentence-aware chunks with overlap
+Embed each chunk into a vector
+Upsert vectors + metadata to Pinecone
+```
+
 ## Beyond plain text: PDFs and other modalities
 
 Let's be upfront about something: this course chunks and embeds **plain text**, because text is how the overwhelming majority of production RAG systems work — and every skill you're building transfers directly. But the data you'll meet at work isn't always a clean string. It's PDFs with tables and figures. Screenshots. Diagrams. Recorded meetings. You don't need to master those today — you need to know they exist and **what to reach for** when one lands on your desk.

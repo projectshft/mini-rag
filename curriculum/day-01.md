@@ -111,6 +111,16 @@ Before diving deeper, watch this explanation of how we turn words into numbers (
 ]
 ```
 
+```order
+title: Put the RAG flow in order
+---
+Store your documents in a searchable format
+A user asks a question
+Find the documents most relevant to the question
+Feed those documents to the LLM as context
+The LLM answers grounded in that real information
+```
+
 ### Real-world RAG applications
 
 - **Customer support**: answer questions based on your knowledge base

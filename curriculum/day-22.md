@@ -70,6 +70,18 @@ Note what the agent receives: `request.query` is the *refined* query your select
 ]
 ```
 
+Before you write a line of code, make sure the order is in your bones:
+
+```order
+title: Put the RAG agent's runtime flow in order
+---
+Turn the user's question into an embedding
+Query Pinecone for the topK most similar vectors
+Extract the text from the matches' metadata
+Build the system prompt with the retrieved context
+Stream the LLM's grounded answer
+```
+
 ## Your challenge
 
 Open [`app/agents/rag.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/agents/rag.ts) and implement the five TODO steps. Try each step yourself before opening its hint — you've written versions of most of this code already.

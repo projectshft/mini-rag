@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { UserButton } from '@clerk/nextjs';
+import { SignOutButton, UserButton } from '@clerk/nextjs';
 import { isAdmin } from '@/lib/lms/admin';
 
 export default async function AdminLayout({
@@ -25,7 +25,14 @@ export default async function AdminLayout({
 							← Course
 						</Link>
 					</div>
-					<UserButton />
+					<span className='flex items-center gap-2'>
+						<UserButton />
+						<SignOutButton>
+							<button className='cursor-pointer text-xs font-medium text-zinc-400 hover:text-zinc-700'>
+								Sign out
+							</button>
+						</SignOutButton>
+					</span>
 				</div>
 			</header>
 			<div className='mx-auto max-w-6xl px-4 py-8'>{children}</div>

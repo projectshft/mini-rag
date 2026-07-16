@@ -97,7 +97,25 @@ vector-search | Watch a query find its neighbors
 Body = filename in `public/visuals/` without `.html`, optional `| caption`.
 Only reference visuals that exist.
 
-### 4. Mermaid — diagrams
+### 4. Order — tap-the-steps-in-order exercise
+
+```` ```order ````
+```
+title: Put the RAG pipeline in order
+---
+Chunk the documents
+Embed each chunk
+Upsert vectors to Pinecone
+Embed the user's question
+Query Pinecone for nearest neighbors
+Feed retrieved chunks + question to the LLM
+```
+Lines after `---` are the correct order; the component presents them
+shuffled and students tap them into place. Use for *processes* (pipelines,
+request flows, algorithms) — 4–6 steps, each short enough to read as a
+pill. Don't use it where order is arbitrary or debatable.
+
+### 5. Mermaid — diagrams
 
 Standard ```` ```mermaid ```` fences render as diagrams.
 

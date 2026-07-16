@@ -7,6 +7,7 @@ import { Mermaid } from './Mermaid';
 import { Quiz } from './Quiz';
 import { VisualEmbed } from './VisualEmbed';
 import { AiPrompt } from './AiPrompt';
+import { OrderSteps } from './OrderSteps';
 
 // Client-side render of a day's markdown body. remark-gfm gives tables
 // and task lists; rehype-raw renders the embedded HTML (Descript video
@@ -17,8 +18,9 @@ import { AiPrompt } from './AiPrompt';
 //   ```quiz      → inline self-check quiz (JSON body; see Quiz.tsx)
 //   ```visual    → embedded interactive explainer (name of public/visuals/*.html)
 //   ```ai-prompt → copyable prompt to paste into Claude/ChatGPT (see AiPrompt.tsx)
+//   ```order     → tap-the-steps-in-order exercise (see OrderSteps.tsx)
 
-const ISLAND_RE = /language-(mermaid|quiz|visual|ai-prompt)/;
+const ISLAND_RE = /language-(mermaid|quiz|visual|ai-prompt|order)/;
 
 const components: Components = {
 	// react-markdown wraps every fence in <pre><code>. For the interactive
@@ -46,6 +48,9 @@ const components: Components = {
 		}
 		if (className?.includes('language-ai-prompt')) {
 			return <AiPrompt source={source} />;
+		}
+		if (className?.includes('language-order')) {
+			return <OrderSteps source={source} />;
 		}
 		return <code className={className}>{children}</code>;
 	},
