@@ -1,0 +1,47 @@
+// LMS database — a SEPARATE Neon project from anything students touch.
+//
+// WARNING: never run `prisma db push --force-reset` against this schema.
+// It holds student progress. The `lms:*` npm scripts target this schema
+// explicitly; keep it that way.
+
+generator client {
+  provider = "prisma-client-js"
+  // Isolated output so this client never collides with any other Prisma
+  // client a student project might generate.
+  output   = "../../node_modules/.prisma/lms-client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("LMS_DATABASE_URL")
+}
+
+// One row per enrolled student. Identity/invites/bans live in Clerk;
+// this mirrors only what the admin progress matrix needs. The id IS the
+// Clerk userId, so progress joins to it directly.
+model Student {
+  id          String           @id // Clerk userId (user_xxx)
+  email       String           @unique // cached from Clerk for the matrix
+  invitedAt   DateTime         @default(now())
+  firstSeenAt DateTime? // set on first authenticated /learn hit
+  progress    LessonProgress[]
+
+  @@map("students")
+}
+
+// One row per (student, day) that the student has marked done.
+// Absence of a row = not done. lessonSlug is the day filename without
+// .md (e.g. "day-03") — stable across curriculum edits, so progress
+// never shifts under a student when content changes.
+model LessonProgress {
+  id          String   @id @default(uuid())
+  studentId   String
+  lessonSlug  String
+  completedAt DateTime @default(now())
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, lessonSlug]) // idempotent mark-done
+  @@index([studentId])
+  @@map("lesson_progress")
+}

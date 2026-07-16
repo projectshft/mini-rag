@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
 :root {
 	--background: #ffffff;
@@ -70,4 +71,155 @@ button {
 	background: #fff;
 	padding: 0.25rem;
 	font-family: 'Times New Roman', Times, serif;
+}
+
+/* ───────────────────────── LMS (/learn + /admin) ─────────────────────────
+   The course site uses a modern, clean look. Everything above styles the
+   retro chat app globally, so the .lms scope undoes it: back to a system
+   sans font, neutral links/tables/inputs, and a full-width body. */
+
+body:has(.lms) {
+	max-width: none;
+	margin: 0;
+	padding: 0;
+	background: #fafafa;
+	line-height: 1.5;
+}
+
+body:has(.lms) > main {
+	padding-top: 0;
+}
+
+.lms {
+	font-family:
+		ui-sans-serif,
+		system-ui,
+		-apple-system,
+		'Segoe UI',
+		Roboto,
+		'Helvetica Neue',
+		Arial,
+		sans-serif;
+	color: #18181b;
+}
+
+.lms a,
+.lms a:visited {
+	color: inherit;
+	text-decoration: none;
+}
+
+.lms h1,
+.lms h2,
+.lms h3,
+.lms h4,
+.lms h5,
+.lms h6 {
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.lms table,
+.lms th,
+.lms td {
+	border: none;
+}
+
+.lms th,
+.lms td {
+	padding: 0;
+	text-align: inherit;
+}
+
+.lms table {
+	margin: 0;
+	width: auto;
+}
+
+.lms input,
+.lms textarea,
+.lms select,
+.lms button {
+	border: none;
+	background: none;
+	padding: 0;
+	font-family: inherit;
+	font-size: inherit;
+}
+
+/* Lesson prose: restore sensible defaults inside the rendered markdown
+   (the typography plugin handles most of it; these cover the extras). */
+.lms .lesson-prose a {
+	color: #4f46e5;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.lms .lesson-prose iframe {
+	max-width: 100%;
+	border: 0;
+	border-radius: 12px;
+	margin: 1.5rem 0;
+	aspect-ratio: 16 / 9;
+	width: 100%;
+	height: auto;
+}
+
+.lms .lesson-prose table,
+.lms .lesson-prose th,
+.lms .lesson-prose td {
+	border: 1px solid #e4e4e7;
+}
+
+.lms .lesson-prose th,
+.lms .lesson-prose td {
+	padding: 0.5rem 0.75rem;
+	text-align: left;
+}
+
+/* <details> hint/solution toggles authored in the lesson markdown */
+.lms .lesson-prose details {
+	border: 1px solid #e4e4e7;
+	border-radius: 12px;
+	background: #fff;
+	padding: 0;
+	margin: 1.25rem 0;
+	overflow: hidden;
+}
+
+.lms .lesson-prose details > summary {
+	cursor: pointer;
+	list-style: none;
+	padding: 0.75rem 1rem;
+	font-weight: 600;
+	font-size: 0.925rem;
+	color: #3f3f46;
+	background: #fafafa;
+	user-select: none;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.lms .lesson-prose details > summary::before {
+	content: '▸';
+	color: #a1a1aa;
+	transition: transform 0.15s ease;
+}
+
+.lms .lesson-prose details[open] > summary::before {
+	transform: rotate(90deg);
+}
+
+.lms .lesson-prose details[open] > summary {
+	border-bottom: 1px solid #e4e4e7;
+}
+
+.lms .lesson-prose details > *:not(summary) {
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
+
+.lms .lesson-prose details > summary::-webkit-details-marker {
+	display: none;
 }

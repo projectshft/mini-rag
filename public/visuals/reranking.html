@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How re-ranking works · RAG &amp; AI Agents</title>
+<style>
+  :root{--ink:#1b2330;--muted:#5b6675;--line:#e3e7ec;--bg:#fff;--panel:#f6f8fa;
+        --accent:#2563eb;--up:#15803d;--down:#b91c1c;--flat:#94a3b8;--code-bg:#f4f6f8;}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);margin:0;padding:2rem;line-height:1.5}
+  h1{font-size:1.7rem;margin:0 0 .3rem}
+  .lead{color:var(--muted);font-size:1.12rem;max-width:64rem;margin:0 0 1.2rem}
+  .controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:0 0 1.2rem}
+  button{font:inherit;font-size:.93rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:.42rem .8rem;border-radius:999px}
+  button:hover{border-color:var(--accent);color:var(--accent)}
+  button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .kctl{display:flex;align-items:center;gap:.5rem;color:var(--muted);font-size:.95rem;margin-left:auto}
+  input[type=range]{accent-color:var(--accent)}
+  .stage{position:relative;display:grid;grid-template-columns:1fr 90px 1fr;gap:0;max-width:1000px}
+  .col h2{font-size:1.02rem;margin:0 0 .2rem}
+  .col .sub{color:var(--muted);font-size:.9rem;margin:0 0 .7rem;min-height:2.4em}
+  .rows{position:relative}
+  .row{height:52px;display:flex;align-items:center;gap:.6rem;border:1px solid var(--line);
+       border-radius:10px;padding:0 .7rem;margin-bottom:8px;background:var(--panel);transition:all .35s ease}
+  .row .lab{font-size:.98rem;line-height:1.2}
+  .row .sc{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted);font-size:.9rem}
+  .row.dim{opacity:.4}
+  .row.win{border-color:var(--up);background:#e7f6ec}
+  .badge{font-size:.72rem;font-weight:600;padding:.1em .5em;border-radius:999px;white-space:nowrap}
+  .b-up{color:var(--up);background:#e7f6ec}.b-down{color:var(--down);background:#fbe9e9}
+  svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+  .why{margin-top:1.3rem;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:1rem 1.2rem}
+  .why h3{margin:.1rem 0 .5rem;font-size:1.05rem}
+  .why p{margin:.35rem 0;color:var(--muted);font-size:1rem}
+  .why b{color:var(--ink)}
+  code{font-family:ui-monospace,"SF Mono",Menlo,monospace;background:var(--code-bg);padding:.1em .35em;border-radius:4px;font-size:.9em}
+  .q{font-weight:600}
+</style>
+</head>
+<body>
+  <h1>How re-ranking works</h1>
+  <p class="lead">
+    Vector search is <b>fast but approximate</b> — it embeds the query and each passage <i>separately</i>, so it
+    matches on surface wording and can be fooled (synonyms it misses, negations it can’t see).
+    A <b>re-ranker (cross-encoder)</b> reads the query and one passage <i>together</i> — far more accurate, but too
+    slow to run on the whole corpus. So: <b>retrieve a wide top-K by vector, then re-rank just those K.</b>
+  </p>
+
+  <div class="controls">
+    <span style="color:var(--muted)">Query:</span>
+    <span id="presets"></span>
+    <label class="kctl">re-rank top-K = <b id="kval">5</b>
+      <input type="range" id="k" min="2" max="8" value="5" />
+    </label>
+  </div>
+
+  <div class="stage">
+    <div class="col">
+      <h2>Stage 1 — vector retrieval</h2>
+      <p class="sub" id="q1"></p>
+      <div class="rows" id="left"></div>
+    </div>
+    <div style="position:relative"><svg class="links" id="links"></svg></div>
+    <div class="col">
+      <h2>Stage 2 — after re-ranking</h2>
+      <p class="sub">Cross-encoder re-scores the top-K by reading query + passage together.</p>
+      <div class="rows" id="right"></div>
+    </div>
+  </div>
+
+  <div class="why" id="why"></div>
+
+<script>
+(() => {
+  // Each passage has: vec = stage-1 vector score (surface similarity),
+  //                   rel = true relevance a cross-encoder would assign,
+  //                   why = the teaching reason the two disagree.
+  const QUERIES = {
+    'why are deploys failing on staging?': [
+      {lab:'Postmortem: expired registry TLS cert blocks image pulls', vec:.62, rel:.95, why:'The real root cause, but worded nothing like the query → vector ranked it mid. The cross-encoder sees the causal link.'},
+      {lab:'Staging deploys failing since Tuesday (build exits 1)',    vec:.88, rel:.90, why:'Surface match AND genuinely relevant — both agree.'},
+      {lab:'Template: “deploy failing on staging” incident report',    vec:.84, rel:.30, why:'Contains the exact phrase but it’s an empty template — a false positive vector search can’t tell apart.'},
+      {lab:'CI runner disk full — jobs can’t write artifacts',         vec:.58, rel:.88, why:'Another real cause the vector under-ranked (completely different vocabulary).'},
+      {lab:'Deploys are NOT failing on staging — alert was a flaky health check', vec:.80, rel:.18, why:'The killer case: the words are there but NEGATED. Bi-encoders embed tokens; cross-encoders read that it says the opposite.'},
+      {lab:'Runbook: retrying a failed deploy',                        vec:.55, rel:.55, why:'A fix procedure — loosely related.'},
+      {lab:'All-hands moved to Friday',                                vec:.35, rel:.05, why:'Irrelevant — low on both.'},
+      {lab:'Office wifi password rotated',                             vec:.30, rel:.10, why:'Irrelevant — low on both.'},
+    ],
+    'is rate limiting enabled in production?': [
+      {lab:'Config audit: prod gateway enforces 1,000 req/min per key', vec:.60, rel:.96, why:'The actual answer, but "enabled" ≠ "enforces 1,000 req/min" lexically → vector under-ranked it.'},
+      {lab:'Rate limiting: design doc and rollout plan',                vec:.90, rel:.55, why:'Very on-topic by words, but a plan doesn’t say what production does today — surface match over-ranks it.'},
+      {lab:'Blog draft: “Why we built rate limiting”',                  vec:.82, rel:.25, why:'Keyword "rate limiting" everywhere, no answer inside.'},
+      {lab:'Grafana: prod serving 429s at a steady ~2/min',             vec:.58, rel:.90, why:'Directly answers it — 429s prove the limiter is live — in vocabulary the query never uses.'},
+      {lab:'Staging rate limits raised for load testing',               vec:.78, rel:.15, why:'"rate limits" token match, but it’s about staging, not production.'},
+      {lab:'On-call guide: handling rate-limit complaints',             vec:.50, rel:.45, why:'Weakly related.'},
+      {lab:'Support team holiday calendar',                             vec:.28, rel:.04, why:'Irrelevant.'},
+      {lab:'Expense policy: meals capped at $50/day',                   vec:.26, rel:.12, why:'Irrelevant.'},
+    ],
+  };
+
+  const ROW_H = 60; // 52 + 8 margin
+  let queryKey = Object.keys(QUERIES)[0];
+  let K = 5;
+
+  const presets = document.getElementById('presets');
+  Object.keys(QUERIES).forEach((q,i) => {
+    const b = document.createElement('button'); b.textContent = '“'+q+'”'; if(i===0)b.classList.add('on');
+    b.onclick = () => { queryKey=q; [...presets.children].forEach(c=>c.classList.remove('on')); b.classList.add('on'); render(); };
+    presets.appendChild(b);
+  });
+  document.getElementById('k').addEventListener('input', e => { K=+e.target.value; document.getElementById('kval').textContent=K; render(); });
+
+  const left = document.getElementById('left'), right = document.getElementById('right');
+  const links = document.getElementById('links'), why = document.getElementById('why');
+  const q1 = document.getElementById('q1');
+
+  function render(){
+    const docs = QUERIES[queryKey].map((d,idx)=>({...d, id:idx}));
+    q1.innerHTML = 'Ordered by vector score. We re-rank the top <b>'+K+'</b> (shaded); the rest keep their vector order.';
+
+    // Stage 1: sort by vec desc
+    const stage1 = [...docs].sort((a,b)=>b.vec-a.vec);
+    // Stage 2: top-K re-sorted by rel desc, remainder appended in stage-1 order
+    const head = stage1.slice(0,K).sort((a,b)=>b.rel-a.rel);
+    const tail = stage1.slice(K);
+    const stage2 = [...head, ...tail];
+
+    const pos1 = new Map(stage1.map((d,i)=>[d.id,i]));
+    const pos2 = new Map(stage2.map((d,i)=>[d.id,i]));
+
+    // render columns
+    left.innerHTML=''; right.innerHTML='';
+    stage1.forEach((d,i)=>{
+      const reranked = i < K;
+      left.appendChild(rowEl(d, d.vec, false, reranked?'':'dim'));
+    });
+    stage2.forEach((d,i)=>{
+      const inK = i < K;
+      const moved = pos2.get(d.id) - pos1.get(d.id); // negative = moved up
+      const badge = !inK ? '' :
+        moved<0 ? `<span class="badge b-up">▲ ${-moved}</span>` :
+        moved>0 ? `<span class="badge b-down">▼ ${moved}</span>` : '';
+      right.appendChild(rowEl(d, inK?d.rel:d.vec, i===0, inK?'':'dim', badge));
+    });
+
+    // connectors
+    const H = Math.max(stage1.length, stage2.length)*ROW_H;
+    links.setAttribute('viewBox',`0 0 90 ${H}`); links.style.height=H+'px';
+    left.parentElement.style.minHeight=H+'px';
+    links.innerHTML='';
+    docs.forEach(d=>{
+      const y1 = pos1.get(d.id)*ROW_H + ROW_H/2 + HEADER();
+      const y2 = pos2.get(d.id)*ROW_H + ROW_H/2 + HEADER();
+      const moved = pos2.get(d.id)-pos1.get(d.id);
+      const inK = pos1.get(d.id) < K;
+      const col = !inK ? 'var(--flat)' : moved<0?'var(--up)':moved>0?'var(--down)':'var(--flat)';
+      const w = (inK && moved!==0) ? 2.4 : 1;
+      const op = inK ? 1 : .3;
+      const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+      p.setAttribute('d',`M 0 ${y1} C 45 ${y1}, 45 ${y2}, 90 ${y2}`);
+      p.setAttribute('fill','none'); p.setAttribute('stroke',col);
+      p.setAttribute('stroke-width',w); p.setAttribute('opacity',op);
+      links.appendChild(p);
+    });
+
+    // why panel: explain the biggest mover
+    const movers = stage2.map((d,i)=>({d, delta: pos1.get(d.id)-i, inK:i<K}))
+                         .filter(m=>m.inK && m.delta!==0)
+                         .sort((a,b)=>Math.abs(b.delta)-Math.abs(a.delta));
+    const winner = stage2[0];
+    why.innerHTML = `<h3>What just happened</h3>`+
+      `<p><b>Top result after re-ranking:</b> “${winner.lab}” — vector #${pos1.get(winner.id)+1} → re-rank #1.</p>`+
+      movers.slice(0,3).map(m=>{
+        const dir = m.delta>0?`rose ${m.delta}`:`fell ${-m.delta}`;
+        return `<p><b>${m.delta>0?'▲':'▼'} “${m.d.lab}” (${dir}):</b> ${m.d.why}</p>`;
+      }).join('')+
+      `<p style="margin-top:.7rem"><b>The lesson:</b> vector search casts a wide, cheap net; the re-ranker is the expensive judge that reads each candidate closely. Retrieve ~20–100, re-rank down to the few you actually feed the LLM.</p>`;
+  }
+
+  function HEADER(){ return 0; } // rows container starts at 0 relative to itself
+
+  function rowEl(d, score, win, cls, badge=''){
+    const el = document.createElement('div');
+    el.className = 'row '+(cls||'')+(win?' win':'');
+    el.innerHTML = `<span class="lab">${d.lab}</span>${badge}<span class="sc">${score.toFixed(2)}</span>`;
+    return el;
+  }
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How hybrid search works · RAG &amp; AI Agents</title>
+<style>
+  :root{--ink:#1b2330;--muted:#5b6675;--line:#e3e7ec;--bg:#fff;--panel:#f6f8fa;
+        --kw:#475569;--vec:#2563eb;--hy:#15803d;--code-bg:#f4f6f8;}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);margin:0;padding:2rem;line-height:1.5}
+  h1{font-size:1.7rem;margin:0 0 .3rem}
+  .lead{color:var(--muted);font-size:1.12rem;max-width:64rem;margin:0 0 1.2rem}
+  .controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:0 0 1.3rem}
+  button{font:inherit;font-size:.93rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:.42rem .8rem;border-radius:999px}
+  button:hover{border-color:var(--vec);color:var(--vec)}
+  button.on{background:var(--vec);color:#fff;border-color:var(--vec)}
+  .cols{display:grid;grid-template-columns:1fr 1fr 1fr;gap:1.1rem;max-width:1080px}
+  .col h2{font-size:1.05rem;margin:0 0 .15rem;display:flex;align-items:center;gap:.4rem}
+  .dot{width:.7em;height:.7em;border-radius:50%}
+  .col .sub{color:var(--muted);font-size:.86rem;margin:0 0 .7rem;min-height:2.6em}
+  .item{border:1px solid var(--line);border-radius:10px;padding:.55rem .7rem;margin-bottom:.5rem;background:var(--panel);font-size:.95rem;display:flex;gap:.5rem;align-items:flex-start}
+  .item .rk{color:var(--muted);font-variant-numeric:tabular-nums;min-width:1.3em}
+  .item .lab{flex:1}
+  .col.kw .item.hit{border-color:var(--kw)}
+  .col.vec .item.hit{border-color:var(--vec)}
+  .col.hy .item{background:#eef7f0;border-color:#cfe9d6}
+  .tag{font-size:.68rem;font-weight:600;padding:.08em .45em;border-radius:999px;white-space:nowrap;margin-top:.1em}
+  .tag.only-vec{color:var(--vec);background:#e8f0fe}
+  .tag.only-kw{color:var(--kw);background:#eef1f5}
+  .miss{opacity:.45;font-style:italic}
+  .why{margin-top:1.4rem;border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:1rem 1.2rem;max-width:1080px}
+  .why h3{margin:.1rem 0 .5rem;font-size:1.05rem}
+  .why p{margin:.35rem 0;color:var(--muted)} .why b{color:var(--ink)}
+  code{font-family:ui-monospace,"SF Mono",Menlo,monospace;background:var(--code-bg);padding:.1em .35em;border-radius:4px;font-size:.9em}
+</style>
+</head>
+<body>
+  <h1>How hybrid search works</h1>
+  <p class="lead">
+    <b>Keyword search</b> (BM25) matches exact tokens — great for rare, precise terms (error codes, config flags, IDs),
+    blind to synonyms. <b>Vector search</b> matches meaning — great for paraphrases and synonyms, but can bury an
+    exact string among semantic neighbors. <b>Hybrid</b> runs both and fuses the rankings (Reciprocal Rank Fusion),
+    so you get exact matches <i>and</i> semantic ones. Switch queries and watch which retriever wins.
+  </p>
+
+  <div class="controls"><span style="color:var(--muted)">Query:</span><span id="presets"></span></div>
+
+  <div class="cols">
+    <div class="col kw"><h2><span class="dot" style="background:var(--kw)"></span>Keyword (BM25)</h2>
+      <p class="sub">Exact token overlap. Rare terms score high; synonyms score zero.</p><div id="kw"></div></div>
+    <div class="col vec"><h2><span class="dot" style="background:var(--vec)"></span>Vector (semantic)</h2>
+      <p class="sub">Meaning overlap. Synonyms & paraphrases match; exact strings can get diluted.</p><div id="vec"></div></div>
+    <div class="col hy"><h2><span class="dot" style="background:var(--hy)"></span>Hybrid (RRF)</h2>
+      <p class="sub">Fuse both rankings: score = Σ 1/(k + rank). Best of both.</p><div id="hy"></div></div>
+  </div>
+
+  <div class="why" id="why"></div>
+
+<script>
+(() => {
+  // Per query: each doc has a keyword score (kw) and a vector score (vec), 0..1.
+  // kw=0 means the term literally isn't in the doc (keyword can't find it).
+  const QUERIES = {
+    'MAX_POOL_SIZE=20': {
+      docs:[
+        {lab:'Set MAX_POOL_SIZE=20 in the database config',      kw:.98, vec:.86},
+        {lab:'MAX_POOL_SIZE default raised last quarter',        kw:.70, vec:.80},
+        {lab:'Connection pool cap set to twenty',                kw:.00, vec:.72}, // synonym for the flag
+        {lab:'Tuning how many simultaneous DB connections we allow', kw:.00, vec:.66}, // paraphrase
+        {lab:'Postgres performance troubleshooting guide',       kw:.00, vec:.40},
+        {lab:'MAX_RETRIES=20 on the queue worker',               kw:.35, vec:.22}, // lexical near-miss ("MAX_…=20")
+      ],
+      why:`<h3>Exact-token query → keyword carries it, vector rescues the rest</h3>
+        <p><b>Keyword nails the exact line</b> “Set MAX_POOL_SIZE=20 in the database config” at #1 — the precise flag string.
+        But it scores <b>0</b> on “connection pool cap” (what the flag means) and the paraphrase about simultaneous DB connections:
+        no shared tokens, invisible to BM25.</p>
+        <p><b>Vector finds those paraphrases</b> — it knows a pool cap <i>is</i> MAX_POOL_SIZE — but on its own it ranks the
+        exact-flag line only slightly above the paraphrases.</p>
+        <p><b>Hybrid</b> keeps the exact flag at the top <i>and</i> pulls in the paraphrased docs keyword missed entirely.</p>`
+    },
+    'connection keeps dropping': {
+      docs:[
+        {lab:'Socket hang up during long requests',              kw:.00, vec:.93}, // pure synonym
+        {lab:'Customers report the connection keeps dropping',   kw:.82, vec:.88},
+        {lab:'Intermittent ERR_CONN_RESET in gateway logs',      kw:.00, vec:.85}, // synonym
+        {lab:'Dropping support for legacy API keys',             kw:.55, vec:.20}, // keyword trap: "dropping"
+        {lab:'Database connection timeouts overnight',           kw:.60, vec:.78},
+        {lab:'Flaky keep-alive behavior on mobile clients',      kw:.30, vec:.72},
+      ],
+      why:`<h3>Paraphrased query → vector carries it, keyword adds precision</h3>
+        <p><b>Vector wins here.</b> “Socket hang up” and “ERR_CONN_RESET” are exactly what the user means,
+        but share <b>no words</b> with the query — keyword scores them 0.</p>
+        <p><b>Keyword’s trap:</b> it ranks “Dropping support for legacy API keys” high just because the token “dropping” matches —
+        a false friend the vector correctly discounts.</p>
+        <p><b>Hybrid</b> surfaces the true synonyms from vector while still rewarding the literal “connection keeps dropping” line.</p>`
+    },
+  };
+
+  const K = 10; // RRF constant (smaller = top ranks dominate more)
+  let qk = Object.keys(QUERIES)[0];
+
+  const presets = document.getElementById('presets');
+  Object.keys(QUERIES).forEach((q,i)=>{
+    const b=document.createElement('button'); b.textContent='“'+q+'”'; if(i===0)b.classList.add('on');
+    b.onclick=()=>{qk=q;[...presets.children].forEach(c=>c.classList.remove('on'));b.classList.add('on');render();};
+    presets.appendChild(b);
+  });
+
+  function ranked(docs, key){
+    return docs.map((d,idx)=>({...d, id:idx}))
+               .filter(d=>d[key]>0)
+               .sort((a,b)=>b[key]-a[key]);
+  }
+
+  function render(){
+    const {docs, why} = QUERIES[qk];
+    const kwList = ranked(docs,'kw');
+    const vecList = ranked(docs,'vec');
+    const kwRank = new Map(kwList.map((d,i)=>[d.id,i]));   // 0-based
+    const vecRank = new Map(vecList.map((d,i)=>[d.id,i]));
+
+    const fused = docs.map((d,idx)=>{
+      const rk = kwRank.has(idx)? 1/(K+kwRank.get(idx)+1):0;
+      const rv = vecRank.has(idx)? 1/(K+vecRank.get(idx)+1):0;
+      return {...d, id:idx, rrf:rk+rv, inKw:kwRank.has(idx), inVec:vecRank.has(idx)};
+    }).filter(d=>d.rrf>0).sort((a,b)=>b.rrf-a.rrf);
+
+    fill('kw', kwList.map((d,i)=>row(i+1,d.lab, d[ 'kw'].toFixed(2))), );
+    fill('vec', vecList.map((d,i)=>row(i+1,d.lab, d['vec'].toFixed(2))));
+    fill('hy', fused.map((d,i)=>{
+      const tag = (d.inVec && !d.inKw) ? '<span class="tag only-vec">vector-only</span>'
+                : (d.inKw && !d.inVec) ? '<span class="tag only-kw">keyword-only</span>' : '';
+      return `<div class="item"><span class="rk">${i+1}</span><span class="lab">${d.lab}</span>${tag}</div>`;
+    }).join(''));
+
+    document.getElementById('why').innerHTML = why +
+      `<p style="margin-top:.7rem"><b>Rule of thumb:</b> if your data has exact identifiers (error codes, config
+       flag names, ticket IDs) users will type verbatim, you want hybrid. Pure vector silently drops exact matches;
+       pure keyword silently drops synonyms.</p>`;
+  }
+  function row(rk,lab,score){ return `<div class="item hit"><span class="rk">${rk}</span><span class="lab">${lab}</span><span style="color:var(--muted);font-variant-numeric:tabular-nums;font-size:.85rem">${score}</span></div>`; }
+  function fill(id, html){ document.getElementById(id).innerHTML = Array.isArray(html)?html.join(''):html; }
+
+  render();
+})();
+</script>
+</body>
+</html>
