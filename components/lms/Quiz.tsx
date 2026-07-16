@@ -43,10 +43,10 @@ function QuizItem({ item, index }: { item: QuizQuestion; index: number }) {
 				{item.options.map((opt, i) => {
 					const isPick = picked === i;
 					const isAnswer = i === item.answer;
-					let cls = 'border-zinc-200 hover:border-indigo-400 cursor-pointer bg-white';
+					let cls = 'border-zinc-200 hover:border-blue-400 cursor-pointer bg-white';
 					if (checked && isAnswer) cls = 'border-emerald-500 bg-emerald-50';
 					else if (checked && isPick && !isAnswer) cls = 'border-red-400 bg-red-50';
-					else if (isPick) cls = 'border-indigo-500 bg-indigo-50 cursor-pointer';
+					else if (isPick) cls = 'border-blue-500 bg-blue-50 cursor-pointer';
 					return (
 						<button
 							key={i}
@@ -65,7 +65,7 @@ function QuizItem({ item, index }: { item: QuizQuestion; index: number }) {
 					type='button'
 					disabled={picked === null}
 					onClick={() => setChecked(true)}
-					className='mt-3 cursor-pointer rounded-lg bg-indigo-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-default disabled:opacity-40'
+					className='mt-3 cursor-pointer rounded-lg bg-blue-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-default disabled:opacity-40'
 				>
 					Check answer
 				</button>

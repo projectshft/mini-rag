@@ -20,7 +20,7 @@ export default async function AdminLayout({
 						<span className='text-[15px] font-bold tracking-tight text-zinc-900'>Admin</span>
 						<Link
 							href='/learn'
-							className='text-sm font-medium text-indigo-600 hover:text-indigo-800'
+							className='text-sm font-medium text-blue-600 hover:text-blue-800'
 						>
 							← Course
 						</Link>

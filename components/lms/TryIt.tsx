@@ -58,7 +58,7 @@ function KeyRow({ apiKey, setApiKey }: { apiKey: string; setApiKey: (k: string) 
 				value={draft}
 				onChange={(e) => setDraft(e.target.value)}
 				placeholder='sk-… (your class API key)'
-				className='min-w-52 flex-1 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs text-zinc-700 outline-none placeholder:text-zinc-300 focus:border-indigo-400'
+				className='min-w-52 flex-1 rounded-lg border border-zinc-200 bg-white px-2.5 py-1.5 text-xs text-zinc-700 outline-none placeholder:text-zinc-300 focus:border-blue-400'
 			/>
 			<button
 				type='button'
@@ -128,9 +128,9 @@ export function TryIt({ source }: { source: string }) {
 	}
 
 	const inputCls =
-		'w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-300 focus:border-indigo-400';
+		'w-full rounded-lg border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-300 focus:border-blue-400';
 	const runCls =
-		'cursor-pointer rounded-lg bg-indigo-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-default disabled:opacity-40';
+		'cursor-pointer rounded-lg bg-blue-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-default disabled:opacity-40';
 
 	return (
 		<div className='not-prose my-6 rounded-xl border border-sky-200 bg-sky-50/40 p-4'>
@@ -161,7 +161,7 @@ export function TryIt({ source }: { source: string }) {
 								</div>
 								<div className='mt-1.5 h-2 w-full overflow-hidden rounded-full bg-zinc-100'>
 									<div
-										className='h-full rounded-full bg-indigo-500'
+										className='h-full rounded-full bg-blue-500'
 										style={{ width: `${Math.max(0, (result.similarity as number)) * 100}%` }}
 									/>
 								</div>

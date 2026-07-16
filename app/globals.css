@@ -19,54 +19,55 @@ body {
 	padding: 0 1rem;
 }
 
-a {
+/* Retro styles apply ONLY outside the LMS (.lms scopes /learn + /admin) */
+a:not(.lms *) {
 	color: var(--link-color);
 	text-decoration: underline;
 }
 
-a:visited {
+a:not(.lms *):visited {
 	color: var(--visited-link);
 }
 
-a:hover {
+a:not(.lms *):hover {
 	text-decoration: none;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1:not(.lms *),
+h2:not(.lms *),
+h3:not(.lms *),
+h4:not(.lms *),
+h5:not(.lms *),
+h6:not(.lms *) {
 	font-weight: bold;
 	margin-top: 1em;
 	margin-bottom: 0.5em;
 }
 
 /* 90s style table styling */
-table {
+table:not(.lms *) {
 	border-collapse: collapse;
 	width: 100%;
 	margin: 1rem 0;
 }
 
-table,
-th,
-td {
+table:not(.lms *),
+th:not(.lms *),
+td:not(.lms *) {
 	border: 1px solid black;
 }
 
-th,
-td {
+th:not(.lms *),
+td:not(.lms *) {
 	padding: 0.5rem;
 	text-align: left;
 }
 
 /* Classic form styling */
-input,
-textarea,
-select,
-button {
+input:not(.lms *),
+textarea:not(.lms *),
+select:not(.lms *),
+button:not(.lms *) {
 	border: 1px solid #000;
 	background: #fff;
 	padding: 0.25rem;
@@ -103,49 +104,9 @@ body:has(.lms) > main {
 	color: #18181b;
 }
 
-.lms a,
-.lms a:visited {
-	color: inherit;
-	text-decoration: none;
-}
-
-.lms h1,
-.lms h2,
-.lms h3,
-.lms h4,
-.lms h5,
-.lms h6 {
-	margin-top: 0;
-	margin-bottom: 0;
-}
-
-.lms table,
-.lms th,
-.lms td {
-	border: none;
-}
-
-.lms th,
-.lms td {
-	padding: 0;
-	text-align: inherit;
-}
-
-.lms table {
-	margin: 0;
-	width: auto;
-}
-
-.lms input,
-.lms textarea,
-.lms select,
-.lms button {
-	border: none;
-	background: none;
-	padding: 0;
-	font-family: inherit;
-	font-size: inherit;
-}
+/* The retro rules above exclude .lms via :not(), so inside the LMS the
+   typography plugin + Tailwind utilities own everything — no counter-
+   resets needed (they'd fight the utilities in the cascade). */
 
 /* Lesson prose: restore sensible defaults inside the rendered markdown
    (the typography plugin handles most of it; these cover the extras). */
@@ -165,7 +126,7 @@ body:has(.lms) > main {
 }
 
 .lms .lesson-prose a {
-	color: #4f46e5;
+	color: #2563eb;
 	text-decoration: underline;
 	text-underline-offset: 2px;
 }
@@ -237,4 +198,28 @@ body:has(.lms) > main {
 
 .lms .lesson-prose details > summary::-webkit-details-marker {
 	display: none;
+}
+
+/* Easter egg: rest-day rows get a little palm-tree sway on hover */
+@keyframes lms-palm-sway {
+	0%,
+	100% {
+		transform: rotate(0deg);
+	}
+	25% {
+		transform: rotate(12deg);
+	}
+	75% {
+		transform: rotate(-10deg);
+	}
+}
+
+.lms .rest-day-label {
+	display: inline-block;
+}
+
+li:hover > .rest-day-row .rest-day-label,
+.rest-day-row:hover .rest-day-label {
+	animation: lms-palm-sway 0.9s ease-in-out infinite;
+	transform-origin: bottom center;
 }

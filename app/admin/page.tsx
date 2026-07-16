@@ -93,11 +93,11 @@ export default async function AdminPage() {
 					name='email'
 					required
 					placeholder='student@example.com'
-					className='min-w-64 flex-1 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-indigo-500'
+					className='min-w-64 flex-1 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-blue-500'
 				/>
 				<button
 					type='submit'
-					className='cursor-pointer rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700'
+					className='cursor-pointer rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700'
 				>
 					Send invite
 				</button>
@@ -204,7 +204,7 @@ export default async function AdminPage() {
 												{!s.apiKey ? (
 													<form action={mintStudentKey} className='inline'>
 														<input type='hidden' name='studentId' value={s.id} />
-														<button className='cursor-pointer rounded-lg bg-indigo-600 px-3 py-1 text-xs font-semibold text-white transition-colors hover:bg-indigo-700'>
+														<button className='cursor-pointer rounded-lg bg-blue-600 px-3 py-1 text-xs font-semibold text-white transition-colors hover:bg-blue-700'>
 															Mint key
 														</button>
 													</form>
@@ -212,7 +212,7 @@ export default async function AdminPage() {
 													<span className='flex items-center justify-end gap-2'>
 														<a
 															href={keyEmailHref(s.email, s.apiKey)}
-															className='rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-indigo-400 hover:text-indigo-700'
+															className='rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-blue-400 hover:text-blue-700'
 															title='Opens a prefilled email in your mail client'
 														>
 															✉️ Send
@@ -228,7 +228,7 @@ export default async function AdminPage() {
 																min='1'
 																step='1'
 																defaultValue='10'
-																className='w-14 rounded-md border border-zinc-200 px-1.5 py-1 text-right text-xs text-zinc-700 outline-none focus:border-indigo-400'
+																className='w-14 rounded-md border border-zinc-200 px-1.5 py-1 text-right text-xs text-zinc-700 outline-none focus:border-blue-400'
 																aria-label='Dollars to add'
 															/>
 															<button className='cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100'>
@@ -347,7 +347,7 @@ export default async function AdminPage() {
 													<button
 														className={`cursor-pointer rounded-full px-2.5 py-0.5 text-xs font-semibold transition-colors ${
 															s.interviewUnlockedAt
-																? 'bg-violet-100 text-violet-700 hover:bg-violet-200'
+																? 'bg-sky-100 text-sky-700 hover:bg-sky-200'
 																: 'bg-zinc-100 text-zinc-400 hover:bg-zinc-200'
 														}`}
 														title={

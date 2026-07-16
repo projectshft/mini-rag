@@ -55,7 +55,7 @@ export function FillBlanks({ source }: { source: string }) {
 
 	const SLOT_CLS: Record<string, string> = {
 		empty: 'border-dashed border-zinc-500 bg-zinc-800 text-zinc-400',
-		picked: 'border-indigo-400 bg-indigo-500/20 text-indigo-200',
+		picked: 'border-blue-400 bg-blue-500/20 text-blue-200',
 		right: 'border-emerald-400 bg-emerald-500/20 text-emerald-300',
 		wrong: 'border-red-400 bg-red-500/20 text-red-300',
 	};
@@ -98,13 +98,13 @@ export function FillBlanks({ source }: { source: string }) {
 							</span>
 							{blank.options.map((opt) => {
 								const isPick = picks[idx] === opt;
-								let cls = 'border-zinc-200 bg-white text-zinc-700 hover:border-indigo-400';
+								let cls = 'border-zinc-200 bg-white text-zinc-700 hover:border-blue-400';
 								if (checked && opt === blank.answer) {
 									cls = 'border-emerald-500 bg-emerald-50 text-emerald-800';
 								} else if (checked && isPick) {
 									cls = 'border-red-400 bg-red-50 text-red-600';
 								} else if (isPick) {
-									cls = 'border-indigo-500 bg-indigo-50 text-indigo-800';
+									cls = 'border-blue-500 bg-blue-50 text-blue-800';
 								}
 								return (
 									<button
@@ -135,7 +135,7 @@ export function FillBlanks({ source }: { source: string }) {
 						type='button'
 						disabled={!allPicked}
 						onClick={() => setChecked(true)}
-						className='cursor-pointer rounded-lg bg-indigo-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-default disabled:opacity-40'
+						className='cursor-pointer rounded-lg bg-blue-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-default disabled:opacity-40'
 					>
 						Check
 					</button>

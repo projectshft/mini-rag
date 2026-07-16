@@ -139,8 +139,8 @@ export function MatchPairs({ source }: { source: string }) {
 									: isWrong
 										? 'border-red-300 bg-red-50'
 										: isActive
-											? 'border-indigo-400 bg-indigo-50/50 ring-1 ring-indigo-300'
-											: 'border-zinc-200 hover:border-indigo-300'
+											? 'border-blue-400 bg-blue-50/50 ring-1 ring-blue-300'
+											: 'border-zinc-200 hover:border-blue-300'
 							}`}
 						>
 							<span className='min-w-0 flex-1 text-sm font-medium text-zinc-800'>
@@ -155,7 +155,7 @@ export function MatchPairs({ source }: { source: string }) {
 											? 'bg-emerald-100 text-emerald-800'
 											: isWrong
 												? 'bg-red-100 text-red-700'
-												: 'bg-indigo-100 text-indigo-800'
+												: 'bg-blue-100 text-blue-800'
 									}`}
 								>
 									{right}
@@ -177,7 +177,7 @@ export function MatchPairs({ source }: { source: string }) {
 							key={right}
 							type='button'
 							onClick={() => assign(right)}
-							className='cursor-pointer rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-indigo-400 hover:bg-indigo-50/60'
+							className='cursor-pointer rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-xs text-zinc-700 transition-colors hover:border-blue-400 hover:bg-blue-50/60'
 						>
 							{right}
 						</button>
@@ -191,7 +191,7 @@ export function MatchPairs({ source }: { source: string }) {
 						type='button'
 						disabled={!allAssigned}
 						onClick={check}
-						className='cursor-pointer rounded-lg bg-indigo-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-default disabled:opacity-40'
+						className='cursor-pointer rounded-lg bg-blue-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-default disabled:opacity-40'
 					>
 						Check matches
 					</button>

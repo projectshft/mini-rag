@@ -61,7 +61,7 @@ export default async function LessonPage({
 				<nav className='mt-12 border-t border-zinc-200 pt-5 text-sm'>
 					<Link
 						href='/learn'
-						className='font-medium text-indigo-600 hover:text-indigo-800'
+						className='font-medium text-blue-600 hover:text-blue-800'
 					>
 						← Back to the course
 					</Link>
@@ -98,7 +98,7 @@ export default async function LessonPage({
 
 				<header className='mt-4 border-b border-zinc-200 pb-6'>
 					<div className='flex flex-wrap items-center gap-2 text-sm text-zinc-500'>
-						<span className='rounded-full bg-violet-100 px-2.5 py-0.5 text-xs font-semibold text-violet-700'>
+						<span className='rounded-full bg-sky-100 px-2.5 py-0.5 text-xs font-semibold text-sky-700'>
 							Interview Prep · {idx + 1}/{lessons.length}
 						</span>
 						{lesson.time && <span className='text-xs text-zinc-400'>· {lesson.time}</span>}
@@ -119,7 +119,7 @@ export default async function LessonPage({
 					{prev ? (
 						<Link
 							href={`/learn/${prev.slug}`}
-							className='max-w-[45%] truncate font-medium text-indigo-600 hover:text-indigo-800'
+							className='max-w-[45%] truncate font-medium text-blue-600 hover:text-blue-800'
 						>
 							← {prev.title}
 						</Link>
@@ -129,7 +129,7 @@ export default async function LessonPage({
 					{next ? (
 						<Link
 							href={`/learn/${next.slug}`}
-							className='max-w-[45%] truncate text-right font-medium text-indigo-600 hover:text-indigo-800'
+							className='max-w-[45%] truncate text-right font-medium text-blue-600 hover:text-blue-800'
 						>
 							{next.title} →
 						</Link>
@@ -163,10 +163,18 @@ export default async function LessonPage({
 
 			<header className='mt-4 border-b border-zinc-200 pb-6'>
 				<div className='flex flex-wrap items-center gap-2 text-sm text-zinc-500'>
-					<span className='rounded-full bg-indigo-50 px-2.5 py-0.5 text-xs font-semibold text-indigo-700'>
+					<span
+						className='rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700'
+						title={day.day === 42 ? 'The answer to RAG, agents, and everything.' : undefined}
+					>
 						Day {day.day}
 					</span>
 					<span className='text-xs text-zinc-400'>Week {day.week}</span>
+					{day.day === 42 && (
+						<span className='text-xs italic text-zinc-300'>
+							don&rsquo;t panic — you brought a towel this far
+						</span>
+					)}
 					{day.time && <span className='text-xs text-zinc-400'>· {day.time}</span>}
 					{day.isDeliverable && (
 						<span className='rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700'>
@@ -190,7 +198,7 @@ export default async function LessonPage({
 				{prev ? (
 					<Link
 						href={`/learn/${prev.slug}`}
-						className='max-w-[45%] truncate font-medium text-indigo-600 hover:text-indigo-800'
+						className='max-w-[45%] truncate font-medium text-blue-600 hover:text-blue-800'
 					>
 						← Day {prev.day}
 					</Link>
@@ -200,7 +208,7 @@ export default async function LessonPage({
 				{next ? (
 					<Link
 						href={`/learn/${next.slug}`}
-						className='max-w-[45%] truncate text-right font-medium text-indigo-600 hover:text-indigo-800'
+						className='max-w-[45%] truncate text-right font-medium text-blue-600 hover:text-blue-800'
 					>
 						Day {next.day} →
 					</Link>

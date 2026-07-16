@@ -108,7 +108,7 @@ export function Scenario({ source }: { source: string }) {
 								key={i}
 								type='button'
 								onClick={() => setPicked(i)}
-								className='block w-full cursor-pointer rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-left text-sm text-zinc-700 transition-colors hover:border-indigo-400 hover:bg-indigo-50/40'
+								className='block w-full cursor-pointer rounded-lg border border-zinc-200 bg-white px-3.5 py-2.5 text-left text-sm text-zinc-700 transition-colors hover:border-blue-400 hover:bg-blue-50/40'
 							>
 								{opt.text}
 							</button>
@@ -119,10 +119,10 @@ export function Scenario({ source }: { source: string }) {
 				<>
 					{/* Your reply bubble */}
 					<div className='mt-3 flex items-start justify-end gap-2.5'>
-						<div className='rounded-2xl rounded-tr-sm bg-indigo-600 px-3.5 py-2.5 text-sm text-white'>
+						<div className='rounded-2xl rounded-tr-sm bg-blue-600 px-3.5 py-2.5 text-sm text-white'>
 							{chosen!.text}
 						</div>
-						<span className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-indigo-100 text-base' aria-hidden>
+						<span className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-blue-100 text-base' aria-hidden>
 							🧑‍💻
 						</span>
 					</div>
@@ -144,7 +144,7 @@ export function Scenario({ source }: { source: string }) {
 						<button
 							type='button'
 							onClick={() => setShowOthers(true)}
-							className='mt-3 cursor-pointer text-xs font-medium text-indigo-600 underline hover:text-indigo-800'
+							className='mt-3 cursor-pointer text-xs font-medium text-blue-600 underline hover:text-blue-800'
 						>
 							How do the other replies land?
 						</button>

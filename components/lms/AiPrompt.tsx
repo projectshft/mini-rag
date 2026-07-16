@@ -45,16 +45,16 @@ export function AiPrompt({ source }: { source: string }) {
 	}
 
 	return (
-		<div className='not-prose my-6 overflow-hidden rounded-xl border border-violet-200 bg-violet-50/60'>
-			<div className='flex items-center justify-between gap-3 border-b border-violet-200 bg-violet-100/60 px-4 py-2.5'>
-				<p className='flex items-center gap-2 text-sm font-semibold text-violet-900'>
+		<div className='not-prose my-6 overflow-hidden rounded-xl border border-cyan-200 bg-cyan-50/60'>
+			<div className='flex items-center justify-between gap-3 border-b border-cyan-200 bg-cyan-100/60 px-4 py-2.5'>
+				<p className='flex items-center gap-2 text-sm font-semibold text-cyan-900'>
 					<span aria-hidden>🤖</span>
 					{title}
 				</p>
 				<button
 					type='button'
 					onClick={copy}
-					className='shrink-0 cursor-pointer rounded-lg bg-violet-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-violet-700'
+					className='shrink-0 cursor-pointer rounded-lg bg-cyan-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-cyan-700'
 				>
 					{copied ? '✓ Copied' : 'Copy prompt'}
 				</button>
@@ -66,12 +66,12 @@ export function AiPrompt({ source }: { source: string }) {
 				<button
 					type='button'
 					onClick={() => setExpanded(!expanded)}
-					className='block w-full cursor-pointer border-t border-violet-200 px-4 py-2 text-left text-xs font-medium text-violet-700 hover:bg-violet-100/60'
+					className='block w-full cursor-pointer border-t border-cyan-200 px-4 py-2 text-left text-xs font-medium text-cyan-700 hover:bg-cyan-100/60'
 				>
 					{expanded ? 'Show less ▴' : 'Show full prompt ▾'}
 				</button>
 			)}
-			<p className='border-t border-violet-200 px-4 py-2 text-xs text-violet-800/70'>
+			<p className='border-t border-cyan-200 px-4 py-2 text-xs text-cyan-800/70'>
 				Paste this into Claude (or your AI of choice) — working <em>with</em> AI is part of
 				the course.
 			</p>

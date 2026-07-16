@@ -46,14 +46,14 @@ export default async function LearnPage() {
 				</div>
 				<div className='mt-2.5 h-2.5 w-full overflow-hidden rounded-full bg-zinc-100'>
 					<div
-						className='h-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all'
+						className='h-full rounded-full bg-gradient-to-r from-blue-500 to-emerald-500 transition-all'
 						style={{ width: `${pct}%` }}
 					/>
 				</div>
 				{nextUp && (
 					<Link
 						href={`/learn/${nextUp.slug}`}
-						className='mt-4 inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-indigo-700'
+						className='mt-4 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700'
 					>
 						{done === 0 ? 'Start Day 1' : `Continue with Day ${nextUp.day}`} →
 					</Link>
@@ -82,12 +82,12 @@ export default async function LearnPage() {
 										return (
 											<li
 												key={`rest-${entry.dayInfo.day}`}
-												className='flex items-center gap-3 bg-zinc-50/60 px-4 py-3'
+												className='rest-day-row flex items-center gap-3 bg-zinc-50/60 px-4 py-3'
 											>
 												<span className='flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-zinc-100 text-xs font-semibold text-zinc-400'>
 													{entry.dayInfo.day}
 												</span>
-												<span className='text-sm text-zinc-400'>
+												<span className='rest-day-label text-sm text-zinc-400'>
 													{entry.dayInfo.label}
 												</span>
 											</li>
@@ -99,7 +99,7 @@ export default async function LearnPage() {
 										<li key={d.slug}>
 											<Link
 												href={`/learn/${d.slug}`}
-												className='flex items-center gap-3 px-4 py-3 transition-colors hover:bg-indigo-50/40'
+												className='flex items-center gap-3 px-4 py-3 transition-colors hover:bg-blue-50/40'
 											>
 												<span
 													className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition-colors ${
@@ -156,7 +156,7 @@ export default async function LearnPage() {
 									<li key={lesson.slug}>
 										<Link
 											href={`/learn/${lesson.slug}`}
-											className='flex items-center gap-3 px-4 py-3 transition-colors hover:bg-indigo-50/40'
+											className='flex items-center gap-3 px-4 py-3 transition-colors hover:bg-blue-50/40'
 										>
 											<span
 												className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
@@ -212,7 +212,7 @@ export default async function LearnPage() {
 										<li key={lesson.slug}>
 											<Link
 												href={`/learn/${lesson.slug}`}
-												className='flex items-center gap-3 px-4 py-3 transition-colors hover:bg-indigo-50/40'
+												className='flex items-center gap-3 px-4 py-3 transition-colors hover:bg-blue-50/40'
 											>
 												<span
 													className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${

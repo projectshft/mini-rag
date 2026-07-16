@@ -126,7 +126,7 @@ export function OrderSteps({ source }: { source: string }) {
 										? 'border-emerald-500 bg-emerald-50 text-emerald-800'
 										: wrong
 											? 'border-red-400 bg-red-50 text-red-700'
-											: 'cursor-pointer border-indigo-200 bg-indigo-50/60 text-zinc-800 hover:border-indigo-400'
+											: 'cursor-pointer border-blue-200 bg-blue-50/60 text-zinc-800 hover:border-blue-400'
 								}`}
 							>
 								<span
@@ -135,7 +135,7 @@ export function OrderSteps({ source }: { source: string }) {
 											? 'bg-emerald-500 text-white'
 											: wrong
 												? 'bg-red-400 text-white'
-												: 'bg-indigo-500 text-white'
+												: 'bg-blue-500 text-white'
 									}`}
 								>
 									{right ? '✓' : wrong ? '✗' : i + 1}
@@ -155,7 +155,7 @@ export function OrderSteps({ source }: { source: string }) {
 							key={step}
 							type='button'
 							onClick={() => place(step)}
-							className='cursor-pointer rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:border-indigo-400 hover:bg-indigo-50/60'
+							className='cursor-pointer rounded-full border border-zinc-200 bg-white px-3 py-1.5 text-sm text-zinc-700 transition-colors hover:border-blue-400 hover:bg-blue-50/60'
 						>
 							{step}
 						</button>
@@ -170,7 +170,7 @@ export function OrderSteps({ source }: { source: string }) {
 						type='button'
 						disabled={!allPlaced}
 						onClick={() => setChecked(true)}
-						className='cursor-pointer rounded-lg bg-indigo-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-indigo-700 disabled:cursor-default disabled:opacity-40'
+						className='cursor-pointer rounded-lg bg-blue-600 px-3.5 py-1.5 text-sm font-semibold text-white transition-colors hover:bg-blue-700 disabled:cursor-default disabled:opacity-40'
 					>
 						Check order
 					</button>
