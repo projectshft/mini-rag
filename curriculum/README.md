@@ -86,6 +86,13 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 Submission stays on Typeform (links live inline in the day files).
 Post your work in Slack for feedback.
 
+## Bonus lessons
+
+Optional labs — always available, never required. Same file format as day
+files (slug prefix `bonus-`).
+
+- [Optional Lab: Chunk the Bible and Store It in Pinecone](bonus-bible-chunking.md)
+
 ## Interview prep
 
 Bonus section, **gated per student** — locked by default, unlocked from

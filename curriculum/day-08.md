@@ -335,6 +335,8 @@ Embed each chunk into a vector
 Upsert vectors + metadata to Pinecone
 ```
 
+**Want to go deeper?** There's an optional lab where you download the entire King James Bible — 4 MB, 66 books, ~31,000 verses — design your own chunking strategy for it, and store it in your own Pinecone index with citations intact: [Chunk the Bible](/learn/bonus-bible-chunking). It's the single best rep for making chunking decisions from the corpus instead of from habit.
+
 ## Beyond plain text: PDFs and other modalities
 
 Let's be upfront about something: this course chunks and embeds **plain text**, because text is how the overwhelming majority of production RAG systems work — and every skill you're building transfers directly. But the data you'll meet at work isn't always a clean string. It's PDFs with tables and figures. Screenshots. Diagrams. Recorded meetings. You don't need to master those today — you need to know they exist and **what to reach for** when one lands on your desk.

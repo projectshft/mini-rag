@@ -36,8 +36,11 @@ export type WeekEntry =
 	| { kind: 'day'; dayInfo: Day }
 	| { kind: 'rest'; dayInfo: RestDay };
 
-// A bonus interview-prep lesson (slug "interview-NN"). Listed in README's
-// "## Interview prep" section; gated per-student by Student.interviewUnlockedAt.
+// An extra lesson outside the day schedule. Two flavors, same shape:
+// - "interview-NN" — listed under README "## Interview prep", gated
+//   per-student by Student.interviewUnlockedAt
+// - "bonus-*" — listed under README "## Bonus lessons", always available
+//   (optional labs like the Bible chunking exercise)
 export type InterviewLesson = {
 	slug: string;
 	title: string;
@@ -45,6 +48,8 @@ export type InterviewLesson = {
 	body: string;
 	order: number;
 };
+
+export type BonusLesson = InterviewLesson;
 
 export type Week = {
 	week: number; // 1..6
@@ -187,14 +192,14 @@ export const getDay = cache(async (slug: string): Promise<Day | null> => {
 	return days.find((d) => d.slug === slug) ?? null;
 });
 
-// A lesson link inside the "## Interview prep" section: "- [title](interview-01.md)"
-const INTERVIEW_LINK_RE = /^-\s*\[([^\]]+)\]\((interview-[A-Za-z0-9._-]+)\.md\)/;
-
 /**
- * The gated interview-prep lessons, in README "## Interview prep" order.
- * Empty array if the section (or its files) don't exist.
+ * Parse a README section ("## Interview prep" / "## Bonus lessons") of
+ * `- [title](slug.md)` links into lessons, restricted to a slug prefix.
  */
-export const getInterviewLessons = cache(async (): Promise<InterviewLesson[]> => {
+async function parseExtraSection(
+	header: RegExp,
+	slugPrefix: string
+): Promise<InterviewLesson[]> {
 	let readme = '';
 	try {
 		readme = await fs.readFile(path.join(CURRICULUM_DIR, 'README.md'), 'utf-8');
@@ -202,15 +207,16 @@ export const getInterviewLessons = cache(async (): Promise<InterviewLesson[]> =>
 		return [];
 	}
 
-	const start = readme.search(/^##\s+Interview prep\s*$/m);
+	const start = readme.search(header);
 	if (start === -1) return [];
 	const rest = readme.slice(start + 1);
 	const end = rest.search(/^##\s+/m);
 	const section = end === -1 ? rest : rest.slice(0, end);
 
+	const linkRe = new RegExp(`^-\\s*\\[([^\\]]+)\\]\\((${slugPrefix}[A-Za-z0-9._-]+)\\.md\\)`);
 	const lessons: InterviewLesson[] = [];
 	for (const rawLine of section.split('\n')) {
-		const link = INTERVIEW_LINK_RE.exec(rawLine.trim());
+		const link = linkRe.exec(rawLine.trim());
 		if (!link) continue;
 		let raw: string;
 		try {
@@ -237,6 +243,28 @@ export const getInterviewLessons = cache(async (): Promise<InterviewLesson[]> =>
 		});
 	}
 	return lessons;
+}
+
+/**
+ * The gated interview-prep lessons, in README "## Interview prep" order.
+ * Empty array if the section (or its files) don't exist.
+ */
+export const getInterviewLessons = cache(async (): Promise<InterviewLesson[]> => {
+	return parseExtraSection(/^##\s+Interview prep\s*$/m, 'interview-');
+});
+
+/**
+ * Ungated optional labs, in README "## Bonus lessons" order (slug prefix
+ * "bonus-"). Always visible to every signed-in student.
+ */
+export const getBonusLessons = cache(async (): Promise<BonusLesson[]> => {
+	return parseExtraSection(/^##\s+Bonus lessons\s*$/m, 'bonus-');
+});
+
+/** A single bonus lesson by slug, or null. */
+export const getBonusLesson = cache(async (slug: string): Promise<BonusLesson | null> => {
+	const lessons = await getBonusLessons();
+	return lessons.find((l) => l.slug === slug) ?? null;
 });
 
 /** A single interview lesson by slug, or null. */

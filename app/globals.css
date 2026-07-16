@@ -149,6 +149,21 @@ body:has(.lms) > main {
 
 /* Lesson prose: restore sensible defaults inside the rendered markdown
    (the typography plugin handles most of it; these cover the extras). */
+
+/* Inline code gets the chip look; code inside <pre> must NOT (a light
+   chip behind light-on-dark block code makes the text invisible). */
+.lms .lesson-prose :not(pre) > code {
+	background: #f4f4f5;
+	padding: 0.1em 0.35em;
+	border-radius: 4px;
+	font-weight: 400;
+}
+
+.lms .lesson-prose pre code {
+	background: transparent;
+	padding: 0;
+}
+
 .lms .lesson-prose a {
 	color: #4f46e5;
 	text-decoration: underline;

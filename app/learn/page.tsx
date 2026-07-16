@@ -1,5 +1,10 @@
 import Link from 'next/link';
-import { getDays, getInterviewLessons, getWeeks } from '@/lib/lms/curriculum';
+import {
+	getBonusLessons,
+	getDays,
+	getInterviewLessons,
+	getWeeks,
+} from '@/lib/lms/curriculum';
 import {
 	ensureStudent,
 	getCompletedSlugs,
@@ -8,13 +13,15 @@ import {
 
 export default async function LearnPage() {
 	const userId = await ensureStudent();
-	const [weeks, days, interviewLessons, completed, interviewUnlocked] = await Promise.all([
-		getWeeks(),
-		getDays(),
-		getInterviewLessons(),
-		userId ? getCompletedSlugs(userId) : Promise.resolve(new Set<string>()),
-		userId ? isInterviewUnlocked(userId) : Promise.resolve(false),
-	]);
+	const [weeks, days, interviewLessons, bonusLessons, completed, interviewUnlocked] =
+		await Promise.all([
+			getWeeks(),
+			getDays(),
+			getInterviewLessons(),
+			getBonusLessons(),
+			userId ? getCompletedSlugs(userId) : Promise.resolve(new Set<string>()),
+			userId ? isInterviewUnlocked(userId) : Promise.resolve(false),
+		]);
 
 	const total = days.length;
 	const done = days.filter((d) => completed.has(d.slug)).length;
@@ -130,6 +137,57 @@ export default async function LearnPage() {
 						</section>
 					);
 				})}
+
+				{bonusLessons.length > 0 && (
+					<section>
+						<div className='flex items-baseline justify-between'>
+							<h2 className='text-lg font-bold tracking-tight text-zinc-900'>
+								Bonus — Optional Labs
+							</h2>
+							<span className='text-xs font-medium text-zinc-400'>
+								{bonusLessons.filter((l) => completed.has(l.slug)).length}/
+								{bonusLessons.length} done
+							</span>
+						</div>
+						<ul className='mt-3 divide-y divide-zinc-100 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm'>
+							{bonusLessons.map((lesson) => {
+								const isDone = completed.has(lesson.slug);
+								return (
+									<li key={lesson.slug}>
+										<Link
+											href={`/learn/${lesson.slug}`}
+											className='flex items-center gap-3 px-4 py-3 transition-colors hover:bg-indigo-50/40'
+										>
+											<span
+												className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold ${
+													isDone
+														? 'bg-emerald-500 text-white'
+														: 'border border-zinc-200 bg-white text-zinc-500'
+												}`}
+												aria-hidden
+											>
+												{isDone ? '✓' : '★'}
+											</span>
+											<span className='min-w-0 flex-1'>
+												<span className='block truncate text-sm font-medium text-zinc-800'>
+													{lesson.title}
+												</span>
+												{lesson.time && (
+													<span className='block text-xs text-zinc-400'>
+														{lesson.time}
+													</span>
+												)}
+											</span>
+											<span className='shrink-0 rounded-full bg-zinc-100 px-2 py-0.5 text-xs font-medium text-zinc-500'>
+												optional
+											</span>
+										</Link>
+									</li>
+								);
+							})}
+						</ul>
+					</section>
+				)}
 
 				{interviewLessons.length > 0 && (
 					<section>

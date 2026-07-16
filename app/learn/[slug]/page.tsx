@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import {
+	getBonusLesson,
 	getDay,
 	getDays,
 	getInterviewLesson,
@@ -20,6 +21,54 @@ export default async function LessonPage({
 	params: Promise<{ slug: string }>;
 }) {
 	const { slug } = await params;
+
+	// ── Optional labs (bonus-*): ungated ──
+	if (slug.startsWith('bonus-')) {
+		const lesson = await getBonusLesson(slug);
+		if (!lesson) notFound();
+
+		const userId = await ensureStudent();
+		const completed = userId ? await getCompletedSlugs(userId) : new Set<string>();
+
+		return (
+			<article>
+				<Link
+					href='/learn'
+					className='text-sm font-medium text-zinc-400 hover:text-zinc-600'
+				>
+					← All days
+				</Link>
+
+				<header className='mt-4 border-b border-zinc-200 pb-6'>
+					<div className='flex flex-wrap items-center gap-2 text-sm text-zinc-500'>
+						<span className='rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-700'>
+							★ Optional lab
+						</span>
+						{lesson.time && <span className='text-xs text-zinc-400'>· {lesson.time}</span>}
+					</div>
+					<h1 className='mt-2 text-[26px] font-bold leading-tight tracking-tight text-zinc-900'>
+						{lesson.title}
+					</h1>
+					<div className='mt-4'>
+						<MarkDoneCheckbox slug={slug} initialDone={completed.has(slug)} />
+					</div>
+				</header>
+
+				<div className='mt-8'>
+					<LessonMarkdown body={lesson.body} />
+				</div>
+
+				<nav className='mt-12 border-t border-zinc-200 pt-5 text-sm'>
+					<Link
+						href='/learn'
+						className='font-medium text-indigo-600 hover:text-indigo-800'
+					>
+						← Back to the course
+					</Link>
+				</nav>
+			</article>
+		);
+	}
 
 	// ── Gated bonus section: interview prep ──
 	if (slug.startsWith('interview-')) {
