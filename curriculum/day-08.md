@@ -325,6 +325,68 @@ const highOverlap = chunkText(text, 500, 150, 'test');
 - How much overlap do you actually need?
 - What happens with very short documents? Very long ones?
 
+## Beyond plain text: PDFs and other modalities
+
+Let's be upfront about something: this course chunks and embeds **plain text**, because text is how the overwhelming majority of production RAG systems work — and every skill you're building transfers directly. But the data you'll meet at work isn't always a clean string. It's PDFs with tables and figures. Screenshots. Diagrams. Recorded meetings. You don't need to master those today — you need to know they exist and **what to reach for** when one lands on your desk.
+
+The good news: the pipeline never changes. It's always **extract → represent → embed → upsert**. What changes is how each kind of content becomes a vector.
+
+### PDFs: extraction is the whole game
+
+A PDF is a *layout*, not a string. Text, tables, figures, and scanned pages all need different treatment, and ingestion quality is decided at extraction time — before any chunking or embedding happens:
+
+- **Paragraphs** — digital PDFs carry a text layer; pull the string out and everything from today applies unchanged.
+- **Tables** — the danger zone. Naive extraction reads cells in visual order and produces word soup. Serialize rows with their headers intact (markdown, or `Region: us-east | Spend: $41k` per row) so each chunk still means something.
+- **Figures and charts** — grab the caption (cheap), have a vision LLM describe the image and embed the description (better), or embed the image itself with a multimodal model (below).
+- **Scans** — there is *no text layer*, just pixels. Without OCR (Tesseract, AWS Textract), extraction silently returns nothing and your "successfully ingested" PDF contributes zero vectors. Count chunks per page.
+
+Layout-aware parsers like Unstructured or Docling emit *typed elements* (Title, NarrativeText, Table, Image) instead of one flat string — which is exactly what lets you give each element the treatment it needs.
+
+### Multimodal embeddings: one space, many modalities
+
+Remember word math — "same direction = same meaning"? Multimodal models like CLIP (and newer ones like voyage-multimodal-3 and Cohere Embed v3) extend that property across modalities: they embed text **and** images into the *same* vector space, trained so an image and the text describing it land near each other. That means a text query can retrieve a screenshot, a chart, or a diagram — no caption matching involved.
+
+And here's the part that should feel familiar: **Pinecone doesn't care what a vector came from.** An index stores vectors of one fixed dimension — text, image, audio, it's all the same to the index. Multimodal RAG in Pinecone is just: pick a multimodal embedding model, tag `metadata.modality` on every record, and embed queries with the same model. Some vector databases (like Weaviate) bundle the multimodal model into the database itself; with Pinecone you bring your own — which is exactly what you're already doing with text.
+
+Play with both ideas here:
+
+```visual
+multimodal-rag | Click the PDF elements, then switch to the shared meaning-space
+```
+
+```quiz
+[
+  {
+    "q": "Your pipeline reports a 60-page PDF as 'successfully ingested', but questions about pages 30–45 return nothing. Most likely cause?",
+    "options": ["Those pages are scans with no text layer, so extraction silently produced zero chunks", "The embedding model rejected those pages", "Pinecone indexes have a 30-page limit"],
+    "answer": 0,
+    "explain": "Scanned pages are pixels, not text. Without OCR they extract as empty strings — the silent failure mode of PDF ingestion. Counting chunks per page catches it."
+  },
+  {
+    "q": "How does a text query retrieve an image in a multimodal RAG system?",
+    "options": ["The system matches the query against image filenames and captions", "A multimodal model embeds text and images into one shared space, so the query vector lands near relevant image vectors", "Pinecone runs OCR on stored images at query time"],
+    "answer": 1,
+    "explain": "CLIP-style models are trained so an image and text describing it land near each other — same geometry you saw with word math, extended across modalities. The index just compares vectors."
+  }
+]
+```
+
+### Go deeper (external)
+
+**PDFs & chunking:**
+
+- [Chunking Strategies for LLM Applications](https://www.pinecone.io/learn/chunking-strategies/) — Pinecone's guide; goes beyond today's sentence-aware approach into semantic and content-aware chunking
+- [Best PDF Parsers for AI and RAG Workflows](https://www.firecrawl.dev/blog/best-pdf-parsers) — practical comparison of Unstructured, Docling, Marker, and friends
+- [Unstructured docs](https://docs.unstructured.io/) — the typed-elements parser most RAG pipelines reach for first
+
+**Multimodal:**
+
+- [Embedding Methods for Image Search](https://www.pinecone.io/learn/series/image-search/) — Pinecone's series, including [Multi-modal ML with OpenAI's CLIP](https://www.pinecone.io/learn/series/image-search/clip/)
+- [CLIP text↔image search notebook](https://github.com/pinecone-io/examples/blob/master/learn/search/multi-modal/clip-search/clip-text-image-search.ipynb) — runnable end-to-end example against a Pinecone index
+- [Voyage multimodal embeddings](https://docs.voyageai.com/docs/multimodal-embeddings) — embeds interleaved text + images (great for document screenshots); see also [voyage-multimodal-3](https://blog.voyageai.com/2024/11/12/voyage-multimodal-3/)
+- [Cohere: multimodal Embed 3](https://cohere.com/blog/multimodal-embed-3) — another production multimodal model
+- [Weaviate multi2vec-clip](https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/multi2vec-clip) — the "model bundled into the database" alternative, for contrast with Pinecone's bring-your-own-vectors approach
+
 ## ✅ Key takeaways
 
 - Chunking is critical to RAG quality: retrieval returns chunks, so chunk boundaries decide what the LLM ever sees
@@ -332,6 +394,7 @@ const highOverlap = chunkText(text, 500, 150, 'test');
 - Sentence-aware splitting + overlap is the workhorse strategy: split on `.!?`, accumulate to a size limit, carry the tail forward
 - 10–20% overlap (50–100 chars for 500-char chunks) preserves boundary context without wasteful duplication
 - Chunk metadata (`source`, `chunkIndex`, `totalChunks`) is what makes retrieval results traceable and reconstructable
+- The pipeline (extract → represent → embed → upsert) never changes across modalities — PDFs need layout-aware extraction (+ OCR for scans), and multimodal models put text and images in one shared space; Pinecone just stores the vectors either way
 
 ## 🤖 Work with AI
 
@@ -349,4 +412,12 @@ title: Generate edge-case tests for getLastWords
 I implemented getLastWords(text: string, maxLength: number) in app/libs/chunking.ts for a RAG chunking library. It returns the last complete words of text that fit within maxLength characters (spaces count), or the whole text if it's already short enough.
 
 Generate 8 edge-case test inputs I should check — think: a single word longer than maxLength, maxLength of 0, text with double spaces, text ending in punctuation, exact-boundary lengths where the space pushes it over. For each, tell me the expected output and WHY, then ask me to predict what my implementation returns before you reveal anything.
+```
+
+```ai-prompt
+title: Plan the ingestion for a messy real-world PDF
+---
+I'm learning RAG ingestion. I know sentence-aware text chunking with overlap, and I've just been introduced to (but haven't implemented) PDF extraction and multimodal embeddings.
+
+Describe a realistic messy PDF for me (pick one: an annual report with financial tables and charts, a scanned vendor contract, or a product spec with architecture diagrams). Then interview me, ONE QUESTION AT A TIME, as I design its ingestion pipeline for a Pinecone index: what I'd extract with, how I'd handle each element type (paragraphs, tables, figures, scans), what metadata I'd attach, and how I'd verify nothing was silently dropped. Push back on hand-waving ("HOW exactly does that table become a chunk?"). At the end, summarize my pipeline and flag the two riskiest points in it.
 ```
