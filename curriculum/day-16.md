@@ -300,6 +300,40 @@ Now classify the user's query.`
 
 **For agent routing:** start with zero-shot. Add few-shot examples only if you see misclassifications.
 
+This exact conversation happens on every AI team — practice it:
+
+```scenario
+{
+  "who": "A teammate",
+  "setting": "Slack thread about your extraction agent. Its outputs keep drifting — field names vary between runs, and dates come back in three different formats.",
+  "ask": "The agent's outputs are inconsistent. I think we need to fine-tune a model on our data.",
+  "note": "Pick the reply you'd actually post in the thread.",
+  "options": [
+    {
+      "text": "Before we reach for training, let's put 3–5 curated examples of exactly the output we want into the system prompt — inconsistent formatting is precisely what few-shot fixes. It costs nothing, we iterate in minutes instead of training runs, and if it plateaus and we've collected 100+ quality examples, fine-tuning is the escalation path — not the opening move.",
+      "verdict": "best",
+      "feedback": "This wins because it sequences the tools by cost: few-shot is a ten-minute experiment, fine-tuning is a data-collection project plus a training run per iteration. 'Escalation path' is the phrase that lands — you're not rejecting the teammate's idea, you're ordering it after the cheap thing that usually works."
+    },
+    {
+      "text": "Have we tried dropping the temperature and tightening the format instructions first? A lot of 'inconsistent output' is just high temperature plus vague instructions.",
+      "verdict": "ok",
+      "feedback": "Right instinct — cheapest knobs first, and low temperature genuinely reduces drift on structured tasks. But instructions alone rarely pin down formats the way concrete examples do, so you'll likely end up adding few-shot anyway — and for output that must parse, a schema-enforced structured output is the real endgame."
+    },
+    {
+      "text": "Agreed — consistent output is literally the classic fine-tuning use case. Let's scope the training run.",
+      "verdict": "weak",
+      "feedback": "It WAS the classic use case, which is why this sounds right — but you're reaching for the most expensive tool first. Fine-tuning wants 100+ curated examples and a training run every time you want to adjust; few-shot gets the same consistency with paste-and-rerun iteration. Start cheap, escalate with evidence."
+    },
+    {
+      "text": "Just add a retry loop — if the output doesn't parse, call the model again.",
+      "verdict": "weak",
+      "feedback": "Retries belong in production, but as a safety net, not the fix. You'd pay full price for every failed generation to paper over a prompt you could improve in ten minutes — and retrying doesn't help at all when the output parses fine but the field names are wrong."
+    }
+  ],
+  "debrief": "The escalation ladder for inconsistent outputs: tighten instructions and temperature → add 3–5 few-shot examples → enforce structure with a schema (you'll do exactly this on Day 18) → fine-tune, only if all of that plateaus and you have 100+ examples. Each rung costs roughly 10x the one before it — climb only as far as the failure demands."
+}
+```
+
 ## Prompt hygiene checklist
 
 Before deploying any prompt, check:

@@ -420,6 +420,40 @@ const docs = await index.query({
 
 **Use cases:** filter by source URL, upload date, content type, or tags.
 
+Getting retrieval working is one thing — keeping it truthful as documents change is another. Practice the conversation:
+
+```scenario
+{
+  "who": "Your team lead",
+  "setting": "Standup. Marketing shipped new pricing last month — the website got updated, but nobody touched the Pinecone index.",
+  "ask": "The bot is still quoting the old prices. How do we handle docs going stale?",
+  "note": "Several of these genuinely work — pick the one you'd reach for first.",
+  "options": [
+    {
+      "text": "Re-ingest by source: delete every vector whose metadata source is the pricing page, then chunk and upsert the new version. With deterministic IDs like source-chunkIndex, the upsert overwrites matching chunks in place — the delete step is what catches the tail when the new doc has fewer chunks than the old one. Either way, it's an ingestion fix, not a prompt fix.",
+      "verdict": "best",
+      "feedback": "The workhorse answer: simple, correct, and scoped to the one doc that changed. Mentioning the tail case is what marks real experience — plain upsert-in-place with the same IDs silently strands orphan chunks whenever the new version is shorter, and those orphans are exactly the stale prices."
+    },
+    {
+      "text": "Version everything: stamp each chunk's metadata with an ingestedAt or version field, and filter to the latest at query time — Pinecone supports metadata filters. Old pricing stays queryable if anyone ever needs the history.",
+      "verdict": "ok",
+      "feedback": "The right reach when history is a requirement — compliance, audits, 'what did we charge in March?' If nobody needs old pricing, though, you're carrying storage and query-time complexity to preserve vectors whose only remaining job is being wrong."
+    },
+    {
+      "text": "Set up a nightly job that wipes the index and re-ingests everything from the source of truth. Nothing can ever be more than a day stale, and we never have to track what changed.",
+      "verdict": "ok",
+      "feedback": "Defensible and genuinely stale-proof — plenty of small systems run exactly this. The costs show up at scale: you re-embed thousands of unchanged chunks to fix one page, and today's wrong prices stay wrong until tonight's run. Good backstop, wasteful as the primary mechanism."
+    },
+    {
+      "text": "Just upload the new pricing doc alongside the old one — the newer content should score higher, and the model can tell which version is current.",
+      "verdict": "weak",
+      "feedback": "It can't. Old and new pricing chunks are semantically near-identical, so both get retrieved, and nothing in a vector or its text says 'I'm outdated' — the model may even blend the two into one confident wrong answer. Retrieval has no sense of time unless you build one."
+    }
+  ],
+  "debrief": "Stale data is an INGESTION problem, not a prompt problem — no system prompt can make the model ignore a wrong chunk you handed it. Make ingestion idempotent (deterministic IDs, delete-by-source, re-upsert) so 'this doc changed' is a routine operation instead of an incident. The other patterns — freshness metadata, scheduled rebuilds — are tools for when history or simplicity matter more than efficiency."
+}
+```
+
 ## Experiments
 
 **1. Different topK values** — run the same query at topK 3, 5, and 10. Compare the lowest score in each set, the relevance of the bottom results, and how many tokens you'd be sending to an LLM.

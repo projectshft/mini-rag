@@ -231,6 +231,21 @@ Trade-offs:
 
 You can even combine both: hybrid search + metadata filtering for maximum precision.
 
+Different query, different retrieval mode — prove you can pick the winner:
+
+```match
+{
+  "title": "Match the query to the retrieval mode that wins",
+  "note": "Tap a query, then tap the approach you'd bet on. Correct matches lock in.",
+  "pairs": [
+    { "left": "\"Error E-4002\" — the user pasted the exact code from their logs", "right": "Sparse — only a verbatim keyword match separates E-4002 from E-4001" },
+    { "left": "\"my connection keeps dropping\" — a paraphrase sharing no keywords with the docs", "right": "Dense — the meaning matches even when the words don't" },
+    { "left": "\"What changed in the PostgreSQL 16.1 security fix?\" — an exact version inside a conceptual question", "right": "Hybrid — sparse pins the version number, dense handles 'what changed'" },
+    { "left": "\"Only show results from the official React docs\" — a hard requirement on the source", "right": "Metadata filter — a constraint on the record, not a similarity problem" }
+  ]
+}
+```
+
 ## Further reading
 
 - [Pinecone: Understanding Hybrid Search](https://docs.pinecone.io/guides/data/understanding-hybrid-search)

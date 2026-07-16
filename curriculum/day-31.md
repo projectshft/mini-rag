@@ -209,6 +209,74 @@ Why?
 - Reliability matters more than flexibility
 - You're building a single-purpose tool
 
+You'll hear this exact pitch at work — practice the reply:
+
+```scenario
+{
+  "who": "A product manager",
+  "setting": "Roadmap review. Your docs Q&A bot runs the fixed embed → search → rerank pipeline, and users are happy with it.",
+  "ask": "I keep reading about agents. Let's give the chatbot tool calling so it can answer from our docs — that's how everyone's building these now.",
+  "note": "The bot already answers from the docs. Pick the reply you'd actually give.",
+  "options": [
+    {
+      "text": "It already answers from our docs — every question runs the same retrieve-then-answer flow, deterministically. Tool calling would add an LLM decision about WHETHER to search, which buys us latency, cost, and a new failure mode where it sometimes decides not to. Tools earn their keep when the assistant has to take actions, hit live systems, or chain steps we can't script — if we add features like that, I'll reach for them.",
+      "verdict": "best",
+      "feedback": "This lands because it separates the capability from the fashion: the PM asked for an outcome the system already delivers. Naming what tool calling would actually add here (a nondeterministic gate in front of retrieval) and when it WOULD be the right call keeps the door open without taking on complexity now."
+    },
+    {
+      "text": "We could wrap our retrieval pipeline in a tool — it's maybe a day of work, and it would set us up if we add more capabilities later. For the current feature set, though, users wouldn't notice any difference.",
+      "verdict": "ok",
+      "feedback": "Honest and low-drama, but 'set us up for later' is how systems grow parts nobody needed. YAGNI applies to agents too: add the tool boundary when the second capability actually exists, because until then you've added a decision point that can only make the bot worse."
+    },
+    {
+      "text": "Good idea — tool calling is the modern pattern, and it'll make the bot smarter about when to search.",
+      "verdict": "weak",
+      "feedback": "It won't make it smarter — the retrieval is identical; you've just put a nondeterministic gate in front of it. The first time the model searches for 'thanks for your help!' or skips a search it needed, you own that bug — and you agreed to it in a meeting without naming the trade."
+    },
+    {
+      "text": "We don't need any of that agent hype — tool calling is overrated.",
+      "verdict": "weak",
+      "feedback": "Right conclusion for this feature, reasoning that won't survive the follow-up: 'so when WOULD we use it?' Dismissing the technique instead of matching it to the use case teaches the PM nothing — the suggestion comes back next quarter with a blog post attached."
+    }
+  ],
+  "debrief": "The question is never 'is tool calling good?' — it's 'who should orchestrate?' When every request needs the same steps (embed → search → answer), your code should decide: cheaper, testable, and it can't choose wrong. Save the model's judgment for workflows you genuinely can't script in advance."
+}
+```
+
+And the inverse conversation — where tools ARE the right call and someone's pushing back:
+
+```scenario
+{
+  "who": "A senior engineer",
+  "setting": "Design review for the support assistant. The new requirement: check a customer's live order status and issue refunds under $50.",
+  "ask": "We should NOT use tool calling for this — LLMs are unreliable. Let's keep it a plain RAG chatbot and stay safe.",
+  "note": "The concern is legitimate. Pick the reply you'd actually give.",
+  "options": [
+    {
+      "text": "The reliability concern is real — models do occasionally call the wrong tool with the wrong arguments. But RAG can't do this feature: retrieval reads a static index, and order status changes by the minute. Live lookups and actions are exactly what tools are for, so let's spend the caution on mitigations: tight parameter schemas the SDK validates, retries on failure, and a human-approval step before any refund executes.",
+      "verdict": "best",
+      "feedback": "Starting with 'you're right about the risk' is what makes the rest land — you're not dismissing a senior engineer, you're redirecting the caution to where it works. Naming the mitigation stack (schemas, validation, retries, human-in-the-loop on writes) shows this is an engineering problem with known controls, not a leap of faith."
+    },
+    {
+      "text": "What if we split it? Tool calling for the read-only order-status lookup, where a wrong call is recoverable — and route refunds to a human queue entirely, at least for now.",
+      "verdict": "ok",
+      "feedback": "A genuinely shippable compromise, and the read/write split is real risk thinking. It gives up more than it has to, though: a human-approval gate gets you automated refunds WITH a check, versus no automation at all. Fine as phase one — just don't let 'for now' quietly become the architecture."
+    },
+    {
+      "text": "That take is outdated — modern models are really good at tool calling now. It'll be fine.",
+      "verdict": "weak",
+      "feedback": "You're answering a risk assessment with vibes. Models are better, and they still occasionally produce wrong arguments or skip a needed call — the senior engineer knows this, so 'it'll be fine' costs you credibility, and the first bad tool call in production reopens the whole debate with you on the losing side."
+    },
+    {
+      "text": "Fair enough — the bot can just link users to the order-status page and tell them to check there.",
+      "verdict": "weak",
+      "feedback": "This avoids the argument by abandoning the requirement. The feature was 'check the order and act on it'; a bot that says 'go check yourself' is a search box with extra steps. Deferring to seniority when the design is wrong for the use case is how bad architectures get consensus."
+    }
+  ],
+  "debrief": "'It's unreliable' is a risk statement, not a veto — and the professional response is a mitigation list, not a counter-opinion. Schemas constrain what the model can send, validation and retries catch what slips through, and human-in-the-loop gates anything irreversible. RAG reads a snapshot of the past; tools touch the live world. When the feature needs the live world, the answer is tools plus controls — not no tools."
+}
+```
+
 ## Your challenge: implement tool-calling RAG
 
 Now it's your turn. Take your existing RAG workflow — the embed → search → rerank pipeline from [/learn/day-22](/learn/day-22) and [/learn/day-23](/learn/day-23) — and refactor it to use tool-calling.

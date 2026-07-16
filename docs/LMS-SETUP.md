@@ -60,6 +60,17 @@ yarn dev
   Locked by default; unlock each student with the 🎤 toggle in `/admin`
   near the end of the program. State lives in
   `Student.interviewUnlockedAt` (null = locked).
+- Student API keys: `/admin` mints budget-capped keys ($10 / 60 days by
+  default) against the class **LiteLLM proxy** — the same proxy the
+  medical-rag course runs (`infra/litellm/` in that repo, live at
+  parsity-litellm.fly.dev). Set `LITELLM_PROXY_URL` +
+  `LITELLM_MASTER_KEY` (optional: `LITELLM_KEY_BUDGET_USD`,
+  `LITELLM_KEY_DURATION_DAYS`). Per student you can: **Mint** (one key
+  each), **✉️ Send** (opens a prefilled email in your mail client),
+  **+$** (raises the ceiling, spend preserved), **Revoke** (kills the
+  key on the proxy immediately). Live spend shows in the table. Keys
+  only work through the proxy, so a leaked key without the base URL is
+  useless, and the budget cap bounds the blast radius either way.
 
 ## Editing the curriculum
 - One file per study day: `curriculum/day-NN.md` (see `curriculum/AUTHORING.md`

@@ -95,6 +95,40 @@
 ]
 ```
 
+You'll get asked this at work. Practice the conversation:
+
+```scenario
+{
+  "who": "Your manager",
+  "setting": "Sprint planning. You've proposed a RAG pipeline for the internal docs assistant, and the vector DB line item is being questioned.",
+  "ask": "This retrieval stuff looks like a lot of moving parts. Why don't we just fine-tune a model on our docs and skip all of it?",
+  "note": "More than one answer is defensible — pick the one YOU'D actually say.",
+  "options": [
+    {
+      "text": "Fine-tuning changes how the model writes, not what it knows. Our docs change weekly — we'd be retraining constantly, and the model still couldn't cite which doc an answer came from. RAG keeps knowledge in a database we update in seconds, with sources.",
+      "verdict": "best",
+      "feedback": "This is the answer that ends the discussion — it names the two dealbreakers for THIS use case (freshness and citations), explains the mechanism in one sentence, and frames RAG as the cheaper operational choice rather than the fancier one."
+    },
+    {
+      "text": "We could fine-tune, and it'd probably work at first — but every docs update means a new training run, and when someone asks 'where did that answer come from?' we'd have nothing to show. Happy to prototype both if you want the comparison.",
+      "verdict": "ok",
+      "feedback": "Defensible and collaborative, and the offer to prototype builds trust. But 'it'd probably work at first' undersells the problem — a fine-tuned model doesn't reliably memorize 40k pages of facts at all; it learns patterns and style. You'd be debugging hallucinations from day one."
+    },
+    {
+      "text": "Fine-tuning is basically deprecated — OpenAI killed it in 2026. Nobody does that anymore.",
+      "verdict": "weak",
+      "feedback": "True-ish and it sounds decisive, but it's an appeal to fashion, not reasoning — and it invites the follow-up you can't answer: 'okay, but WHY did they kill it?' Worse, it teaches your manager nothing, so the same question comes back next quarter. Argue the use case, not the trend."
+    },
+    {
+      "text": "Sure, fine-tuning would be simpler — let's do that.",
+      "verdict": "weak",
+      "feedback": "Agreeing to unblock the meeting feels efficient, but you'd own the fallout: weekly retraining costs, no citations, and hallucinated answers about stale policies. When you know the approach is wrong for the use case, saying so IS the job."
+    }
+  ],
+  "debrief": "The pattern to remember: tie the technique to the use case's actual constraints (how often knowledge changes, whether citations matter, how many examples you have) — not to what's modern. Tomorrow's lesson shows the flip side: a use case where imitating a VOICE is the goal, and prompting with examples beats retrieval."
+}
+```
+
 ## Cost breakdown
 
 **Training (one-time):**

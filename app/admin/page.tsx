@@ -2,14 +2,45 @@ import { clerkClient } from '@clerk/nextjs/server';
 import { lmsPrisma } from '@/lib/lms/prisma';
 import { getDays } from '@/lib/lms/curriculum';
 import {
+	litellmConfigured,
+	litellmProxyUrl,
+	keySpend,
+	KEY_BUDGET_USD,
+	KEY_DURATION_DAYS,
+	type KeySpend,
+} from '@/lib/lms/litellm';
+import { CopyButton } from '@/components/lms/CopyButton';
+import {
 	inviteStudent,
 	revokeStudent,
 	unbanStudent,
 	revokeInvitation,
 	setInterviewAccess,
+	mintStudentKey,
+	bumpStudentKeyBudget,
+	revokeStudentKey,
 } from './actions';
 
 export const dynamic = 'force-dynamic';
+
+// Prefilled email for sending a student their key (same wording the
+// medical-rag cohort sheet used) — opens the admin's own mail client.
+function keyEmailHref(email: string, key: string): string {
+	const subject = 'Your Parsity API key (for class)';
+	const body = [
+		`Hey — here's your private API key for class, courtesy of Parsity. It has $${KEY_BUDGET_USD} in credits, plenty to get started.`,
+		'',
+		"Set BOTH of these when you use it. The key ONLY works through our proxy — with just the key on its own it won't:",
+		'',
+		`  OPENAI_API_KEY=${key}`,
+		`  OPENAI_BASE_URL=${litellmProxyUrl()}`,
+		'',
+		"Then use it with the OpenAI SDK exactly as normal (any model, e.g. gpt-4o-mini). If it doesn't work, just reply to this email.",
+		'',
+		'— Brian',
+	].join('\n');
+	return `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
 
 export default async function AdminPage() {
 	const client = await clerkClient();
@@ -23,6 +54,19 @@ export default async function AdminPage() {
 		client.users.getUserList({ limit: 200 }),
 		client.invitations.getInvitationList({ status: 'pending' }),
 	]);
+
+	// Live spend per key (proxy lookups tolerate failure → null → "—").
+	const keysConfigured = litellmConfigured();
+	const spendByStudent = new Map<string, KeySpend | null>();
+	if (keysConfigured) {
+		await Promise.all(
+			students
+				.filter((s) => s.apiKey)
+				.map(async (s) => {
+					spendByStudent.set(s.id, await keySpend(s.apiKey!));
+				})
+		);
+	}
 
 	const total = days.length || 1;
 	const bannedById = new Map(userList.data.map((u) => [u.id, u.banned]));
@@ -83,6 +127,140 @@ export default async function AdminPage() {
 					</ul>
 				</section>
 			)}
+
+			{/* API keys (LiteLLM proxy) */}
+			<section>
+				<h2 className='text-xs font-semibold uppercase tracking-wide text-zinc-400'>
+					API keys · ${KEY_BUDGET_USD} / {KEY_DURATION_DAYS} days via the class proxy
+				</h2>
+				{!keysConfigured ? (
+					<p className='mt-3 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/60 px-4 py-4 text-sm text-zinc-500'>
+						Not configured. Set <code className='rounded bg-zinc-100 px-1'>LITELLM_PROXY_URL</code> and{' '}
+						<code className='rounded bg-zinc-100 px-1'>LITELLM_MASTER_KEY</code> to mint
+						budget-capped student keys from here (see docs/LMS-SETUP.md).
+					</p>
+				) : students.length === 0 ? (
+					<p className='mt-3 text-sm text-zinc-500'>
+						No students have joined yet — keys are minted per joined student.
+					</p>
+				) : (
+					<div className='mt-3 overflow-x-auto rounded-2xl border border-zinc-200 bg-white shadow-sm'>
+						<table className='w-full border-collapse text-sm'>
+							<thead>
+								<tr className='bg-zinc-50 text-left'>
+									<th className='px-3 py-2 font-semibold text-zinc-700'>Student</th>
+									<th className='px-3 py-2 font-semibold text-zinc-400'>Key</th>
+									<th className='px-3 py-2 text-right font-semibold text-zinc-400'>
+										Spend / budget
+									</th>
+									<th className='px-3 py-2 text-right font-semibold text-zinc-400'>
+										Expires
+									</th>
+									<th className='px-3 py-2 text-right font-semibold text-zinc-400'>
+										Actions
+									</th>
+								</tr>
+							</thead>
+							<tbody className='divide-y divide-zinc-100'>
+								{students.map((s) => {
+									const spend = spendByStudent.get(s.id);
+									const expired =
+										s.apiKeyExpiresAt && s.apiKeyExpiresAt.getTime() < Date.now();
+									return (
+										<tr key={s.id}>
+											<td className='max-w-56 truncate px-3 py-2 font-medium text-zinc-800'>
+												{s.email || s.id}
+											</td>
+											<td className='whitespace-nowrap px-3 py-2'>
+												{s.apiKey ? (
+													<span className='flex items-center gap-2'>
+														<code className='rounded bg-zinc-100 px-1.5 py-0.5 text-xs text-zinc-500'>
+															{s.apiKey.slice(0, 7)}…{s.apiKey.slice(-4)}
+														</code>
+														<CopyButton text={s.apiKey} label='Copy key' />
+													</span>
+												) : (
+													<span className='text-xs text-zinc-300'>no key</span>
+												)}
+											</td>
+											<td className='whitespace-nowrap px-3 py-2 text-right tabular-nums text-zinc-600'>
+												{s.apiKey
+													? spend
+														? `$${spend.spend.toFixed(2)} / $${(spend.maxBudget ?? s.apiKeyBudget ?? 0).toFixed(0)}`
+														: `— / $${(s.apiKeyBudget ?? 0).toFixed(0)}`
+													: ''}
+											</td>
+											<td className='whitespace-nowrap px-3 py-2 text-right text-xs text-zinc-500'>
+												{s.apiKeyExpiresAt ? (
+													<span className={expired ? 'font-semibold text-red-500' : ''}>
+														{expired ? 'expired ' : ''}
+														{s.apiKeyExpiresAt.toISOString().slice(0, 10)}
+													</span>
+												) : (
+													''
+												)}
+											</td>
+											<td className='whitespace-nowrap px-3 py-2 text-right'>
+												{!s.apiKey ? (
+													<form action={mintStudentKey} className='inline'>
+														<input type='hidden' name='studentId' value={s.id} />
+														<button className='cursor-pointer rounded-lg bg-indigo-600 px-3 py-1 text-xs font-semibold text-white transition-colors hover:bg-indigo-700'>
+															Mint key
+														</button>
+													</form>
+												) : (
+													<span className='flex items-center justify-end gap-2'>
+														<a
+															href={keyEmailHref(s.email, s.apiKey)}
+															className='rounded-lg border border-zinc-200 px-2.5 py-1 text-xs font-medium text-zinc-600 transition-colors hover:border-indigo-400 hover:text-indigo-700'
+															title='Opens a prefilled email in your mail client'
+														>
+															✉️ Send
+														</a>
+														<form
+															action={bumpStudentKeyBudget}
+															className='inline-flex items-center gap-1'
+														>
+															<input type='hidden' name='studentId' value={s.id} />
+															<input
+																type='number'
+																name='amount'
+																min='1'
+																step='1'
+																defaultValue='10'
+																className='w-14 rounded-md border border-zinc-200 px-1.5 py-1 text-right text-xs text-zinc-700 outline-none focus:border-indigo-400'
+																aria-label='Dollars to add'
+															/>
+															<button className='cursor-pointer rounded-lg border border-emerald-200 bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700 transition-colors hover:bg-emerald-100'>
+																+$
+															</button>
+														</form>
+														<form action={revokeStudentKey} className='inline'>
+															<input type='hidden' name='studentId' value={s.id} />
+															<button className='cursor-pointer text-xs font-medium text-zinc-400 hover:text-red-500'>
+																Revoke
+															</button>
+														</form>
+													</span>
+												)}
+											</td>
+										</tr>
+									);
+								})}
+							</tbody>
+						</table>
+					</div>
+				)}
+				{keysConfigured && (
+					<p className='mt-2 text-xs text-zinc-400'>
+						Keys work only through the proxy: students set{' '}
+						<code className='rounded bg-zinc-100 px-1'>OPENAI_API_KEY</code> +{' '}
+						<code className='rounded bg-zinc-100 px-1'>OPENAI_BASE_URL={litellmProxyUrl()}</code>.
+						&ldquo;+$&rdquo; raises the ceiling (spend is preserved); Revoke kills the key on
+						the proxy immediately.
+					</p>
+				)}
+			</section>
 
 			{/* Progress matrix */}
 			<section>

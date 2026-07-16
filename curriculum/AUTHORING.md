@@ -115,7 +115,59 @@ shuffled and students tap them into place. Use for *processes* (pipelines,
 request flows, algorithms) — 4–6 steps, each short enough to read as a
 pill. Don't use it where order is arbitrary or debatable.
 
-### 5. Mermaid — diagrams
+### 5. Scenario — "what do you say?" workplace exercises
+
+```` ```scenario ````
+```json
+{
+  "who": "Your manager",
+  "setting": "Sprint planning. The vector DB line item is being questioned.",
+  "ask": "Why don't we just fine-tune a model on our docs instead of building all this RAG stuff?",
+  "note": "More than one answer is defensible — pick the one YOU'D say.",
+  "options": [
+    { "text": "…", "verdict": "best", "feedback": "…" },
+    { "text": "…", "verdict": "ok", "feedback": "…" },
+    { "text": "…", "verdict": "weak", "feedback": "…" }
+  ],
+  "debrief": "Optional wrap-up shown after any pick."
+}
+```
+The consultant-training island: a coworker asks a nebulous question, the
+student picks the reply they'd actually give, gets a graded verdict
+(`best` / `ok` / `weak`) with feedback, and can reveal how the other
+replies land. Rules for writing good ones:
+
+- **The ask must be something people actually say** ("why don't we just
+  fine-tune?", "we should add tool calling", "these docs are stale — now
+  what?"). Never quiz-question phrasing.
+- **3–4 options, all plausible.** `weak` options are things a smart person
+  might say that don't survive follow-up questions — never strawmen.
+  Sometimes every option is defensible; the verdicts explain which is
+  *strongest for this use case* and why.
+- **Feedback teaches the reasoning, not the label** — it should read like
+  a staff engineer explaining what lands with a manager and what invites
+  the next hard question.
+- Ephemeral: not persisted, resets on reload. Marking the day done is the
+  only persistence.
+
+### 6. Match — tap-to-match pairs
+
+```` ```match ````
+```json
+{
+  "title": "Match the chunking strategy to the content",
+  "note": "Tap a row, then tap its match.",
+  "pairs": [
+    { "left": "Confluence pages with clean headings", "right": "Structure-aware: split on headings" },
+    { "left": "Scanned PDF contracts", "right": "OCR first, then sentence-aware chunks" }
+  ]
+}
+```
+3–6 pairs. `left` = the situation, `right` = the technique/answer. Rights
+must be mutually exclusive (no two rights that both fit one left). Correct
+matches lock in on check; wrong ones return to the pool.
+
+### 7. Mermaid — diagrams
 
 Standard ```` ```mermaid ```` fences render as diagrams.
 

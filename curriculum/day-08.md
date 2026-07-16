@@ -381,6 +381,22 @@ multimodal-rag | Click the PDF elements, then switch to the shared meaning-space
 ]
 ```
 
+Different content, different knife. Prove you can pick the right one:
+
+```match
+{
+  "title": "Match the content to its chunking strategy",
+  "note": "Tap a content type, then tap the strategy you'd reach for. Correct matches lock in.",
+  "pairs": [
+    { "left": "Confluence pages with clean heading structure", "right": "Structure-aware: split on headings, keep sections whole" },
+    { "left": "A 200-page digital PDF manual with big tables", "right": "Layout-aware parse; serialize table rows with headers" },
+    { "left": "Scanned vendor contracts (no text layer)", "right": "OCR first, then sentence-aware chunks" },
+    { "left": "Tweets and short Slack messages", "right": "No chunking — each item is already one retrieval-sized piece" },
+    { "left": "A long blog post you scraped as one text blob", "right": "Sentence-aware chunks with 10–20% overlap" }
+  ]
+}
+```
+
 ### Go deeper (external)
 
 **PDFs & chunking:**

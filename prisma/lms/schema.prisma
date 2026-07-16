@@ -27,6 +27,14 @@ model Student {
   // Interview-prep gate: null = locked (default). The admin unlocks each
   // student near the end of the program via the /admin toggle.
   interviewUnlockedAt DateTime?
+  // LiteLLM proxy key minted for this student from /admin (null = none).
+  // The raw key is stored so the admin can resend/bump/revoke it — same
+  // trust level as the cohort sheet it replaces. Spend is fetched live
+  // from the proxy, never cached here.
+  apiKey          String?
+  apiKeyBudget    Float? // current $ ceiling on the key
+  apiKeyMintedAt  DateTime?
+  apiKeyExpiresAt DateTime?
   progress    LessonProgress[]
 
   @@map("students")

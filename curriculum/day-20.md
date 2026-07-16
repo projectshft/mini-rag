@@ -182,6 +182,40 @@ If the output doesn't sound right:
 
 An extremely niche domain few examples can't capture, very high-volume generation where prompt tokens cost more than training, or a style that drifts with few-shot. For a personal LinkedIn agent, few-shot prompting wins on every axis that matters: speed, cost, and iteration time.
 
+Expect this question in code review — practice the answer:
+
+```scenario
+{
+  "who": "A teammate",
+  "setting": "Code review on your LinkedIn agent. They've noticed data/brian_posts.csv has 850+ posts and you're only using three.",
+  "ask": "Why not embed all 850 posts into Pinecone and RAG over them? Retrieval could pull the most relevant old posts for each new topic — we're wasting the data.",
+  "note": "Pick the reply you'd leave on the review.",
+  "options": [
+    {
+      "text": "Retrieval fetches facts — it doesn't shape how the model writes. RAG would hand the model Brian's old post about a topic as context, which is what you'd want for quoting or referencing it, not for imitating him. Style lives in examples (or, historically, in fine-tuned weights); knowledge lives in the index. Three varied examples already carry the voice — 850 retrieved chunks wouldn't carry it better, they'd just tempt the model to recycle old content.",
+      "verdict": "best",
+      "feedback": "This is the distinction that settles it: retrieval changes what the model KNOWS for one answer; examples change how it WRITES. The 'wasting the data' framing assumes more input is always better — pointing out that the 850 posts are style-reference-shaped, not knowledge-shaped, reframes the whole question."
+    },
+    {
+      "text": "There's a decent hybrid in that direction, actually: retrieve the 3 stylistically closest posts per topic and inject them as dynamic few-shot examples instead of the hard-coded ones. Still few-shot doing the style work — retrieval just picks which examples.",
+      "verdict": "ok",
+      "feedback": "A real production pattern (retrieval-selected few-shot), and it shows you understand that examples, not context, carry the voice. But it's an optimization to earn: it adds a retrieval hop and per-request prompt churn before the static version has even failed — and topically-similar examples pull the model toward recycling content, the exact failure the 'style, not content' instruction guards against."
+    },
+    {
+      "text": "Mostly cost — indexing 850 posts means embedding and Pinecone storage, and the agent already works fine.",
+      "verdict": "weak",
+      "feedback": "Cost is a real consideration but it's not the reason, and it's a weak hill to defend — 850 short posts cost pennies to embed and store. Argue economics and the suggestion returns the moment someone notices the price tag is trivial; the durable answer is architectural: retrieval doesn't transfer style."
+    },
+    {
+      "text": "Sure, more data can't hurt — let's index them and give the agent a search tool over its own posts.",
+      "verdict": "weak",
+      "feedback": "'Use all the data' sounds rigorous, which is what makes this tempting — but it mistakes what the model is missing. It doesn't lack knowledge about the topics; it needs a voice to write in. You'd ship a slower, more complex agent whose posts read like remixes of the retrieved ones."
+    }
+  ],
+  "debrief": "This is Day 12's question, inverted: there the goal was knowledge (docs that change weekly, citations required), so retrieval won. Here the goal is voice, so examples win. The sorting question for any 'should we RAG this?' debate: does the model need to KNOW something, or SOUND like someone? Knowledge belongs in the index; voice belongs in examples in the prompt — or, before the May 2026 deprecation, in fine-tuned weights."
+}
+```
+
 ## Testing
 
 Once implemented, the selector agent you built on [Day 17](/learn/day-17)–[18](/learn/day-18) will route LinkedIn-post requests to this agent automatically — try "Write a LinkedIn post about learning RAG" in the app and watch it stream.

@@ -206,6 +206,40 @@ Reason: RAG is now retrieving outdated documentation,
 response references deprecated APIs.
 ```
 
+Before you build the judge, practice defending why it needs to exist:
+
+```scenario
+{
+  "who": "Your engineering manager",
+  "setting": "Monday morning. You shipped a prompt edit to the RAG agent on Friday afternoon.",
+  "ask": "You changed the prompt Friday — how do we know nothing broke over the weekend?",
+  "note": "Pick the answer you'd want to be able to give.",
+  "options": [
+    {
+      "text": "That's what the golden set is for: a small suite of our critical questions, each with a reference answer, scored by an LLM judge on every prompt change. Friday's edit ran against it before merge — every case cleared the threshold, and I can pull up the scores. If the edit HAD degraded anything, the merge would've failed.",
+      "verdict": "best",
+      "feedback": "This is the answer that builds trust, because it replaces 'I think it's fine' with a repeatable measurement that ran BEFORE the change shipped. The key properties: fixed questions, fixed references, a threshold — so the same bar applies to every future change, not just this one."
+    },
+    {
+      "text": "I manually re-ran our five most common queries after deploying and compared the answers side by side — they looked as good or better.",
+      "verdict": "ok",
+      "feedback": "Diligent, and honestly better than most teams manage — but it doesn't scale and it protects nothing next Friday. Eyeballing misses the subtle regressions LLM changes actually cause (a dropped caveat, a deprecated API reference), and the manager has to trust your judgment call each time instead of a number."
+    },
+    {
+      "text": "The LLM judge will flag any bad responses in production.",
+      "verdict": "weak",
+      "feedback": "A judge without a golden set isn't a regression test — it's an opinion with no baseline. 'Was this answer good?' drifts with the judge's own scoring mood; 'is this answer as good as the reference we agreed on?' is measurable. And 'caught in production' means users saw the regression first."
+    },
+    {
+      "text": "If something broke, users will tell us and we'll fix it same-day.",
+      "verdict": "weak",
+      "feedback": "Honest about how a lot of teams operate, and fast fixes do matter. But this makes users your test suite — and for a docs bot, most users don't file a report when an answer is subtly wrong; they quietly stop trusting the bot. By the time complaints arrive, the damage is a week old."
+    }
+  ],
+  "debrief": "The judge is the grader; the golden set is the exam. A grader with no exam just improvises opinions — but graded against fixed reference answers, every prompt change takes the same test, and 'how do we know nothing broke?' has a one-line answer: the suite passed. That's exactly what you're building below."
+}
+```
+
 ## Your challenge: implement LLM-as-judge testing
 
 The test file `app/agents/__tests__/llm-judge.test.ts` has TODOs for you to complete. You'll implement the judge from scratch using the concepts above as reference.
