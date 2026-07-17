@@ -12,66 +12,76 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 
 ## Week index
 
-**Week 1 — Foundations (Days 1–7)**
+<!-- Day numbers are computed from position — do NOT hand-number these lines.
+     To add/move/remove a lesson: edit this list only (a bullet WITH a link is
+     a lesson page; a bullet WITHOUT a link is a no-page day like a rest day).
+     Filenames are stable ids tied to student progress — never rename them; new
+     lessons can use any unused slug. Week day-ranges are computed too. -->
 
-- Day 0 — [Start Here — How to Win This Program](day-00.md)
-- Day 1 — [How to Learn + What is RAG](day-01.md)
-- Day 2 — [Vectors and Embeddings](day-02.md)
-- Day 3 — [Implementing Similarity](day-03.md)
-- Day 4 — [Word Math: The Magic of Embeddings](day-04.md) 🎥
-- Day 5 — [Setting Up Pinecone](day-05.md)
-- Day 6 — [Introduction to Scraping](day-06.md)
-- Day 7 — Rest day
+**Week 1 — Foundations**
 
-**Week 2 — Data Pipeline (Days 8–14)**
+- [Start Here — How to Win This Program](day-00.md)
+- [How to Learn + What is RAG](day-01.md)
+- [Vectors and Embeddings](day-02.md)
+- [Implementing Similarity](day-03.md)
+- [Word Math: The Magic of Embeddings](day-04.md) 🎥
+- [Setting Up Pinecone](day-05.md)
+- [Introduction to Scraping](day-06.md)
+- Rest day
 
-- Day 8 — [Understanding Chunking](day-08.md)
-- Day 9 — [Uploading Documents with a Script](day-09.md)
-- Day 10 — [Building the Upload API Route](day-10.md)
-- Day 11 — [Querying Documents](day-11.md)
-- Day 12 — [Fine-Tuning Overview](day-12.md)
-- Day 13 — [Running Fine-Tuning + Assignment 1](day-13.md) 🎥
-- Day 14 — Rest day
+**Week 2 — Data Pipeline**
 
-**Week 3 — Agent Architecture (Days 15–21)**
+- [Understanding Chunking](day-08.md)
+- [Uploading Documents with a Script](day-09.md)
+- [Building the Upload API Route](day-10.md)
+- [Querying Documents](day-11.md)
+- [Fine-Tuning Overview](day-12.md)
+- [Running Fine-Tuning + Assignment 1](day-13.md) 🎥
+- Rest day
 
-- Day 15 — [Understanding Agent Systems](day-15.md)
-- Day 16 — [Prompting for Agents](day-16.md)
-- Day 17 — [Implementing the Selector (Text-Based)](day-17.md)
-- Day 18 — [Upgrading to Structured Outputs](day-18.md)
-- Day 19 — [Graceful Degradation](day-19.md)
-- Day 20 — [Implementing the LinkedIn Agent](day-20.md)
-- Day 21 — Rest day
+**Week 3 — Agent Architecture**
 
-**Week 4 — RAG Agent (Days 22–28)**
+- [Understanding Agent Systems](day-15.md)
+- [Prompting for Agents](day-16.md)
+- [Implementing the Selector (Text-Based)](day-17.md)
+- [Upgrading to Structured Outputs](day-18.md)
+- [Graceful Degradation](day-19.md)
+- [Implementing the LinkedIn Agent](day-20.md)
+- Rest day
 
-- Day 22 — [Implementing the RAG Agent](day-22.md)
-- Day 23 — [Implementing Reranking](day-23.md)
-- Day 24 — [Sparse + Dense Vectors (Hybrid Search)](day-24.md)
-- Day 25 — [Understanding the Chat Interface](day-25.md)
-- Day 26 — [Observability with LangSmith](day-26.md)
-- Day 27 — [Assignment 2: RAG Agent](day-27.md) 🎥
-- Day 28 — Rest day
+**Week 4 — RAG Agent**
 
-**Week 5 — Testing & Tools (Days 29–35)**
+- [Implementing the RAG Agent](day-22.md)
+- [Implementing Reranking](day-23.md)
+- [Sparse + Dense Vectors (Hybrid Search)](day-24.md)
+- [Understanding the Chat Interface](day-25.md)
+- [Observability with LangSmith](day-26.md)
+- [Assignment 2: RAG Agent](day-27.md) 🎥
+- Rest day
 
-- Day 29 — [Testing the Selector Agent](day-29.md)
-- Day 30 — [LLM as Judge](day-30.md)
-- Day 31 — [Tool Calling Concepts](day-31.md)
-- Day 32 — [The Reveal + MCP](day-32.md)
-- Day 33 — [RAG Without Vectors: The SQL Agent](day-33.md)
-- Day 34 — [LLM & RAG Security + Assignment 3](day-34.md) 🎥
-- Day 35 — Rest day
+**Week 5 — Testing & Tools**
 
-**Week 6 — Capstone (Days 36–42)**
+- [Testing the Selector Agent](day-29.md)
+- [LLM as Judge](day-30.md)
+- [Tool Calling Concepts](day-31.md)
+- [The Reveal + MCP](day-32.md)
+- [RAG Without Vectors: The SQL Agent](day-33.md)
+- [LLM & RAG Security + Assignment 3](day-34.md) 🎥
+- Rest day
 
-- Day 36 — [Capstone Kickoff: Your Final Project](day-36.md) 🎥
-- Day 37 — [Capstone Development I](day-37.md)
-- Day 38 — [Capstone Development II + Assignment 4](day-38.md) 🎥
-- Day 39 — [Capstone Development III](day-39.md)
-- Day 40 — [Capstone Polish & Documentation](day-40.md)
-- Day 41 — [Capstone Demo Recording](day-41.md)
-- Day 42 — [Capstone Submission](day-42.md) 🎥
+**Week 6 — Capstone**
+
+- [Capstone Kickoff: Your Final Project](day-36.md) 🎥
+- [Capstone Development I](day-37.md)
+- [Capstone Development II + Assignment 4](day-38.md) 🎥
+- [Capstone Development III](day-39.md)
+- [Capstone Polish & Documentation](day-40.md)
+- [Capstone Demo Recording](day-41.md)
+- [Capstone Submission](day-42.md) 🎥
+
+**Week 7 — Going Further (optional)**
+
+- [MCP in Production: Auth, Tools & Resources](day-43.md)
 
 ## Assignments
 

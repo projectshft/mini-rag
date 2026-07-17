@@ -403,6 +403,8 @@ Cursor and Claude Desktop accept the same config block — check each client's d
 - [ ] The Inspector lists `search_docs` and returns real matches from your index.
 - [ ] One MCP client (Claude Code / Cursor / Desktop) calls the tool and answers from your docs.
 
+**Want to take this to production?** [Day 43 — MCP in Production](/learn/day-43) picks up where this leaves off: more than one tool, resources and prompts, and the authorization + PII handling you can't skip once your server exposes data that actually matters. Encouraged once you've got this single-tool server working.
+
 ## Key takeaways
 
 - Most production AI features are **workflows**, not agents — tool-calling earns its cost only when the sequence of actions is genuinely unknowable in advance

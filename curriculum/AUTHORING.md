@@ -38,6 +38,23 @@ Rules:
 - Keep Typeform submission links exactly as-is on assignment days.
 - Voice: direct, practical, working-engineer-to-working-engineer. No fluff.
 
+## Adding, moving, or removing a lesson
+
+Day numbers are **computed from position** in README.md's `## Week index`, not
+hand-written. So restructuring is just editing that list:
+
+- **Add a lesson:** create the file with any unused slug (`curriculum/<slug>.md`
+  — new lessons don't have to be `day-NN`; a semantic slug like
+  `mcp-in-production.md` is fine), then add one bullet where it belongs:
+  `- [Title](<slug>.md)`. Every following day renumbers automatically.
+- **Move a lesson:** move its bullet. **Remove one:** delete its bullet (the
+  file and any student progress under that slug are untouched).
+- **Rest / no-page day:** a bullet with **no link**, e.g. `- Rest day`.
+- **Never rename an existing file** — the slug is the id student progress is
+  keyed on. Reorder freely; just don't rename.
+
+Week `(Days X–Y)` ranges are computed too — don't hand-write them.
+
 ## Links
 
 - **Code references** -> link to the student branch on GitHub:

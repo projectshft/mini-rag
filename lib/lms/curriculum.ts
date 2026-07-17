@@ -59,12 +59,14 @@ export type Week = {
 
 const CURRICULUM_DIR = path.join(process.cwd(), 'curriculum');
 
-// A group header inside the week index: "**Week 3 — Agent Architecture (Days 15–21)**".
+// A group header inside the week index: "**Week 3 — Agent Architecture**".
 const GROUP_RE = /^\*\*Week\s+(\d+)\s*[—–-]\s*(.+?)\*\*\s*$/;
-// A day line: "- Day 12 — [Fine-Tuning Overview](day-12.md) 🎥"
-const DAY_LINK_RE = /^-\s*Day\s+(\d+)\s*[—–-]\s*\[([^\]]+)\]\(([A-Za-z0-9._-]+)\.md\)/;
-// A rest / no-page day line: "- Day 7 — 🌴 Rest day"
-const DAY_REST_RE = /^-\s*Day\s+(\d+)\s*[—–-]\s*(.+?)\s*$/;
+// A lesson line: "- [Fine-Tuning Overview](day-12.md) 🎥". A leading "Day N —"
+// is tolerated but IGNORED — the display number comes from position, so
+// lessons can be added or reordered without renumbering files.
+const DAY_LINK_RE = /^-\s*(?:Day\s+\d+\s*[—–-]\s*)?\[([^\]]+)\]\(([A-Za-z0-9._-]+)\.md\)/;
+// A no-page day (e.g. a rest day): a bullet with NO link, e.g. "- Rest day".
+const DAY_REST_RE = /^-\s*(?:Day\s+\d+\s*[—–-]\s*)?(.+?)\s*$/;
 const TITLE_RE = /^#\s+(.+?)\s*$/m;
 const TIME_RE = /^\*\*Time:\*\*\s*(.+?)\s*$/m;
 
@@ -91,6 +93,12 @@ const parseIndex = cache(async (): Promise<IndexGroup[]> => {
 
 	const groups: IndexGroup[] = [];
 	let current: IndexGroup | null = null;
+	// Global position counter across ALL entries (lessons + rest days). This is
+	// the displayed "Day N" — derived from order, so inserting or moving a
+	// lesson renumbers everything after it automatically, and no file is ever
+	// renamed. (day-00 sits at position 0, rest days occupy a slot, so this
+	// reproduces the original hand-numbering exactly.)
+	let pos = 0;
 
 	for (const rawLine of section.split('\n')) {
 		const line = rawLine.trim();
@@ -106,13 +114,15 @@ const parseIndex = cache(async (): Promise<IndexGroup[]> => {
 		}
 		if (!current) continue;
 
+		// A bullet WITH a markdown link is a lesson page; one WITHOUT is a
+		// no-page day (rest day). Check the link form first.
 		const link = DAY_LINK_RE.exec(line);
 		if (link) {
 			current.entries.push({
 				kind: 'day',
-				day: parseInt(link[1], 10),
-				linkText: link[2].trim(),
-				slug: link[3],
+				day: pos++,
+				linkText: link[1].trim(),
+				slug: link[2],
 				isDeliverable: line.includes('🎥'),
 			});
 			continue;
@@ -121,11 +131,11 @@ const parseIndex = cache(async (): Promise<IndexGroup[]> => {
 		if (restDay) {
 			current.entries.push({
 				kind: 'rest',
-				day: parseInt(restDay[1], 10),
-				label: restDay[2].trim(),
+				day: pos++,
+				label: restDay[1].trim(),
 			});
 		}
-		// anything else (prose, legend) is skipped
+		// anything else (prose, legend, HTML comments) is skipped
 	}
 
 	return groups;
@@ -280,17 +290,25 @@ export const getWeeks = cache(async (): Promise<Week[]> => {
 	const [groups, days] = await Promise.all([parseIndex(), getDays()]);
 	const bySlug = new Map(days.map((d) => [d.slug, d]));
 
-	return groups.map((group) => ({
-		week: group.week,
-		name: group.name,
-		entries: group.entries
-			.map((e): WeekEntry | null => {
-				if (e.kind === 'rest') {
-					return { kind: 'rest', dayInfo: { day: e.day, label: e.label } };
-				}
-				const dayInfo = bySlug.get(e.slug);
-				return dayInfo ? { kind: 'day', dayInfo } : null;
-			})
-			.filter((e): e is WeekEntry => e !== null),
-	}));
+	return groups.map((group) => {
+		// Compute the week's "(Days X–Y)" range from the entries' positions so
+		// it never goes stale when lessons are added or moved.
+		const nums = group.entries.map((e) => e.day);
+		const lo = Math.min(...nums);
+		const hi = Math.max(...nums);
+		const range = !nums.length ? '' : lo === hi ? ` (Day ${lo})` : ` (Days ${lo}–${hi})`;
+		return {
+			week: group.week,
+			name: group.name + range,
+			entries: group.entries
+				.map((e): WeekEntry | null => {
+					if (e.kind === 'rest') {
+						return { kind: 'rest', dayInfo: { day: e.day, label: e.label } };
+					}
+					const dayInfo = bySlug.get(e.slug);
+					return dayInfo ? { kind: 'day', dayInfo } : null;
+				})
+				.filter((e): e is WeekEntry => e !== null),
+		};
+	});
 });

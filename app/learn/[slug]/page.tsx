@@ -173,12 +173,12 @@ export default async function LessonPage({
 				<div className='flex flex-wrap items-center gap-2 text-sm text-zinc-500'>
 					<span
 						className='rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700'
-						title={day.day === 42 ? 'The answer to RAG, agents, and everything.' : undefined}
+						title={slug === 'day-42' ? 'The answer to RAG, agents, and everything.' : undefined}
 					>
 						Day {day.day}
 					</span>
 					<span className='text-xs text-zinc-400'>Week {day.week}</span>
-					{day.day === 42 && (
+					{slug === 'day-42' && (
 						<span className='text-xs italic text-zinc-300'>
 							don&rsquo;t panic — you brought a towel this far
 						</span>
