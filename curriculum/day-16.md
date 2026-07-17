@@ -1,6 +1,5 @@
 # Day 16 — Prompting for Agents
 
-**Time:** ~60 min · Read + Exercise
 
 > **Today:** before you build agents, you need to understand how they think — and that comes down to prompting. You'll learn the prompt stack, temperature, model selection, and caching, then design the prompts you'll implement tomorrow.
 
@@ -13,15 +12,15 @@ await openai.chat.completions.create({
 	model: 'gpt-4o-mini',
 	messages: [
 		{
-			role: 'system', // ← Defines the model's role, tone, and constraints
+			role: 'system', // <- Defines the model's role, tone, and constraints
 			content: 'You are a database search agent that returns structured JSON.',
 		},
 		{
-			role: 'user', // ← The human's request
+			role: 'user', // <- The human's request
 			content: 'Find songs with over 1M plays in Brazil.',
 		},
 		{
-			role: 'assistant', // ← Previous responses (optional, for context)
+			role: 'assistant', // <- Previous responses (optional, for context)
 			content: 'Here are the top songs...',
 		},
 	],
@@ -68,22 +67,22 @@ Respond in this format:
 
 **What makes this effective?**
 
-- ✅ **Clear role definition**: "You are an agent router"
-- ✅ **Explicit options**: lists available agents with descriptions
-- ✅ **Step-by-step instructions**: numbered task breakdown
-- ✅ **Defined output format**: shows the exact JSON structure expected
+- **Clear role definition**: "You are an agent router"
+- **Explicit options**: lists available agents with descriptions
+- **Step-by-step instructions**: numbered task breakdown
+- **Defined output format**: shows the exact JSON structure expected
 
 ## System prompt best practices
 
-### ✅ DO:
+### DO:
 
 **Be specific about the task**
 
 ```typescript
-// ❌ Vague
+// Vague
 "You help with routing"
 
-// ✅ Specific
+// Specific
 "You analyze user queries and route them to the correct specialized agent"
 ```
 
@@ -115,35 +114,35 @@ Output: { agent: 'linkedin', query: 'LinkedIn post celebrating promotion' }"
 - query: string (refined version of user's question)"
 ```
 
-### ❌ DON'T:
+### DON'T:
 
 **Be unnecessarily long**
 
 ```typescript
-// ❌ Too verbose (wasted tokens)
+// Too verbose (wasted tokens)
 "You are an incredibly sophisticated AI system with vast knowledge spanning countless domains. Your primary responsibility, which has been carefully crafted..." // [continues for 500 words]
 
-// ✅ Concise
+// Concise
 "You select the best agent for each user query based on conversation context."
 ```
 
 **Contradict yourself**
 
 ```typescript
-// ❌ Contradictory
+// Contradictory
 "Always select the LinkedIn agent. Pick the best agent for the task."
 
-// ✅ Consistent
+// Consistent
 "Select the LinkedIn agent only when the user needs professional content creation or career advice."
 ```
 
 **Use ambiguous language**
 
 ```typescript
-// ❌ Unclear
+// Unclear
 "Try to maybe pick a good agent if you can"
 
-// ✅ Clear
+// Clear
 "Select the most appropriate agent based on the query intent"
 ```
 
@@ -151,18 +150,18 @@ Output: { agent: 'linkedin', query: 'LinkedIn post celebrating promotion' }"
 
 OpenAI's API **caches identical system messages** to save latency and cost.
 
-- System prompt stays the same → cached (fast + cheap)
-- System prompt changes often → no caching (slow + expensive)
+- System prompt stays the same -> cached (fast + cheap)
+- System prompt changes often -> no caching (slow + expensive)
 
 ### Best practice: static system, dynamic user messages
 
 ```typescript
-// ✅ Good: Static system prompt (cached)
+// Good: Static system prompt (cached)
 system: "You are a song search agent that returns JSON."
-user: `Find top 5 TikTok sounds for ${artistName}.` // ← Dynamic data goes here
+user: `Find top 5 TikTok sounds for ${artistName}.` // <- Dynamic data goes here
 
-// ❌ Bad: Dynamic system prompt (cache busting)
-system: `You are a song search agent for ${artistName}.` // ← Changes every request
+// Bad: Dynamic system prompt (cache busting)
+system: `You are a song search agent for ${artistName}.` // <- Changes every request
 user: "Find top 5 TikTok sounds."
 ```
 
@@ -176,18 +175,18 @@ user: "Find top 5 TikTok sounds."
 Input: "The capital of France is"
 
 Temperature 0.0 (Deterministic):
-- Paris (99.9%) ← Always picks highest probability
-→ Output: "Paris" (every single time)
+- Paris (99.9%) <- Always picks highest probability
+-> Output: "Paris" (every single time)
 
 Temperature 0.7 (Balanced):
-- Paris (99.9%) ← Usually picks this
-- London (0.05%) ← Occasionally might pick
-→ Output: "Paris" (most times), occasionally varies
+- Paris (99.9%) <- Usually picks this
+- London (0.05%) <- Occasionally might pick
+-> Output: "Paris" (most times), occasionally varies
 
 Temperature 2.0 (Creative):
-- Paris (60%) ← Flattened probabilities
+- Paris (60%) <- Flattened probabilities
 - London (20%), Rome (15%), Madrid (5%)
-→ Output: Highly unpredictable!
+-> Output: Highly unpredictable!
 ```
 
 ### Temperature selection guide
@@ -203,7 +202,7 @@ Temperature 2.0 (Creative):
 ```typescript
 const response = await openai.chat.completions.create({
 	model: 'gpt-4o-mini',
-	temperature: 0.1, // ← Consistent routing decisions
+	temperature: 0.1, // <- Consistent routing decisions
 	messages: [...],
 });
 ```
@@ -249,14 +248,14 @@ Then feel it — same prompt, both ends of the dial, real API calls:
 ```typescript
 // Selector agent (fast classification)
 await openai.chat.completions.create({
-	model: 'gpt-4o-mini', // ← Fast and cheap
+	model: 'gpt-4o-mini', // <- Fast and cheap
 	temperature: 0.1,
 	messages: [...],
 });
 
 // RAG agent (complex synthesis)
 await openai.chat.completions.create({
-	model: 'gpt-4o', // ← Powerful reasoning
+	model: 'gpt-4o', // <- Powerful reasoning
 	temperature: 0.7,
 	messages: [...],
 });
@@ -351,7 +350,7 @@ This exact conversation happens on every AI team — practice it:
       "feedback": "Retries belong in production, but as a safety net, not the fix. You'd pay full price for every failed generation to paper over a prompt you could improve in ten minutes — and retrying doesn't help at all when the output parses fine but the field names are wrong."
     }
   ],
-  "debrief": "The escalation ladder for inconsistent outputs: tighten instructions and temperature → add 3–5 few-shot examples → enforce structure with a schema (you'll do exactly this on Day 18) → fine-tune, only if all of that plateaus and you have 100+ examples. Each rung costs roughly 10x the one before it — climb only as far as the failure demands."
+  "debrief": "The escalation ladder for inconsistent outputs: tighten instructions and temperature -> add 3–5 few-shot examples -> enforce structure with a schema (you'll do exactly this on Day 18) -> fine-tune, only if all of that plateaus and you have 100+ examples. Each rung costs roughly 10x the one before it — climb only as far as the failure demands."
 }
 ```
 
@@ -359,11 +358,11 @@ This exact conversation happens on every AI team — practice it:
 
 Before deploying any prompt, check:
 
-- ✅ **One clear instruction** — no ambiguity about the task
-- ✅ **Explicit output format** — JSON schema, Markdown, or specific structure
-- ✅ **No unnecessary examples** — only include what's truly needed
-- ✅ **Static system prompts** — dynamic data goes in user messages
-- ✅ **Enforce structure with Zod** — use `zodTextFormat()` for type safety (you'll do exactly this on [Day 18](/learn/day-18))
+- **One clear instruction** — no ambiguity about the task
+- **Explicit output format** — JSON schema, Markdown, or specific structure
+- **No unnecessary examples** — only include what's truly needed
+- **Static system prompts** — dynamic data goes in user messages
+- **Enforce structure with Zod** — use `zodTextFormat()` for type safety (you'll do exactly this on [Day 18](/learn/day-18))
 
 ### Example: a well-structured prompt
 
@@ -422,7 +421,7 @@ Before moving to implementation, plan your prompts. You'll reference these decis
 Write your answers in your notes or a markdown file — actually write them, don't just think them. Time estimate: 15–20 minutes.
 
 <details>
-<summary>✅ Example answer (selector agent) — write yours first, then compare</summary>
+<summary>Example answer (selector agent) — write yours first, then compare</summary>
 
 ```
 Model: gpt-4o-mini (fast classification)
@@ -431,7 +430,7 @@ System Prompt: "You are an agent router. Analyze user queries and select either 
 Examples: Zero-shot (task is straightforward)
 ```
 
-Now reason through the LinkedIn agent (creative content → higher temperature? bigger model?) and the RAG agent (grounded synthesis → what temperature keeps it factual but not robotic?) yourself. There's no single right answer — what matters is that you can defend each choice.
+Now reason through the LinkedIn agent (creative content -> higher temperature? bigger model?) and the RAG agent (grounded synthesis -> what temperature keeps it factual but not robotic?) yourself. There's no single right answer — what matters is that you can defend each choice.
 
 </details>
 
@@ -468,12 +467,12 @@ const response = await openai.responses.parse({
 
 ## Further reading
 
-- ⭐ [Prompt Engineering for Business Performance (Anthropic)](https://www.anthropic.com/news/prompt-engineering-for-business-performance) — best practices, few-shot vs zero-shot, measuring quality
+- [Prompt Engineering for Business Performance (Anthropic)](https://www.anthropic.com/news/prompt-engineering-for-business-performance) — best practices, few-shot vs zero-shot, measuring quality
 - [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering)
 - [Temperature and Top P Explained](https://platform.openai.com/docs/api-reference/chat/create#temperature)
 - [OpenAI Model Comparison](https://platform.openai.com/docs/models)
 
-## ✅ Key takeaways
+## Key takeaways
 
 - The prompt stack has three roles: `system` (job description), `user` (the request), `assistant` (prior turns for context)
 - Effective system prompts have a clear role, explicit options, numbered steps, and a defined output format — and stay concise
@@ -482,7 +481,7 @@ const response = await openai.responses.parse({
 - Match the model to the task: gpt-4o-mini for the selector's fast classification, gpt-4o for the RAG agent's synthesis
 - Start zero-shot; add few-shot examples only when you observe real misclassifications
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Critique my agent prompt designs

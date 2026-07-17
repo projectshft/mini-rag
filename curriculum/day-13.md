@@ -1,6 +1,5 @@
 # Day 13 — Running Fine-Tuning + Assignment 1
 
-**Time:** ~90 min · Build
 
 > **Today:** two things. First, a code archaeology session — you'll read the fine-tuning scripts as historical artifacts and understand the workflow they automated, plus the few-shot pattern that replaced them. Then, **Assignment 1 is due**: your document upload pipeline, hardened with sanitization, plus your first Feynman video.
 
@@ -30,15 +29,15 @@ Located at [`app/scripts/upload-training-data.ts`](https://github.com/projectshf
 
 ```
 Training Data (JSONL)
-    ↓
+    |
 1. Upload to OpenAI
-    ↓
+    |
 2. Create fine-tuning job
-    ↓
+    |
 3. OpenAI trains model
-    ↓
+    |
 4. Get model ID
-    ↓
+    |
 5. Use in your app
 ```
 
@@ -72,7 +71,7 @@ Fine-tuning job created successfully: ftjob-abc123
 You can monitor the job status using the OpenAI dashboard or the job ID:
 https://platform.openai.com/finetune/ftjob-abc123?filter=all
 
-🚨 IMPORTANT: Once the fine-tuning job completes, you will receive
+IMPORTANT: Once the fine-tuning job completes, you will receive
    a new fine-tuned model ID. Update the model ID in .env.local
    to use your new fine-tuned model.
 ```
@@ -119,8 +118,8 @@ This is the modern pattern: **the examples in the prompt do the work that traini
 ### Before vs after (what fine-tuning changed internally)
 
 ```
-Before: Your Question → Base Model → Generic Response
-After:  Your Question → Fine-Tuned Model → Response in YOUR Voice
+Before: Your Question -> Base Model -> Generic Response
+After:  Your Question -> Fine-Tuned Model -> Response in YOUR Voice
 ```
 
 Internally: base model weights + your training examples = adjusted weights. OpenAI moved millions of parameters to better match your data.
@@ -169,7 +168,7 @@ Example posts for few-shot prompting: data/brian_posts.csv
 
 ---
 
-## 🎥 Assignment
+## Assignment
 
 **Assignment 1: Document Upload — due today.** This is everything Week 2 built, wrapped up and submitted.
 
@@ -219,15 +218,15 @@ No jargon without explanation. If you can't explain your chunk-size choice simpl
 
 Post your video and code in **Slack** for feedback — seeing how others chunked the same three document types is half the value.
 
-## ✅ Key takeaways
+## Key takeaways
 
-- The fine-tuning workflow was: JSONL training file → upload → training job → new model ID in `.env.local` — study `app/scripts/upload-training-data.ts` as the artifact
+- The fine-tuning workflow was: JSONL training file -> upload -> training job -> new model ID in `.env.local` — study `app/scripts/upload-training-data.ts` as the artifact
 - In training data, the assistant messages are the product: consistent system message, varied user questions, your voice in every answer
 - Few-shot prompting replaced it here: examples in the prompt (from `data/brian_posts.csv`) do what training data did, with zero training cost and instant iteration
 - Fine-tuning still exists at Anthropic, Cohere, Hugging Face, and Together AI — the concepts transfer
 - Assignment 1 is the whole Week 2 pipeline: chunking + upload route + sanitization, explained simply on video
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Rehearse my Assignment 1 video

@@ -1,6 +1,5 @@
 # Day 30 — LLM as Judge
 
-**Time:** ~90 min · Build
 
 > **Today:** yesterday's tests verified the *right agent* was selected. Today you'll test whether the answer was any *good* — by building an LLM judge that scores your RAG responses against golden references and fails the build when quality regresses.
 
@@ -14,9 +13,9 @@ expect(result.agent).toBe('rag');
 expect(result.query).toBeTruthy();
 
 // We have no idea if the actual answer was:
-// ✅ "React hooks let you use state in functional components..."
-// ❌ "I don't know anything about hooks"
-// ❌ "Here's some random unrelated text..."
+// "React hooks let you use state in functional components..."
+// "I don't know anything about hooks"
+// "Here's some random unrelated text..."
 ```
 
 **LLM-as-judge** solves this by using another LLM call to evaluate response quality. It's the standard technique for catching regressions when models update, prompts change, or retrieval drifts.
@@ -35,8 +34,8 @@ flowchart LR
     G[Golden response] --> J
     A --> J[LLM judge<br/>compare & score 1–10]
     J --> T{Score >= 8?}
-    T -->|yes| P[✅ PASS]
-    T -->|no| F[❌ FAIL]
+    T -->|yes| P[PASS]
+    T -->|no| F[FAIL]
 ```
 
 ## When to use LLM-as-judge
@@ -67,10 +66,10 @@ The key to good LLM-as-judge tests is high-quality reference responses.
 **What makes a good golden response:**
 
 ```typescript
-// ❌ Too vague - hard to score against
+// Too vague - hard to score against
 const badGolden = 'React hooks are useful for state management.';
 
-// ✅ Specific and comprehensive
+// Specific and comprehensive
 const goodGolden = `React hooks let you use state and lifecycle features
 in functional components. The most common hooks are:
 
@@ -159,12 +158,12 @@ Why 8 as the passing score?
 
 | Score | Meaning                      | Test result |
 | ----- | ---------------------------- | ----------- |
-| 10    | Perfect match or better      | ✅ Pass     |
-| 9     | Excellent, minor differences | ✅ Pass     |
-| 8     | Good, covers key points      | ✅ Pass     |
-| 7     | Decent but missing details   | ❌ Fail     |
-| 6     | Acceptable but concerning    | ❌ Fail     |
-| <6    | Quality problem              | ❌ Fail     |
+| 10    | Perfect match or better      | Pass     |
+| 9     | Excellent, minor differences | Pass     |
+| 8     | Good, covers key points      | Pass     |
+| 7     | Decent but missing details   | Fail     |
+| 6     | Acceptable but concerning    | Fail     |
+| <6    | Quality problem              | Fail     |
 
 **Adjust based on your needs:**
 
@@ -179,8 +178,8 @@ LLM-as-judge excels at catching subtle regressions you'd never spot with structu
 **Model update regression**
 
 ```
-Before (GPT-4): Score 9/10 ✅
-After (GPT-4-turbo): Score 6/10 ❌
+Before (GPT-4): Score 9/10 
+After (GPT-4-turbo): Score 6/10 
 
 Reason: New model is more concise but missing key details
 about hook rules and common pitfalls.
@@ -189,8 +188,8 @@ about hook rules and common pitfalls.
 **Prompt change regression**
 
 ```
-Before: Score 9/10 ✅
-After prompt edit: Score 5/10 ❌
+Before: Score 9/10 
+After prompt edit: Score 5/10 
 
 Reason: Response now includes incorrect information about
 hooks working inside loops.
@@ -199,8 +198,8 @@ hooks working inside loops.
 **Retrieval drift**
 
 ```
-Before: Score 9/10 ✅
-After re-indexing: Score 4/10 ❌
+Before: Score 9/10 
+After re-indexing: Score 4/10 
 
 Reason: RAG is now retrieving outdated documentation,
 response references deprecated APIs.
@@ -277,7 +276,7 @@ Open `app/agents/__tests__/llm-judge.test.ts` and implement each TODO. A `getRAG
 Try it yourself before opening the hints — the pieces are all things you've built before (a system prompt, a Zod schema, one `chat.completions.create` call).
 
 <details>
-<summary>💡 Hint 1 — the judge function's shape</summary>
+<summary>Hint 1 — the judge function's shape</summary>
 
 `judgeResponse(question, actualResponse, goldenResponse)` is a single OpenAI call:
 
@@ -292,14 +291,14 @@ Then `JSON.parse` the message content into your `JudgeResult` type.
 </details>
 
 <details>
-<summary>💡 Hint 2 — the test suite loop</summary>
+<summary>Hint 2 — the test suite loop</summary>
 
 Use `test.each(TEST_CASES)` with `jest.setTimeout(30000)` (LLM calls are slow). Each test: (1) `getRAGResponse(question)`, (2) `judgeResponse(...)`, (3) `console.log` the score and reason so failures are debuggable, (4) `expect(score).toBeGreaterThanOrEqual(PASSING_SCORE)`.
 
 </details>
 
 <details>
-<summary>✅ Solution — reference implementation (don't open until you've tried)</summary>
+<summary>Solution — reference implementation (don't open until you've tried)</summary>
 
 Use this as a guide, not something to copy verbatim — your judge prompt and test cases should reflect *your* indexed content.
 
@@ -472,7 +471,7 @@ describe('LLM-as-Judge Response Quality', () => {
 			);
 
 			// 3. Log results for visibility
-			console.log(`\n📊 Test: ${question}`);
+			console.log(`\nTest: ${question}`);
 			console.log(`   Score: ${score}/10`);
 			console.log(`   Reason: ${reason}`);
 			console.log(`   Threshold: ${PASSING_SCORE}`);
@@ -493,17 +492,17 @@ yarn test:judge
 ```
 
 <details>
-<summary>🔍 Expected output</summary>
+<summary>Expected output</summary>
 
 ```
 PASS app/agents/__tests__/llm-judge.test.ts
   LLM-as-Judge Response Quality
-    ✓ should produce quality response for: React hooks explanation (4521ms)
-      📊 How do React hooks work?
+    [x] should produce quality response for: React hooks explanation (4521ms)
+      How do React hooks work?
          Score: 9/10
          Reason: Covers all key hooks and rules, adds helpful examples
-    ✓ should produce quality response for: Async/await explanation (3892ms)
-      📊 Explain async/await in JavaScript
+    [x] should produce quality response for: Async/await explanation (3892ms)
+      Explain async/await in JavaScript
          Score: 8/10
          Reason: Accurate explanation, missing try/catch detail
 
@@ -556,7 +555,7 @@ When you've completed the exercise, submit your `app/agents/__tests__/llm-judge.
 
 Post it in Slack too — comparing judge prompts and thresholds with other students is genuinely useful.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - LLM-as-judge tests response **quality** against golden references — the layer routing/structure tests can't reach
 - Structured outputs (Zod + `zodResponseFormat`) guarantee the judge returns a parseable `{ score, reason }` every time
@@ -564,7 +563,7 @@ Post it in Slack too — comparing judge prompts and thresholds with other stude
 - Judge tests shine at catching regressions from model updates, prompt edits, and retrieval drift — run them at merge points, not every commit
 - Golden responses are the test — specific, focused references make scoring meaningful; vague ones make it noise
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Stress-test my judge prompt

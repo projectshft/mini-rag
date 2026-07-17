@@ -1,6 +1,5 @@
 # Day 22 — Implementing the RAG Agent
 
-**Time:** ~90 min · Build
 
 > **Today:** the payoff for everything you've built so far. You'll implement the RAG agent — the piece that takes the selector's refined query, embeds it, searches Pinecone, and streams back an answer grounded in *your* documents.
 
@@ -91,14 +90,14 @@ Open [`app/agents/rag.ts`](https://github.com/projectshft/mini-rag/blob/student-
 Convert `request.query` into a vector using the **same model you embedded documents with**.
 
 <details>
-<summary>💡 Hint 1 — you did this in the upload script</summary>
+<summary>Hint 1 — you did this in the upload script</summary>
 
 Look at how [`app/scripts/scrapeAndVectorizeContent.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/scripts/scrapeAndVectorizeContent.ts) embeds chunks. Same client, same model (`text-embedding-3-small`), same call — the only difference is the input is now the query string.
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — the exact call</summary>
+<summary>Hint 2 — the exact call</summary>
 
 ```typescript
 const embeddingResponse = await openaiClient.embeddings.create({
@@ -116,7 +115,7 @@ const embedding = embeddingResponse.data[0].embedding;
 Search the index for the most relevant chunks. You want the metadata back, not just IDs.
 
 <details>
-<summary>💡 Hint — same query you wrote on Day 11</summary>
+<summary>Hint — same query you wrote on Day 11</summary>
 
 ```typescript
 const index = pineconeClient.Index(process.env.PINECONE_INDEX as string);
@@ -137,7 +136,7 @@ const queryResponse = await index.query({
 Turn the array of matches into one context string. Watch out for matches with missing metadata.
 
 <details>
-<summary>💡 Hint — map, filter, join</summary>
+<summary>Hint — map, filter, join</summary>
 
 ```typescript
 const retrievedContext = queryResponse.matches
@@ -155,7 +154,7 @@ const retrievedContext = queryResponse.matches
 Ground the LLM: give it the original request, the refined query, the retrieved context, and an explicit instruction for what to do when the context isn't enough.
 
 <details>
-<summary>💡 Hint — the prompt shape</summary>
+<summary>Hint — the prompt shape</summary>
 
 ```typescript
 const systemPrompt = `You are a helpful assistant that answers questions based on the provided context.
@@ -179,7 +178,7 @@ Including *both* queries matters: the refined query drove retrieval, but the ori
 Return a streaming response so the frontend can render tokens as they arrive.
 
 <details>
-<summary>💡 Hint — streamText, like the LinkedIn agent</summary>
+<summary>Hint — streamText, like the LinkedIn agent</summary>
 
 You built this pattern in the LinkedIn agent on [Day 20](/learn/day-20):
 
@@ -194,7 +193,7 @@ return streamText({
 </details>
 
 <details>
-<summary>✅ Solution — don't open until you've tried all five steps</summary>
+<summary>Solution — don't open until you've tried all five steps</summary>
 
 ```typescript
 export async function ragAgent(request: AgentRequest): Promise<AgentResponse> {
@@ -271,15 +270,15 @@ If the answer is bad, this tells you instantly whether the problem is retrieval 
 
 The RAG agent you built today is the core of **Assignment 2 (due Day 27)** — you'll extend it with query preprocessing and record a video on evaluating retrieval quality. Full spec, checklist, and submission links on [Day 27](/learn/day-27). As you test today, start noticing: when retrieval misses, *why* does it miss?
 
-## ✅ Key takeaways
+## Key takeaways
 
-- The RAG agent is a five-step pipeline: **embed → search → extract → prompt → stream** — every step is code you'd already written elsewhere
+- The RAG agent is a five-step pipeline: **embed -> search -> extract -> prompt -> stream** — every step is code you'd already written elsewhere
 - Query and documents must share one embedding model, or similarity scores are noise
 - The chunk text lives in Pinecone **metadata** — `includeMetadata: true` or you retrieve nothing usable
 - An explicit "say so if the context is insufficient" instruction converts retrieval failures into honest answers instead of hallucinations
 - Debug RAG by logging the retrieved context: it splits every bad answer into a retrieval problem or a generation problem
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Debug my RAG agent with me
@@ -292,7 +291,7 @@ I'm going to paste my implementation and one example of a bad answer it gave. Wa
 ```ai-prompt
 title: Poke holes in my pipeline explanation
 ---
-I'm learning RAG and just built a five-step RAG agent: embed query → Pinecone search → extract metadata text → build grounded system prompt → stream response. I'll explain each step to you in my own words, including WHY it exists.
+I'm learning RAG and just built a five-step RAG agent: embed query -> Pinecone search -> extract metadata text -> build grounded system prompt -> stream response. I'll explain each step to you in my own words, including WHY it exists.
 
 Play a skeptical senior engineer: after each step, ask one pointed question that tests whether I really understand it (e.g. "what breaks if you embed the query with a different model?", "why topK 5 and not 50?", "what happens when metadata.text is missing?"). If my answer is hand-wavy, push back once before moving on. End with a list of the steps I explained weakest.
 ```

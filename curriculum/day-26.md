@@ -1,6 +1,5 @@
 # Day 26 — Observability with LangSmith
 
-**Time:** ~45 min · Hands-on
 
 > **Today:** right now, when your agent gives a weird answer, you're guessing. In about ten lines of setup, LangSmith will show you every prompt, every token count, every latency spike — so you stop flying blind before Assignment 2.
 
@@ -42,7 +41,7 @@ LANGSMITH_PROJECT="your-project-name"
 
 **Where to find these:**
 
-- **API Key:** Settings → API Keys → Create API Key
+- **API Key:** Settings -> API Keys -> Create API Key
 - **Project name:** the project you created in step 3 (left sidebar under Projects)
 
 ### Step 3: Wrap the OpenAI client
@@ -121,7 +120,7 @@ You now have insight into how your app performs through every change you make as
 5. Check the LangSmith dashboard — you should see your traces
 
 <details>
-<summary>🔍 Expected result — what a healthy trace looks like</summary>
+<summary>Expected result — what a healthy trace looks like</summary>
 
 In your project's **Runs** list you should see one entry per OpenAI call — that means a single chat message produces *multiple* runs: one for the selector, one for the query embedding, one for the final completion. Click the completion run and you should recognize your own system prompt, with the retrieved Pinecone context pasted inside it, plus token counts and latency on the right. If the list stays empty: check `LANGSMITH_PROJECT` first, then restart your dev server (Next.js only reads `.env.local` at startup).
 
@@ -150,7 +149,7 @@ const response = await openaiClient.chat.completions.create(
 
 Try tagging your selector, RAG, and LinkedIn calls with an `agent` field, then filter the dashboard by it. Play around — LangSmith is quickly becoming the de facto standard monitoring tool for AI projects.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Classic observability catches 500s; LLM observability catches **bad 200s** — subjective quality, drifting token costs, misrouted agents
 - One wrapped export (`wrapOpenAI` in `app/libs/openai/openai.ts`) instruments every LLM call in the app — the base-client pattern earning its keep
@@ -158,7 +157,7 @@ Try tagging your selector, RAG, and LinkedIn calls with an `agent` field, then f
 - Traces show the full chain — selector decision, retrieval context, final prompt — which is how you debug "why did it answer that?"
 - Custom metadata (`langsmithExtra`) turns a pile of traces into per-agent cost and latency dashboards
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Read my traces with me

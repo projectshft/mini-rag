@@ -126,7 +126,7 @@ export default async function LearnPage() {
 														className='shrink-0 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700'
 														title='Assignment due — submit via the links in the lesson'
 													>
-														🎥 Assignment
+														Assignment
 													</span>
 												)}
 											</Link>
@@ -201,7 +201,7 @@ export default async function LearnPage() {
 									{interviewLessons.length} done
 								</span>
 							) : (
-								<span className='text-xs font-medium text-zinc-400'>🔒 locked</span>
+								<span className='text-xs font-medium text-zinc-400'>Locked</span>
 							)}
 						</div>
 						{interviewUnlocked ? (
@@ -242,7 +242,7 @@ export default async function LearnPage() {
 						) : (
 							<div className='mt-3 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/60 px-5 py-6 text-center'>
 								<p className='text-sm font-medium text-zinc-500'>
-									🔒 The AI Engineering Interview Playbook
+									The AI Engineering Interview Playbook
 								</p>
 								<p className='mt-1 text-xs text-zinc-400'>
 									{interviewLessons.length} sessions — signature stories, tradeoff

@@ -9,6 +9,9 @@ generator client {
   // Isolated output so this client never collides with any other Prisma
   // client a student project might generate.
   output   = "../../node_modules/.prisma/lms-client"
+  // Vercel serverless runtime engine + local dev. Without rhel-openssl-3.0.x
+  // the deployed functions can't find the query engine.
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
 }
 
 datasource db {

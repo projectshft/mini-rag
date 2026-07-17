@@ -1,6 +1,5 @@
 # Day 25 — Understanding the Chat Interface
 
-**Time:** ~90 min · Build
 
 > **Today:** you've built the backend — agents, routing, retrieval. Now walk through the frontend to see how it all comes together: a hand-rolled streaming chat UI in one React component. It's intentionally bare-bones, and your challenge is to make it better by surfacing RAG sources.
 
@@ -13,7 +12,7 @@
 By the end of today, you'll understand:
 
 - How the custom streaming implementation works (fetch + `ReadableStream`, no libraries)
-- The two-step flow: agent selection → chat response
+- The two-step flow: agent selection -> chat response
 - How messages are managed with React state
 - Where the code can be improved (lots of opportunities!)
 
@@ -274,7 +273,7 @@ Located at `app/page.tsx` (lines 236–264):
 			}`}
 		>
 			<p className='font-semibold mb-1'>
-				{message.role === 'user' ? '👤 You' : '🤖 AI Assistant'}
+				{message.role === 'user' ? 'You' : 'AI Assistant'}
 			</p>
 			<div className='whitespace-pre-wrap'>{message.content}</div>
 		</div>
@@ -290,7 +289,7 @@ User messages get a blue background pushed right (`ml-8`); assistant messages gr
 {
 	isStreaming && !messages[messages.length - 1]?.content && (
 		<div className='p-3 rounded bg-gray-100 mr-8'>
-			<p className='text-gray-500'>🤔 Thinking...</p>
+			<p className='text-gray-500'>Thinking...</p>
 		</div>
 	);
 }
@@ -332,7 +331,7 @@ This is a **bare-bones** interface. Obvious upgrades you could make:
 3. **Message timestamps** — render `toLocaleTimeString()` under each bubble
 4. **Copy button** — `navigator.clipboard.writeText(message.content)`
 5. **Markdown rendering** — AI responses contain code blocks; render with `react-markdown` instead of raw text
-6. **Agent indicator** — show whether 📚 RAG or 💼 LinkedIn handled each response
+6. **Agent indicator** — show whether RAG or LinkedIn handled each response
 7. **Source references** — your challenge, below
 
 ## Your challenge: add source references
@@ -361,7 +360,7 @@ const sources = queryResponse.matches.map((match) => ({
 Here's the tricky part: `streamText()` returns a *text* stream. How do you smuggle structured metadata alongside it? Think about it before opening the hints — there are at least three workable designs.
 
 <details>
-<summary>💡 Hint 1 — approach A: custom headers</summary>
+<summary>Hint 1 — approach A: custom headers</summary>
 
 Headers are sent before the body, so you can attach sources there:
 
@@ -381,7 +380,7 @@ Simple, but header size is limited and non-ASCII text needs encoding.
 </details>
 
 <details>
-<summary>💡 Hint 2 — approach B: append a marker to the stream</summary>
+<summary>Hint 2 — approach B: append a marker to the stream</summary>
 
 Emit the metadata as a sentinel-delimited suffix after the text finishes:
 
@@ -401,7 +400,7 @@ Watch out: a sentinel can be split across chunk boundaries — check the *accumu
 </details>
 
 <details>
-<summary>💡 Hint 3 — approach C: separate API call</summary>
+<summary>Hint 3 — approach C: separate API call</summary>
 
 Store sources server-side keyed by message ID, then have the frontend fetch `/api/sources/:messageId` after the stream ends. Simpler parsing, one extra request.
 
@@ -415,7 +414,7 @@ Add a section below RAG responses:
 {
 	message.role === 'assistant' && message.sources && (
 		<div className='mt-3 pt-3 border-t'>
-			<p className='text-xs font-semibold mb-2'>📚 Sources:</p>
+			<p className='text-xs font-semibold mb-2'>Sources:</p>
 			{message.sources.map((source, idx) => (
 				<a
 					key={idx}
@@ -446,7 +445,7 @@ When done, users should see:
 
 ## Testing your interface
 
-**Test 1 — basic chat flow:** upload a document, ask a question, watch for: message appears immediately → "Thinking..." → response streams in word by word → auto-scroll keeps up.
+**Test 1 — basic chat flow:** upload a document, ask a question, watch for: message appears immediately -> "Thinking..." -> response streams in word by word -> auto-scroll keeps up.
 
 **Test 2 — agent routing:** "Explain React hooks" should hit the RAG agent; "Help me write a LinkedIn post" should hit LinkedIn. Check the console logs.
 
@@ -455,7 +454,7 @@ When done, users should see:
 ```
 You: "What are React hooks?"
 AI: [explains hooks]
-You: "Give me an example"  ← Should understand context
+You: "Give me an example"  <- Should understand context
 AI: [provides hook example]
 ```
 
@@ -463,7 +462,7 @@ AI: [provides hook example]
 
 **Test 5 — source references (after the challenge):** ask a RAG question, verify sources render with sensible scores and links open in a new tab.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - The UI does **two round trips** per message: `/api/select-agent` picks the agent and refines the query, then `/api/chat` streams the answer
 - Streaming is just `response.body.getReader()` + `TextDecoder` + accumulating chunks into one message updated in place by ID — no library required
@@ -471,7 +470,7 @@ AI: [provides hook example]
 - The empty-assistant-message trick is what makes streaming render smoothly — one stable message, updated per chunk
 - `streamText()` gives you a text-only stream, so attaching metadata (like RAG sources) forces a real design decision: headers, in-stream markers, or a second request
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Design review my source-references implementation

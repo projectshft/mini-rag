@@ -1,6 +1,5 @@
 # Day 40 — Capstone Polish & Documentation
 
-**Time:** ~2 hrs · Polish
 
 > **Today:** feature freeze. No new capabilities — you're making what exists presentable: a README that sells the project, error handling that holds up, and a codebase you'd be comfortable showing in an interview.
 
@@ -16,11 +15,11 @@ Your capstone will be judged largely through its README and a fresh-clone experi
 - [ ] **Run all your saved test queries one last time** — polish has broken more demos than bugs have
 
 <details>
-<summary>💡 The README formula (steal this structure)</summary>
+<summary>The README formula (steal this structure)</summary>
 
 1. **One-paragraph pitch** — the problem, and the 10x question it answers
 2. **Demo section** — 2–3 example queries with real (trimmed) responses, right at the top; reviewers decide here whether to keep reading
-3. **Architecture** — a small diagram or 5-line pipeline description: source → chunking → embeddings → store → retrieval → generation
+3. **Architecture** — a small diagram or 5-line pipeline description: source -> chunking -> embeddings -> store -> retrieval -> generation
 4. **Tech choices, each with a "why"** — one sentence per choice beats a paragraph of hedging
 5. **Chunking strategy** — size, overlap, structure-awareness, and *why for this data*
 6. **Setup** — prerequisites, env vars, install, ingest, run. Numbered, copy-pasteable
@@ -29,20 +28,20 @@ Your capstone will be judged largely through its README and a fresh-clone experi
 </details>
 
 <details>
-<summary>💡 Short on time? Polish in this order</summary>
+<summary>Short on time? Polish in this order</summary>
 
 README first — it's read by 100% of reviewers. Then the "no results" / API-failure error paths your demo might actually hit. Then code cleanup in the 2–3 files a reviewer will open (your agent/retrieval core), not the whole repo. Skip: refactoring working code for elegance, test coverage beyond your saved queries, CI.
 
 </details>
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Feature freeze is a discipline: from here on you're reducing risk, not adding scope
 - The README is the highest-leverage file in the repo — it's your project's demo, pitch, and defense of technical choices in one place
 - The fresh-clone test is the only honest measure of "how to run it" docs
 - Error handling on external calls (LLM, vector DB) is what separates a demo that survives from one that face-plants live
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Review my README like a hiring manager

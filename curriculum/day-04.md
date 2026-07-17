@@ -1,6 +1,5 @@
 # Day 4 — Word Math: The Magic of Embeddings
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** proof that words really are just vectors — you'll compute `king − man + woman` and watch it land on `queen`, then invent your own word equations. It's the most fun you'll have with linear algebra, and it's exactly why RAG retrieval works.
 
@@ -145,7 +144,7 @@ The script walks through three equations. Here's the first in full — the patte
 
 ```typescript
 // Example 1: king - man + woman ≈ queen
-console.log('\n🔮 Example 1: king - man + woman');
+console.log('\nExample 1: king - man + woman');
 const king = await getEmbedding('king');
 const man = await getEmbedding('man');
 const woman = await getEmbedding('woman');
@@ -179,16 +178,16 @@ yarn exercise:word-math
 This runs the complete script at `app/scripts/exercises/vector-word-arithmetic.ts`.
 
 <details>
-<summary>🔍 Expected output</summary>
+<summary>Expected output</summary>
 
 ```
-🔮 Example 1: king - man + woman
+Example 1: king - man + woman
 Answer: queen (0.892)
 
-🔮 Example 2: Paris - France + Italy
+Example 2: Paris - France + Italy
 Answer: Rome (0.847)
 
-🔮 Example 3: walking - walk + swim
+Example 3: walking - walk + swim
 Answer: swimming (0.923)
 ```
 
@@ -200,14 +199,14 @@ Your exact scores may differ slightly, but the winning words should match. Notic
 
 Try these patterns:
 
-**Country → Capital**
+**Country -> Capital**
 
 ```typescript
 // Tokyo - Japan + Germany ≈ ?
 // Berlin!
 ```
 
-**Adjective → Noun**
+**Adjective -> Noun**
 
 ```typescript
 // biggest - big + small ≈ ?
@@ -221,7 +220,7 @@ Try these patterns:
 // eating!
 ```
 
-**Company → Product**
+**Company -> Product**
 
 ```typescript
 // iPhone - Apple + Microsoft ≈ ?
@@ -239,8 +238,8 @@ Try these patterns:
 
 This is why RAG works:
 
-1. User query → vector
-2. Documents → vectors
+1. User query -> vector
+2. Documents -> vectors
 3. Find closest vectors
 4. Return matching documents
 
@@ -285,21 +284,21 @@ async function myEquations() {
 - Professions: doctor - hospital + school ≈ ?
 
 <details>
-<summary>💡 Hint 1 — designing an equation that works</summary>
+<summary>Hint 1 — designing an equation that works</summary>
 
 Pick a *consistent relationship* and cancel it out. The pattern is always `A - B + C` where A and B differ by exactly one concept, and C should pick that concept up. If A and B differ in several ways at once (e.g. `pizza - library`), the result vector points somewhere meaningless.
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — choosing good candidate words</summary>
+<summary>Hint 2 — choosing good candidate words</summary>
 
 Your candidates make or break the demo. Include the answer you expect, 2–3 plausible near-misses (words in the same category), and one obviously wrong word (like `broccoli`). If the wrong word ever wins, your equation's relationship isn't as clean as you thought — that's a genuinely interesting result, dig into why.
 
 </details>
 
 <details>
-<summary>💡 Hint 3 — worked example of the challenge pattern</summary>
+<summary>Hint 3 — worked example of the challenge pattern</summary>
 
 Opposites, worked through: `hot - cold` isolates a "temperature-flip" direction. Adding `loud` should flip it the same way:
 
@@ -311,11 +310,11 @@ const answer = await findClosestWord(result, [
 // Expect: quiet (or silent) — the "opposite" direction applied to loud
 ```
 
-Don't be surprised if `noisy` wins instead — antonym directions are messier than analogy directions like country→capital. That's worth mentioning in your video.
+Don't be surprised if `noisy` wins instead — antonym directions are messier than analogy directions like country->capital. That's worth mentioning in your video.
 
 </details>
 
-## 🎥 Assignment
+## Assignment
 
 Now apply what you've learned by creating your own word math example and explaining the underlying concepts.
 
@@ -347,7 +346,7 @@ Be specific with your explanations — show you understand the geometry, not jus
 
 **Requirements:**
 
-- Add at least 2 original word equations that demonstrate different relationship types (profession→workplace, product→company, emotion→expression, hobby→equipment...)
+- Add at least 2 original word equations that demonstrate different relationship types (profession->workplace, product->company, emotion->expression, hobby->equipment...)
 - For each equation, provide candidate words that make it interesting (include some "wrong" answers)
 - Add comments explaining why you expect each equation to work
 
@@ -364,22 +363,22 @@ Be specific with your explanations — show you understand the geometry, not jus
 
 Post your favorite equation (especially the surprising failures) in Slack — they make great discussion.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Embeddings preserve *relationships* as geometry: `king − man + woman` lands near `queen` because concepts are directions in the space
 - Vector subtraction removes a concept's contribution; addition injects one — the arithmetic is meaningful because the space is
 - The "answer" is found by cosine similarity against candidates — the same operation as Day 3's document retrieval, with `topK = 1`
 - This is the deep reason RAG works: a query vector sits near the document vectors that *mean* the same thing, even with zero shared keywords
-- Clean single-concept relationships (country→capital, verb tense) work best; fuzzy ones (antonyms) get messy — good instincts for debugging retrieval later
+- Clean single-concept relationships (country->capital, verb tense) work best; fuzzy ones (antonyms) get messy — good instincts for debugging retrieval later
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Help me invent word equations for my assignment
 ---
 I'm doing the word-math exercise from app/scripts/exercises/vector-word-arithmetic.ts (run with `yarn exercise:word-math`). I need to invent 2+ ORIGINAL equations of the form A - B + C ≈ ? for my video assignment — not king/man/woman, not Paris/France/Italy.
 
-Don't just hand me equations. Instead: (1) ask me which relationship types I find interesting (profession→workplace, product→company, emotion→expression, etc.), (2) help me refine MY proposals — for each one, make me articulate what single concept A - B isolates and predict the answer before running it, (3) help me pick 5 candidate words per equation including plausible near-misses, (4) after I run them, help me explain any surprising results in terms of vector geometry. I need to explain the WHY on camera, so keep pushing my explanations until they're airtight.
+Don't just hand me equations. Instead: (1) ask me which relationship types I find interesting (profession->workplace, product->company, emotion->expression, etc.), (2) help me refine MY proposals — for each one, make me articulate what single concept A - B isolates and predict the answer before running it, (3) help me pick 5 candidate words per equation including plausible near-misses, (4) after I run them, help me explain any surprising results in terms of vector geometry. I need to explain the WHY on camera, so keep pushing my explanations until they're airtight.
 ```
 
 ```ai-prompt

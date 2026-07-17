@@ -1,6 +1,5 @@
 # Day 11 — Querying Documents
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** your Pinecone index is full of vectors. Time for the payoff — the "read" side of RAG. You'll learn how similarity search actually retrieves documents, then harden a query API route with proper validation and error handling.
 
@@ -36,7 +35,7 @@ When you query Pinecone:
 
     ```
     "How do React hooks work?"
-    → [0.23, -0.15, 0.89, ..., 0.42]  // 512 numbers
+    -> [0.23, -0.15, 0.89, ..., 0.42]  // 512 numbers
     ```
 
 2. **Pinecone compares it to all stored vectors**
@@ -102,7 +101,7 @@ export const searchDocuments = async (
 
 **Step 2: create the query embedding.**
 
-⚠️ **Critical:** model and dimensions **must match** what you used during upload. Vectors from different models (or different dimension counts) live in different spaces — comparing them is meaningless.
+**Critical:** model and dimensions **must match** what you used during upload. Vectors from different models (or different dimension counts) live in different spaces — comparing them is meaningless.
 
 **Step 3: query Pinecone** — `vector` is your query embedding, `topK` is how many results you want, and `includeMetadata: true` is what gets you the actual text back (without it, you'd receive IDs and scores but no content).
 
@@ -233,7 +232,7 @@ It works — until someone sends it garbage. **Extend it with production-quality
 Write it yourself before opening the hints.
 
 <details>
-<summary>💡 Hint 1 — the Zod schema</summary>
+<summary>Hint 1 — the Zod schema</summary>
 
 Zod schemas can attach defaults, so parsing handles the "optional with default" case for you:
 
@@ -249,14 +248,14 @@ After `ragTestSchema.parse(body)`, `topK` is always a number — no `??` fallbac
 </details>
 
 <details>
-<summary>💡 Hint 2 — telling a 400 from a 500</summary>
+<summary>Hint 2 — telling a 400 from a 500</summary>
 
-In the catch block, the error's *type* decides the status: `if (error instanceof ZodError)` → the caller's fault → 400 with the validation issues; anything else → your system's fault → log it and return a generic 500. Never leak internal error details in the 500 response.
+In the catch block, the error's *type* decides the status: `if (error instanceof ZodError)` -> the caller's fault -> 400 with the validation issues; anything else -> your system's fault -> log it and return a generic 500. Never leak internal error details in the 500 response.
 
 </details>
 
 <details>
-<summary>✅ Solution — don't open until you've tried</summary>
+<summary>Solution — don't open until you've tried</summary>
 
 ```typescript
 import { searchDocuments } from '@/app/libs/pinecone';
@@ -464,15 +463,15 @@ Getting retrieval working is one thing — keeping it truthful as documents chan
 
 That third experiment matters: **Assignment 1** is due on [Day 13](/learn/day-13), and it asks you to reason about exactly these retrieval-quality tradeoffs.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Retrieval = embed the query, then vector-similarity search — never text matching; paraphrases retrieve the same chunks
 - Query embedding model and dimensions must match upload exactly, or the search is broken (hard error) — this is the #1 gotcha
 - `includeMetadata: true` is what turns matches (IDs + scores) into usable context (the actual chunk text)
 - Scores above ~0.8 are strong matches; below ~0.6, treat results with suspicion — thresholds are how you say "I don't know"
-- Production routes validate input (Zod → 400) and separate caller errors from server errors (500) — the pattern you'll reuse in every route from here on
+- Production routes validate input (Zod -> 400) and separate caller errors from server errors (500) — the pattern you'll reuse in every route from here on
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Predict-the-score retrieval game

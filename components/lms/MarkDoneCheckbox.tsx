@@ -1,7 +1,12 @@
 'use client';
 
-import { useRef, useState, useTransition } from 'react';
+import { useEffect, useRef, useState, useTransition } from 'react';
 import { toggleDay } from '@/app/learn/actions';
+
+// A lesson shows this toggle at the top AND bottom. Both instances share the
+// same slug, so when one toggles it broadcasts and the other mirrors the UI
+// (no second DB write — only the origin persists).
+const SYNC_EVENT = 'lesson-done-sync';
 
 // Confetti egg: a small burst when a day is marked done; a bigger, longer
 // one on day-42 (it IS the answer to everything). No dependency — just
@@ -54,11 +59,22 @@ export function MarkDoneCheckbox({
 	const [pending, startTransition] = useTransition();
 	const labelRef = useRef<HTMLLabelElement>(null);
 
+	// Mirror the sibling instance's state (top <-> bottom) without re-persisting.
+	useEffect(() => {
+		function onSync(e: Event) {
+			const { slug: s, next } = (e as CustomEvent<{ slug: string; next: boolean }>).detail;
+			if (s === slug) setDone(next);
+		}
+		window.addEventListener(SYNC_EVENT, onSync);
+		return () => window.removeEventListener(SYNC_EVENT, onSync);
+	}, [slug]);
+
 	function onToggle(next: boolean) {
 		setDone(next);
 		if (next && labelRef.current) {
 			burst(labelRef.current, slug === 'day-42');
 		}
+		window.dispatchEvent(new CustomEvent(SYNC_EVENT, { detail: { slug, next } }));
 		startTransition(async () => {
 			try {
 				await toggleDay(slug, next);

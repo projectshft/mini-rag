@@ -1,6 +1,5 @@
 # Day 15 — Understanding Agent Systems
 
-**Time:** ~45 min · Read + Watch
 
 > **Today:** you've built the data pipeline — now you make the system intelligent. Agents are specialized AI workers, and this week you'll build the architecture that routes every user message to the right one.
 
@@ -30,7 +29,7 @@ Imagine you have a chatbot that needs to:
 **One approach: use one model for everything**
 
 ```typescript
-// ❌ The naive approach
+// The naive approach
 const response = await openai.chat.completions.create({
 	model: 'gpt-4o',
 	messages: [
@@ -173,7 +172,7 @@ Example:
 ```
 User: "Tell me about yourself"
 Bot: "I'm a RAG assistant..."
-User: "What about hooks?" ← Without context, unclear!
+User: "What about hooks?" <- Without context, unclear!
 ```
 
 With context, the selector knows "hooks" refers to React (from earlier messages).
@@ -263,13 +262,13 @@ Then:
 
 ```
 ┌─────────────────┐
-│ Select Agent    │ ← Routing logic
+│ Select Agent    │ <- Routing logic
 ├─────────────────┤
-│ Execute Agent   │ ← Execution logic
+│ Execute Agent   │ <- Execution logic
 ├─────────────────┤
-│ LinkedIn Agent  │ ← Domain logic (professional)
+│ LinkedIn Agent  │ <- Domain logic (professional)
 ├─────────────────┤
-│ RAG Agent       │ ← Domain logic (documentation)
+│ RAG Agent       │ <- Domain logic (documentation)
 └─────────────────┘
 ```
 
@@ -279,8 +278,8 @@ Each layer has ONE job. Easy to test individually, modify without breaking other
 
 ```typescript
 // TypeScript prevents:
-getAgent('invalid-agent'); // ❌ Type error!
-getAgent('rag'); // ✅ Works!
+getAgent('invalid-agent'); // Type error!
+getAgent('rag'); // Works!
 ```
 
 And it ensures every agent receives an `AgentRequest` and returns an `AgentResponse`.
@@ -306,15 +305,15 @@ Done. The selector automatically knows about it because it reads from the config
 
 **[Building Effective Agents (Anthropic)](https://www.anthropic.com/engineering/building-effective-agents)** — deep dive into agentic workflows vs simple prompts, routing patterns (exactly what we're building!), tool-calling patterns, and real production examples. Read it for: when to use agents vs workflows, orchestration patterns, and common pitfalls.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - One model with one prompt can't excel at every task — specialized agents behind a router beat a generalist
 - The selector agent is triage: it reads recent conversation context, picks an agent, and refines the query
 - `AgentRequest` is the contract — every agent takes the same shape (type, query, originalQuery, messages) and returns a stream
 - Config + registry + types make adding a new agent a four-step change with no routing rewrites
-- Query refinement ("yo what's that state thing" → "React state management") directly improves retrieval quality downstream
+- Query refinement ("yo what's that state thing" -> "React state management") directly improves retrieval quality downstream
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Quiz me on agent architecture
@@ -327,7 +326,7 @@ Quiz me with 5 questions, ONE AT A TIME, waiting for my answer. Start easy ("wha
 ```ai-prompt
 title: Design a new agent with me
 ---
-I'm learning the agent architecture pattern: types (AgentType union), config (name + description used by the selector), registry (name → executor function), and a selector that routes based on config descriptions.
+I'm learning the agent architecture pattern: types (AgentType union), config (name + description used by the selector), registry (name -> executor function), and a selector that routes based on config descriptions.
 
 Help me design a hypothetical third agent — a "coding" agent that reviews code snippets. Walk me through the four extension steps one at a time, asking ME to propose each change (the type union edit, the config description the selector would route on, the registry entry, and the agent function signature) before you critique it. Push back hard on my config description: give me three example user messages and ask which agent should get each one, to test whether my description would route them correctly.
 ```

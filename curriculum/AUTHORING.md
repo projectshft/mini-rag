@@ -12,17 +12,16 @@ they're plain lines in README.md's Week index.
 ```markdown
 # Day N — Title of the Day
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** one or two sentences setting up what the student will do and why it matters.
 
 ...lesson content...
 
-## ✅ Key takeaways
+## Key takeaways
 
 - three to five bullets, each a claim the student should be able to defend
 
-## 🤖 Work with AI
+## Work with AI
 
 (one or two ai-prompt blocks — see below)
 ```
@@ -41,9 +40,9 @@ Rules:
 
 ## Links
 
-- **Code references** → link to the student branch on GitHub:
+- **Code references** -> link to the student branch on GitHub:
   `https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/agents/rag.ts`
-- **Other days** → `/learn/day-NN` (absolute path, works in the app).
+- **Other days** -> `/learn/day-NN` (absolute path, works in the app).
 - Never link to `curriculum/` module paths (they don't exist on the site)
   or leave relative `../module/lesson.md` links behind.
 
@@ -82,7 +81,7 @@ give a hint and let me retry once. At the end, list the concepts I was
 shaky on and explain each in two sentences.
 ```
 The part before `---` is `title:`; the rest is the prompt students copy
-into Claude. Every day ends with a `## 🤖 Work with AI` section holding
+into Claude. Every day ends with a `## Work with AI` section holding
 1–2 of these. Good patterns: "quiz me", "explain it back to me and poke
 holes", "help me extend this exercise", "generate harder test cases".
 Make prompts *specific to the day's content* — name the files, the
@@ -217,14 +216,14 @@ hints, solutions, expected output. Blank line after `<summary>` is required
 
 ```html
 <details>
-<summary>💡 Hint 1 — what shape does the selector return?</summary>
+<summary>Hint 1 — what shape does the selector return?</summary>
 
 The selector returns a *name*, not a result. Look at the `AgentName` type.
 
 </details>
 
 <details>
-<summary>✅ Solution — don't open until you've tried</summary>
+<summary>Solution — don't open until you've tried</summary>
 
 ​```typescript
 // working code here
@@ -233,12 +232,12 @@ The selector returns a *name*, not a result. Look at the `AgentName` type.
 </details>
 ```
 
-Convention: `💡 Hint N — <nudge>` for hints (escalating), `✅ Solution` for
-full answers, `🔍 Expected output` for what running it should print.
+Convention: `Hint N — <nudge>` for hints (escalating), `Solution` for
+full answers, `Expected output` for what running it should print.
 Lessons that hand students big code blocks inline should be converted to
 try-first + reveal.
 
-## Assignment days (🎥)
+## Assignment days ()
 
 Assignment days keep: what to build, the exact files to touch (linked to
 the student branch), the video requirements (3–4 min, Feynman-style), and

@@ -1,6 +1,5 @@
 # Day 2 — Vectors and Embeddings
 
-**Time:** ~45 min · Read + Watch
 
 > **Today:** the math that makes RAG possible — how text becomes lists of numbers (embeddings), and how measuring the angle between those numbers tells you whether two pieces of text *mean* the same thing.
 
@@ -46,18 +45,18 @@ const embedding = [0.1, -0.3, 0.8, 0.2, ...];
 
 ```
 "artificial intelligence"
-        ↓
+        |
 Embedding Model
-        ↓
+        |
 [0.1, -0.3, 0.8, ..., 0.2]  (512 numbers)
 ```
 
-**The magic:** similar concepts → similar vectors.
+**The magic:** similar concepts -> similar vectors.
 
 ```typescript
-"dog"   → [0.1, 0.5, -0.2, ...]
-"puppy" → [0.2, 0.4, -0.1, ...]  // Close to "dog"!
-"car"   → [-0.3, 0.1, 0.8, ...]  // Far from "dog"
+"dog"   -> [0.1, 0.5, -0.2, ...]
+"puppy" -> [0.2, 0.4, -0.1, ...]  // Close to "dog"!
+"car"   -> [-0.3, 0.1, 0.8, ...]  // Far from "dog"
 ```
 
 ### Using OpenAI's embedding API
@@ -119,9 +118,9 @@ function cosineSimilarity(a: number[], b: number[]): number {
 
 Cosine similarity measures the **angle** between vectors:
 
-- Same direction → angle 0° → similarity = 1
-- Perpendicular → angle 90° → similarity = 0
-- Opposite → angle 180° → similarity = -1
+- Same direction -> angle 0° -> similarity = 1
+- Perpendicular -> angle 90° -> similarity = 0
+- Opposite -> angle 180° -> similarity = -1
 
 Small angle = high similarity. Large angle = low similarity. Play with it here — drop a query into the space and watch which documents it lands near:
 
@@ -231,7 +230,7 @@ For beautiful visual explanations:
 
 These resources make the concepts crystal clear.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - A vector is just a list of numbers — a point (or direction) in space
 - Embeddings convert text to vectors where **similar meaning = nearby vectors**
@@ -239,7 +238,7 @@ These resources make the concepts crystal clear.
 - More dimensions capture richer meaning, at the cost of speed and storage
 - This is exactly how RAG finds relevant documents: embed the query, embed the docs, return the closest ones
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Quiz me on vectors and embeddings

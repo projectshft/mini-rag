@@ -35,7 +35,7 @@ export default async function LearnLayout({
 								href={`/learn/${firstInterview.slug}`}
 								className='font-medium text-sky-600 hover:text-sky-800'
 							>
-								🎤 <span className='hidden sm:inline'>Interview Prep</span>
+								<span className='sm:inline'>Interview Prep</span>
 							</Link>
 						)}
 						<a
@@ -45,7 +45,7 @@ export default async function LearnLayout({
 							className='font-medium text-zinc-500 hover:text-zinc-800'
 							title='Stuck on a concept? Found a curriculum error? Ask here — answered in office hours or directly.'
 						>
-							❓ <span className='hidden sm:inline'>Ask a question</span>
+							<span className='sm:inline'>Ask a question</span>
 						</a>
 						{admin && (
 							<Link

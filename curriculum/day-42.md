@@ -1,6 +1,5 @@
 # Day 42 — Capstone Submission
 
-**Time:** ~60 min · Submit
 
 > **Today:** ship it. Final checks, submit your capstone video and code, and close out 42 days of building. This is also your buffer day — if anything slipped, today's slack absorbs it.
 
@@ -36,7 +35,7 @@ If you extended the class project, double-check the Option A additions: new data
 ]
 ```
 
-## 🎥 Assignment
+## Assignment
 
 **Assignment 5: Capstone — final submission.**
 
@@ -70,14 +69,14 @@ Then **post your project in Slack** — repo link, one screenshot or query examp
 
 Six weeks ago, RAG was an acronym. Since then you've built vector similarity from raw math ([Day 3](/learn/day-03)), a chunking and ingestion pipeline ([Day 8](/learn/day-08)–[Day 10](/learn/day-10)), a multi-agent router with structured outputs and graceful degradation ([Day 17](/learn/day-17)–[Day 19](/learn/day-19)), a RAG agent with reranking and hybrid search ([Day 22](/learn/day-22)–[Day 24](/learn/day-24)), agent tests and an LLM judge ([Day 29](/learn/day-29)–[Day 30](/learn/day-30)), a SQL agent that does retrieval without vectors ([Day 33](/learn/day-33)), and a security mindset for all of it ([Day 34](/learn/day-34)). The capstone proves you can do it without training wheels — keep it running, keep using it, and let it be the project you talk about in your next technical interview.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - The capstone bar: working pipeline, real chunking strategy, demo queries, one unique feature, and documentation that defends every choice
 - Buffer day exists to be spent — fix the small gaps (README sections, a flaky query) before submitting, not after
 - The graded skill all course long was the same one: build it, then explain it simply — that's what makes you the AI person on your team
 - Your capstone is a living portfolio piece: keep the repo public, keep the demo link handy
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Grade my capstone before the graders do

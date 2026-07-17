@@ -1,6 +1,5 @@
 # Day 10 — Building the Upload API Route
 
-**Time:** ~90 min · Build
 
 > **Today:** yesterday's script proved the pipeline works. Now you'll build it properly — an API route your frontend (or anything else) can call to scrape, chunk, vectorize, and upload documents. This is the "write" side of your RAG system, and you're implementing it TODO by TODO.
 
@@ -24,10 +23,10 @@ By the end of today, you'll have:
 
 ```mermaid
 flowchart TD
-    A[URLs from user] --> B[1. Scrape web content<br/>HTML → text]
+    A[URLs from user] --> B[1. Scrape web content<br/>HTML -> text]
     T[Raw text from user] --> C
     B --> C[2. Chunk into smaller pieces]
-    C --> D[3. Generate embeddings<br/>text → vectors]
+    C --> D[3. Generate embeddings<br/>text -> vectors]
     D --> E[4. Upload to Pinecone]
     E --> F[Content ready for RAG]
 ```
@@ -37,14 +36,14 @@ The URL route (`/api/upload-document`) does all four steps; the text route (`/ap
 ### Why this pipeline exists
 
 **Why not just save the whole webpage?**
-- Too much context for the LLM (token limits!)
-- Harder to find relevant sections
-- Less precise retrieval
+- Retrieval hands back the whole blob — the relevant section is buried and diluted
+- One vector for the whole page is the "average" of everything, so it matches queries poorly
+- Secondary: it's also too much context for the LLM (token limits)
 
 **Why chunk the content?**
-- Smaller chunks = more focused context
-- Better retrieval (find exact relevant sections)
-- Fits within LLM context windows
+- Each chunk is one focused topic with enough context to stand on its own
+- Precise retrieval — the query matches the right chunk, not the whole page
+- As a bonus, focused chunks also stay within token and context-window limits
 
 **Why batch upload?**
 - API rate limits
@@ -193,14 +192,14 @@ Open [`app/api/upload-document/route.ts`](https://github.com/projectshft/mini-ra
 You've already seen every ingredient: the script from [Day 9](/learn/day-09) does the same pipeline, and the finished [`/api/upload-text`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/upload-text/route.ts) route shows the route-shaped version minus scraping. **Try it from memory first** — resist opening those references until you're stuck.
 
 <details>
-<summary>💡 Hint 1 — validation and scraping (steps 1–2)</summary>
+<summary>Hint 1 — validation and scraping (steps 1–2)</summary>
 
 Parse the JSON body with `await req.json()`, then run it through the schema: `uploadDocumentSchema.parse(body)` — Zod throws if the shape is wrong, and destructuring `{ urls }` from the parsed result gives you typed data. Scraping + chunking is two lines: instantiate `DataProcessor`, then `await processor.processUrls(urls)`.
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — embeddings and vector format (steps 6–7)</summary>
+<summary>Hint 2 — embeddings and vector format (steps 6–7)</summary>
 
 The embeddings API takes an **array of strings** and returns embeddings in the same order:
 
@@ -223,7 +222,7 @@ const id = `${chunk.metadata.url}-${chunk.metadata.chunkIndex}`;
 </details>
 
 <details>
-<summary>💡 Hint 3 — the upload itself (step 8)</summary>
+<summary>Hint 3 — the upload itself (step 8)</summary>
 
 One line per batch:
 
@@ -281,7 +280,7 @@ curl -X POST http://localhost:3000/api/upload-text \
 ### "Dimension mismatch"
 
 ```
-❌ Vector dimension (1536) doesn't match index (512)
+Vector dimension (1536) doesn't match index (512)
 ```
 
 **Fix:** ensure you're using `text-embedding-3-small` with `dimensions: 512`.
@@ -300,10 +299,10 @@ curl -X POST http://localhost:3000/api/upload-text \
 
 ## Understanding what you built
 
-- **Request → validation:** `uploadDocumentSchema.parse(body)` — only well-formed URL arrays get through
-- **Scraping → chunking:** `processor.processUrls(urls)` — HTML becomes structured chunks with metadata
-- **Text → vectors:** `openaiClient.embeddings.create()` — meaning becomes numbers in 512-dimensional space
-- **Vectors → database:** `index.upsert(vectors)` — your knowledge is now searchable by semantic similarity
+- **Request -> validation:** `uploadDocumentSchema.parse(body)` — only well-formed URL arrays get through
+- **Scraping -> chunking:** `processor.processUrls(urls)` — HTML becomes structured chunks with metadata
+- **Text -> vectors:** `openaiClient.embeddings.create()` — meaning becomes numbers in 512-dimensional space
+- **Vectors -> database:** `index.upsert(vectors)` — your knowledge is now searchable by semantic similarity
 
 ## Think beyond the exercise
 
@@ -323,15 +322,17 @@ Once your route works (or you've genuinely exhausted the hints), watch the imple
 
 <iframe src="https://share.descript.com/embed/tb6EgaRGjay" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
-## ✅ Key takeaways
+## Key takeaways
 
-- The upload route is the write side of RAG: validate → scrape → chunk → embed → upsert, exposed as `POST /api/upload-document`
+- The upload route is the write side of RAG: validate -> scrape -> chunk -> embed -> upsert, exposed as `POST /api/upload-document`
 - Zod validation at the boundary fails fast on bad input, before you pay for scraping or embeddings
 - Embedding model **and** dimensions must match your index (512 for `text-embedding-3-small` here) — mismatches fail at upsert time
 - Batches of 100 keep you inside rate limits and make Pinecone upserts efficient
 - The already-built `/api/upload-text` route is the same pipeline minus scraping — a useful reference for isolating what each piece does
 
-## 🤖 Work with AI
+**Put the whole pipeline to work (optional, encouraged).** You've now built the write side end to end. The [Chunk the Bible lab](/learn/bonus-bible-chunking) runs this exact pipeline — chunk -> embed -> upsert — on a big, richly structured corpus (66 books, ~31,000 verses) where your chunking choices visibly change what's retrievable. Not required to continue, but it's the best way to feel the pipeline on real-scale data before you meet it at work.
+
+## Work with AI
 
 ```ai-prompt
 title: Debug my upload route with me
@@ -344,7 +345,7 @@ Act as my debugging partner. ONE AT A TIME, present me a realistic failure sympt
 ```ai-prompt
 title: Design review — take my route to production
 ---
-Here's my situation: I have a working /api/upload-document route (scrape → chunk → embed → upsert to Pinecone, batches of 100). Interview me like a staff engineer doing a design review for taking it to production at 100k documents.
+Here's my situation: I have a working /api/upload-document route (scrape -> chunk -> embed -> upsert to Pinecone, batches of 100). Interview me like a staff engineer doing a design review for taking it to production at 100k documents.
 
 Ask me one question at a time about: idempotency and re-uploads, partial batch failures mid-request, request timeouts on long scrapes (should this be a job queue?), filtering junk content before paying for embeddings, and cost controls. Push back on hand-wavy answers. At the end, summarize my design's three biggest weaknesses.
 ```

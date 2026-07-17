@@ -1,6 +1,5 @@
 # Day 38 — Capstone Development II + Assignment 4
 
-**Time:** ~2.5 hrs · Build
 
 > **Today:** two things — push your capstone from "one query works" to "the real dataset works," and ship Assignment 4: the SQL agent you started in [Day 33](/learn/day-33).
 
@@ -13,7 +12,7 @@ Yesterday you proved the pipeline on a small sample. Today, make it real:
 - [ ] **Start your unique feature** — the "one thing not covered in the curriculum" from your proposal. Get its skeleton in place today so Days 39–40 are refinement, not invention
 
 <details>
-<summary>💡 Ingestion taking forever or blowing up? </summary>
+<summary>Ingestion taking forever or blowing up? </summary>
 
 - **Batch embeddings** — most embedding APIs accept arrays; embedding one chunk per request is 10–50x slower.
 - **Batch upserts** — Pinecone and friends take ~100 vectors per call comfortably.
@@ -24,7 +23,7 @@ Yesterday you proved the pipeline on a small sample. Today, make it real:
 
 ---
 
-## 🎥 Assignment
+## Assignment
 
 **Assignment 4: SQL Agent — due today.**
 
@@ -36,7 +35,7 @@ Complete the `databaseSearchAgent`:
 
 - Define the **Zod schema** the LLM's structured output must match
 - Build the **Prisma WHERE clause** from the LLM's parsed query intent
-- Implement the **full agent flow**: user question → structured query plan → database query → results → natural-language answer
+- Implement the **full agent flow**: user question -> structured query plan -> database query -> results -> natural-language answer
 
 ### The code
 
@@ -49,7 +48,7 @@ git clone -b sql-agent https://github.com/projectshft/killer_agents.git
 **File to complete:** `app/agents/databaseSearchAgent.ts`
 
 <details>
-<summary>💡 Hint — where to start in databaseSearchAgent.ts</summary>
+<summary>Hint — where to start in databaseSearchAgent.ts</summary>
 
 Work backwards from the Prisma call. Decide what a valid `WHERE` clause needs (fields, operators, values), make your Zod schema capture exactly those decisions — nothing more — and let structured outputs force the LLM to fill it. If the LLM can express something your WHERE-builder can't handle, tighten the schema, don't loosen the builder.
 
@@ -87,14 +86,14 @@ Post your working agent in Slack for feedback — especially any query your sche
 ]
 ```
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Full-dataset ingestion is an engineering problem: batch, checkpoint, and make scripts resumable
 - Re-running the same saved test queries after every change is how you know a change helped
-- A SQL agent is RAG without vectors: structured output → validated query plan → precise database retrieval
+- A SQL agent is RAG without vectors: structured output -> validated query plan -> precise database retrieval
 - SQL wins when questions are predicates and aggregations; vectors win when questions are about meaning
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Generate adversarial questions for my SQL agent

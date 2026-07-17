@@ -1,6 +1,5 @@
 # Day 23 — Implementing Reranking
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** your RAG agent works, but its context is only as good as cosine similarity's top 5 — and cosine's top 5 is often polluted. You'll fix that with the two-stage pattern every production RAG system uses: over-fetch, then re-rank.
 
@@ -18,11 +17,11 @@ Vector search (Pinecone) is fast and good at finding *generally related* content
 
 **Pinecone returns (top 5 by cosine similarity):**
 
-1. "React hooks introduction" — 0.89 ✅ Relevant
-2. "TypeScript basics" — 0.87 ⚠️ Not specific enough
-3. "Using hooks in React" — 0.86 ✅ Relevant
-4. "TypeScript with React" — 0.85 ⚠️ Not about hooks specifically
-5. "React hooks patterns" — 0.84 ✅ Relevant
+1. "React hooks introduction" — 0.89 Relevant
+2. "TypeScript basics" — 0.87 Not specific enough
+3. "Using hooks in React" — 0.86 Relevant
+4. "TypeScript with React" — 0.85 Not about hooks specifically
+5. "React hooks patterns" — 0.84 Relevant
 
 **The issue:** results 2 and 4 pollute the context with semi-relevant content. The LLM now has to answer around noise — and noise in, noise out.
 
@@ -98,7 +97,7 @@ Modify your RAG agent ([`app/agents/rag.ts`](https://github.com/projectshft/mini
 Change your Pinecone query to pull more candidates than you'll keep.
 
 <details>
-<summary>💡 Hint — one number changes</summary>
+<summary>Hint — one number changes</summary>
 
 ```typescript
 const queryResponse = await index.query({
@@ -115,14 +114,14 @@ const queryResponse = await index.query({
 After the Pinecone query, pass the candidate texts plus the query to a re-ranking model. Pinecone's inference API hosts one, so you don't need a new vendor account.
 
 <details>
-<summary>💡 Hint 1 — what the re-ranker needs</summary>
+<summary>Hint 1 — what the re-ranker needs</summary>
 
 The re-ranker takes: a model name, the query string, and an array of *plain document texts* (not vectors, not matches). So first pull the text out of your matches, filtering out empties.
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — the call</summary>
+<summary>Hint 2 — the call</summary>
 
 ```typescript
 // Re-rank the results using Pinecone's inference API
@@ -149,7 +148,7 @@ const reranked = await pineconeClient.inference.rerank(
 Your context string should now come from the re-ranker's output, not the raw Pinecone matches.
 
 <details>
-<summary>💡 Hint — reranked.data replaces queryResponse.matches</summary>
+<summary>Hint — reranked.data replaces queryResponse.matches</summary>
 
 ```typescript
 // Changed from queryResponse.matches to reranked.data
@@ -164,7 +163,7 @@ Everything downstream (system prompt, `streamText`) stays the same.
 </details>
 
 <details>
-<summary>✅ Solution — the full re-ranking implementation</summary>
+<summary>Solution — the full re-ranking implementation</summary>
 
 ```typescript
 export async function ragAgent(request: AgentRequest): Promise<AgentResponse> {
@@ -239,9 +238,9 @@ Query: "React hooks with TypeScript"
 
 Top 5 from Pinecone:
 1. React hooks intro - 0.89
-2. TypeScript basics - 0.87       ← Not specific enough
+2. TypeScript basics - 0.87       <- Not specific enough
 3. Using hooks - 0.86
-4. TypeScript with React - 0.85   ← Not about hooks
+4. TypeScript with React - 0.85   <- Not about hooks
 5. React hooks patterns - 0.84
 ```
 
@@ -253,23 +252,23 @@ Query: "React hooks with TypeScript"
 Step 1 - Pinecone: Get top 10 similar docs
 
 Step 2 - Re-rank:
-1. React hooks with TypeScript guide - 0.95  ✅ Perfect
-2. TypeScript types for hooks - 0.89         ✅ Highly relevant
-3. useState with TypeScript - 0.84           ✅ Specific example
+1. React hooks with TypeScript guide - 0.95  Perfect
+2. TypeScript types for hooks - 0.89         Highly relevant
+3. useState with TypeScript - 0.84           Specific example
 ```
 
 **Result:** higher quality, more focused context for the LLM. Notice the score *spread* too — re-ranked scores separate relevant from irrelevant much more sharply than cosine's crowded 0.84–0.89 band.
 
 ## When to use re-ranking
 
-### ✅ Use re-ranking when:
+### Use re-ranking when:
 
 - Queries are specific and nuanced
 - Your corpus has many similar documents
 - Precision matters more than speed
 - Production applications where quality is critical
 
-### ❌ Skip re-ranking when:
+### Skip re-ranking when:
 
 - Queries are broad and simple
 - Small corpus (< 100 documents)
@@ -283,7 +282,7 @@ Step 2 - Re-rank:
 | Approach | Pinecone | Re-ranking | Total |
 | --------------------- | -------- | ---------- | ------ |
 | Basic (topK=5) | ~50ms | — | ~50ms |
-| Re-ranked (topK=10→3) | ~60ms | ~150ms | ~210ms |
+| Re-ranked (topK=10->3) | ~60ms | ~150ms | ~210ms |
 
 **Cost (per 1,000 queries):**
 
@@ -319,13 +318,13 @@ Re-ranking is the core of **Assignment 3 (due Day 34)**, where you'll extend tod
 
 ## Additional reading
 
-### Re-Ranking Semantic Search (Qdrant) ⭐ highly recommended
+### Re-Ranking Semantic Search (Qdrant) highly recommended
 
 **Link:** https://qdrant.tech/documentation/search-precision/reranking-semantic-search/
 
 Deep technical explanation of re-ranking algorithms: two-stage retrieval, cross-encoder vs bi-encoder models, latency vs accuracy trade-offs, and benchmarks. It uses Qdrant examples, but the concepts apply directly to Pinecone — re-ranking principles are universal across vector databases.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Cosine similarity has good **recall** but mediocre **precision** — semi-relevant docs cluster right below the truly relevant ones
 - The production pattern is two-stage: **over-fetch** a wide candidate pool fast, then **re-rank** it with a cross-encoder that reads query + document together
@@ -333,12 +332,12 @@ Deep technical explanation of re-ranking algorithms: two-stage retrieval, cross-
 - Re-ranking costs real latency (~150ms) and real money (~$2/1k queries) — it's a trade-off you justify, not a default you assume
 - Compare score distributions before/after: re-ranked scores separate signal from noise far more sharply
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Grill me on the two-stage retrieval trade-offs
 ---
-I just implemented over-fetch + re-rank in my RAG agent (Pinecone topK 10 → bge-reranker-v2-m3 → keep top 5, in app/agents/rag.ts). Play a pragmatic engineering manager deciding whether to ship this to production.
+I just implemented over-fetch + re-rank in my RAG agent (Pinecone topK 10 -> bge-reranker-v2-m3 -> keep top 5, in app/agents/rag.ts). Play a pragmatic engineering manager deciding whether to ship this to production.
 
 Ask me, one at a time: (1) what latency and per-query cost does re-ranking add and where do those numbers come from, (2) for OUR corpus, what evidence would show re-ranking is actually improving answers, (3) when would you rip it out. Push back on vague answers — demand numbers or concrete experiments. Then give me your ship/don't-ship verdict and one thing to measure first.
 ```
@@ -346,7 +345,7 @@ Ask me, one at a time: (1) what latency and per-query cost does re-ranking add a
 ```ai-prompt
 title: Help me design a re-ranking A/B test
 ---
-I have a RAG agent in app/agents/rag.ts with re-ranking behind a code path I can toggle (basic topK=5 vs topK=10 → rerank → top 5). Help me design a small evaluation: 10 test queries against my own document corpus, half broad ("what is chunking?") and half nuanced ("difference between topK and topN in reranking?").
+I have a RAG agent in app/agents/rag.ts with re-ranking behind a code path I can toggle (basic topK=5 vs topK=10 -> rerank -> top 5). Help me design a small evaluation: 10 test queries against my own document corpus, half broad ("what is chunking?") and half nuanced ("difference between topK and topN in reranking?").
 
 For each query I'll paste both retrieved-context lists. Help me score them (relevant / semi-relevant / irrelevant per chunk), tally the results, and decide whether re-ranking earns its 150ms for my corpus. Start by helping me pick the 10 queries.
 ```

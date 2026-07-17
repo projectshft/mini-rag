@@ -1,6 +1,5 @@
 # RAG System Design Interviews
 
-**Time:** ~90 min · Write + Record
 
 > **This session:** "Design a RAG system for X" is the most common technical question in AI engineering interviews. You'll learn a six-part framework that works for any scenario, then apply it to three worked designs — legal documents, customer support, and code documentation.
 
@@ -103,7 +102,7 @@ Legal documents are:
 **Approach: chunk by semantic boundaries**
 
 ```typescript
-// ✅ Good chunking for legal docs
+// Good chunking for legal docs
 Chunk by:
 - Sections (numbered headings like "3.2 Indemnification")
 - Clauses (complete legal statements)
@@ -117,9 +116,9 @@ Preserve:
 
 **Why not fixed-size chunks?**
 
-❌ Fixed chunks split clauses mid-sentence
-❌ Loses structural context
-❌ Makes citations unclear ("found in chunk 47" is useless)
+Fixed chunks split clauses mid-sentence
+Loses structural context
+Makes citations unclear ("found in chunk 47" is useless)
 
 **Example:**
 
@@ -151,10 +150,10 @@ Metadata:
 
 **Why?**
 
-✅ Scales to thousands of documents
-✅ Can query across document types
-✅ Easy to filter to specific cases
-✅ Client data isolation
+Scales to thousands of documents
+Can query across document types
+Easy to filter to specific cases
+Client data isolation
 
 #### 4. Retrieval strategy
 
@@ -512,9 +511,9 @@ const results = await index.namespace("react-18").query({...});
 
 **Why namespaces instead of one index?**
 
-✅ Prevents mixing React and Vue results
-✅ Easy to update one framework independently
-✅ Can query across frameworks when needed
+Prevents mixing React and Vue results
+Easy to update one framework independently
+Can query across frameworks when needed
 
 #### 4. Retrieval strategy
 
@@ -662,8 +661,8 @@ While explaining, draw boxes and arrows — data flow, components, decision poin
 
 For every choice, say why:
 
-❌ "I'd use GPT-4"
-✅ "I'd use GPT-4 because legal queries need complex reasoning and accuracy matters more than cost"
+"I'd use GPT-4"
+"I'd use GPT-4 because legal queries need complex reasoning and accuracy matters more than cost"
 
 ### Tip 3: mention what you're NOT doing
 
@@ -679,13 +678,13 @@ Keep your explanation tight: too brief = missing critical details; too long = lo
 
 ### Mistake 1: too generic
 
-❌ "I'd use RAG with chunking and retrieval"
-✅ "I'd chunk by semantic boundaries - specifically by numbered sections - because legal docs have explicit structure"
+"I'd use RAG with chunking and retrieval"
+"I'd chunk by semantic boundaries - specifically by numbered sections - because legal docs have explicit structure"
 
 ### Mistake 2: no reasoning
 
-❌ "I'd use re-ranking"
-✅ "I'd use re-ranking because legal queries are precise and initial retrieval often returns related but not exact matches"
+"I'd use re-ranking"
+"I'd use re-ranking because legal queries are precise and initial retrieval often returns related but not exact matches"
 
 ### Mistake 3: forgetting updates
 
@@ -699,15 +698,15 @@ Legal docs ≠ Support docs ≠ Code docs
 
 Each has different chunking needs, update frequency, accuracy requirements, and cost constraints.
 
-## ✅ Key takeaways
+## Key takeaways
 
-- Every RAG design question yields to the same six-part framework: content characteristics → chunking → embedding & storage → retrieval → generation → updates & maintenance
+- Every RAG design question yields to the same six-part framework: content characteristics -> chunking -> embedding & storage -> retrieval -> generation -> updates & maintenance
 - Start from the content, not the tech: its structure dictates chunking, its precision requirements dictate re-ranking, its churn rate dictates the maintenance story
 - The three worked designs diverge on purpose — semantic-boundary chunks + re-ranking for legal precision, recency bias for fast-churning support docs, per-framework namespaces for versioned code docs
 - Model choice follows the workload: accuracy-first (GPT-4/Opus) for legal reasoning, cheap-and-fast (4o-mini) for high-volume support, balanced (4o) for code chat
 - Updates & maintenance is the section candidates forget — always answer how new, changed, and stale content is handled
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Mock-interview me on RAG system design

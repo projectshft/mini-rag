@@ -1,6 +1,5 @@
 # Day 19 — Graceful Degradation
 
-**Time:** ~45 min · Read + Think
 
 > **Today:** what happens when OpenAI goes down? Or your primary model is overloaded? Production systems need fallback strategies — today you learn the patterns that keep your app standing when its dependencies fall over.
 
@@ -300,15 +299,15 @@ Actually write down answers — these come back when you plan your capstone in W
 - [ ] **Monitoring/alerts** — know when degradation is happening
 - [ ] **Cached responses** — serve stale data when fresh is unavailable
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Plan for failure — every external service you depend on will eventually fail
 - Degrade gracefully: partial functionality (raw results, cached answers, a smaller model) beats total failure
 - Classify errors before retrying — back off on rate limits and connection errors, fail fast on auth and bad requests
-- Circuit breakers stop cascading failures: closed → open at the failure threshold → half-open to probe recovery
+- Circuit breakers stop cascading failures: closed -> open at the failure threshold -> half-open to probe recovery
 - Untested fallback code often doesn't work — inject failures deliberately and communicate degradation to users clearly
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Design a degradation plan for my RAG app

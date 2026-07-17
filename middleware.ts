@@ -1,12 +1,12 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-// Only the LMS routes are gated. The RAG chat app (/, and all /api/*
-// routes) gets Clerk context but is NOT blocked, because we only call
-// auth.protect() for /learn and /admin.
-const isLmsRoute = createRouteMatcher(['/learn(.*)', '/admin(.*)']);
+// Private course platform. Everything requires sign-in EXCEPT the public
+// landing page (`/`) and the auth pages. The RAG chat demo that used to live
+// at `/` is gone — students clone the student-* branch for that.
+const isPublicRoute = createRouteMatcher(['/', '/sign-in(.*)', '/sign-up(.*)']);
 
 export default clerkMiddleware(async (auth, req) => {
-	if (isLmsRoute(req)) {
+	if (!isPublicRoute(req)) {
 		await auth.protect();
 	}
 });

@@ -1,6 +1,5 @@
 # Day 39 — Capstone Development III
 
-**Time:** ~2 hrs · Build
 
 > **Today:** agent behavior and edge cases. Your pipeline works on the happy path — now make it behave when the query is weird, the retrieval is empty, or the user asks something your data can't answer.
 
@@ -15,7 +14,7 @@ Reviewers (and future users) don't judge your capstone by its best answer — th
 - [ ] **Add 3 more saved test queries** covering the edge cases you just fixed
 
 <details>
-<summary>💡 The five failure modes to check, in order of embarrassment</summary>
+<summary>The five failure modes to check, in order of embarrassment</summary>
 
 1. **Confident hallucination on out-of-domain questions** — worst one to show in a demo. Fix with score thresholds + an honest "that's not in my data" response.
 2. **Crash on empty/malformed input** — cheapest to fix, validate before you retrieve.
@@ -26,7 +25,7 @@ Reviewers (and future users) don't judge your capstone by its best answer — th
 </details>
 
 <details>
-<summary>💡 Behind schedule? Here's the triage</summary>
+<summary>Behind schedule? Here's the triage</summary>
 
 Unique feature not done? **Shrink it, don't drop it** — the requirement is one feature not covered in the curriculum, not a big one. A "sources cited with every answer" feature or a similarity-score confidence badge counts and takes an hour. Edge-case handling beats feature breadth: cut extra polish, keep the "I don't know" path.
 
@@ -34,13 +33,13 @@ Unique feature not done? **Shrink it, don't drop it** — the requirement is one
 
 **Optional extension:** if your capstone involves multi-step agent workflows, the two bonus LangGraph lessons (LangGraph concepts, and building custom state graphs) are worth a look — they live in the course repo's curriculum source, not on this site.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - A capstone is judged by its worst answer: hunt for it deliberately with hostile queries
 - "I don't know" backed by a score threshold is a feature, not a failure
 - Every edge case you fix becomes a saved test query — your regression suite grows with your confidence
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Generate edge-case inputs for my retrieval
@@ -53,7 +52,7 @@ Generate 15 edge-case queries in five categories (3 each): (1) completely out-of
 ```ai-prompt
 title: Design my "I don't know" threshold
 ---
-My RAG system retrieves top-k chunks with cosine similarity scores. Here are real scores from 6 of my queries — 3 that got good answers and 3 that hallucinated: [paste query → top-3 scores for each].
+My RAG system retrieves top-k chunks with cosine similarity scores. Here are real scores from 6 of my queries — 3 that got good answers and 3 that hallucinated: [paste query -> top-3 scores for each].
 
 Help me pick a thresholding strategy: absolute score cutoff vs. gap-based (top score vs. runner-up) vs. requiring N chunks above a floor. Reason from MY numbers, not generic advice. Then write the exact guard clause logic (pseudocode is fine) and the honest fallback message my system should return, and tell me how I'd know if the threshold is set too aggressively.
 ```

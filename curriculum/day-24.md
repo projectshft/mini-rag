@@ -1,6 +1,5 @@
 # Day 24 — Sparse + Dense Vectors (Hybrid Search)
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** dense embeddings think `SKU-7292` and `SKU-7293` are practically the same thing. Your users disagree. You'll see where semantic search breaks on exact identifiers — and fix it by combining dense vectors with sparse keyword vectors in one hybrid query.
 
@@ -111,21 +110,21 @@ The demo ([`app/scripts/exercises/hybrid-search-demo.ts`](https://github.com/pro
 Before you run it, predict: for the query "How do I fix error E-4002?", which documents will dense-only rank in its top 3?
 
 <details>
-<summary>💡 Hint 1 — if the demo errors immediately</summary>
+<summary>Hint 1 — if the demo errors immediately</summary>
 
 You need `OPENAI_API_KEY` and `PINECONE_API_KEY` in your `.env` — the same keys you've used since [Day 5](/learn/day-05). The demo creates its own serverless index called `hybrid-demo` (dimension 512, metric `dotproduct`), so it won't touch your main course index.
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — what to actually look at in the output</summary>
+<summary>Hint 2 — what to actually look at in the output</summary>
 
-For each of the four example queries, the demo prints a **DENSE ONLY** top-3 and a **HYBRID** top-3, with scores. Lines containing the exact term (e.g. `SKU-7292`) are marked with `✓`. Watch two things: (1) where the `✓` line ranks in each list, and (2) how close together the dense scores are — that crowding *is* the problem from yesterday's lesson, in live data.
+For each of the four example queries, the demo prints a **DENSE ONLY** top-3 and a **HYBRID** top-3, with scores. Lines containing the exact term (e.g. `SKU-7292`) are marked with `[x]`. Watch two things: (1) where the `[x]` line ranks in each list, and (2) how close together the dense scores are — that crowding *is* the problem from yesterday's lesson, in live data.
 
 </details>
 
 <details>
-<summary>🔍 Expected output — what a run looks like</summary>
+<summary>Expected output — what a run looks like</summary>
 
 Your scores will differ slightly, but the shape should match. During `upsert` you'll see both vector types for the first document:
 
@@ -145,11 +144,11 @@ Looking for exact term: "SKU-7292"
 
   DENSE ONLY (semantic meaning):
     [0.412]   Nike Air Zoom Pegasus 40 running shoe, mens, blue/grey. Product...
-    [0.409] ✓ Nike Air Zoom Pegasus 40 running shoe, mens, black/white. Produ...
+    [0.409] [x] Nike Air Zoom Pegasus 40 running shoe, mens, black/white. Produ...
     [0.401]   Nike Pegasus Trail 4 running shoe, mens, olive green. Product c...
 
   HYBRID (semantic + keywords):
-    [4.876] ✓ Nike Air Zoom Pegasus 40 running shoe, mens, black/white. Produ...
+    [4.876] [x] Nike Air Zoom Pegasus 40 running shoe, mens, black/white. Produ...
     [0.912]   Nike Air Zoom Pegasus 40 running shoe, mens, blue/grey. Product...
     [0.887]   Nike Pegasus Trail 4 running shoe, mens, olive green. Product c...
 ```
@@ -252,7 +251,7 @@ Different query, different retrieval mode — prove you can pick the winner:
 - [Pinecone: Hybrid Search Quickstart](https://docs.pinecone.io/guides/search/hybrid-search)
 - [BM25 Algorithm](https://en.wikipedia.org/wiki/Okapi_BM25)
 
-## ✅ Key takeaways
+## Key takeaways
 
 - **Dense** vectors capture meaning ("fast" ≈ "quick" ≈ "performant"); **sparse** vectors capture exact terms (`SKU-7292` ≠ `SKU-7293`) — hybrid runs both and combines the scores
 - Hybrid's value shows up when documents are **semantically similar but differ by identifier** — SKUs, versions, error codes, order numbers
@@ -260,7 +259,7 @@ Different query, different retrieval mode — prove you can pick the winner:
 - Hybrid indexes need the **dotproduct** metric — cosine's normalization breaks additive sparse scoring
 - Metadata filtering is a complementary tool for exact matches; production systems often use both
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Explain my hybrid demo results back to you

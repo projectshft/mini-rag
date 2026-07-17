@@ -1,6 +1,5 @@
 # Start Here — How to Win This Program
 
-**Time:** ~20 min · Read first
 
 > **This page:** everything that separates the people who transform their careers with this program from the people who quietly drift away. Read it once now, and come back to it whenever momentum dips.
 
@@ -10,13 +9,13 @@ Let's be direct about why you're here: **there is a massive opportunity in front
 
 This program is designed to get you there efficiently. But a curriculum can't want it for you. So here's the honest playbook — the things that actually predict who does well. None of them are complicated. All of them are choices.
 
-## ⚠️ The video homework is the whole game
+## The video homework is the whole game
 
 You'll notice every assignment asks for a short **video of you explaining what you built**. Read this part carefully, because students who treat the videos as a chore miss the entire point:
 
 **If you can't explain it simply, you don't understand it yet.** That's the Feynman Technique — study the concept, explain it like you're teaching a smart 12-year-old, notice exactly where you stumble, go fix that gap. The stumble *is* the diagnostic. No quiz can find your gaps as precisely as your own mouth trying to form the sentence.
 
-And there's a second reason, the career one: after this program, you will likely be **the AI person** on your team. Your manager will ask you to explain RAG to stakeholders. A PM will ask "why can't we just fine-tune?" in a meeting. The interview loop for that next role is mostly *you, talking about systems you built*. Every weekly video is a rep for exactly that muscle. The lessons even include 💼 scenario exercises where a "manager" asks you these questions — take them seriously; they're rehearsal.
+And there's a second reason, the career one: after this program, you will likely be **the AI person** on your team. Your manager will ask you to explain RAG to stakeholders. A PM will ask "why can't we just fine-tune?" in a meeting. The interview loop for that next role is mostly *you, talking about systems you built*. Every weekly video is a rep for exactly that muscle. The lessons even include scenario exercises where a "manager" asks you these questions — take them seriously; they're rehearsal.
 
 **Non-negotiable habit:** record the video even when it's rough. Especially when it's rough. Rough videos are where the learning is.
 
@@ -75,7 +74,7 @@ A few things to set straight expectations:
 
 - **This is a living curriculum.** It gets updated *very* often — that's a feature; you're learning a field that moves monthly. It also means there will be hiccups: a link that's stale, a screenshot that doesn't quite match, a rough edge we haven't sanded. When you hit one, [flag it](https://form.typeform.com/to/EwCKfAN6) (or post in Slack) and keep moving — it'll be fixed fast, and you'll have made the course better for everyone behind you.
 - **It's mostly text, on purpose.** Text is simply faster to learn from than video — you can scan, re-read, copy code, and search it. There are videos where a walkthrough genuinely helps, and they get refreshed here and there, but the text is the backbone.
-- **The lessons are interactive, on purpose.** Quizzes, live API calls with your class key, scenarios, exercises — work them, don't skim past them. And the 🤖 AI prompts at the end of each day are half the curriculum: this is an AI-first program, and learning to learn *with* an AI is itself the skill.
+- **The lessons are interactive, on purpose.** Quizzes, live API calls with your class key, scenarios, exercises — work them, don't skim past them. And the AI prompts at the end of each day are half the curriculum: this is an AI-first program, and learning to learn *with* an AI is itself the skill.
 - **The humans are the product.** Weekly live sessions, office hours, mentors, Slack. A curriculum this compressed can't cover everything under the sun — and it deliberately doesn't try. When you hit the edge of what's written, that's what the humans are for. You're working with people who have actually built what you want to build.
 - **We teach foundations, not tools.** Frameworks will churn; the principles here — embeddings, retrieval, chunking, agents, evals, security — transfer to whatever stack you touch next. Learn the foundations well and every future tool is a variation on something you already understand.
 
@@ -88,7 +87,7 @@ A few things to set straight expectations:
 - [ ] Skim the [full 42-day schedule](/learn) so you know the shape of the next six weeks
 - [ ] Start [Day 1](/learn/day-01)
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Build my personal success plan for this program

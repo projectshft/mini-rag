@@ -1,6 +1,5 @@
 # Day 18 — Upgrading to Structured Outputs
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** yesterday your selector parsed free text and hoped the LLM followed the format. Today you refactor it to OpenAI's structured outputs with a Zod schema — guaranteed valid JSON, type-safe, no string surgery.
 
@@ -62,12 +61,12 @@ const schema = z.object({
 
 | Aspect          | Text parsing          | Structured outputs        |
 | --------------- | --------------------- | ------------------------- |
-| Type safety     | ❌ No                 | ✅ Yes (Zod validates)    |
-| Parsing         | ❌ Manual             | ✅ Automatic              |
-| Reliability     | ⚠️ Can fail           | ✅ Always valid JSON      |
-| DX              | ❌ No autocomplete    | ✅ Full TypeScript support |
-| Debugging       | ✅ Easy to see        | ⚠️ Less transparent       |
-| Code complexity | ⚠️ More parsing logic | ✅ Simpler                |
+| Type safety     | No                 | Yes (Zod validates)    |
+| Parsing         | Manual             | Automatic              |
+| Reliability     | Can fail           | Always valid JSON      |
+| DX              | No autocomplete    | Full TypeScript support |
+| Debugging       | Easy to see        | Less transparent       |
+| Code complexity | More parsing logic | Simpler                |
 
 ## Documentation resources
 
@@ -139,10 +138,10 @@ And here's the whole day in one live call — the selector returning schema-cons
 **Example validation:**
 
 ```typescript
-// ✅ Valid
+// Valid
 agentSelectionSchema.parse({ agent: 'rag', query: 'React hooks' })
 
-// ❌ Invalid - throws error
+// Invalid - throws error
 agentSelectionSchema.parse({ agent: 'invalid', query: 'test' })
 // Error: Invalid enum value. Expected 'linkedin' | 'rag', received 'invalid'
 ```
@@ -171,14 +170,14 @@ Replace your `openaiClient.chat.completions.create()` call with the structured o
 - Remove "respond in this exact format" from your prompt (OpenAI handles it now)
 
 <details>
-<summary>💡 Hint 1 — what changes, what stays</summary>
+<summary>Hint 1 — what changes, what stays</summary>
 
 The system prompt content mostly survives — the router role, the `agentDescriptions` list, the query-refinement instruction. What goes away is the `AGENT:/QUERY:` format instruction, because the schema now enforces the shape. The message array moves from `messages:` to `input:`, and the schema plugs in under `text.format`.
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — the full call shape</summary>
+<summary>Hint 2 — the full call shape</summary>
 
 ```typescript
 const result = await openaiClient.responses.parse({
@@ -219,7 +218,7 @@ Replace all your text parsing code with direct access to the parsed result.
 - Return `agent` and `query` from the parsed result
 
 <details>
-<summary>💡 Hint — what replaces ~15 lines of parsing</summary>
+<summary>Hint — what replaces ~15 lines of parsing</summary>
 
 ```typescript
 // Remove all this:
@@ -240,7 +239,7 @@ No manual string splitting, no validation logic (Zod handles it), full TypeScrip
 </details>
 
 <details>
-<summary>✅ Solution — full refactored route, don't open until you've tried</summary>
+<summary>Solution — full refactored route, don't open until you've tried</summary>
 
 ```typescript
 import { NextRequest, NextResponse } from 'next/server';
@@ -383,7 +382,7 @@ curl -X POST http://localhost:3000/api/select-agent \
 ```
 
 <details>
-<summary>🔍 Expected output</summary>
+<summary>Expected output</summary>
 
 ```json
 {
@@ -410,7 +409,7 @@ curl -X POST http://localhost:3000/api/select-agent \
 ```
 
 <details>
-<summary>🔍 Expected output</summary>
+<summary>Expected output</summary>
 
 ```json
 {
@@ -464,7 +463,7 @@ const validAgent =
 return NextResponse.json({ agent: validAgent, query });
 ```
 
-~20 lines · ❌ no type safety · ⚠️ can fail on parsing errors
+~20 lines · no type safety · can fail on parsing errors
 
 ### Structured outputs version (after)
 
@@ -485,7 +484,7 @@ return NextResponse.json({
 });
 ```
 
-~8 lines · ✅ full TypeScript support · ✅ fails only on validation errors (caught by try/catch)
+~8 lines · full TypeScript support · fails only on validation errors (caught by try/catch)
 
 ## When to use each approach
 
@@ -569,7 +568,7 @@ z.string().optional()         // Optional string
 
 **Further reading:** [Structured Outputs Best Practices](https://platform.openai.com/docs/guides/structured-outputs#best-practices) · [Zod Type Inference](https://zod.dev/?id=type-inference) · [JSON Schema vs Zod](https://zod.dev/?id=json-schema)
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Structured outputs constrain the model's token generation to your schema — valid JSON is guaranteed, not requested
 - Zod gives you one schema for both runtime validation and TypeScript types, and `zodTextFormat()` wires it into the OpenAI call
@@ -577,7 +576,7 @@ z.string().optional()         // Optional string
 - `z.enum(['linkedin', 'rag'])` makes invalid agent names unrepresentable — most of yesterday's fallback logic evaporates
 - Text parsing still has a place for prototyping and debugging; structured outputs win in production
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Explain structured outputs back and poke holes

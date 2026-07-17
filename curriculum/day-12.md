@@ -1,6 +1,5 @@
 # Day 12 — Fine-Tuning Overview
 
-**Time:** ~45 min · Read + Watch
 
 > **Today:** a lighter day. You'll learn what fine-tuning is, when it beats RAG (and when it doesn't), and why the industry has largely moved past it — knowledge you'll need for architecture decisions and interviews, even though you won't train a model yourself.
 
@@ -47,19 +46,19 @@
 
 **In this course:**
 
-- **LinkedIn Agent** uses few-shot prompting → a specific voice and style, no training required
-- **RAG Agent** uses retrieval → current technical documentation
+- **LinkedIn Agent** uses few-shot prompting -> a specific voice and style, no training required
+- **RAG Agent** uses retrieval -> current technical documentation
 
 ### When to fine-tune
 
-✅ **Use fine-tuning when:**
+**Use fine-tuning when:**
 
 - You need consistent brand voice or writing style
 - The task is repetitive (classification, formatting, support)
 - You have 100+ quality examples in your style
 - Style/tone matters more than the latest information
 
-❌ **Don't fine-tune when:**
+**Don't fine-tune when:**
 
 - Information changes frequently
 - The base model already performs well
@@ -143,10 +142,10 @@ You'll get asked this at work. Practice the conversation:
 
 **Is it worth it?**
 
-- ✅ Yes: style consistency is critical, high-volume use case
-- ❌ No: one-off tasks, frequently changing needs
+- Yes: style consistency is critical, high-volume use case
+- No: one-off tasks, frequently changing needs
 
-**Example:** 1,000 queries/day at 500 tokens each → extra cost of ~$0.075/day = $2.25/month. Worth it if the quality improvement matters — trivial money, so the real cost is operational (maintaining a custom model, retraining to update it).
+**Example:** 1,000 queries/day at 500 tokens each -> extra cost of ~$0.075/day = $2.25/month. Worth it if the quality improvement matters — trivial money, so the real cost is operational (maintaining a custom model, retraining to update it).
 
 ## Training data requirements
 
@@ -158,16 +157,16 @@ You'll get asked this at work. Practice the conversation:
 
 **What makes good training data:**
 
-- ✅ Diverse questions (cover different topics)
-- ✅ Consistent voice (all responses sound like the same person)
-- ✅ High quality (well-written, accurate)
-- ✅ 100+ examples minimum (500+ ideal)
+- Diverse questions (cover different topics)
+- Consistent voice (all responses sound like the same person)
+- High quality (well-written, accurate)
+- 100+ examples minimum (500+ ideal)
 
 **What makes bad training data:**
 
-- ❌ Repetitive questions (no variety)
-- ❌ Inconsistent tone (multiple authors)
-- ❌ Low quality (errors, incomplete)
+- Repetitive questions (no variety)
+- Inconsistent tone (multiple authors)
+- Low quality (errors, incomplete)
 
 ## Why learn this if it's deprecated?
 
@@ -203,7 +202,7 @@ Many production systems still run on fine-tuned models. Knowing how they were cr
 
 On [Day 13](/learn/day-13), you'll examine the fine-tuning code as an artifact, see how few-shot prompting replaces it in the LinkedIn agent — and submit **Assignment 1**.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Fine-tuning adjusts model *weights* from your examples; RAG supplies *context* at query time — style vs knowledge is the core split
 - Choose RAG when information changes or you need citations; fine-tuning only made sense for stable, style-heavy, high-volume tasks with 100+ quality examples
@@ -211,7 +210,7 @@ On [Day 13](/learn/day-13), you'll examine the fine-tuning code as an artifact, 
 - Training data quality (diverse questions, one consistent voice, JSONL format) mattered more than quantity
 - Fine-tuning still lives at Anthropic, Cohere, Hugging Face, and Together AI — and in interviews
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Architecture drill — fine-tune, RAG, or few-shot?

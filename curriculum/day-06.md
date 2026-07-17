@@ -1,6 +1,5 @@
 # Day 6 — Introduction to Scraping
 
-**Time:** ~45 min · Read + Watch
 
 > **Today:** your Pinecone index is empty, and a RAG system with no data answers nothing. We'll cover how to ethically scrape web content to fill it — what makes scraped content good or garbage, and why the size of what you scrape sets up next week's big topic: chunking.
 
@@ -16,12 +15,12 @@ Right now, your Pinecone database (set up on [Day 5](/learn/day-05)) is empty. W
 
 ```
 Empty Pinecone Index
-        ↓
+        |
       No Data
-        ↓
+        |
    Can't Answer Questions
-        ↓
-   Useless RAG System 😢
+        |
+   Useless RAG System 
 ```
 
 **The solution?** Scrape publicly available documentation and content from the web.
@@ -92,7 +91,7 @@ Web scraping is... complicated. Here's the truth:
 
 As developers, we should be ethical. Here's how:
 
-**✅ DO:**
+**DO:**
 
 1. **Check `robots.txt`** — every site has one at `/robots.txt`
 
@@ -119,7 +118,7 @@ As developers, we should be ethical. Here's how:
 
 5. **Only scrape public content** — no login-protected pages, no personal information, no copyrighted content (without permission)
 
-**❌ DON'T:**
+**DON'T:**
 
 - Ignore `robots.txt`
 - Scrape at high frequency (DDoS-like behavior)
@@ -198,9 +197,9 @@ Real websites are messy:
 Modern websites use JavaScript to load content:
 
 ```
-Initial HTML → Empty <div id="root"></div>
-JavaScript runs → Content appears
-Your scraper → Sees nothing!
+Initial HTML -> Empty <div id="root"></div>
+JavaScript runs -> Content appears
+Your scraper -> Sees nothing!
 ```
 
 **Solution:** use headless browsers (Puppeteer, Playwright) that execute JavaScript.
@@ -238,10 +237,10 @@ Your embedding limit: 512 dimensions
 
 **What happens if you embed the entire document as one vector?**
 
-- ❌ Too much information → diluted meaning
-- ❌ May exceed token limits
-- ❌ Won't fit in the LLM context window
-- ❌ Loses specificity
+- Diluted meaning — one vector averaging 50,000 words is specific about nothing
+- Poor retrieval — a query can't match the right passage inside the averaged blob
+- Even when retrieved, the relevant paragraph is buried in everything around it
+- Secondary: that much text may also exceed token limits and won't fit the LLM context window
 
 **Example of the problem:**
 
@@ -292,7 +291,7 @@ Chunk 1: "After years of research, scientists finally discovered
 
 For RAG systems, quality matters:
 
-### ✅ Good content characteristics
+### Good content characteristics
 
 1. **Authoritative** — official documentation, not random blog posts
 2. **Complete** — full thoughts, not fragments
@@ -301,7 +300,7 @@ For RAG systems, quality matters:
 5. **Relevant** — matches your domain
 6. **Clean** — no ads, navigation, footers
 
-### ❌ Bad content to avoid
+### Bad content to avoid
 
 1. **Advertisements** — "Buy now! Limited time offer!"
 2. **Navigation menus** — "Home | About | Contact"
@@ -322,7 +321,7 @@ According to experienced practitioners:
 
 **Your advantage:** we're all learning this together. RAG is so new that even senior developers are still figuring it out. Form your own opinions, experiment, and document what works!
 
-## ✅ Key takeaways
+## Key takeaways
 
 - A RAG system is only as good as its data — an empty index answers nothing, and garbage in means garbage answers out
 - Ethical scraping = check `robots.txt`, respect its rules, rate-limit requests, prefer public APIs, and only touch public content
@@ -330,12 +329,12 @@ According to experienced practitioners:
 - Content quality is a curation job: keep authoritative, complete, structured text; strip navigation, ads, and boilerplate
 - Big scraped pages can't become one embedding — chunking (Day 8) is how we turn raw pages into focused, retrievable pieces
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Quiz me on ethical scraping and content quality
 ---
-You are my strict-but-friendly tutor. I just finished a lesson on web scraping for RAG: the scrape pipeline (request → HTML → parse → extract → clean → store), robots.txt and rate limiting, scraping challenges (messy HTML, JS-rendered content, anti-scraping measures), good vs bad scraped content, and why huge pages must be chunked before embedding.
+You are my strict-but-friendly tutor. I just finished a lesson on web scraping for RAG: the scrape pipeline (request -> HTML -> parse -> extract -> clean -> store), robots.txt and rate limiting, scraping challenges (messy HTML, JS-rendered content, anti-scraping measures), good vs bad scraped content, and why huge pages must be chunked before embedding.
 
 Quiz me with 5 questions, ONE AT A TIME. Start easy ("what is robots.txt?") and get harder — include at least one scenario question like "a client asks you to scrape a competitor's logged-in dashboard, what do you say?" and one on why a 50,000-word page can't be a single embedding. If I'm wrong, give me a hint and let me retry once. End with the concepts I was shaky on, each explained in two sentences.
 ```

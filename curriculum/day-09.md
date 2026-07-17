@@ -1,6 +1,5 @@
 # Day 9 — Uploading Documents with a Script
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** time to get real content into your RAG system. You'll run a script that walks the entire ingestion pipeline — scrape, chunk, embed, upload — and watch your Pinecone index fill up with searchable knowledge.
 
@@ -16,7 +15,7 @@ Located at [`app/scripts/scrapeAndVectorizeContent.ts`](https://github.com/proje
 
 ```mermaid
 flowchart LR
-    U[URLs] --> S[Scrape HTML → text]
+    U[URLs] --> S[Scrape HTML -> text]
     S --> C[Chunk with chunkText]
     C --> E[Embed with OpenAI]
     E --> P[(Upsert to Pinecone)]
@@ -184,22 +183,22 @@ npx ts-node app/scripts/scrapeAndVectorizeContent.ts
 ### 4. Watch the output
 
 ```bash
-📥 Scraping 8 URLs...
-✅ Processed https://react.dev/learn: 47 chunks
-✅ Processed https://nextjs.org/docs: 62 chunks
+Scraping 8 URLs...
+Processed https://react.dev/learn: 47 chunks
+Processed https://nextjs.org/docs: 62 chunks
 ...
 
-✅ Created 245 chunks from content
+Created 245 chunks from content
 
-🔄 Generating embeddings and uploading to Pinecone...
+Generating embeddings and uploading to Pinecone...
 Processing batch 1/3...
-✅ Uploaded 100 vectors
+Uploaded 100 vectors
 Processing batch 2/3...
-✅ Uploaded 100 vectors
+Uploaded 100 vectors
 Processing batch 3/3...
-✅ Uploaded 45 vectors
+Uploaded 45 vectors
 
-📊 SUMMARY
+SUMMARY
 ==================
 Total chunks: 245
 Successful: 245
@@ -273,15 +272,15 @@ Ideas to consider:
 
 We'll turn this pipeline into a proper API route on [Day 10](/learn/day-10).
 
-## ✅ Key takeaways
+## Key takeaways
 
-- The ingestion pipeline is always the same four moves: scrape → chunk → embed → upsert
+- The ingestion pipeline is always the same four moves: scrape -> chunk -> embed -> upsert
 - `DataProcessor` (`app/libs/dataProcessor.ts`) bundles scraping + your Day 8 `chunkText()` into one call
 - Batching (100 chunks per API call) is how you respect rate limits and keep Pinecone upserts fast
 - Deterministic vector IDs (`url-chunkIndex`) make re-runs idempotent — upsert overwrites instead of duplicating
 - Metadata is the payload: Pinecone searches the vectors, but the `text` in metadata is what your LLM will actually read
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Explain the upload script back to me — then poke holes
@@ -294,7 +293,7 @@ I'll explain the whole pipeline to you from memory, step by step. Play a skeptic
 ```ai-prompt
 title: Help me build the sitemap crawler extension
 ---
-I have a working script (app/scripts/scrapeAndVectorizeContent.ts) that takes a hardcoded array of URLs and scrapes → chunks → embeds → upserts them to Pinecone. I want to extend it to crawl a sitemap.xml automatically instead of hardcoding URLs.
+I have a working script (app/scripts/scrapeAndVectorizeContent.ts) that takes a hardcoded array of URLs and scrapes -> chunks -> embeds -> upserts them to Pinecone. I want to extend it to crawl a sitemap.xml automatically instead of hardcoding URLs.
 
 Don't write the code for me. Instead: (1) ask me clarifying questions about my design (how I'll parse the XML, filter URLs, dedupe against already-uploaded pages, respect rate limits), (2) point out edge cases I haven't considered (sitemap index files that link to other sitemaps, thousands of URLs, non-HTML entries), and (3) let me propose the implementation plan, then critique it. Only show code if I explicitly give up on a step.
 ```

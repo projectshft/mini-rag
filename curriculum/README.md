@@ -21,7 +21,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - Day 4 — [Word Math: The Magic of Embeddings](day-04.md) 🎥
 - Day 5 — [Setting Up Pinecone](day-05.md)
 - Day 6 — [Introduction to Scraping](day-06.md)
-- Day 7 — 🌴 Rest day
+- Day 7 — Rest day
 
 **Week 2 — Data Pipeline (Days 8–14)**
 
@@ -31,7 +31,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - Day 11 — [Querying Documents](day-11.md)
 - Day 12 — [Fine-Tuning Overview](day-12.md)
 - Day 13 — [Running Fine-Tuning + Assignment 1](day-13.md) 🎥
-- Day 14 — 🌴 Rest day
+- Day 14 — Rest day
 
 **Week 3 — Agent Architecture (Days 15–21)**
 
@@ -41,7 +41,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - Day 18 — [Upgrading to Structured Outputs](day-18.md)
 - Day 19 — [Graceful Degradation](day-19.md)
 - Day 20 — [Implementing the LinkedIn Agent](day-20.md)
-- Day 21 — 🌴 Rest day
+- Day 21 — Rest day
 
 **Week 4 — RAG Agent (Days 22–28)**
 
@@ -51,7 +51,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - Day 25 — [Understanding the Chat Interface](day-25.md)
 - Day 26 — [Observability with LangSmith](day-26.md)
 - Day 27 — [Assignment 2: RAG Agent](day-27.md) 🎥
-- Day 28 — 🌴 Rest day
+- Day 28 — Rest day
 
 **Week 5 — Testing & Tools (Days 29–35)**
 
@@ -61,7 +61,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - Day 32 — [The Reveal + MCP](day-32.md)
 - Day 33 — [RAG Without Vectors: The SQL Agent](day-33.md)
 - Day 34 — [LLM & RAG Security + Assignment 3](day-34.md) 🎥
-- Day 35 — 🌴 Rest day
+- Day 35 — Rest day
 
 **Week 6 — Capstone (Days 36–42)**
 

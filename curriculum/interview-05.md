@@ -1,6 +1,5 @@
 # Live Practice
 
-**Time:** ~60 min · Practice + Record (optional)
 
 > **This session:** practice makes permanent. You've written the material — now get extra reps answering the three interview question types out loud, on camera, with honest self-review. Optional, since you've already submitted videos in the earlier sessions — but this is where fluency comes from.
 
@@ -64,7 +63,7 @@ Record yourself answering this question:
 
 **Requirements:**
 
-- Use the Problem → Agitate → Solve → Reflect framework from [Your Signature Story](/learn/interview-02)
+- Use the Problem -> Agitate -> Solve -> Reflect framework from [Your Signature Story](/learn/interview-02)
 - Don't read from notes
 - Record in one take
 
@@ -89,7 +88,7 @@ The challenge was [explain the problem in 2-3 sentences].
 I considered a few approaches: [approach 1], [approach 2], and [approach 3].
 I chose [approach] because [reasoning about tradeoffs].
 
-The system works like this: [step 1] → [step 2] → [step 3] → [result].
+The system works like this: [step 1] -> [step 2] -> [step 3] -> [result].
 
 One challenge I ran into was [problem]. I solved it by [solution],
 which [outcome or learning].
@@ -195,27 +194,27 @@ After recording each video, watch it back and check:
 
 ### Content
 
-- ✅ Did I answer the question directly?
-- ✅ Did I use the framework/structure?
-- ✅ Did I explain reasoning, not just choices?
-- ✅ Did I mention tradeoffs?
-- ✅ Did I provide specific examples?
+- Did I answer the question directly?
+- Did I use the framework/structure?
+- Did I explain reasoning, not just choices?
+- Did I mention tradeoffs?
+- Did I provide specific examples?
 
 ### Delivery
 
-- ✅ Was I within the time limit?
-- ✅ Did I sound confident (even if nervous)?
-- ✅ Did I minimize filler words ("um", "like", "you know")?
-- ✅ Did I maintain good pacing (not too fast, not too slow)?
-- ✅ Did I look at the camera?
+- Was I within the time limit?
+- Did I sound confident (even if nervous)?
+- Did I minimize filler words ("um", "like", "you know")?
+- Did I maintain good pacing (not too fast, not too slow)?
+- Did I look at the camera?
 
 ### Red flags
 
-- ❌ Reading from notes
-- ❌ Going over time by more than 1 minute
-- ❌ Forgetting major points
-- ❌ Saying "I don't know" without attempting an answer
-- ❌ Rambling without structure
+- Reading from notes
+- Going over time by more than 1 minute
+- Forgetting major points
+- Saying "I don't know" without attempting an answer
+- Rambling without structure
 
 ## Advanced practice (optional)
 
@@ -342,10 +341,10 @@ Create a single document with:
 
 You now have:
 
-- ✅ A signature story
-- ✅ Strong opinions with reasoning
-- ✅ System design frameworks
-- ✅ Practice speaking out loud
+- A signature story
+- Strong opinions with reasoning
+- System design frameworks
+- Practice speaking out loud
 
 This is more preparation than 95% of candidates do.
 
@@ -387,14 +386,14 @@ Practice these using the same frameworks!
 
 ## Quick reference
 
-**Project questions** — use Problem → Agitate → Solve → Reflect:
-what I built → the problem → my approach → system design → challenges → what I learned
+**Project questions** — use Problem -> Agitate -> Solve -> Reflect:
+what I built -> the problem -> my approach -> system design -> challenges -> what I learned
 
-**Opinion questions** — use Position → Reasoning → Tradeoffs → Use Cases:
-state position → reasoning → tradeoffs → counter-examples
+**Opinion questions** — use Position -> Reasoning -> Tradeoffs -> Use Cases:
+state position -> reasoning -> tradeoffs -> counter-examples
 
 **Design questions** — use the six-part framework:
-content characteristics → chunking → embedding & storage → retrieval → generation → updates & maintenance
+content characteristics -> chunking -> embedding & storage -> retrieval -> generation -> updates & maintenance
 
 ## Schedule a mock interview
 
@@ -409,7 +408,7 @@ Want personalized feedback? Schedule a 1-on-1 mock interview session with an ins
 
 [Request a Mock Interview](https://form.typeform.com/to/qgQCwFoi)
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Interviews split roughly 40/30/30 across project, opinion, and design questions — and each type maps to a framework you've already built
 - Writing perfect answers isn't enough: only speaking out loud exposes filler words, lost structure, and pacing problems
@@ -417,7 +416,7 @@ Want personalized feedback? Schedule a 1-on-1 mock interview session with an ins
 - Record in one take and recover from stumbles mid-answer; real interviews don't have redos
 - Watch every video back against the self-review checklist: framework used, reasoning explained, tradeoffs named, time respected
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Run a full live practice session with follow-up questions

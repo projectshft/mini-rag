@@ -48,7 +48,6 @@ export function AiPrompt({ source }: { source: string }) {
 		<div className='not-prose my-6 overflow-hidden rounded-xl border border-cyan-200 bg-cyan-50/60'>
 			<div className='flex items-center justify-between gap-3 border-b border-cyan-200 bg-cyan-100/60 px-4 py-2.5'>
 				<p className='flex items-center gap-2 text-sm font-semibold text-cyan-900'>
-					<span aria-hidden>🤖</span>
 					{title}
 				</p>
 				<button

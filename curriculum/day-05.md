@@ -1,6 +1,5 @@
 # Day 5 — Setting Up Pinecone
 
-**Time:** ~60 min · Setup + Hands-on
 
 > **Today:** wire up the two services that power the whole system — OpenAI (turns text into embeddings) and Pinecone (stores and searches them). By the end you'll have accounts, API keys, an index, and a working client you'll use every day from here on.
 
@@ -31,6 +30,34 @@ Watch the complete setup of OpenAI and Pinecone step-by-step:
 
 ### Get your OpenAI API key
 
+**Have a class API key from us?** You can skip the OpenAI signup and billing below — the class key we email you is enough to get you through the lessons. Set two env vars and point your clients at the class endpoint:
+
+```bash
+OPENAI_API_KEY=<your class key>
+OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1
+```
+
+```typescript
+import OpenAI from 'openai';
+import { createOpenAI } from '@ai-sdk/openai';
+
+// One place that configures how we talk to OpenAI. The same OPENAI_BASE_URL
+// routes both the OpenAI SDK and the Vercel AI SDK through your class key.
+export const openai = new OpenAI({
+	apiKey: process.env.OPENAI_API_KEY,
+	baseURL: process.env.OPENAI_BASE_URL,
+});
+
+export const openaiProvider = createOpenAI({
+	apiKey: process.env.OPENAI_API_KEY,
+	baseURL: process.env.OPENAI_BASE_URL,
+});
+```
+
+Don't have a class key yet? Email [assistant@parsity.io](mailto:assistant@parsity.io).
+
+**Prefer your own OpenAI account?** Follow the steps below instead.
+
 1. Go to [platform.openai.com](https://platform.openai.com)
 2. Sign up or log in
 3. Navigate to the "API Keys" section in your dashboard
@@ -55,13 +82,13 @@ The OpenAI API is pay-per-use:
 
 **Embedding models** (convert text to vectors):
 
-- **text-embedding-3-small**: 512–1536 dimensions, fast and cheap ✅ (we'll use this)
+- **text-embedding-3-small**: 512–1536 dimensions, fast and cheap (we'll use this)
 - **text-embedding-3-large**: up to 3072 dimensions, more accurate but pricier
 
 **Chat models** (generate responses):
 
 - **gpt-4o**: most capable, best reasoning
-- **gpt-4o-mini**: great balance of speed/cost/quality ✅ (we'll use this)
+- **gpt-4o-mini**: great balance of speed/cost/quality (we'll use this)
 
 **Learn more:** [OpenAI Platform Documentation](https://platform.openai.com/docs/introduction) · [OpenAI Node.js SDK](https://github.com/openai/openai-node) (version `5.15.0` used in this project) · [Embeddings Guide](https://developers.openai.com/api/docs/guides/embeddings)
 
@@ -77,7 +104,7 @@ The OpenAI API is pay-per-use:
    - **Metric**: `cosine`
 4. Copy your API key from the console (API Keys section)
 
-**⚠️ CRITICAL:** your Pinecone index dimensions MUST match your OpenAI embedding dimensions. We're using `512` dimensions for `text-embedding-3-small`.
+**CRITICAL:** your Pinecone index dimensions MUST match your OpenAI embedding dimensions. We're using `512` dimensions for `text-embedding-3-small`.
 
 **Learn more:** [Pinecone Documentation](https://docs.pinecone.io/guides/get-started/overview) · [Pinecone Node.js SDK](https://www.npmjs.com/package/@pinecone-database/pinecone) (version `6.1.0` used in this project)
 
@@ -96,8 +123,8 @@ PINECONE_INDEX=rag-tutorial
 
 **Where to get these:**
 
-- **OPENAI_API_KEY**: OpenAI Platform → API Keys
-- **PINECONE_API_KEY**: Pinecone console → API Keys
+- **OPENAI_API_KEY**: OpenAI Platform -> API Keys
+- **PINECONE_API_KEY**: Pinecone console -> API Keys
 - **PINECONE_INDEX**: the name you chose when creating your index (`rag-tutorial`)
 
 ## Understanding the code
@@ -174,7 +201,7 @@ Think of it like: client = database connection pool, index = the specific table 
 
 ### The search flow
 
-1. Get embedding from OpenAI (convert text → vector)
+1. Get embedding from OpenAI (convert text -> vector)
 2. Pass embedding to Pinecone (search for similar vectors)
 3. Pinecone finds similar vectors using cosine similarity
 4. Returns documents with similarity scores (0–1, higher = more similar)
@@ -211,7 +238,7 @@ The response contains:
     "q": "Why does searchDocuments call OpenAI before it calls Pinecone?",
     "options": ["To check the user's query for policy violations", "Pinecone searches by vector, so the text query must first be converted to an embedding", "To warm up the OpenAI connection for the final answer"],
     "answer": 1,
-    "explain": "Pinecone only understands vectors. Every search is: text → embedding (OpenAI) → nearest-neighbor query (Pinecone)."
+    "explain": "Pinecone only understands vectors. Every search is: text -> embedding (OpenAI) -> nearest-neighbor query (Pinecone)."
   },
   {
     "q": "Why set includeMetadata: true on the query?",
@@ -242,7 +269,7 @@ console.log('Pinecone client initialized:', !!pineconeClient);
 ```
 
 <details>
-<summary>🔍 Expected output</summary>
+<summary>Expected output</summary>
 
 ```
 Pinecone client initialized: true
@@ -254,10 +281,10 @@ No thrown errors, no missing-key warnings. (Searches will return zero matches fo
 
 **Common issues:**
 
-- ❌ `OPENAI_API_KEY is missing` → check your `.env` file
-- ❌ `PINECONE_API_KEY is missing` → check your `.env` file
-- ❌ `Dimensions mismatch` → Pinecone index must be 512 dimensions
-- ❌ `Index not found` → verify your index name in the Pinecone console
+- `OPENAI_API_KEY is missing` -> check your `.env` file
+- `PINECONE_API_KEY is missing` -> check your `.env` file
+- `Dimensions mismatch` -> Pinecone index must be 512 dimensions
+- `Index not found` -> verify your index name in the Pinecone console
 
 ## Why 512 dimensions?
 
@@ -309,7 +336,7 @@ Embedding dimensions affect cost, performance, and accuracy — a decision you'l
 **5. Cost analysis** — you have 100,000 documents; each dimension is a 32-bit float (4 bytes). Compare total storage for 512 vs 1536 vs 3072 dimensions.
 
 <details>
-<summary>💡 Hint — the cost math</summary>
+<summary>Hint — the cost math</summary>
 
 Storage = documents × dimensions × 4 bytes. For 100,000 docs at 512 dimensions that's 100,000 × 512 × 4 ≈ 205 MB. Now scale the dimension count — the storage (and query compute) scales linearly with it. That linear factor is the whole trade-off.
 
@@ -325,15 +352,15 @@ Save your analysis and keep it as a reference — these trade-offs come back in 
 
 **Pinecone SDK:** [Node.js SDK](https://docs.pinecone.io/reference/sdks/node/overview) · [Query API Reference](https://docs.pinecone.io/reference/api/data-plane/query) · [Best Practices](https://docs.pinecone.io/troubleshooting/best-practices)
 
-## ✅ Key takeaways
+## Key takeaways
 
-- The RAG query path is: text → embedding (OpenAI) → similarity search (Pinecone) → matching docs → LLM answer (OpenAI)
+- The RAG query path is: text -> embedding (OpenAI) -> similarity search (Pinecone) -> matching docs -> LLM answer (OpenAI)
 - One shared client per service, authenticated via env vars — never hardcode or commit API keys
 - **Index dimensions must exactly match embedding dimensions** (512 in this project) — the #1 setup bug
 - `searchDocuments` is Day 3's similarity function running at database scale: Pinecone scores by cosine, returns topK with metadata
 - Dimension count is a cost/accuracy/speed dial, and storage scales linearly with it
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Debug my OpenAI + Pinecone setup with me

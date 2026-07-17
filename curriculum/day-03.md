@@ -1,6 +1,5 @@
 # Day 3 — Implementing Similarity
 
-**Time:** ~90 min · Hands-on
 
 > **Today:** you set up the project and write the single most important function in RAG — `findTopSimilarDocuments`, which takes a query vector and returns the best-matching documents. Everything we build for the next six weeks sits on top of this.
 
@@ -116,7 +115,7 @@ cosineSimilarity([1, 0], [-1, 0]); // -1.0 (opposite)
 
 **Why cosine?**
 
-- **Direction matters, not length**: `[1, 2]` and `[2, 4]` point the same direction → similarity 1.0
+- **Direction matters, not length**: `[1, 2]` and `[2, 4]` point the same direction -> similarity 1.0
 - **Normalized**: always returns -1 to 1
 - **Standard in NLP**: used by all major RAG systems
 
@@ -196,19 +195,19 @@ The implementation is four small steps. Try writing it yourself before opening a
 **Threshold intuition:**
 
 - `0.9+`: almost identical
-- `0.7–0.9`: highly relevant ← good default
+- `0.7–0.9`: highly relevant <- good default
 - `0.5–0.7`: somewhat relevant
 - `< 0.5`: probably noise
 
 <details>
-<summary>💡 Hint 1 — which array methods?</summary>
+<summary>Hint 1 — which array methods?</summary>
 
 Each step maps to one array method: `map` (score), `filter` (threshold), `sort` (order), `slice` (limit). Chain them in that order — the order matters (see "Common mistakes" below).
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — scoring each document</summary>
+<summary>Hint 2 — scoring each document</summary>
 
 Build an array of `{ document, similarity }` objects:
 
@@ -222,7 +221,7 @@ const results = documents.map((doc) => ({
 </details>
 
 <details>
-<summary>💡 Hint 3 — sorting in the right direction</summary>
+<summary>Hint 3 — sorting in the right direction</summary>
 
 To sort **descending** (highest similarity first), the comparator is `b - a`:
 
@@ -235,7 +234,7 @@ If `b > a` the result is positive, so `b` comes first. `a.similarity - b.similar
 </details>
 
 <details>
-<summary>✅ Solution — don't open until you've tried</summary>
+<summary>Solution — don't open until you've tried</summary>
 
 ```typescript
 export function findTopSimilarDocuments(
@@ -282,7 +281,7 @@ yarn exercise:vectors
 ```
 
 <details>
-<summary>🔍 Expected output</summary>
+<summary>Expected output</summary>
 
 The script runs a sample query against a small document set and prints the matches, sorted by score — something like:
 
@@ -343,20 +342,20 @@ This is THE core of RAG:
 
 ```
 User Question
-      ↓
+      |
 Convert to embedding
-      ↓
-findTopSimilarDocuments() ← YOUR FUNCTION!
-      ↓
+      |
+findTopSimilarDocuments() <- YOUR FUNCTION!
+      |
 Get relevant chunks
-      ↓
+      |
 Feed to LLM as context
-      ↓
+      |
 LLM generates answer
 ```
 
-**Without this:** random chunks → confused LLM → bad answers.
-**With this:** relevant chunks → focused LLM → great answers.
+**Without this:** random chunks -> confused LLM -> bad answers.
+**With this:** relevant chunks -> focused LLM -> great answers.
 
 ```quiz
 [
@@ -364,7 +363,7 @@ LLM generates answer
     "q": "In findTopSimilarDocuments, why must you filter by threshold BEFORE slicing to topK?",
     "options": ["It's faster to filter first", "Slicing first could keep low-similarity docs and discard high-similarity ones, then the filter can't fix it", "The tests require that exact order but either works in production"],
     "answer": 1,
-    "explain": "If you slice(0, topK) on unfiltered (or unsorted) results, you may lock in irrelevant documents and throw away relevant ones. Score → filter → sort → slice."
+    "explain": "If you slice(0, topK) on unfiltered (or unsorted) results, you may lock in irrelevant documents and throw away relevant ones. Score -> filter -> sort -> slice."
   },
   {
     "q": "What does sort((a, b) => a.similarity - b.similarity) do to your results?",
@@ -423,21 +422,21 @@ const answer = await llm.chat({
 
 ## Common mistakes
 
-### ❌ Not filtering
+### Not filtering
 
 ```typescript
 // Returns ALL documents, even 0.1 similarity
 return documents.map(...).sort(...).slice(0, topK);
 ```
 
-### ❌ Wrong sort direction
+### Wrong sort direction
 
 ```typescript
 // Lowest similarity first (backwards!)
 filtered.sort((a, b) => a.similarity - b.similarity);
 ```
 
-### ❌ Filtering after slicing
+### Filtering after slicing
 
 ```typescript
 // Filters AFTER taking top K (wrong order!)
@@ -451,15 +450,15 @@ Once you've got the tests passing (or you're truly stuck), watch the solution ex
 
 <iframe src="https://share.descript.com/embed/5ze8rVvlJGu" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
-## ✅ Key takeaways
+## Key takeaways
 
 - The dot product measures alignment; magnitude normalizes it; cosine similarity = angle-based score from -1 to 1
-- Retrieval is four steps: **score → filter → sort → slice** — and the order matters
+- Retrieval is four steps: **score -> filter -> sort -> slice** — and the order matters
 - The similarity threshold is a quality floor (~0.7 is a good default); topK is a focus cap (3–5 for RAG)
 - `findTopSimilarDocuments` IS the "R" in RAG — every answer the system gives flows through this function
 - Returning fewer, better results beats returning more, noisier ones
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Generate harder test cases for my implementation

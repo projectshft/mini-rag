@@ -1,6 +1,5 @@
 # Day 27 — Assignment 2: RAG Agent
 
-**Time:** ~90 min · Assignment
 
 > **Today:** ship it. Assignment 2 is due — a working RAG agent extended with query preprocessing, plus a video where you explain how you evaluate retrieval quality. This is the Feynman moment for everything you built this week.
 
@@ -16,7 +15,7 @@ Quick recap of the week. Your `ragAgent` in [`app/agents/rag.ts`](https://github
 
 On top of that working pipeline, the assignment adds **query preprocessing** — cleaning up messy, casual queries *before* they're embedded, because retrieval is only as good as the query vector:
 
-- Expand common abbreviations ("JS" → "JavaScript", "DB" → "database")
+- Expand common abbreviations ("JS" -> "JavaScript", "DB" -> "database")
 - Normalize casing for technical terms
 - Strip filler words that don't help retrieval ("um", "like", "basically")
 - Handle common typos with fuzzy matching (optional stretch goal)
@@ -25,7 +24,7 @@ You should be able to demonstrate a **before/after**: a messy query that retriev
 
 (If you also implemented reranking from [Day 23](/learn/day-23) — great, keep it. It isn't required here; it's the core of Assignment 3 on [Day 34](/learn/day-34).)
 
-## 🎥 Assignment
+## Assignment
 
 ### Video (3–4 minutes)
 
@@ -72,14 +71,14 @@ And **post your work in Slack** — the before/after preprocessing demo makes a 
 **A video that recites definitions.** "Chunks can be too big or too small" earns no points. "My 1000-char chunks kept splitting code examples mid-function, so answers about `useState` came back half-baked — here's the trace" is what a 3–4 minute video should sound like.
 
 <details>
-<summary>💡 Detail — why messy queries tank retrieval (the thing your preprocessing fixes)</summary>
+<summary>Detail — why messy queries tank retrieval (the thing your preprocessing fixes)</summary>
 
-Embeddings encode *everything* in the input, including noise. "um so like how do i do the JS thing with, you know, state?" spends its vector budget on filler and vagueness, so its nearest neighbors are only loosely related chunks. Strip the filler and expand "JS" → "JavaScript", and the query vector moves measurably closer to your React state-management chunks. Log the top-5 scores for both versions of the query — the after-scores should be higher *and* more spread out. That logged comparison is exactly the before/after demo the assignment asks for, and a great clip for your video.
+Embeddings encode *everything* in the input, including noise. "um so like how do i do the JS thing with, you know, state?" spends its vector budget on filler and vagueness, so its nearest neighbors are only loosely related chunks. Strip the filler and expand "JS" -> "JavaScript", and the query vector moves measurably closer to your React state-management chunks. Log the top-5 scores for both versions of the query — the after-scores should be higher *and* more spread out. That logged comparison is exactly the before/after demo the assignment asks for, and a great clip for your video.
 
 </details>
 
 <details>
-<summary>💡 Detail — a clean shape for the preprocessing code</summary>
+<summary>Detail — a clean shape for the preprocessing code</summary>
 
 Resist the urge to inline regexes into `ragAgent`. A small pure function is easier to test and easier to demo:
 
@@ -135,7 +134,7 @@ Then in `ragAgent`: `const query = preprocessQuery(request.query);` and embed `q
 ]
 ```
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Retrieval quality is decided **before** the LLM ever runs — the query vector and the chunk vectors do all the work
 - Query preprocessing is high-leverage: cheap string cleanup measurably moves the query vector toward the right chunks
@@ -143,12 +142,12 @@ Then in `ragAgent`: `const query = preprocessQuery(request.query);` and embed `q
 - Every threshold is a trade-off — too high rejects good context ("I don't know" to answerable questions), too low invites hallucination
 - If you can't explain your evaluation approach out loud in 4 minutes with real examples, you've found the gap to study — that's the Feynman Technique doing its job
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Review my RAG agent like a staff engineer
 ---
-I'm submitting a RAG agent for a course assignment. It lives in app/agents/rag.ts and does: query preprocessing (abbreviation expansion, casing normalization, filler-word stripping) → embedding with text-embedding-3-small → Pinecone query (topK, includeMetadata) → context extraction from metadata → grounded system prompt (original + refined query + context + "say if insufficient") → streamText with gpt-4o.
+I'm submitting a RAG agent for a course assignment. It lives in app/agents/rag.ts and does: query preprocessing (abbreviation expansion, casing normalization, filler-word stripping) -> embedding with text-embedding-3-small -> Pinecone query (topK, includeMetadata) -> context extraction from metadata -> grounded system prompt (original + refined query + context + "say if insufficient") -> streamText with gpt-4o.
 
 I'll paste the full file. Review it like a staff engineer doing a pre-merge pass: (1) correctness bugs and unhandled edge cases (empty matches, missing metadata.text, preprocessing applied to the wrong string, empty context), (2) whether my preprocessing could ever CORRUPT a query rather than improve it — give a concrete input that breaks each rule if you find one, (3) prompt weaknesses that could invite hallucination. Rank findings by severity, and tell me the one change with the best effort-to-payoff before I submit.
 ```

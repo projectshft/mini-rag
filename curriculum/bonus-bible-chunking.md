@@ -1,8 +1,7 @@
 # Optional Lab: Chunk the Bible and Store It in Pinecone
 
-**Time:** ~2–3 hrs · Optional side project
 
-> **This lab:** download one enormous, beautifully structured document — the King James Bible — design your own chunking strategy for it, and store the result in your own Pinecone index with metadata worth citing. Nothing religious about the exercise: the KJV is just a big, public-domain, heavily-quoted text with explicit structure (books → chapters → verses), which makes it a perfect chunking corpus.
+> **This lab:** download one enormous, beautifully structured document — the King James Bible — design your own chunking strategy for it, and store the result in your own Pinecone index with metadata worth citing. Nothing religious about the exercise: the KJV is just a big, public-domain, heavily-quoted text with explicit structure (books -> chapters -> verses), which makes it a perfect chunking corpus.
 
 ## Why this corpus
 
@@ -35,7 +34,7 @@ Write **one script** (e.g. `app/scripts/exercises/chunk-bible.ts`) that **chunks
 So nobody is grading your regex — here's a parser for the Gutenberg file. Paste it into your script and spend your effort on the strategy instead:
 
 <details>
-<summary>📄 Provided: <code>loadVerses()</code> — every verse as <code>{ book, chapter, verse, text }</code></summary>
+<summary>Provided: <code>loadVerses()</code> — every verse as <code>{ book, chapter, verse, text }</code></summary>
 
 ```typescript
 import fs from 'fs';
@@ -121,7 +120,7 @@ The tiebreaker is a question most tutorials skip: **who queries this index, and 
 Follow the exact pattern you already know from the upload route — embed in batches, upsert with metadata:
 
 <details>
-<summary>💡 The embed + upsert skeleton (adapted from <code>app/api/upload-text/route.ts</code>)</summary>
+<summary>The embed + upsert skeleton (adapted from <code>app/api/upload-text/route.ts</code>)</summary>
 
 ```typescript
 import { openaiClient } from '../libs/openai/openai';
@@ -224,7 +223,7 @@ Post the video (and your repo) in Slack for feedback.
 - [Simon Willison — Embeddings: what they are and why they matter](https://simonwillison.net/2023/Oct/23/embeddings/)
 - [Jay Alammar — The Illustrated Word2vec](https://jalammar.github.io/illustrated-word2vec/)
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Defend my chunking strategy

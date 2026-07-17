@@ -1,6 +1,5 @@
 # Day 32 — The Reveal + MCP
 
-**Time:** ~90 min · Build
 
 > **Today:** two things. First, the reveal — our tool-calling RAG implementation and the answers to yesterday's workflow-vs-tool-calling scenarios. Then the payoff: tool-calling standardized across every AI client is called **MCP**, and you'll build a real MCP server that lets Claude search your Pinecone index straight from your editor.
 
@@ -28,7 +27,7 @@ questions that require looking up documentation.`,
 	}),
 
 	execute: async ({ query }) => {
-		console.log('🔧 Tool called:', query);
+		console.log('Tool called:', query);
 
 		// Step 1: Generate embedding
 		const embeddingResponse = await openaiClient.embeddings.create({
@@ -66,7 +65,7 @@ questions that require looking up documentation.`,
 			.filter(Boolean)
 			.join('\n\n');
 
-		console.log('📊 Retrieved', reranked.data.length, 'docs');
+		console.log('Retrieved', reranked.data.length, 'docs');
 		return context;
 	},
 });
@@ -105,21 +104,21 @@ For general conversation, greetings, or simple clarifications, respond directly 
 
 Let's revisit yesterday's six scenarios.
 
-**1. Customer support bot (knowledge base) → Workflow.** Every customer question needs the same thing: search the knowledge base, find relevant articles, generate a response. There's no decision to make — always search. Tool-calling would just add overhead for the AI to "decide" to do what it always needs to do.
+**1. Customer support bot (knowledge base) -> Workflow.** Every customer question needs the same thing: search the knowledge base, find relevant articles, generate a response. There's no decision to make — always search. Tool-calling would just add overhead for the AI to "decide" to do what it always needs to do.
 
 ```
-Query → Embed → Search KB → Rerank → Generate
+Query -> Embed -> Search KB -> Rerank -> Generate
 ```
 
-**2. Code review assistant → Workflow.** A code review has a known checklist: security check → lint → test coverage → suggestions. You want **every PR** to go through all these steps. Letting the AI skip steps would be dangerous.
+**2. Code review assistant -> Workflow.** A code review has a known checklist: security check -> lint -> test coverage -> suggestions. You want **every PR** to go through all these steps. Letting the AI skip steps would be dangerous.
 
-**3. Travel planning agent → Tool-calling.** Genuinely open-ended: search flights (maybe multiple airlines), find hotels based on flight times, look up activities based on interests, check weather, combine into an itinerary. The sequence depends on preferences, budget, and availability. The AI needs autonomy to explore options.
+**3. Travel planning agent -> Tool-calling.** Genuinely open-ended: search flights (maybe multiple airlines), find hotels based on flight times, look up activities based on interests, check weather, combine into an itinerary. The sequence depends on preferences, budget, and availability. The AI needs autonomy to explore options.
 
-**4. Documentation Q&A bot → Workflow.** Same as customer support. Every question needs docs. Just search.
+**4. Documentation Q&A bot -> Workflow.** Same as customer support. Every question needs docs. Just search.
 
-**5. Research assistant → Tool-calling.** Research is exploratory: start with one source, find a lead, follow it, cross-reference, realize you need to search for something else. Exactly where tool-calling shines — the AI dynamically decides what to investigate next.
+**5. Research assistant -> Tool-calling.** Research is exploratory: start with one source, find a lead, follow it, cross-reference, realize you need to search for something else. Exactly where tool-calling shines — the AI dynamically decides what to investigate next.
 
-**6. Form-filling assistant → Workflow.** Extract data → validate → populate database. Known steps, every time.
+**6. Form-filling assistant -> Workflow.** Extract data -> validate -> populate database. Known steps, every time.
 
 ### The honest truth
 
@@ -134,7 +133,7 @@ That's why our RAG app sticks with the workflow approach in [`app/agents/rag.ts`
 ```typescript
 // Our actual implementation
 export async function ragAgent(request: AgentRequest) {
-	// Always: embed → search → rerank → generate
+	// Always: embed -> search -> rerank -> generate
 	const embedding = await generateEmbedding(request.query);
 	const results = await searchPinecone(embedding);
 	const reranked = await rerank(results);
@@ -155,7 +154,7 @@ export async function ragAgent(request: AgentRequest) {
     "q": "Why does the reference implementation set maxSteps: 3?",
     "options": ["To limit Pinecone results to 3 documents", "Without a cap, the model could keep calling tools indefinitely — the limit bounds the tool-call loop", "It makes streaming 3x faster"],
     "answer": 1,
-    "explain": "Each 'step' is a model turn that may call a tool. 3 steps is enough for search → (maybe refine) → final answer, and guarantees termination."
+    "explain": "Each 'step' is a model turn that may call a tool. 3 steps is enough for search -> (maybe refine) -> final answer, and guarantees termination."
   },
   {
     "q": "A code review assistant that must check security, lint, and coverage on EVERY PR — workflow or tool-calling, and why?",
@@ -236,9 +235,9 @@ Instead of building a chat UI, you can expose your RAG system as an MCP server, 
 
 ```
 User: "What's the refund policy?"
-  → Claude Desktop calls your MCP tool
-  → Your server queries Pinecone
-  → Claude gets context and responds
+  -> Claude Desktop calls your MCP tool
+  -> Your server queries Pinecone
+  -> Claude gets context and responds
 ```
 
 ### MCP vs REST API
@@ -282,7 +281,7 @@ Create `mcp/rag-server.ts`. It's self-contained on purpose — it talks to Pinec
 Before you look at the code below, try sketching it yourself: you already know how to embed a query and search Pinecone (you've done it since [/learn/day-11](/learn/day-11)), and you just saw that a tool is a name + description + Zod schema + execute function. The only new pieces are `McpServer` and the stdio transport.
 
 <details>
-<summary>💡 Hint — the skeleton</summary>
+<summary>Hint — the skeleton</summary>
 
 ```typescript
 const server = new McpServer({ name: 'rag-server', version: '1.0.0' });
@@ -292,7 +291,7 @@ server.tool(
 	'<description the client model will read>',
 	{ /* Zod fields (not wrapped in z.object) */ },
 	async (args) => {
-		// embed → index.query → map matches
+		// embed -> index.query -> map matches
 		return { content: [{ type: 'text', text: '...' }] };
 	},
 );
@@ -304,7 +303,7 @@ await server.connect(transport);
 </details>
 
 <details>
-<summary>✅ Solution — the full server</summary>
+<summary>Solution — the full server</summary>
 
 ```typescript
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
@@ -404,7 +403,7 @@ Cursor and Claude Desktop accept the same config block — check each client's d
 - [ ] The Inspector lists `search_docs` and returns real matches from your index.
 - [ ] One MCP client (Claude Code / Cursor / Desktop) calls the tool and answers from your docs.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Most production AI features are **workflows**, not agents — tool-calling earns its cost only when the sequence of actions is genuinely unknowable in advance
 - In tool-calling implementations, three things do the steering: a specific tool description, an explicit "when NOT to use tools" system prompt, and a `maxSteps` cap
@@ -412,7 +411,7 @@ Cursor and Claude Desktop accept the same config block — check each client's d
 - An MCP tool is still name + description + schema — the same contract you learned yesterday, just exposed to clients you don't control
 - With stdio transport, stdout belongs to the protocol — log to stderr only, and test with the Inspector before wiring up a real client
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Extend my MCP server with a second tool
@@ -427,5 +426,5 @@ title: Defend my workflow-vs-tool-calling answers
 ---
 Yesterday I classified 6 scenarios as workflow or tool-calling; today I saw the official answers: customer support bot (workflow), code review assistant (workflow), travel planner (tool-calling), docs Q&A (workflow), research assistant (tool-calling), form-filler (workflow).
 
-Play devil's advocate against the official answers, one scenario at a time. Argue the OPPOSITE choice as convincingly as you can (e.g., "a travel planner is really just search-flights → search-hotels → combine — that's a workflow!"), and make me defend the official answer using the real criteria: known vs unknown step sequence, cost of the model skipping steps, testability, and latency/cost overhead. If I can't defend one, explain what nuance I'm missing in two sentences.
+Play devil's advocate against the official answers, one scenario at a time. Argue the OPPOSITE choice as convincingly as you can (e.g., "a travel planner is really just search-flights -> search-hotels -> combine — that's a workflow!"), and make me defend the official answer using the real criteria: known vs unknown step sequence, cost of the model skipping steps, testability, and latency/cost overhead. If I can't defend one, explain what nuance I'm missing in two sentences.
 ```

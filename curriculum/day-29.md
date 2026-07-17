@@ -1,6 +1,5 @@
 # Day 29 — Testing the Selector Agent
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** you'll learn why testing LLM-powered code is fundamentally different from testing regular code, then run and extend a real test suite against your selector agent — testing routing decisions and structure, not exact text.
 
@@ -19,22 +18,22 @@ LLMs are **non-deterministic** — they can give different outputs for the same 
 ```typescript
 // Same query, different times:
 selectAgent("How do hooks work?")
-→ "Explain React hooks concepts"  // First run
-→ "How to use React hooks"        // Second run
-→ "React hooks tutorial"          // Third run
+-> "Explain React hooks concepts"  // First run
+-> "How to use React hooks"        // Second run
+-> "React hooks tutorial"          // Third run
 ```
 
 Even with `temperature=0`, you get slight variations. That breaks the mental model most of us bring from regular unit testing, where `f(x)` always equals the same `y`.
 
 ### What this means for testing
 
-**❌ DON'T test:**
+**DON'T test:**
 
 - Exact text output (`"should return 'Explain React hooks'"`)
 - Specific word choices
 - Response creativity or style
 
-**✅ DO test:**
+**DO test:**
 
 - Output structure (has required fields)
 - Agent routing decisions (`linkedin` vs `rag`)
@@ -139,26 +138,26 @@ yarn test:selector
 First run takes 15–30 seconds — every test is a real OpenAI API call.
 
 <details>
-<summary>🔍 Expected output</summary>
+<summary>Expected output</summary>
 
 ```
 PASS app/agents/__tests__/selector.test.ts
   Selector Agent Routing
     LinkedIn Agent Routing
-      ✓ should route LinkedIn post creation to linkedin agent (2145ms)
-      ✓ should route career advice to linkedin agent (1832ms)
-      ✓ should route professional networking questions to linkedin agent (1654ms)
+      [x] should route LinkedIn post creation to linkedin agent (2145ms)
+      [x] should route career advice to linkedin agent (1832ms)
+      [x] should route professional networking questions to linkedin agent (1654ms)
     RAG Agent Routing
-      ✓ should route technical documentation questions to rag agent (1723ms)
-      ✓ should route coding questions to rag agent (1567ms)
-      ✓ should route framework questions to rag agent (1689ms)
+      [x] should route technical documentation questions to rag agent (1723ms)
+      [x] should route coding questions to rag agent (1567ms)
+      [x] should route framework questions to rag agent (1689ms)
     Response Structure
-      ✓ should return valid response structure (1543ms)
-      ✓ should refine queries (1698ms)
+      [x] should return valid response structure (1543ms)
+      [x] should refine queries (1698ms)
     Edge Cases
-      ✓ should handle very short queries (1421ms)
-      ✓ should handle out-of-domain queries (1589ms)
-      ✓ should handle ambiguous queries (1623ms)
+      [x] should handle very short queries (1421ms)
+      [x] should handle out-of-domain queries (1589ms)
+      [x] should handle ambiguous queries (1623ms)
 
 Test Suites: 1 passed, 1 total
 Tests:       11 passed, 11 total
@@ -194,7 +193,7 @@ All 11 tests should pass. Occasional routing variations are normal — that's no
 
 ## When tests fail
 
-**❌ "Timeout exceeded"**
+**"Timeout exceeded"**
 
 ```
 Test timeout of 5000ms exceeded
@@ -202,7 +201,7 @@ Test timeout of 5000ms exceeded
 
 Tests have a 15s timeout — this means the API is slow or down. Check OpenAI API status, your internet connection, and rate limits.
 
-**❌ "Unexpected agent selected"**
+**"Unexpected agent selected"**
 
 ```
 Expected: 'linkedin'
@@ -215,7 +214,7 @@ This can happen! LLMs are non-deterministic. Ask yourself:
 - Could it reasonably go to either agent?
 - Maybe my expectation is wrong?
 
-**❌ "Missing API key"**
+**"Missing API key"**
 
 ```
 Error: OPENAI_API_KEY is not set
@@ -230,9 +229,9 @@ Two levers:
 1. **Make queries clearer:**
 
 ```typescript
-❌ "Tell me about JavaScript"
-✅ "Write a LinkedIn post about JavaScript"
-✅ "How do I use JavaScript async/await?"
+"Tell me about JavaScript"
+"Write a LinkedIn post about JavaScript"
+"How do I use JavaScript async/await?"
 ```
 
 2. **Accept some randomness** for genuinely ambiguous queries:
@@ -269,14 +268,14 @@ it('should route [scenario] to [agent] agent', async () => {
 Then run `yarn test:selector` and verify all existing tests still pass, your new tests pass, and there are no errors in the output.
 
 <details>
-<summary>💡 Hint 1 — reducing flakiness before it starts</summary>
+<summary>Hint 1 — reducing flakiness before it starts</summary>
 
 Be specific in your test queries. "How can I improve my resume?" is unambiguous LinkedIn territory; "Tell me about careers in tech" could go either way. For any query where you can argue both routings, use `toContain` against both agents instead of `toBe`.
 
 </details>
 
 <details>
-<summary>✅ Example test — try writing your own first</summary>
+<summary>Example test — try writing your own first</summary>
 
 ```typescript
 it('should route resume advice to linkedin agent', async () => {
@@ -314,14 +313,14 @@ yarn test:selector -t "LinkedIn"
 yarn test:selector --watch
 ```
 
-## ✅ Key takeaways
+## Key takeaways
 
 - LLMs are non-deterministic — test **routing decisions and response structure**, never exact output text
 - Tests import the Next.js route handler directly and call it like a function — no running server needed
 - An intermittently failing routing test usually means the query is genuinely ambiguous — clarify the query or accept either agent
 - Keeping assertions loose where the model has legitimate freedom (and tight where it doesn't) is what makes AI test suites stable
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Generate adversarial test cases for my selector

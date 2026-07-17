@@ -1,6 +1,5 @@
 # Day 31 — Tool Calling Concepts
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** the pattern behind every "autonomous agent" you've heard about — tool calling, where the AI decides *when* and *how* to act. You'll learn how it actually works (it's not magic), when it beats a fixed workflow (less often than you'd think), and then refactor your RAG pipeline into a tool the AI chooses to call.
 
@@ -137,8 +136,8 @@ The "decision" the AI makes is *which* tool and *what values*. The *structure* o
 With tool-calling, you define **what** tools exist. The AI decides **when** to use them.
 
 ```
-Traditional Code:    You → decide order → call functions → return result
-Tool-Calling:        You → define tools → AI decides → AI calls → AI responds
+Traditional Code:    You -> decide order -> call functions -> return result
+Tool-Calling:        You -> define tools -> AI decides -> AI calls -> AI responds
 ```
 
 This is powerful for **autonomous agents** that need to figure things out on their own.
@@ -192,7 +191,7 @@ Here's the trade-off:
 
 Why?
 
-1. **You usually know what needs to happen.** If you're building a RAG app, you know every query needs: embed → search → rerank → generate. Why make the AI figure that out?
+1. **You usually know what needs to happen.** If you're building a RAG app, you know every query needs: embed -> search -> rerank -> generate. Why make the AI figure that out?
 2. **Workflows are testable.** You can unit test each step. With tool-calling, the AI might take different paths for similar inputs.
 3. **Workflows are cheaper.** No extra LLM calls to decide what to do.
 4. **Workflows are debuggable.** When something breaks, you know exactly where.
@@ -214,7 +213,7 @@ You'll hear this exact pitch at work — practice the reply:
 ```scenario
 {
   "who": "A product manager",
-  "setting": "Roadmap review. Your docs Q&A bot runs the fixed embed → search → rerank pipeline, and users are happy with it.",
+  "setting": "Roadmap review. Your docs Q&A bot runs the fixed embed -> search -> rerank pipeline, and users are happy with it.",
   "ask": "I keep reading about agents. Let's give the chatbot tool calling so it can answer from our docs — that's how everyone's building these now.",
   "note": "The bot already answers from the docs. Pick the reply you'd actually give.",
   "options": [
@@ -239,7 +238,7 @@ You'll hear this exact pitch at work — practice the reply:
       "feedback": "Right conclusion for this feature, reasoning that won't survive the follow-up: 'so when WOULD we use it?' Dismissing the technique instead of matching it to the use case teaches the PM nothing — the suggestion comes back next quarter with a blog post attached."
     }
   ],
-  "debrief": "The question is never 'is tool calling good?' — it's 'who should orchestrate?' When every request needs the same steps (embed → search → answer), your code should decide: cheaper, testable, and it can't choose wrong. Save the model's judgment for workflows you genuinely can't script in advance."
+  "debrief": "The question is never 'is tool calling good?' — it's 'who should orchestrate?' When every request needs the same steps (embed -> search -> answer), your code should decide: cheaper, testable, and it can't choose wrong. Save the model's judgment for workflows you genuinely can't script in advance."
 }
 ```
 
@@ -279,7 +278,7 @@ And the inverse conversation — where tools ARE the right call and someone's pu
 
 ## Your challenge: implement tool-calling RAG
 
-Now it's your turn. Take your existing RAG workflow — the embed → search → rerank pipeline from [/learn/day-22](/learn/day-22) and [/learn/day-23](/learn/day-23) — and refactor it to use tool-calling.
+Now it's your turn. Take your existing RAG workflow — the embed -> search -> rerank pipeline from [/learn/day-22](/learn/day-22) and [/learn/day-23](/learn/day-23) — and refactor it to use tool-calling.
 
 **Create:** `app/api/tool-calling-agent/route.ts`
 
@@ -296,14 +295,14 @@ Now it's your turn. Take your existing RAG workflow — the embed → search →
 4. `"Explain React hooks"` — should call the tool
 
 <details>
-<summary>💡 Hint 1 — where does your existing RAG logic go?</summary>
+<summary>Hint 1 — where does your existing RAG logic go?</summary>
 
-Wrap your whole retrieval pipeline (embed → search → rerank) inside a single tool's `execute` function. The tool takes a `query` string and returns the reranked context as text. Your existing [`app/agents/rag.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/agents/rag.ts) already has all the pieces — you're just relocating them behind a tool boundary.
+Wrap your whole retrieval pipeline (embed -> search -> rerank) inside a single tool's `execute` function. The tool takes a `query` string and returns the reranked context as text. Your existing [`app/agents/rag.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/agents/rag.ts) already has all the pieces — you're just relocating them behind a tool boundary.
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — making the AI decide correctly</summary>
+<summary>Hint 2 — making the AI decide correctly</summary>
 
 - Use `toolChoice: 'auto'` so the AI decides when to search.
 - Write a specific `description` — it's how the AI knows *when* to use the tool ("Search the documentation for technical questions about React, hooks, components...").
@@ -327,7 +326,7 @@ Before tomorrow, consider these scenarios. For each one, would you use tool-call
 
 Write down your answers. We'll go through them tomorrow in [/learn/day-32](/learn/day-32) — where we reveal our implementation and discuss when workflows beat tool-calling (spoiler: most of the time).
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Tool-calling = you define **what** tools exist, the AI decides **when** and with **what arguments** to call them
 - It's not magic: the tool name, description, and Zod-schema-turned-JSON-Schema are sent to the model up front — the model fills in a shape you defined
@@ -335,12 +334,12 @@ Write down your answers. We'll go through them tomorrow in [/learn/day-32](/lear
 - Fixed workflows beat tool-calling when the steps are known: cheaper, testable, debuggable, predictable
 - Reach for tool-calling only when the task is genuinely open-ended and the sequence of actions can't be known in advance
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Debug my tool-calling RAG route with me
 ---
-I'm building app/api/tool-calling-agent/route.ts with the Vercel AI SDK: a single search tool wrapping my embed → Pinecone search → rerank pipeline, toolChoice: 'auto', and a system prompt telling the model when NOT to search. My four test cases: "Thanks for your help!" and "Hello, what can you do?" should skip the tool; "How do I use useEffect?" and "Explain React hooks" should call it.
+I'm building app/api/tool-calling-agent/route.ts with the Vercel AI SDK: a single search tool wrapping my embed -> Pinecone search -> rerank pipeline, toolChoice: 'auto', and a system prompt telling the model when NOT to search. My four test cases: "Thanks for your help!" and "Hello, what can you do?" should skip the tool; "How do I use useEffect?" and "Explain React hooks" should call it.
 
 Here's my code and what's happening: [paste code + behavior]
 

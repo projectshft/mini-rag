@@ -1,6 +1,5 @@
 # Day 17 — Implementing the Selector (Text-Based)
 
-**Time:** ~90 min · Build
 
 > **Today:** you implement the brain of your agent system. The selector reads conversation history, picks the right agent, and refines the query — starting with the simplest approach: text in, text out, parse it yourself.
 
@@ -52,18 +51,18 @@ We'll start with the simplest approach: ask the LLM to return text in a specific
 
 **Pros:**
 
-- ✅ Simple to understand and debug
-- ✅ Easy to see what the LLM returns (just read the text)
-- ✅ Works reliably with clear prompts
-- ✅ No extra dependencies
-- ✅ Good for learning and prototyping
+- Simple to understand and debug
+- Easy to see what the LLM returns (just read the text)
+- Works reliably with clear prompts
+- No extra dependencies
+- Good for learning and prototyping
 
 **Cons:**
 
-- ❌ Manual string parsing (can be brittle)
-- ❌ No type safety
-- ❌ LLM might not always follow the format exactly
-- ❌ Extra error handling needed
+- Manual string parsing (can be brittle)
+- No type safety
+- LLM might not always follow the format exactly
+- Extra error handling needed
 
 (You'll fix the cons on [Day 18](/learn/day-18) by upgrading to structured outputs.)
 
@@ -110,7 +109,7 @@ Replace the first TODO block with an OpenAI call.
 - Include `recentMessages` for context
 
 <details>
-<summary>💡 Hint 1 — the shape of the call</summary>
+<summary>Hint 1 — the shape of the call</summary>
 
 You need `openaiClient.chat.completions.create()` with a `model` and a `messages` array. The first message is your `system` prompt; the rest are the recent conversation messages spread in after it.
 
@@ -119,7 +118,7 @@ Think about what belongs in the system prompt: the router's job, the agent list 
 </details>
 
 <details>
-<summary>💡 Hint 2 — a starting skeleton</summary>
+<summary>Hint 2 — a starting skeleton</summary>
 
 ```typescript
 const completion = await openaiClient.chat.completions.create({
@@ -154,14 +153,14 @@ Extract the agent and query from the LLM's text response.
 - Extract the values after the colons
 
 <details>
-<summary>💡 Hint 1 — which array methods?</summary>
+<summary>Hint 1 — which array methods?</summary>
 
 `content.split('\n')` gives you lines. `Array.prototype.find()` with `line.startsWith('AGENT:')` locates the right line. Then split that line on `':'` and `.trim()` the second piece. Use optional chaining everywhere — the LLM might not have followed the format.
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — the parsing code</summary>
+<summary>Hint 2 — the parsing code</summary>
 
 ```typescript
 const lines = content.split('\n');
@@ -186,7 +185,7 @@ Add validation to handle edge cases.
 - Return a JSON response with `agent` and `query`
 
 <details>
-<summary>💡 Hint — validation with a fallback</summary>
+<summary>Hint — validation with a fallback</summary>
 
 ```typescript
 const validAgent =
@@ -203,7 +202,7 @@ Why default to `'rag'`? It's the safest generalist — a misrouted technical que
 </details>
 
 <details>
-<summary>✅ Solution — don't open until you've tried all three steps</summary>
+<summary>Solution — don't open until you've tried all three steps</summary>
 
 ```typescript
 export async function POST(req: NextRequest) {
@@ -302,7 +301,7 @@ curl -X POST http://localhost:3000/api/select-agent \
 ```
 
 <details>
-<summary>🔍 Expected output</summary>
+<summary>Expected output</summary>
 
 ```json
 {
@@ -313,8 +312,8 @@ curl -X POST http://localhost:3000/api/select-agent \
 
 **What to check:**
 
-- ✅ Agent is `"rag"` (technical documentation question)
-- ✅ Query is refined (removed the "How do I" conversational language)
+- Agent is `"rag"` (technical documentation question)
+- Query is refined (removed the "How do I" conversational language)
 
 </details>
 
@@ -334,7 +333,7 @@ curl -X POST http://localhost:3000/api/select-agent \
 ```
 
 <details>
-<summary>🔍 Expected output</summary>
+<summary>Expected output</summary>
 
 ```json
 {
@@ -408,12 +407,12 @@ For a high-traffic app, this choice saves thousands of dollars.
 **Cause:** agent descriptions too vague. **Solution:** update [`app/agents/config.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/agents/config.ts) with specific descriptions:
 
 ```typescript
-// ❌ Too vague
+// Too vague
 linkedin: {
 	description: 'For professional content';
 }
 
-// ✅ Specific
+// Specific
 linkedin: {
 	description: 'For questions about LinkedIn profiles, professional networking, career advice, and creating LinkedIn posts';
 }
@@ -453,7 +452,7 @@ const query =
 	'';
 ```
 
-## ✅ Key takeaways
+## Key takeaways
 
 - The selector is one LLM call: system prompt (role + agent list + output format) plus the last 5 conversation messages
 - Text-based output is great for learning and debugging, but parsing free text is brittle — the LLM isn't forced to follow your format
@@ -461,7 +460,7 @@ const query =
 - Query refinement strips conversational fluff, which pays off directly in retrieval quality
 - gpt-4o-mini is the right model for routing: classification runs on every message, so speed and cost dominate
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Generate adversarial test cases for my selector

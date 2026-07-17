@@ -90,7 +90,7 @@ export function OrderSteps({ source }: { source: string }) {
 	return (
 		<div className='not-prose my-6 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm'>
 			<p className='text-xs font-semibold uppercase tracking-wide text-zinc-400'>
-				🧩 {title}
+				{title}
 			</p>
 			<p className='mt-1 text-xs text-zinc-400'>
 				Tap the steps in the order they happen. Tap a placed step to put it back.

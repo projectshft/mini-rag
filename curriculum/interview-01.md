@@ -1,6 +1,5 @@
 # The AI Engineering Interview Playbook
 
-**Time:** ~20 min · Read
 
 > **This session:** how AI engineering interviews actually work, why the conversation portion — not the coding portion — is where most candidates lose the offer, and the plan for the next four sessions: a signature story, defensible opinions, system design frameworks, and live practice.
 
@@ -40,7 +39,7 @@ By the end of these sessions, you'll have:
 
 ### 1. [Your Signature Story](/learn/interview-02) — most important
 
-Craft a clear, compelling story about your RAG project using the **Problem → Agitate → Solve → Reflect** framework.
+Craft a clear, compelling story about your RAG project using the **Problem -> Agitate -> Solve -> Reflect** framework.
 
 **Deliverables:** a written story, then a 1–5 minute video recording (no notes), submitted for feedback.
 
@@ -90,17 +89,17 @@ Re-record until you can explain clearly without reading notes.
 
 They are NOT looking for:
 
-- ❌ Perfect answers
-- ❌ Memorized scripts
-- ❌ Buzzword bingo
+- Perfect answers
+- Memorized scripts
+- Buzzword bingo
 
 They ARE looking for:
 
-- ✅ Clear thinking
-- ✅ Tradeoff awareness
-- ✅ Strong opinions (with reasoning)
-- ✅ Communication skills
-- ✅ System design ability
+- Clear thinking
+- Tradeoff awareness
+- Strong opinions (with reasoning)
+- Communication skills
+- System design ability
 
 **The best candidates don't just explain what they built — they explain why they built it that way.**
 
@@ -120,15 +119,15 @@ The coding portion of AI engineering interviews typically follows traditional so
 
 If you want help preparing for traditional coding interviews, ask in the course Slack.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - The conversation portion — explaining what you built and why — is where AI interviews diverge from standard SWE interviews, and where most candidates stumble
 - Preparation means internalizing frameworks and practicing out loud, not memorizing scripts
 - Interviewers reward clear thinking, tradeoff awareness, and defensible opinions — not perfect answers
 - The workflow for every session: write first, record on video, watch it back, iterate
-- Work through the sessions in order: signature story → opinions → system design → (optional) live practice
+- Work through the sessions in order: signature story -> opinions -> system design -> (optional) live practice
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Audit my interview readiness before I start

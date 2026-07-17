@@ -14,9 +14,24 @@ export async function ensureStudent(): Promise<string | null> {
 	if (!existing) {
 		const user = await currentUser();
 		const email = user?.primaryEmailAddress?.emailAddress ?? '';
-		await lmsPrisma.student.create({
-			data: { id: userId, email, firstSeenAt: new Date() },
-		});
+		try {
+			// The email is unique. A row may already hold it under a *different*
+			// Clerk id — e.g. after switching Clerk instances (keyless -> dev ->
+			// production), which re-issues user ids. Drop that orphaned row (its
+			// progress cascades) so the current id can claim the email.
+			if (email) {
+				await lmsPrisma.student.deleteMany({ where: { email, NOT: { id: userId } } });
+			}
+			await lmsPrisma.student.create({
+				data: { id: userId, email, firstSeenAt: new Date() },
+			});
+		} catch (e) {
+			// Next.js fires several concurrent requests per navigation, so two of
+			// them can race to create the same first-time student row. A unique
+			// violation (P2002) just means another request already won — the row
+			// exists, so treat it as success rather than crashing the page.
+			if ((e as { code?: string })?.code !== 'P2002') throw e;
+		}
 	}
 	return userId;
 }

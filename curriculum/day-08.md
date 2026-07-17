@@ -1,6 +1,5 @@
 # Day 8 — Understanding Chunking
 
-**Time:** ~60 min · Hands-on
 
 > **Today:** before you can vectorize documents, you have to break them into pieces. How you break them — chunking — quietly decides how good your entire RAG system will be. You'll learn the strategies, then implement the one function that makes overlap work.
 
@@ -10,33 +9,34 @@
 
 ## Why chunking matters
 
-### The problem
+### The real reason: retrievable units with the right context
 
-Documents are too long:
+Chunking isn't mainly about staying under a size limit — it's about making each *retrievable unit* a focused slice of meaning that carries enough context to stand on its own. Retrieval hands the LLM whole chunks, so where you draw the chunk boundaries decides what context the model actually gets to reason over.
 
-- Embedding models have token limits (8,191 tokens for `text-embedding-3-small`)
-- Embedding an entire document dilutes meaning — you get the "average" of everything in it
-- A user asks about hooks → retrieval hands back an entire 50,000-word doc
-- Huge docs don't fit in the LLM's context window anyway
+- One vector for a whole document is the *average* of everything in it — specific about nothing. A question about hooks barely matches a doc that's also about routing, state, testing, and deployment.
+- Retrieval returns whole units. If your unit is a 50,000-word doc, the one relevant paragraph is buried in a haystack and its signal is diluted by everything around it.
+- The goal for each chunk: **one coherent topic, plus enough surrounding context to be understood without the rest of the document.** A chunk that's too small loses the context that makes it answerable; too big and it dilutes back into an "average."
+
+Token limits are a real constraint too — embedding models cap out (8,191 tokens for `text-embedding-3-small`) and LLM context windows are finite — but that's the *secondary* reason. Even with unlimited limits you'd still chunk, because precise retrieval demands it.
 
 ### The solution
 
 ```
 50,000-word Document
-        ↓
-Break into 100 chunks of ~500 chars each
-        ↓
-Each chunk = focused topic
-        ↓
-Retrieve only the relevant chunks
+        |
+Break into focused chunks, each one coherent topic + context
+        |
+Each chunk retrievable and self-contained
+        |
+Retrieve only the chunks relevant to the query
 ```
 
 **Benefits:**
 
-- Focused, specific meaning per chunk
+- Focused, specific meaning per chunk — the query matches the right unit, not a diluted blob
 - Better embeddings (each vector captures one concept, not fifty)
-- Precise retrieval — you get exactly what you need
-- Results fit comfortably in context windows
+- Precise retrieval, and each retrieved chunk carries enough context to answer well
+- As a bonus, focused chunks also stay well within token and context-window limits
 
 ```visual
 chunking | Fixed-size vs structure-aware chunking
@@ -44,7 +44,7 @@ chunking | Fixed-size vs structure-aware chunking
 
 ## Bad chunking examples
 
-### ❌ Character splitting
+### Character splitting
 
 ```typescript
 function badCharacterChunking(text: string): string[] {
@@ -58,7 +58,7 @@ function badCharacterChunking(text: string): string[] {
 
 **Problem:** breaks words mid-character!
 
-### ❌ Word splitting
+### Word splitting
 
 ```typescript
 function badWordChunking(text: string): string[] {
@@ -78,7 +78,7 @@ function badWordChunking(text: string): string[] {
 ```typescript
 // Original: "React Hooks were introduced in React 16.8. They allow you to use state..."
 
-// ❌ Bad chunking produces:
+// Bad chunking produces:
 [
 	'React Hooks were introduced in React 16.8. They allow you to use state without wri',
 	'ting a class component...',
@@ -124,8 +124,8 @@ Chunk 2: "It returns a pair of values..."
 
 User asks: "what does useState return?"
 
-- Chunk 1 has "useState" but not "return" ❌
-- Chunk 2 has "return" but not "useState" ❌
+- Chunk 1 has "useState" but not "return" 
+- Chunk 2 has "return" but not "useState" 
 
 **With overlap (50 chars):**
 
@@ -134,7 +134,7 @@ Chunk 1: "...useState is a hook."
 Chunk 2: "useState is a hook. It returns a pair of values..."
 ```
 
-Now chunk 2 has BOTH "useState" AND "return" ✅
+Now chunk 2 has BOTH "useState" AND "return" 
 
 ### How much overlap?
 
@@ -175,12 +175,12 @@ The chunking logic in [`app/libs/chunking.ts`](https://github.com/projectshft/mi
 // Without getLastWords (no overlap):
 Chunk 1: "React Hooks allow you to use state."
 Chunk 2: "The most common hooks are useState."
-// Query: "What do React Hooks do?" → Might miss Chunk 2!
+// Query: "What do React Hooks do?" -> Might miss Chunk 2!
 
 // With getLastWords (proper overlap):
 Chunk 1: "React Hooks allow you to use state."
 Chunk 2: "allow you to use state. The most common hooks are useState."
-// Query: "What do React Hooks do?" → Finds both chunks! ✅
+// Query: "What do React Hooks do?" -> Finds both chunks! 
 ```
 
 ### Test-driven development
@@ -215,14 +215,14 @@ function getLastWords(text: string, maxLength: number): string {
 **Step 4 — implement it yourself before opening any hints.** Then re-run `yarn test:chunking` until all 18 tests pass.
 
 <details>
-<summary>💡 Hint 1 — the shape of the algorithm</summary>
+<summary>Hint 1 — the shape of the algorithm</summary>
 
 Handle the easy case first: if the whole text already fits in `maxLength`, return it as-is. Otherwise split into words and build a result string by walking **backwards** from the last word, stopping before you'd exceed `maxLength`.
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — the two classic off-by-one traps</summary>
+<summary>Hint 2 — the two classic off-by-one traps</summary>
 
 1. When you prepend a word onto a non-empty result, the joining **space counts** toward the length (`word.length + 1`).
 2. You're building the string back-to-front, so each accepted word goes on the **front** of the result — `word + ' ' + result`, not `result + ' ' + word`.
@@ -230,7 +230,7 @@ Handle the easy case first: if the whole text already fits in `maxLength`, retur
 </details>
 
 <details>
-<summary>✅ Solution — don't open until yarn test:chunking is green (or you're truly stuck)</summary>
+<summary>Solution — don't open until yarn test:chunking is green (or you're truly stuck)</summary>
 
 ```typescript
 function getLastWords(text: string, maxLength: number): string {
@@ -335,13 +335,13 @@ Embed each chunk into a vector
 Upsert vectors + metadata to Pinecone
 ```
 
-**Want to go deeper?** There's an optional lab where you download the entire King James Bible — 4 MB, 66 books, ~31,000 verses — design your own chunking strategy for it, and store it in your own Pinecone index with citations intact: [Chunk the Bible](/learn/bonus-bible-chunking). It's the single best rep for making chunking decisions from the corpus instead of from habit.
+**Optional, but strongly encouraged.** There's a lab where you download the entire King James Bible — 4 MB, 66 books, ~31,000 verses — design your own chunking strategy for it, and store it in your own Pinecone index with citations intact: [Chunk the Bible](/learn/bonus-bible-chunking). It's not required to move on, but it's the single best rep for making chunking decisions from the corpus instead of from habit — do it if you can.
 
 ## Beyond plain text: PDFs and other modalities
 
 Let's be upfront about something: this course chunks and embeds **plain text**, because text is how the overwhelming majority of production RAG systems work — and every skill you're building transfers directly. But the data you'll meet at work isn't always a clean string. It's PDFs with tables and figures. Screenshots. Diagrams. Recorded meetings. You don't need to master those today — you need to know they exist and **what to reach for** when one lands on your desk.
 
-The good news: the pipeline never changes. It's always **extract → represent → embed → upsert**. What changes is how each kind of content becomes a vector.
+The good news: the pipeline never changes. It's always **extract -> represent -> embed -> upsert**. What changes is how each kind of content becomes a vector.
 
 ### PDFs: extraction is the whole game
 
@@ -410,21 +410,21 @@ Different content, different knife. Prove you can pick the right one:
 **Multimodal:**
 
 - [Embedding Methods for Image Search](https://www.pinecone.io/learn/series/image-search/) — Pinecone's series, including [Multi-modal ML with OpenAI's CLIP](https://www.pinecone.io/learn/series/image-search/clip/)
-- [CLIP text↔image search notebook](https://github.com/pinecone-io/examples/blob/master/learn/search/multi-modal/clip-search/clip-text-image-search.ipynb) — runnable end-to-end example against a Pinecone index
+- [CLIP text<->image search notebook](https://github.com/pinecone-io/examples/blob/master/learn/search/multi-modal/clip-search/clip-text-image-search.ipynb) — runnable end-to-end example against a Pinecone index
 - [Voyage multimodal embeddings](https://docs.voyageai.com/docs/multimodal-embeddings) — embeds interleaved text + images (great for document screenshots); see also [voyage-multimodal-3](https://blog.voyageai.com/2024/11/12/voyage-multimodal-3/)
 - [Cohere: multimodal Embed 3](https://cohere.com/blog/multimodal-embed-3) — another production multimodal model
 - [Weaviate multi2vec-clip](https://weaviate.io/developers/weaviate/modules/retriever-vectorizer-modules/multi2vec-clip) — the "model bundled into the database" alternative, for contrast with Pinecone's bring-your-own-vectors approach
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Chunking is critical to RAG quality: retrieval returns chunks, so chunk boundaries decide what the LLM ever sees
 - Naive strategies (fixed character or word counts) break words and sentences — meaning dies at the boundary
 - Sentence-aware splitting + overlap is the workhorse strategy: split on `.!?`, accumulate to a size limit, carry the tail forward
 - 10–20% overlap (50–100 chars for 500-char chunks) preserves boundary context without wasteful duplication
 - Chunk metadata (`source`, `chunkIndex`, `totalChunks`) is what makes retrieval results traceable and reconstructable
-- The pipeline (extract → represent → embed → upsert) never changes across modalities — PDFs need layout-aware extraction (+ OCR for scans), and multimodal models put text and images in one shared space; Pinecone just stores the vectors either way
+- The pipeline (extract -> represent -> embed -> upsert) never changes across modalities — PDFs need layout-aware extraction (+ OCR for scans), and multimodal models put text and images in one shared space; Pinecone just stores the vectors either way
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Quiz me on chunking strategy

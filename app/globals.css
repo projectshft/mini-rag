@@ -223,3 +223,80 @@ li:hover > .rest-day-row .rest-day-label,
 	animation: lms-palm-sway 0.9s ease-in-out infinite;
 	transform-origin: bottom center;
 }
+
+/* Landing page animations */
+@keyframes landing-float {
+	0%,
+	100% {
+		transform: translate(-50%, -50%);
+	}
+	50% {
+		transform: translate(-50%, calc(-50% - 9px));
+	}
+}
+@keyframes landing-pulse {
+	0%,
+	100% {
+		opacity: 0.55;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+/* Cards ease up and in as the "what makes it different" grid arrives. */
+@keyframes landing-rise {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+/* A slow, low-amplitude drift for the accent orb behind the closing section. */
+@keyframes landing-drift {
+	0%,
+	100% {
+		transform: translate(0, 0);
+	}
+	50% {
+		transform: translate(-18px, 14px);
+	}
+}
+/* The "humans in the loop" connection dot breathes gently. */
+@keyframes landing-link {
+	0%,
+	100% {
+		opacity: 0.5;
+		box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.35);
+	}
+	50% {
+		opacity: 1;
+		box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
+	}
+}
+.landing-float {
+	animation: landing-float 4s ease-in-out infinite;
+}
+.landing-pulse {
+	animation: landing-pulse 2.4s ease-in-out infinite;
+}
+.landing-rise {
+	animation: landing-rise 0.7s ease-out both;
+}
+.landing-drift {
+	animation: landing-drift 14s ease-in-out infinite;
+}
+.landing-link {
+	animation: landing-link 3s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+	.landing-float,
+	.landing-pulse,
+	.landing-rise,
+	.landing-drift,
+	.landing-link {
+		animation: none;
+	}
+}

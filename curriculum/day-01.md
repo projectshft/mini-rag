@@ -1,6 +1,5 @@
 # Day 1 — How to Learn + What is RAG
 
-**Time:** ~45 min · Read + Watch
 
 > **Today:** how this course works (and why you'll be recording videos), then the core idea behind everything we build for the next six weeks: Retrieval-Augmented Generation.
 
@@ -142,14 +141,14 @@ Throughout this curriculum, we'll build a **Document Q&A System** that can:
 
 All in **TypeScript**. You'll work in the [`student-todo-exercises`](https://github.com/projectshft/mini-rag/tree/student-todo-exercises) branch — starter code with TODOs you complete as the course progresses.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - RAG = **Retrieval** (find relevant docs) + **Generation** (answer using them as context) — an open-book exam for AI
 - RAG beats retraining when knowledge changes often: update the documents, not the model
 - Hallucination is the failure mode RAG attacks: ground answers in retrieved facts
 - Explaining concepts simply (Feynman Technique) is how you'll actually learn this — the weekly videos are the workout
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Quiz me on RAG fundamentals

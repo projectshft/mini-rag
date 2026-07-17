@@ -1,6 +1,5 @@
 # Day 33 — RAG Without Vectors: The SQL Agent
 
-**Time:** ~60 min · Read + Code
 
 > **Today:** a reality check on vector search. Not all "retrieval" needs embeddings — for structured data with known schemas, plain database queries are more precise, faster, and cheaper. You'll learn when SQL beats vectors, how an LLM translates natural language into safe database queries, and start the SQL agent you'll submit as Assignment 4.
 
@@ -47,12 +46,12 @@ const results = await index.query({
 
 | Question | SQL | Vector |
 |----------|-----|--------|
-| Do I know the exact field names? | ✅ | |
-| Is the data structured with a schema? | ✅ | |
-| Do I need aggregations (COUNT, SUM, AVG)? | ✅ | |
-| Is the query about meaning/similarity? | | ✅ |
-| Is the content unstructured text? | | ✅ |
-| Do users ask in natural language? | Depends | ✅ |
+| Do I know the exact field names? | | |
+| Is the data structured with a schema? | | |
+| Do I need aggregations (COUNT, SUM, AVG)? | | |
+| Is the query about meaning/similarity? | | |
+| Is the content unstructured text? | | |
+| Do users ask in natural language? | Depends | |
 
 ## Hybrid approach: best of both
 
@@ -124,7 +123,7 @@ Every field is `optional()` because users rarely specify everything — "I need 
 ### The dangerous way (raw SQL)
 
 ```typescript
-// ❌ NEVER DO THIS - SQL injection vulnerability
+// NEVER DO THIS - SQL injection vulnerability
 const query = `SELECT * FROM users WHERE name = '${userInput}'`;
 
 // User inputs: "'; DROP TABLE users; --"
@@ -134,7 +133,7 @@ const query = `SELECT * FROM users WHERE name = '${userInput}'`;
 ### The safe way (Prisma)
 
 ```typescript
-// ✅ Prisma uses parameterized queries
+// Prisma uses parameterized queries
 const users = await prisma.user.findMany({
   where: { name: userInput }
 });
@@ -196,7 +195,7 @@ Complete the `databaseSearchAgent` in `app/agents/databaseSearchAgent.ts`:
 
 1. Define the Zod schema for extracted parameters
 2. Build a Prisma WHERE clause from those parameters
-3. Implement the full agent flow (prompt → LLM → query → format)
+3. Implement the full agent flow (prompt -> LLM -> query -> format)
 
 **Test these queries work:**
 
@@ -205,14 +204,14 @@ Complete the `databaseSearchAgent` in `app/agents/databaseSearchAgent.ts`:
 - "I need gaming influencers"
 
 <details>
-<summary>💡 Hint 1 — the schema</summary>
+<summary>Hint 1 — the schema</summary>
 
 Look at the Prisma schema in the repo first — your Zod schema should mirror the queryable columns (genre, location, tier, price range). Make every field `.optional()`: "I need gaming influencers" specifies only genre, and the extraction must not fail because location is missing. Use `z.enum()` for tier so the model can only return valid values, and `.describe()` each field so the model knows what maps where ("maxPrice: the maximum budget in dollars, e.g. 500 for 'under $500'").
 
 </details>
 
 <details>
-<summary>💡 Hint 2 — the WHERE clause</summary>
+<summary>Hint 2 — the WHERE clause</summary>
 
 Build the object conditionally — only include keys the LLM actually extracted:
 
@@ -234,7 +233,7 @@ Case-insensitive matching matters — users type "la", "LA", and "Los Angeles".
 </details>
 
 <details>
-<summary>💡 Hint 3 — the agent flow</summary>
+<summary>Hint 3 — the agent flow</summary>
 
 Three steps, all patterns you've built before: (1) call the LLM with a system prompt describing the extraction task + `zodResponseFormat(QueryParamsSchema, ...)` to get params (day 18's structured outputs), (2) `prisma.influencer.findMany({ where })` with your constructed clause, (3) format the rows into a readable response — either template the results directly or hand them to the LLM as context for a natural-language summary.
 
@@ -246,15 +245,15 @@ Three steps, all patterns you've built before: (1) call the LLM with a system pr
 
 Post your progress in Slack — WHERE-clause edge cases ("under $500" vs "between $200 and $500") make good discussion.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - "Retrieval" in RAG doesn't have to mean vectors — structured data with a known schema is SQL territory: exact matches, aggregations, joins, sorting
 - Vector search earns its keep on unstructured text and meaning-based queries; production systems often route between both (your day-17 router pattern)
-- The safe SQL agent pattern: LLM extracts **typed parameters** via structured outputs → your code builds a **parameterized** Prisma query — the model never writes SQL
+- The safe SQL agent pattern: LLM extracts **typed parameters** via structured outputs -> your code builds a **parameterized** Prisma query — the model never writes SQL
 - Optional Zod fields + enums make extraction robust to partial queries and impossible values
 - Parameterized queries treat user input as data, never code — that's why Prisma is injection-safe by construction
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Generate test queries for my databaseSearchAgent

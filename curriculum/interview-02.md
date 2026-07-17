@@ -1,8 +1,7 @@
 # Your Signature Story
 
-**Time:** ~90 min · Write + Record
 
-> **This session:** the most important skill in AI interviews — one clear, compelling story about a project you've built, structured with the Problem → Agitate → Solve → Reflect framework. You'll write it, record it, and iterate until it flows.
+> **This session:** the most important skill in AI interviews — one clear, compelling story about a project you've built, structured with the Problem -> Agitate -> Solve -> Reflect framework. You'll write it, record it, and iterate until it flows.
 
 ## Video walkthrough
 
@@ -27,7 +26,7 @@ Most engineers ramble when asked "Tell me about a project you built":
 - Don't explain why they made certain choices
 - Run out of time before explaining outcomes
 
-The fix is structure: the **Problem → Agitate → Solve → Reflect** framework.
+The fix is structure: the **Problem -> Agitate -> Solve -> Reflect** framework.
 
 ## What the interviewer is really asking
 
@@ -86,10 +85,10 @@ Make the problem feel real and non-trivial.
 **Good vs bad:**
 
 ```
-❌ "The problem was we needed to search documents."
+"The problem was we needed to search documents."
    (Too vague, not compelling)
 
-✅ "The challenge was that naive keyword search returned irrelevant results.
+"The challenge was that naive keyword search returned irrelevant results.
    When a user asked 'How do hooks work?', keyword search would return
    every mention of the word 'hooks' across thousands of docs - most
    were useless. We needed semantic understanding, not keyword matching."
@@ -163,7 +162,7 @@ Walk through your architecture at a high level.
 
 **Template:**
 
-"The system works like this: [step 1] → [step 2] → [step 3] → [result]"
+"The system works like this: [step 1] -> [step 2] -> [step 3] -> [result]"
 
 **Example:**
 
@@ -173,7 +172,7 @@ Walk through your architecture at a high level.
 
 ```
 The system works like this:
-[Step 1] → [Step 2] → [Step 3] → [Result]
+[Step 1] -> [Step 2] -> [Step 3] -> [Result]
 ```
 
 ### 5. Challenges / failures
@@ -240,33 +239,33 @@ Your complete story should flow naturally through the six sections:
 
 ### Mistake 1: starting with implementation
 
-❌ "So I used TypeScript and Next.js and I installed Pinecone and..."
+"So I used TypeScript and Next.js and I installed Pinecone and..."
 
-✅ "I built a RAG system for querying documentation. The challenge was..."
+"I built a RAG system for querying documentation. The challenge was..."
 
 **Start with the problem, not the tech stack.**
 
 ### Mistake 2: no tradeoffs
 
-❌ "I used vector search because it's better."
+"I used vector search because it's better."
 
-✅ "I chose vector search over keyword search because I needed semantic understanding. The tradeoff was cost - embeddings are expensive - but relevance mattered more."
+"I chose vector search over keyword search because I needed semantic understanding. The tradeoff was cost - embeddings are expensive - but relevance mattered more."
 
 **Always explain why you chose one option over another.**
 
 ### Mistake 3: vague problems
 
-❌ "The problem was we needed to search data."
+"The problem was we needed to search data."
 
-✅ "The problem was that with 10,000 documents, keyword search returned 500 results for common terms. Users couldn't find what they needed."
+"The problem was that with 10,000 documents, keyword search returned 500 results for common terms. Users couldn't find what they needed."
 
 **Make the problem specific and real.**
 
 ### Mistake 4: no reflection
 
-❌ "And that's my project."
+"And that's my project."
 
-✅ "If I did this again, I'd implement observability earlier. Debugging LLM failures without logs was painful."
+"If I did this again, I'd implement observability earlier. Debugging LLM failures without logs was painful."
 
 **End with what you learned or would change.**
 
@@ -275,7 +274,7 @@ Your complete story should flow naturally through the six sections:
 Draft your own six sections first — then read this complete example and compare it against yours.
 
 <details>
-<summary>✅ Complete example story — draft yours before opening</summary>
+<summary>Complete example story — draft yours before opening</summary>
 
 ### What I built
 
@@ -358,9 +357,9 @@ Record yourself telling your signature story and submit for feedback.
 
 **What to watch for when reviewing:**
 
-❌ Red flags: reading from notes, too many "um" or "like" filler words, losing track of structure, rambling without focus, forgetting to explain tradeoffs
+Red flags: reading from notes, too many "um" or "like" filler words, losing track of structure, rambling without focus, forgetting to explain tradeoffs
 
-✅ Good signs: clear structure (you can hear the sections), natural pacing, explaining "why" not just "what", confident delivery, concise and focused
+Good signs: clear structure (you can hear the sections), natural pacing, explaining "why" not just "what", confident delivery, concise and focused
 
 **What you'll receive feedback on:** structure and framework adherence, clarity of explanations, tradeoff discussion, delivery and confidence, areas to improve for interviews.
 
@@ -396,15 +395,15 @@ Don't submit take 1. Do at least 3 takes.
 
 If your explanation is getting long, you're probably including too much technical detail, explaining implementation instead of decisions, or rambling without structure. Cut ruthlessly. Focus on the framework.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - One practiced story beats ten improvised ones — interviewers are testing capability, leadership, impact, and whether they can imagine you solving *their* problems
-- The six-section flow: what I built → the problem → my approach → system design → challenges → what I learned
+- The six-section flow: what I built -> the problem -> my approach -> system design -> challenges -> what I learned
 - The approach section carries the most weight: name the alternatives you considered and why the tradeoffs pointed to your choice
 - Start with the problem, never the tech stack — and always end with what you'd do differently
 - Write first, then record without notes, then watch it back and re-record — at least 3 takes
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Pressure-test my signature story

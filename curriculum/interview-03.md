@@ -1,6 +1,5 @@
 # Strong Opinions on Tradeoffs
 
-**Time:** ~90 min · Write + Record
 
 > **This session:** most candidates describe — strong candidates take positions and defend them. You'll develop defensible opinions on the five topics AI interviewers ask about most: agents vs workflows, vector search vs SQL, RAG patterns, model selection, and observability.
 
@@ -82,7 +81,7 @@ Why it lands: you picked a side, then showed you understand the *other* side wel
 - You need to debug failures
 - You're building production systems
 
-Examples: customer support (classify → route → respond), email triage (read → categorize → draft reply), document processing (extract → validate → store).
+Examples: customer support (classify -> route -> respond), email triage (read -> categorize -> draft reply), document processing (extract -> validate -> store).
 
 **Autonomous agents** — use when:
 
@@ -354,7 +353,7 @@ Record yourself explaining your strongest opinion and submit for feedback.
 
 1. Choose ONE opinion from above (pick your strongest)
 2. Keep it concise — aim for 1–5 minutes
-3. Structure: Position → Reasoning → Tradeoffs → Use Cases
+3. Structure: Position -> Reasoning -> Tradeoffs -> Use Cases
 4. Don't read from notes
 5. Sound confident (even if you're not 100% sure)
 6. **Submit your video** — you'll receive feedback on your reasoning and delivery
@@ -423,15 +422,15 @@ Shows flexibility, practical thinking, and that you're not dogmatic.
 
 Even if you're not 100% confident, sound like you have a position.
 
-## ✅ Key takeaways
+## Key takeaways
 
 - The weak answer isn't "I don't know" — it's the confident textbook response that says nothing; the moment you sound like ChatGPT, the interviewer learns nothing about you
-- Every opinion follows the same skeleton: position → reasoning → tradeoffs → when you'd choose differently
+- Every opinion follows the same skeleton: position -> reasoning -> tradeoffs -> when you'd choose differently
 - Default positions worth defending: workflows over agents for known-shape production work; ask where the data lives before reaching for embeddings; chunk by meaning, not arbitrary size; make models swappable and start cheap; observability from day one because LLMs fail silently
 - "It depends" is only acceptable when followed by a default: "It depends, but I default to X unless Z"
 - Showing you understand the *other* side — and exactly when you'd switch — is what makes a position credible instead of dogmatic
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Play the skeptical staff engineer and poke holes in my opinions
@@ -440,7 +439,7 @@ I've written five interview opinions for AI engineering roles: (1) agents vs str
 
 [paste your five written opinions]
 
-Play a skeptical staff engineer who disagrees with me by default. Go opinion by opinion: steelman the OPPOSITE position and push back hard ("workflows are just agents with extra steps — why maintain two patterns?", "re-ranking doubled our latency and users left — still worth it?", "you say start cheap, but a bad first impression from a weak model kills adoption"). ONE challenge at a time; wait for my defense before moving on. After each round, tell me whether my answer held position → reasoning → tradeoffs → use-cases, or collapsed into 'it depends'. Finish by ranking my five opinions from most to least defensible.
+Play a skeptical staff engineer who disagrees with me by default. Go opinion by opinion: steelman the OPPOSITE position and push back hard ("workflows are just agents with extra steps — why maintain two patterns?", "re-ranking doubled our latency and users left — still worth it?", "you say start cheap, but a bad first impression from a weak model kills adoption"). ONE challenge at a time; wait for my defense before moving on. After each round, tell me whether my answer held position -> reasoning -> tradeoffs -> use-cases, or collapsed into 'it depends'. Finish by ranking my five opinions from most to least defensible.
 ```
 
 ```ai-prompt

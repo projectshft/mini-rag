@@ -1,6 +1,5 @@
 # Day 20 — Implementing the LinkedIn Agent
 
-**Time:** ~90 min · Build
 
 > **Today:** your first specialized agent. You'll use few-shot prompting to lock in a specific LinkedIn writing voice and stream the response — the selector you built this week will route to it automatically.
 
@@ -68,7 +67,7 @@ Your agent needs to:
 The TODOs in `app/agents/linkedin.ts` guide you through each step. Try it yourself before opening the hints below.
 
 <details>
-<summary>💡 Hint 1 — where do the examples go?</summary>
+<summary>Hint 1 — where do the examples go?</summary>
 
 In the **system prompt**, not the message history. If you put example posts in `messages`, the model treats them as conversation turns; in the system prompt, they're style reference material.
 
@@ -77,7 +76,7 @@ Build one string: map over `EXAMPLE_POSTS`, label each one (`--- Example Post 1 
 </details>
 
 <details>
-<summary>💡 Hint 2 — the system prompt's three jobs</summary>
+<summary>Hint 2 — the system prompt's three jobs</summary>
 
 Your system prompt needs to do three things, in roughly this order:
 
@@ -90,7 +89,7 @@ Without the "style, not content" instruction, the model will recycle topics from
 </details>
 
 <details>
-<summary>💡 Hint 3 — the streamText call</summary>
+<summary>Hint 3 — the streamText call</summary>
 
 ```typescript
 return streamText({
@@ -105,7 +104,7 @@ Return the `streamText()` result directly — no `await`, no extra method calls.
 </details>
 
 <details>
-<summary>✅ Solution — don't open until you've tried</summary>
+<summary>Solution — don't open until you've tried</summary>
 
 ```typescript
 import { EXAMPLE_POSTS } from './example-posts';
@@ -227,7 +226,7 @@ Then try the same topic with different example posts swapped into `app/agents/ex
 - [Vercel AI SDK — streamText](https://sdk.vercel.ai/docs/ai-core/stream-text)
 - [OpenAI Prompt Engineering Guide](https://platform.openai.com/docs/guides/prompt-engineering)
 
-## ✅ Key takeaways
+## Key takeaways
 
 - Few-shot prompting does what fine-tuning used to: 3–5 example posts in the system prompt lock in a voice, with instant iteration
 - Examples belong in the system prompt as style reference — and you must explicitly say "imitate the style, not the content"
@@ -235,7 +234,7 @@ Then try the same topic with different example posts swapped into `app/agents/ex
 - The agent honors the Day 15 contract: it takes an `AgentRequest` (both queries + messages) and returns `streamText()` directly
 - Tuning is an edit-and-re-run loop: swap examples, tighten instructions, add constraints — no training jobs
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: A/B test my few-shot voice

@@ -58,7 +58,11 @@ export default async function LessonPage({
 					<LessonMarkdown body={lesson.body} />
 				</div>
 
-				<nav className='mt-12 border-t border-zinc-200 pt-5 text-sm'>
+				<div className='mt-10 border-t border-zinc-200 pt-6'>
+					<MarkDoneCheckbox slug={slug} initialDone={completed.has(slug)} />
+				</div>
+
+				<nav className='mt-8 text-sm'>
 					<Link
 						href='/learn'
 						className='font-medium text-blue-600 hover:text-blue-800'
@@ -115,7 +119,11 @@ export default async function LessonPage({
 					<LessonMarkdown body={lesson.body} />
 				</div>
 
-				<nav className='mt-12 flex items-center justify-between gap-4 border-t border-zinc-200 pt-5 text-sm'>
+				<div className='mt-10 border-t border-zinc-200 pt-6'>
+					<MarkDoneCheckbox slug={slug} initialDone={completed.has(slug)} />
+				</div>
+
+				<nav className='mt-8 flex items-center justify-between gap-4 text-sm'>
 					{prev ? (
 						<Link
 							href={`/learn/${prev.slug}`}
@@ -178,7 +186,7 @@ export default async function LessonPage({
 					{day.time && <span className='text-xs text-zinc-400'>· {day.time}</span>}
 					{day.isDeliverable && (
 						<span className='rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700'>
-							🎥 Assignment due
+							Assignment due
 						</span>
 					)}
 				</div>
@@ -194,7 +202,11 @@ export default async function LessonPage({
 				<LessonMarkdown body={day.body} />
 			</div>
 
-			<nav className='mt-12 flex items-center justify-between gap-4 border-t border-zinc-200 pt-5 text-sm'>
+			<div className='mt-10 border-t border-zinc-200 pt-6'>
+				<MarkDoneCheckbox slug={slug} initialDone={isDone} />
+			</div>
+
+			<nav className='mt-8 flex items-center justify-between gap-4 text-sm'>
 				{prev ? (
 					<Link
 						href={`/learn/${prev.slug}`}

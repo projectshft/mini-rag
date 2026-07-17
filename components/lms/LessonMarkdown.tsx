@@ -3,6 +3,8 @@
 import ReactMarkdown, { type Components } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeRaw from 'rehype-raw';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github-dark.css';
 import { Mermaid } from './Mermaid';
 import { Quiz } from './Quiz';
 import { VisualEmbed } from './VisualEmbed';
@@ -31,6 +33,20 @@ import { TryIt } from './TryIt';
 const ISLAND_RE = /language-(mermaid|quiz|visual|ai-prompt|order|scenario|match|blanks|try-it)\b/;
 
 const components: Components = {
+	// External links open in a new tab (keep the lesson open behind them);
+	// relative/anchor links (e.g. /learn/day-05) navigate in place.
+	a({ node, href, children, ...rest }) {
+		const external = /^https?:\/\//i.test(href ?? '');
+		return external ? (
+			<a href={href} target='_blank' rel='noopener noreferrer' {...rest}>
+				{children}
+			</a>
+		) : (
+			<a href={href} {...rest}>
+				{children}
+			</a>
+		);
+	},
 	// react-markdown wraps every fence in <pre><code>. For the interactive
 	// islands the <pre> must go away, or they inherit code-block styling.
 	pre(props) {
@@ -81,7 +97,10 @@ export function LessonMarkdown({ body }: { body: string }) {
 		<div className='lesson-prose prose prose-zinc max-w-none prose-headings:font-semibold prose-pre:bg-zinc-900 prose-pre:text-zinc-100 prose-code:before:content-none prose-code:after:content-none prose-img:rounded-xl'>
 			<ReactMarkdown
 				remarkPlugins={[remarkGfm]}
-				rehypePlugins={[rehypeRaw]}
+				// rehype-raw reparses the trusted inline HTML; rehype-highlight then
+				// colorizes fenced code. ignoreMissing leaves our island fences
+				// (mermaid/quiz/…) as plain text so their handlers still get a string.
+				rehypePlugins={[rehypeRaw, [rehypeHighlight, { ignoreMissing: true }]]}
 				components={components}
 			>
 				{body}

@@ -1,6 +1,5 @@
 # Day 36 — Capstone Kickoff: Your Final Project
 
-**Time:** ~90 min · Plan + Submit
 
 > **Today:** you pick your capstone — a complete RAG application for a domain you actually care about — scope it, and submit your proposal. Everything you've built over five weeks was practice for this.
 
@@ -179,14 +178,14 @@ Post your idea in Slack too — a quick sanity check from mentors or classmates 
 
 > **Build something that works. Explain your choices. Show us what you learned.**
 
-## ✅ Key takeaways
+## Key takeaways
 
 - The best capstone answers the 10x question: what takes you 10 minutes to find that should take 10 seconds?
 - Any stack is fine — the graded skill is *justifying* your choices, not matching the class tooling
 - Know the finish line before you start: working pipeline, real chunking strategy, demo queries, one unique feature, and a README that explains it all
 - Scope small and real: pick something you'll still use after the course ends, then submit the proposal today
 
-## 🤖 Work with AI
+## Work with AI
 
 ```ai-prompt
 title: Pressure-test my capstone idea
