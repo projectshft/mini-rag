@@ -1,4 +1,5 @@
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
 :root {
 	--background: #ffffff;
@@ -18,56 +19,284 @@ body {
 	padding: 0 1rem;
 }
 
-a {
+/* Retro styles apply ONLY outside the LMS (.lms scopes /learn + /admin) */
+a:not(.lms *) {
 	color: var(--link-color);
 	text-decoration: underline;
 }
 
-a:visited {
+a:not(.lms *):visited {
 	color: var(--visited-link);
 }
 
-a:hover {
+a:not(.lms *):hover {
 	text-decoration: none;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1:not(.lms *),
+h2:not(.lms *),
+h3:not(.lms *),
+h4:not(.lms *),
+h5:not(.lms *),
+h6:not(.lms *) {
 	font-weight: bold;
 	margin-top: 1em;
 	margin-bottom: 0.5em;
 }
 
 /* 90s style table styling */
-table {
+table:not(.lms *) {
 	border-collapse: collapse;
 	width: 100%;
 	margin: 1rem 0;
 }
 
-table,
-th,
-td {
+table:not(.lms *),
+th:not(.lms *),
+td:not(.lms *) {
 	border: 1px solid black;
 }
 
-th,
-td {
+th:not(.lms *),
+td:not(.lms *) {
 	padding: 0.5rem;
 	text-align: left;
 }
 
 /* Classic form styling */
-input,
-textarea,
-select,
-button {
+input:not(.lms *),
+textarea:not(.lms *),
+select:not(.lms *),
+button:not(.lms *) {
 	border: 1px solid #000;
 	background: #fff;
 	padding: 0.25rem;
 	font-family: 'Times New Roman', Times, serif;
+}
+
+/* ───────────────────────── LMS (/learn + /admin) ─────────────────────────
+   The course site uses a modern, clean look. Everything above styles the
+   retro chat app globally, so the .lms scope undoes it: back to a system
+   sans font, neutral links/tables/inputs, and a full-width body. */
+
+body:has(.lms) {
+	max-width: none;
+	margin: 0;
+	padding: 0;
+	background: #fafafa;
+	line-height: 1.5;
+}
+
+body:has(.lms) > main {
+	padding-top: 0;
+}
+
+.lms {
+	font-family:
+		ui-sans-serif,
+		system-ui,
+		-apple-system,
+		'Segoe UI',
+		Roboto,
+		'Helvetica Neue',
+		Arial,
+		sans-serif;
+	color: #18181b;
+}
+
+/* The retro rules above exclude .lms via :not(), so inside the LMS the
+   typography plugin + Tailwind utilities own everything — no counter-
+   resets needed (they'd fight the utilities in the cascade). */
+
+/* Lesson prose: restore sensible defaults inside the rendered markdown
+   (the typography plugin handles most of it; these cover the extras). */
+
+/* Inline code gets the chip look; code inside <pre> must NOT (a light
+   chip behind light-on-dark block code makes the text invisible). */
+.lms .lesson-prose :not(pre) > code {
+	background: #f4f4f5;
+	padding: 0.1em 0.35em;
+	border-radius: 4px;
+	font-weight: 400;
+}
+
+.lms .lesson-prose pre code {
+	background: transparent;
+	padding: 0;
+}
+
+.lms .lesson-prose a {
+	color: #2563eb;
+	text-decoration: underline;
+	text-underline-offset: 2px;
+}
+
+.lms .lesson-prose iframe {
+	max-width: 100%;
+	border: 0;
+	border-radius: 12px;
+	margin: 1.5rem 0;
+	aspect-ratio: 16 / 9;
+	width: 100%;
+	height: auto;
+}
+
+.lms .lesson-prose table,
+.lms .lesson-prose th,
+.lms .lesson-prose td {
+	border: 1px solid #e4e4e7;
+}
+
+.lms .lesson-prose th,
+.lms .lesson-prose td {
+	padding: 0.5rem 0.75rem;
+	text-align: left;
+}
+
+/* <details> hint/solution toggles authored in the lesson markdown */
+.lms .lesson-prose details {
+	border: 1px solid #e4e4e7;
+	border-radius: 12px;
+	background: #fff;
+	padding: 0;
+	margin: 1.25rem 0;
+	overflow: hidden;
+}
+
+.lms .lesson-prose details > summary {
+	cursor: pointer;
+	list-style: none;
+	padding: 0.75rem 1rem;
+	font-weight: 600;
+	font-size: 0.925rem;
+	color: #3f3f46;
+	background: #fafafa;
+	user-select: none;
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+}
+
+.lms .lesson-prose details > summary::before {
+	content: '▸';
+	color: #a1a1aa;
+	transition: transform 0.15s ease;
+}
+
+.lms .lesson-prose details[open] > summary::before {
+	transform: rotate(90deg);
+}
+
+.lms .lesson-prose details[open] > summary {
+	border-bottom: 1px solid #e4e4e7;
+}
+
+.lms .lesson-prose details > *:not(summary) {
+	margin-left: 1rem;
+	margin-right: 1rem;
+}
+
+.lms .lesson-prose details > summary::-webkit-details-marker {
+	display: none;
+}
+
+/* Easter egg: rest-day rows get a little palm-tree sway on hover */
+@keyframes lms-palm-sway {
+	0%,
+	100% {
+		transform: rotate(0deg);
+	}
+	25% {
+		transform: rotate(12deg);
+	}
+	75% {
+		transform: rotate(-10deg);
+	}
+}
+
+.lms .rest-day-label {
+	display: inline-block;
+}
+
+li:hover > .rest-day-row .rest-day-label,
+.rest-day-row:hover .rest-day-label {
+	animation: lms-palm-sway 0.9s ease-in-out infinite;
+	transform-origin: bottom center;
+}
+
+/* Landing page animations */
+@keyframes landing-float {
+	0%,
+	100% {
+		transform: translate(-50%, -50%);
+	}
+	50% {
+		transform: translate(-50%, calc(-50% - 9px));
+	}
+}
+@keyframes landing-pulse {
+	0%,
+	100% {
+		opacity: 0.55;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+/* Cards ease up and in as the "what makes it different" grid arrives. */
+@keyframes landing-rise {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+/* A slow, low-amplitude drift for the accent orb behind the closing section. */
+@keyframes landing-drift {
+	0%,
+	100% {
+		transform: translate(0, 0);
+	}
+	50% {
+		transform: translate(-18px, 14px);
+	}
+}
+/* The "humans in the loop" connection dot breathes gently. */
+@keyframes landing-link {
+	0%,
+	100% {
+		opacity: 0.5;
+		box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.35);
+	}
+	50% {
+		opacity: 1;
+		box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
+	}
+}
+.landing-float {
+	animation: landing-float 4s ease-in-out infinite;
+}
+.landing-pulse {
+	animation: landing-pulse 2.4s ease-in-out infinite;
+}
+.landing-rise {
+	animation: landing-rise 0.7s ease-out both;
+}
+.landing-drift {
+	animation: landing-drift 14s ease-in-out infinite;
+}
+.landing-link {
+	animation: landing-link 3s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+	.landing-float,
+	.landing-pulse,
+	.landing-rise,
+	.landing-drift,
+	.landing-link {
+		animation: none;
+	}
 }

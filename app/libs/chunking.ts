@@ -120,6 +120,16 @@ export function chunkText(
  * 8. Return the result
  */
 function getLastWords(text: string, maxLength: number): string {
-	// TODO: Implement this function!
-	// YOUR CODE HERE
+	if (text.length <= maxLength) return text;
+
+	const words = text.split(' ');
+	let result = '';
+
+	for (let i = words.length - 1; i >= 0; i--) {
+		const candidate = result ? words[i] + ' ' + result : words[i];
+		if (candidate.length > maxLength) break;
+		result = candidate;
+	}
+
+	return result;
 }

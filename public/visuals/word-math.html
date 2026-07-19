@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Word math · RAG &amp; AI Agents</title>
+<style>
+  :root{--ink:#1b2330;--muted:#5b6675;--line:#e3e7ec;--bg:#fff;--panel:#f6f8fa;
+        --accent:#2563eb;--answer:#b45309;--answer-bg:#fef3e2;--good:#15803d;--warn:#b91c1c;
+        --code-bg:#f4f6f8;}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);margin:0;padding:2rem;line-height:1.5;background:var(--bg)}
+  h1{font-size:1.7rem;margin:0 0 .3rem}
+  .lead{color:var(--muted);font-size:1.1rem;max-width:66rem;margin:0 0 1.1rem}
+  .callout{max-width:66rem;background:#eef4ff;border:1px solid #cfe0ff;border-radius:10px;padding:.7rem 1rem;font-size:.98rem;margin:0 0 1.3rem}
+  .callout b{color:var(--ink)}
+  .controls{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;margin:0 0 1rem;padding:1rem 1.2rem;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  .modes{display:flex;gap:.4rem;flex-wrap:wrap}
+  .modes button{font:inherit;font-size:.92rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:.4rem .8rem;border-radius:999px}
+  .modes button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  label.chk{display:flex;align-items:center;gap:.4rem;font-size:.9rem;color:var(--muted);cursor:pointer}
+  .wrap{display:flex;gap:1.6rem;flex-wrap:wrap;align-items:flex-start}
+  .left{flex:1 1 460px;min-width:340px}
+  .right{flex:1 1 300px;min-width:280px}
+  .plot{border:1px solid var(--line);border-radius:12px;background:#fff;width:100%;height:auto}
+  .eq{font-size:1.25rem;margin:.2rem 0 .8rem;font-variant-numeric:tabular-nums}
+  .eq .a,.eq .b,.eq .c{font-weight:700;color:var(--accent)}
+  .eq .r{font-weight:700;color:var(--answer)}
+  .legend{display:flex;gap:1rem;flex-wrap:wrap;margin:.8rem 0 0;font-size:.86rem;color:var(--muted)}
+  .swatch{display:inline-block;width:.9em;height:.9em;border-radius:50%;vertical-align:-1px;margin-right:.3em}
+  h2{font-size:1.05rem;margin:0 0 .6rem}
+  .cand{border:1px solid var(--line);border-radius:10px;padding:.55rem .8rem;margin-bottom:.5rem;background:var(--panel);transition:all .15s}
+  .cand.win{border-color:var(--good);background:#e7f6ec}
+  .cand.excluded{opacity:.55}
+  .cand .top{display:flex;justify-content:space-between;font-size:.92rem;align-items:baseline}
+  .cand .w{font-weight:600}
+  .cand .score{font-variant-numeric:tabular-nums;font-weight:600;color:var(--muted);font-size:.86rem}
+  .cand .tag{font-size:.72rem;padding:.05em .5em;border-radius:999px;background:#e9edf2;color:var(--muted);margin-left:.4em}
+  .cand.win .tag.ans{background:#d6efdd;color:var(--good)}
+  .bar{height:6px;border-radius:999px;background:#e9edf2;overflow:hidden;margin-top:.4rem}
+  .bar>i{display:block;height:100%;background:var(--accent);border-radius:999px}
+  .cand.win .bar>i{background:var(--good)}
+  .verdict{margin:1rem 0 0;padding:.9rem 1.1rem;border-radius:10px;font-size:1rem}
+  .verdict.good{background:#e7f6ec;color:var(--good)}
+  .verdict.warn{background:#fdf0e3;color:#9a3412}
+  .foot{color:var(--muted);font-size:.84rem;margin-top:.6rem}
+  code{font-family:ui-monospace,"SF Mono",Menlo,monospace;background:var(--code-bg);padding:.1em .35em;border-radius:4px;font-size:.9em}
+</style>
+</head>
+<body>
+  <h1>Word math</h1>
+  <p class="lead">
+    Embeddings turn words into points in space — and <b>relationships into directions</b>. The direction from
+    <i>man</i> to <i>king</i> is roughly "add royalty". Apply that same direction to <i>woman</i> and the nearest
+    word to where you land is… <i>queen</i>. Pick an analogy and watch the arithmetic happen.
+  </p>
+  <div class="callout">
+    <b>Why this matters for RAG:</b> this is the property your whole retrieval pipeline stands on.
+    Meaning has <i>geometry</i>: similar meanings sit near each other, and relationships are consistent
+    directions. Vector search is nothing more than "find the nearest points" — word math is the proof
+    that nearness = meaning. (Real embeddings live in 1,536 dimensions; this is a 2-D projection.)
+  </div>
+
+  <div class="controls">
+    <div class="modes" id="presets"></div>
+    <label class="chk"><input type="checkbox" id="excl" checked> exclude the input words from results</label>
+  </div>
+
+  <div class="wrap">
+    <div class="left">
+      <p class="eq" id="eq"></p>
+      <svg id="plot" class="plot" viewBox="0 0 520 360" role="img" aria-label="2-D projection of word embeddings showing the analogy arithmetic"></svg>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--accent)"></span>input words</span>
+        <span><span class="swatch" style="background:var(--answer)"></span>result of the math (not a word!)</span>
+        <span><span class="swatch" style="background:var(--good)"></span>nearest word = the answer</span>
+        <span><span class="swatch" style="background:#c6ccd4"></span>other vocabulary</span>
+      </div>
+      <div class="verdict" id="verdict"></div>
+      <p class="foot">Same arrow, twice: the <b>blue dashed arrow</b> you see from the second input is a copy of the
+      first one — that's the "+&nbsp;(king − man)" being applied to <i>woman</i>.</p>
+    </div>
+    <div class="right">
+      <h2>Nearest words to the result</h2>
+      <div id="cands"></div>
+      <p class="foot">
+        <b>closeness</b> = similarity of each vocabulary word to the amber point (computed from the actual
+        distances in this projection). In production you'd use <code>cosine similarity</code> on the full
+        1,536-D vectors — same idea, more dimensions. Note the raw nearest neighbor is often an <i>input word</i>
+        — real systems exclude them, and the toggle shows why.
+      </p>
+    </div>
+  </div>
+
+<script>
+// Each analogy: a - b + c ≈ answer. Coordinates are hand-projected so the
+// parallelogram genuinely works in 2-D: answer ≈ a - b + c, and closeness
+// scores below are honestly computed from these coordinates.
+const ANALOGIES = [
+  {
+    name: 'king − man + woman',
+    a: 'king', b: 'man', c: 'woman', answer: 'queen',
+    // x = gender axis (left male, right female), y = royalty axis (up royal)
+    words: {
+      man:    [150, 280], woman:  [330, 280],
+      king:   [170, 90],  queen:  [352, 92],
+      prince: [130, 130], princess:[380, 135],
+      boy:    [110, 310], girl:   [370, 312],
+      crown:  [255, 60],  person: [245, 255],
+    },
+  },
+  {
+    name: 'paris − france + japan',
+    a: 'paris', b: 'france', c: 'japan', answer: 'tokyo',
+    // x = country identity, y = "capital-ness" (up = city, down = country)
+    words: {
+      france: [120, 280], japan:  [340, 285],
+      paris:  [140, 95],  tokyo:  [362, 98],
+      italy:  [200, 300], rome:   [222, 110],
+      berlin: [90, 120],  kyoto:  [400, 150],
+      europe: [130, 330], asia:   [360, 335],
+    },
+  },
+  {
+    name: 'puppy − dog + cat',
+    a: 'puppy', b: 'dog', c: 'cat', answer: 'kitten',
+    // x = species, y = age (up = young)
+    words: {
+      dog:    [140, 270], cat:    [340, 270],
+      puppy:  [155, 95],  kitten: [356, 93],
+      wolf:   [90, 300],  lion:   [400, 300],
+      pet:    [245, 245], animal: [250, 320],
+      cub:    [430, 120], foal:   [40, 120],
+    },
+  },
+  {
+    name: 'walking − walk + swim',
+    a: 'walking', b: 'walk', c: 'swim', answer: 'swimming',
+    // x = verb identity, y = tense/form (up = -ing form)
+    words: {
+      walk:     [130, 275], swim:     [330, 275],
+      walking:  [148, 100], swimming: [349, 97],
+      run:      [225, 290], running:  [242, 112],
+      ran:      [210, 330], swam:     [365, 330],
+      water:    [430, 240], road:     [50, 240],
+    },
+  },
+];
+
+const svg = document.getElementById('plot');
+const candsEl = document.getElementById('cands');
+const verdictEl = document.getElementById('verdict');
+const eqEl = document.getElementById('eq');
+const presetsEl = document.getElementById('presets');
+const exclEl = document.getElementById('excl');
+let current = 0;
+
+ANALOGIES.forEach((an, i) => {
+  const btn = document.createElement('button');
+  btn.textContent = an.name;
+  btn.addEventListener('click', () => { current = i; render(); });
+  presetsEl.appendChild(btn);
+});
+
+function closeness(p, q) {
+  // Honest score from the projection: inverse distance, scaled to read like
+  // a similarity. Monotone with actual nearness in this 2-D space.
+  const d = Math.hypot(p[0] - q[0], p[1] - q[1]);
+  return 1 / (1 + d / 90);
+}
+
+function arrow(x1, y1, x2, y2, color, dashed, id) {
+  return `<defs><marker id="${id}" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L6,3 L0,6 z" fill="${color}"/></marker></defs>
+    <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${color}" stroke-width="2"
+      ${dashed ? 'stroke-dasharray="6 5"' : ''} marker-end="url(#${id})"/>`;
+}
+
+function render() {
+  const an = ANALOGIES[current];
+  const excl = exclEl.checked;
+  [...presetsEl.children].forEach((b, i) => b.classList.toggle('on', i === current));
+
+  eqEl.innerHTML = `<span class="a">${an.a}</span> − <span class="b">${an.b}</span> + <span class="c">${an.c}</span> = <span class="r">?</span>`;
+
+  const A = an.words[an.a], B = an.words[an.b], C = an.words[an.c];
+  const R = [A[0] - B[0] + C[0], A[1] - B[1] + C[1]]; // the amber point
+
+  // Rank vocabulary by closeness to R
+  const inputs = new Set([an.a, an.b, an.c]);
+  const ranked = Object.entries(an.words)
+    .map(([w, p]) => ({ w, p, s: closeness(p, R), isInput: inputs.has(w) }))
+    .sort((x, y) => y.s - x.s);
+  const eligible = ranked.filter(r => !excl || !r.isInput);
+  const winner = eligible[0];
+
+  // ── plot ──
+  let out = '';
+  // grid
+  for (let gx = 40; gx < 520; gx += 60) out += `<line x1="${gx}" y1="20" x2="${gx}" y2="340" stroke="#f0f2f5"/>`;
+  for (let gy = 40; gy < 360; gy += 60) out += `<line x1="20" y1="${gy}" x2="500" y2="${gy}" stroke="#f0f2f5"/>`;
+  // vocab points
+  for (const [w, p] of Object.entries(an.words)) {
+    const isInput = inputs.has(w);
+    const isWin = winner && w === winner.w;
+    const fill = isWin ? 'var(--good)' : isInput ? 'var(--accent)' : '#c6ccd4';
+    const r = isInput || isWin ? 7 : 5;
+    out += `<circle cx="${p[0]}" cy="${p[1]}" r="${r}" fill="${fill}" stroke="#fff" stroke-width="2"/>`;
+    const bold = isInput || isWin ? 'font-weight="700"' : '';
+    const col = isWin ? 'var(--good)' : isInput ? 'var(--accent)' : 'var(--muted)';
+    out += `<text x="${p[0]}" y="${p[1] - 12}" text-anchor="middle" font-size="13" ${bold} fill="${col}">${w}</text>`;
+  }
+  // the offset arrow b→a, then its dashed copy at c
+  out += arrow(B[0], B[1], A[0], A[1], 'var(--accent)', false, 'm1');
+  out += arrow(C[0], C[1], R[0], R[1], 'var(--accent)', true, 'm2');
+  // result point (amber star)
+  out += `<circle cx="${R[0]}" cy="${R[1]}" r="9" fill="var(--answer)" stroke="#fff" stroke-width="2"/>
+    <text x="${R[0]}" y="${R[1] + 24}" text-anchor="middle" font-size="13" font-weight="700" fill="var(--answer)">result</text>`;
+  // ring around winner
+  if (winner) out += `<circle cx="${winner.p[0]}" cy="${winner.p[1]}" r="14" fill="none" stroke="var(--good)" stroke-width="2" stroke-dasharray="4 3"/>`;
+  svg.innerHTML = out;
+
+  // ── candidate list ──
+  candsEl.innerHTML = ranked.slice(0, 6).map(rk => {
+    const excluded = excl && rk.isInput;
+    const isWin = winner && rk.w === winner.w;
+    const tag = rk.isInput ? '<span class="tag">input word</span>'
+      : rk.w === an.answer ? `<span class="tag ans">the analogy's answer</span>` : '';
+    return `<div class="cand ${isWin ? 'win' : ''} ${excluded ? 'excluded' : ''}">
+      <div class="top"><span class="w">${isWin ? '✓ ' : ''}${rk.w}${tag}</span>
+      <span class="score">${rk.s.toFixed(3)}</span></div>
+      <div class="bar"><i style="width:${(rk.s * 100).toFixed(1)}%"></i></div>
+    </div>`;
+  }).join('');
+
+  // ── verdict ──
+  if (winner && winner.w === an.answer) {
+    verdictEl.className = 'verdict good';
+    verdictEl.innerHTML = `<b>${an.a} − ${an.b} + ${an.c} ≈ ${an.answer}</b> — the nearest word to the amber point
+      is <b>${an.answer}</b>. The "${an.b} → ${an.a}" direction means something, and it means the <i>same thing</i>
+      when applied to "${an.c}".`;
+  } else if (winner) {
+    verdictEl.className = 'verdict warn';
+    verdictEl.innerHTML = `Nearest word is <b>${winner.w}</b>, not <i>${an.answer}</i> — with the input words still
+      in the pool, one of them usually wins (the result lands close to where you started). This is exactly why real
+      word-math implementations <b>exclude the input words</b>. Flip the toggle back on.`;
+  }
+}
+
+exclEl.addEventListener('change', render);
+render();
+</script>
+</body>
+</html>

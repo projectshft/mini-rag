@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How chunking works · RAG &amp; AI Agents</title>
+<style>
+  :root{--ink:#1b2330;--muted:#5b6675;--line:#e3e7ec;--bg:#fff;--panel:#f6f8fa;
+        --accent:#2563eb;--answer:#b45309;--answer-bg:#fef3e2;--good:#15803d;--warn:#b91c1c;
+        --bookA:#eef4ff;--bookB:#fdf2f8;--code-bg:#f4f6f8;}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);margin:0;padding:2rem;line-height:1.5}
+  h1{font-size:1.7rem;margin:0 0 .3rem}
+  .lead{color:var(--muted);font-size:1.1rem;max-width:66rem;margin:0 0 1.1rem}
+  .callout{max-width:66rem;background:#eef4ff;border:1px solid #cfe0ff;border-radius:10px;padding:.7rem 1rem;font-size:.98rem;margin:0 0 1.3rem}
+  .callout b{color:var(--ink)}
+  .controls{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center;margin:0 0 1rem;padding:1rem 1.2rem;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  .modes{display:flex;gap:.4rem}
+  .modes button{font:inherit;font-size:.92rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:.4rem .8rem;border-radius:999px}
+  .modes button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .ctl{display:flex;flex-direction:column;gap:.3rem;font-size:.88rem;color:var(--muted)}
+  .ctl b{color:var(--ink);font-variant-numeric:tabular-nums}
+  input[type=range]{accent-color:var(--accent);width:170px}
+  label.chk{display:flex;align-items:center;gap:.4rem;font-size:.9rem;color:var(--muted)}
+  .wrap{display:flex;gap:1.6rem;flex-wrap:wrap;align-items:flex-start}
+  .left{flex:1 1 460px;min-width:340px}
+  .right{flex:1 1 300px;min-width:280px}
+  .query{font-size:1.03rem;margin:0 0 .8rem}.query .q{font-weight:600;color:var(--accent)}
+  .passage{border:1px solid var(--line);border-radius:12px;background:#fff;padding:1rem 1.2rem;font-size:1.04rem;line-height:1.95}
+  .bh{font-weight:700;color:var(--muted);letter-spacing:.02em;text-transform:uppercase;font-size:.8rem;margin:.6rem 0 .2rem}
+  .w{padding:1px 0;border-radius:3px}
+  .w.bookA{background:var(--bookA)} .w.bookB{background:var(--bookB)}
+  .w.ans{background:var(--answer-bg);color:var(--answer);font-weight:600}
+  .w.best{box-shadow:inset 0 -3px 0 var(--accent)}
+  .ref{color:var(--muted);font-size:.78em;font-weight:600;vertical-align:.15em;margin-right:.15em}
+  .legend{display:flex;gap:1rem;flex-wrap:wrap;margin:.8rem 0 0;font-size:.86rem;color:var(--muted)}
+  .swatch{display:inline-block;width:.9em;height:.9em;border-radius:3px;vertical-align:-1px;margin-right:.3em}
+  .verdict{margin:1rem 0 0;padding:.9rem 1.1rem;border-radius:10px;font-size:1rem}
+  .verdict.good{background:#e7f6ec;color:var(--good)} .verdict.bad{background:#fbe9e9;color:var(--warn)}
+  h2{font-size:1.05rem;margin:0 0 .6rem}
+  .chunk{border:1px solid var(--line);border-radius:10px;padding:.55rem .8rem;margin-bottom:.5rem;background:var(--panel);transition:all .15s}
+  .chunk.best{border-color:var(--accent);background:#eef4ff}
+  .chunk.split{border-color:#f0c4c4}
+  .chunk .top{display:flex;justify-content:space-between;font-size:.88rem}
+  .chunk .rng{color:var(--muted)} .chunk .score{font-variant-numeric:tabular-nums;font-weight:600}
+  .bar{height:6px;border-radius:999px;background:#e9edf2;overflow:hidden;margin-top:.4rem}
+  .bar>i{display:block;height:100%;background:var(--accent)}
+  .flags{font-size:.78rem;margin-top:.35rem;display:flex;gap:.5rem;flex-wrap:wrap}
+  .flag{padding:.05em .45em;border-radius:999px}
+  .flag.split{color:var(--warn);background:#fbe9e9}.flag.cross{color:#9a3412;background:#ffedd5}
+  code{font-family:ui-monospace,"SF Mono",Menlo,monospace;background:var(--code-bg);padding:.1em .35em;border-radius:4px;font-size:.9em}
+</style>
+</head>
+<body>
+  <h1>How chunking works</h1>
+  <p class="lead">
+    Chunking answers one question: <b>what is “one piece” for retrieval?</b> Split a document into chunks, embed each,
+    retrieve the chunk that best matches the query. <b>Fixed-size</b> slicing is structure-blind — it happily cuts a
+    sentence (or a verse) in half. <b>Structure-aware</b> chunking cuts along the document’s own joints. Flip the mode
+    and watch what happens to the verse we’re searching for.
+  </p>
+  <div class="callout">
+    <b>Why the Bible?</b> Because it’s one enormous document (4.4M chars) with visible structure — books, chapters,
+    verses — and everyone already knows it, so nothing distracts from the chunking itself. Your corpus in this course
+    is the same shape: scraped web pages and uploaded documents are <b>long</b>, so they must be split before embedding,
+    and you face exactly these decisions — chunk size, overlap, and whether to cut along the document’s own structure.
+    That’s what you implement in <code>app/libs/chunking.ts</code>.
+  </div>
+
+  <div class="controls">
+    <div class="modes">
+      <button id="mFixed" class="on">Fixed-size (structure-blind)</button>
+      <button id="mSmart">Structure-aware (verse-packing)</button>
+    </div>
+    <label class="ctl"><span id="sizeLbl">window size</span> <b><span id="sizeV"></span> chars</b>
+      <input type="range" id="size" min="40" max="300" value="90"></label>
+    <label class="ctl fixedOv"><span>overlap</span> <b><span id="ovV"></span> chars</b>
+      <input type="range" id="ov" min="0" max="60" value="0"></label>
+    <label class="chk smartOv" style="display:none"><input type="checkbox" id="carry"> carry previous verse (overlap)</label>
+  </div>
+
+  <p class="query">Query: <span class="q">“who is my shepherd?”</span> — the answer is one whole verse.</p>
+
+  <div class="wrap">
+    <div class="left">
+      <div class="passage" id="passage"></div>
+      <div class="legend">
+        <span><span class="swatch" style="background:var(--answer-bg)"></span>the answer verse</span>
+        <span><span class="swatch" style="box-shadow:inset 0 -3px 0 var(--accent);background:#fff"></span>retrieved chunk</span>
+        <span><span class="swatch" style="background:var(--bookA)"></span>Psalms</span>
+        <span><span class="swatch" style="background:var(--bookB)"></span>Proverbs</span>
+      </div>
+      <div class="verdict" id="verdict"></div>
+    </div>
+    <div class="right">
+      <h2>Chunks &amp; retrieval score</h2>
+      <div id="chunks"></div>
+      <p style="color:var(--muted);font-size:.84rem;margin-top:.6rem">
+        <b>coverage</b> = how much of the answer verse this chunk holds · <b>focus</b> = how little surrounds it ·
+        score ≈ coverage × √focus. ⚠ = split a verse · ⛌ = crossed a book boundary.
+      </p>
+    </div>
+  </div>
+
+<script>
+(() => {
+  // A short, real KJV stretch spanning a book boundary (Psalms -> Proverbs).
+  // In the real file every verse is prefixed "chapter:verse" and books are titled lines.
+  const VERSES = [
+    {book:'Psalms',   ref:'23:1', text:'The LORD is my shepherd; I shall not want.'},
+    {book:'Psalms',   ref:'23:2', text:'He maketh me to lie down in green pastures: he leadeth me beside the still waters.'},
+    {book:'Psalms',   ref:'23:3', text:'He restoreth my soul: he leadeth me in the paths of righteousness for his name’s sake.'},
+    {book:'Psalms',   ref:'23:4', text:'Yea, though I walk through the valley of the shadow of death, I will fear no evil.'},
+    {book:'Proverbs', ref:'3:5',  text:'Trust in the LORD with all thine heart; and lean not unto thine own understanding.'},
+    {book:'Proverbs', ref:'3:6',  text:'In all thy ways acknowledge him, and he shall direct thy paths.'},
+  ];
+
+  // Build the canonical string S (what a fixed-size chunker actually slices),
+  // tracking each verse's char span. Verse text = "ref text".
+  let S = '';
+  VERSES.forEach((v,i) => {
+    if (i) S += ' ';
+    v.s = S.length;
+    S += v.ref + ' ' + v.text;
+    v.textStart = v.s + v.ref.length + 1;
+    v.e = S.length;
+  });
+  const bookBoundary = VERSES.find((v,i)=> i>0 && v.book!==VERSES[i-1].book).s; // char offset where book flips
+  const ANSWER = VERSES[0];               // 23:1 answers "who is my shepherd?"
+  const aS = ANSWER.textStart, aE = ANSWER.e;
+
+  const $ = id => document.getElementById(id);
+  let mode = 'fixed';
+
+  $('mFixed').onclick = () => setMode('fixed');
+  $('mSmart').onclick = () => setMode('smart');
+  function setMode(m){
+    mode=m;
+    $('mFixed').classList.toggle('on', m==='fixed');
+    $('mSmart').classList.toggle('on', m==='smart');
+    $('sizeLbl').textContent = m==='fixed' ? 'window size' : 'target size';
+    document.querySelector('.fixedOv').style.display = m==='fixed' ? '' : 'none';
+    document.querySelector('.smartOv').style.display = m==='smart' ? '' : 'none';
+    render();
+  }
+  $('size').addEventListener('input', render);
+  $('ov').addEventListener('input', render);
+  $('carry').addEventListener('change', render);
+
+  function fixedChunks(size, ov){
+    const step = Math.max(1, size - ov), out=[];
+    for(let s=0; s<S.length; s+=step){ const e=Math.min(S.length, s+size); out.push({s,e}); if(e===S.length) break; }
+    return out;
+  }
+  function smartChunks(target, carry){
+    const out=[]; let group=[];
+    const flush = () => {
+      if(!group.length) return;
+      out.push({ s: group[0].s, e: group[group.length-1].e, verses: group.map(v=>v.ref) });
+    };
+    for(let i=0;i<VERSES.length;i++){
+      const v=VERSES[i];
+      const curBook = group.length ? group[0].book : v.book;
+      const wouldExceed = group.length && (v.e - group[0].s) > target;
+      if(group.length && (v.book!==curBook || wouldExceed)){
+        flush();
+        // start next group; optionally carry the previous verse for overlap
+        group = (carry && v.book===curBook) ? [group[group.length-1]] : [];
+      }
+      group.push(v);
+    }
+    flush();
+    return out;
+  }
+
+  function score(c){
+    const s=Math.max(c.s,aS), e=Math.min(c.e,aE);
+    const inA = Math.max(0, e-s);
+    const coverage = inA/(aE-aS);
+    const focus = inA/(c.e-c.s);
+    return {coverage, focus, score: coverage*Math.sqrt(focus)};
+  }
+  const splitsAVerse = c => VERSES.some(v => (c.s>v.s && c.s<v.e) || (c.e>v.s && c.e<v.e));
+  const crossesBook  = c => c.s < bookBoundary && c.e > bookBoundary;
+
+  function render(){
+    let size=+$('size').value, ov=+$('ov').value;
+    $('sizeV').textContent=size; $('ovV').textContent=ov;
+    if(ov>size-1){ ov=size-1; $('ov').value=ov; $('ovV').textContent=ov; }
+
+    const raw = mode==='fixed' ? fixedChunks(size, ov) : smartChunks(size, $('carry').checked);
+    const chunks = raw.map(c => ({...c, ...score(c), split: mode==='fixed'&&splitsAVerse(c), cross: crossesBook(c)}));
+    const best = chunks.reduce((a,b)=> b.score>a.score?b:a, chunks[0]);
+
+    // passage
+    renderPassage(best);
+
+    // chunk list
+    const list=$('chunks'); list.innerHTML='';
+    chunks.forEach((c,k)=>{
+      const el=document.createElement('div');
+      el.className='chunk'+(c===best?' best':'')+(c.split?' split':'');
+      const label = mode==='smart' && c.verses ? c.verses.join(', ') : `chars ${c.s+1}–${c.e}`;
+      const flags = (c.split?'<span class="flag split">⚠ split verse</span>':'')
+                  + (c.cross?'<span class="flag cross">⛌ crossed book</span>':'');
+      el.innerHTML =
+        `<div class="top"><span class="rng">chunk ${k+1} · ${label}</span><span class="score">${c.score.toFixed(2)}</span></div>`+
+        `<div class="bar"><i style="width:${(c.score*100).toFixed(0)}%"></i></div>`+
+        `<div class="flags">${flags||`<span style="color:var(--muted)">coverage ${(c.coverage*100|0)}% · focus ${(c.focus*100|0)}%</span>`}</div>`;
+      list.appendChild(el);
+    });
+
+    // verdict
+    const v=$('verdict');
+    if(mode==='fixed'){
+      const answerChunk = chunks.find(c=>c.s<=aS && c.e>=aE);
+      if(best.coverage < .999 || !answerChunk){
+        v.className='verdict bad';
+        v.innerHTML='⚠ <b>Fixed-size split the verse.</b> “The LORD is my shepherd” landed in one chunk and “I shall not want” in the next — neither holds the whole thought (best coverage '+(best.coverage*100|0)+'%). It also has no idea Psalms and Proverbs are different books.';
+      } else {
+        v.className='verdict bad';
+        v.innerHTML='It happens to keep this verse whole at this exact size — but fixed-size is <b>blind to structure</b>. Nudge the slider and it splits a verse or merges two books. Reliability by luck isn’t reliability.';
+      }
+    } else {
+      v.className='verdict good';
+      v.innerHTML='✓ <b>Structure-aware wins.</b> Every chunk is whole verses, “23:1” is intact, and no chunk mixes Psalms with Proverbs. That’s the idea behind structure-aware chunking: pack whole units to a target size, never split one, never cross a section boundary.';
+    }
+  }
+
+  function renderPassage(best){
+    const p=$('passage'); p.innerHTML='';
+    let lastBook=null;
+    // render verse-by-verse so book headers show; words carry their char offset for highlighting
+    VERSES.forEach(v=>{
+      if(v.book!==lastBook){ const h=document.createElement('div'); h.className='bh'; h.textContent=v.book; p.appendChild(h); lastBook=v.book; }
+      const line=document.createElement('div');
+      const bookCls = v.book==='Psalms'?'bookA':'bookB';
+      // ref label
+      const refEl=document.createElement('span'); refEl.className='ref'; refEl.textContent=v.ref; line.appendChild(refEl);
+      // words with offsets
+      let off=v.textStart;
+      v.text.split(/(\s+)/).forEach(tok=>{
+        if(/^\s+$/.test(tok)){ line.appendChild(document.createTextNode(tok)); off+=tok.length; return; }
+        const start=off, end=off+tok.length; off=end;
+        const mid=(start+end)/2;
+        const sp=document.createElement('span');
+        const inAns = mid>=aS && mid<aE;
+        const inBest = mid>=best.s && mid<best.e;
+        sp.className='w '+bookCls+(inAns?' ans':'')+(inBest?' best':'');
+        sp.textContent=tok+' ';
+        line.appendChild(sp);
+      });
+      p.appendChild(line);
+    });
+  }
+
+  setMode('fixed');
+})();
+</script>
+</body>
+</html>
