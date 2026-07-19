@@ -59,3 +59,22 @@ model LessonProgress {
   @@index([studentId])
   @@map("lesson_progress")
 }
+
+// Leads from the public "Would You Pass an AI Engineering Interview?" quiz
+// (app/ai-interview-quiz). Not a student — a marketing lead who gave an email
+// to see their result. Phone optional. Score/bucket/answers stored so we can
+// segment follow-up. No relation to Student; this is top-of-funnel.
+model QuizLead {
+  id        String   @id @default(uuid())
+  email     String
+  phone     String?
+  score     Int
+  total     Int
+  bucket    String // "hireable" | "at-risk" | "flagged"
+  answers   Json // the chosen option index per question
+  createdAt DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+  @@map("quiz_leads")
+}

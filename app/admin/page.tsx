@@ -10,10 +10,9 @@ import {
 	type KeySpend,
 } from '@/lib/lms/litellm';
 import { CopyButton } from '@/components/lms/CopyButton';
+import { RemoveStudentButton } from '@/components/lms/RemoveStudentButton';
 import {
 	inviteStudent,
-	revokeStudent,
-	unbanStudent,
 	revokeInvitation,
 	setInterviewAccess,
 	mintStudentKey,
@@ -45,13 +44,12 @@ function keyEmailHref(email: string, key: string): string {
 export default async function AdminPage() {
 	const client = await clerkClient();
 
-	const [students, days, userList, inviteList] = await Promise.all([
+	const [students, days, inviteList] = await Promise.all([
 		lmsPrisma.student.findMany({
 			include: { progress: { select: { lessonSlug: true } } },
 			orderBy: { invitedAt: 'asc' },
 		}),
 		getDays(),
-		client.users.getUserList({ limit: 200 }),
 		client.invitations.getInvitationList({ status: 'pending' }),
 	]);
 
@@ -69,7 +67,6 @@ export default async function AdminPage() {
 	}
 
 	const total = days.length || 1;
-	const bannedById = new Map(userList.data.map((u) => [u.id, u.banned]));
 	const pending = inviteList.data;
 	// A day starts a new week block → draw a left border before it.
 	const isWeekStart = (i: number) => i === 0 || days[i].week !== days[i - 1].week;
@@ -305,16 +302,10 @@ export default async function AdminPage() {
 									const doneSet = new Set(s.progress.map((p) => p.lessonSlug));
 									const doneCount = days.filter((d) => doneSet.has(d.slug)).length;
 									const pct = Math.round((doneCount / total) * 100);
-									const banned = bannedById.get(s.id) ?? false;
 									return (
-										<tr key={s.id} className={banned ? 'opacity-50' : ''}>
+										<tr key={s.id}>
 											<td className='sticky left-0 z-10 max-w-56 truncate bg-white px-3 py-2 font-medium text-zinc-800'>
 												{s.email || s.id}
-												{banned && (
-													<span className='ml-2 rounded bg-red-100 px-1.5 py-0.5 text-[10px] font-semibold text-red-600'>
-														revoked
-													</span>
-												)}
 											</td>
 											<td className='px-2 py-2 text-right tabular-nums text-zinc-500'>
 												{pct}%
@@ -361,21 +352,7 @@ export default async function AdminPage() {
 												</form>
 											</td>
 											<td className='whitespace-nowrap px-3 py-2 text-right'>
-												{banned ? (
-													<form action={unbanStudent} className='inline'>
-														<input type='hidden' name='userId' value={s.id} />
-														<button className='cursor-pointer text-xs font-medium text-emerald-600 hover:text-emerald-800'>
-															Restore
-														</button>
-													</form>
-												) : (
-													<form action={revokeStudent} className='inline'>
-														<input type='hidden' name='userId' value={s.id} />
-														<button className='cursor-pointer text-xs font-medium text-zinc-400 hover:text-red-500'>
-															Revoke
-														</button>
-													</form>
-												)}
+												<RemoveStudentButton userId={s.id} email={s.email || s.id} />
 											</td>
 										</tr>
 									);

@@ -22,25 +22,32 @@ export async function inviteStudent(formData: FormData) {
 	revalidatePath('/admin');
 }
 
-/** Revoke access = ban in Clerk (revokes sessions, blocks sign-in). */
-export async function revokeStudent(formData: FormData) {
+/**
+ * Evict a student. Clerk's ban is a paid-plan feature, so on the free plan the
+ * eviction is a hard DELETE: remove the Clerk account (blocks sign-in and
+ * kills sessions), revoke their proxy key, and drop their LMS row (progress
+ * cascades). Permanent — re-access requires a fresh invite, and sign-up is
+ * restricted so they can't self-register.
+ */
+export async function removeStudent(formData: FormData) {
 	await requireAdmin();
 	const userId = String(formData.get('userId') ?? '');
 	if (!userId) return;
 
-	const client = await clerkClient();
-	await client.users.banUser(userId);
-	revalidatePath('/admin');
-}
+	// Best-effort: kill their proxy key so it can't keep spending once they're gone.
+	const student = await lmsPrisma.student.findUnique({ where: { id: userId } });
+	if (student?.apiKey) {
+		try {
+			await revokeKey(student.apiKey);
+		} catch {
+			// A proxy hiccup shouldn't block the eviction.
+		}
+	}
 
-/** Restore a previously revoked student. */
-export async function unbanStudent(formData: FormData) {
-	await requireAdmin();
-	const userId = String(formData.get('userId') ?? '');
-	if (!userId) return;
-
 	const client = await clerkClient();
-	await client.users.unbanUser(userId);
+	await client.users.deleteUser(userId);
+	await lmsPrisma.student.deleteMany({ where: { id: userId } }); // progress cascades
+
 	revalidatePath('/admin');
 }
 
