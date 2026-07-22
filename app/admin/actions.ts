@@ -12,10 +12,18 @@ export async function inviteStudent(formData: FormData) {
 	const email = String(formData.get('email') ?? '').trim();
 	if (!email) return;
 
+	// The invite link must land on /sign-up: sign-ups are Restricted, so the
+	// account only gets created when the <SignUp> component consumes the
+	// __clerk_ticket that Clerk appends to this URL. Pointing at a protected
+	// route (like /learn) bounces the invitee to /sign-in, drops the ticket,
+	// and strands them — no account exists yet, so sign-in always errors.
+	// If NEXT_PUBLIC_APP_URL is unset, omit redirectUrl entirely so Clerk
+	// falls back to its Account Portal flow instead of a broken relative URL.
+	const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 	const client = await clerkClient();
 	await client.invitations.createInvitation({
 		emailAddress: email,
-		redirectUrl: `${process.env.NEXT_PUBLIC_APP_URL ?? ''}/learn`,
+		...(appUrl ? { redirectUrl: `${appUrl}/sign-up` } : {}),
 		notify: true,
 		ignoreExisting: true,
 	});

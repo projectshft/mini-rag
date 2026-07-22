@@ -1,4 +1,5 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
+import { NextResponse } from 'next/server';
 
 // Private course platform. Everything requires sign-in EXCEPT the public
 // landing page (`/`) and the auth pages. The RAG chat demo that used to live
@@ -15,6 +16,20 @@ const isPublicRoute = createRouteMatcher([
 
 export default clerkMiddleware(async (auth, req) => {
 	if (!isPublicRoute(req)) {
+		// An unauthenticated hit carrying a Clerk invitation ticket means
+		// someone clicked an invite email that points at a protected page
+		// (older invites linked straight to /learn). Send them to /sign-up
+		// with the ticket intact — sign-ups are Restricted, so redeeming the
+		// ticket there is the only way their account gets created. Without
+		// this, auth.protect() bounces them to /sign-in, the ticket is lost,
+		// and sign-in fails forever because the account doesn't exist yet.
+		const ticket = req.nextUrl.searchParams.get('__clerk_ticket');
+		const { userId } = await auth();
+		if (!userId && ticket) {
+			const signUpUrl = new URL('/sign-up', req.url);
+			signUpUrl.searchParams.set('__clerk_ticket', ticket);
+			return NextResponse.redirect(signUpUrl);
+		}
 		await auth.protect();
 	}
 });
