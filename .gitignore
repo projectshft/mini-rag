@@ -46,3 +46,7 @@ next-env.d.ts
 
 # curriculum preview
 curriculum-preview.html
+
+# secrets / local artifacts — never commit
+.clerk/
+clerk-*.zone

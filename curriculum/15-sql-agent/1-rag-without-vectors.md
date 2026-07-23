@@ -192,10 +192,6 @@ Complete the `databaseSearchAgent` in `app/agents/databaseSearchAgent.ts`.
 - "Show me micro tier creators under $500"
 - "I need gaming influencers"
 
-### Submit Your Work
-
-- [Code Submission](https://form.typeform.com/to/FNEjXTwk)
-
 ---
 
 ## Key Takeaways
