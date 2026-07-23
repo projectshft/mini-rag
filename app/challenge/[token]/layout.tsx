@@ -7,7 +7,7 @@ import { isValidChallengeToken } from '@/lib/lms/challenge';
 // must never be discoverable — no index, no follow, and robots.txt also
 // disallows /challenge (the token itself never appears anywhere crawlable).
 export const metadata: Metadata = {
-	title: 'AI Build Challenge',
+	title: '5-Day AI Advisor Challenge',
 	robots: { index: false, follow: false, nocache: true },
 };
 
@@ -30,10 +30,10 @@ export default async function ChallengeLayout({
 						href={`/challenge/${token}`}
 						className='shrink-0 text-[15px] font-bold tracking-tight text-zinc-900'
 					>
-						AI <span className='text-blue-600'>Build</span> Challenge
+						AI <span className='text-blue-600'>Advisor</span> Challenge
 					</Link>
 					<span className='text-xs font-medium text-zinc-400'>
-						Spotify → TikTok pipeline
+						5 steps · Gemini + RAG
 					</span>
 				</div>
 			</header>

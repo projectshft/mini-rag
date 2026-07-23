@@ -2,11 +2,19 @@ import { cache } from 'react';
 import { promises as fs } from 'fs';
 import path from 'path';
 
-// Server-only loader for the AI Build Challenge — a public-but-unlisted
-// mini-program that lives at /challenge/<token>. The pages are ordinary
-// curriculum-style markdown in challenge/*.md, rendered with the same
-// LessonMarkdown pipeline as /learn, but with NO auth and NO progress rows:
-// anyone with the link can read them, nobody can find them without it.
+// Server-only loader for the 5-Day AI Advisor Challenge — a public-but-
+// unlisted mini-course that lives at /challenge/<token>. Students build an
+// AI advisory board of YouTubers (Gemini + system prompts + simple RAG +
+// YouTube transcripts) against the projectshft/ai-advisor starter repo.
+// The pages are ordinary curriculum-style markdown in challenge/*.md,
+// rendered with the same LessonMarkdown pipeline as /learn, but with NO
+// auth and NO progress rows: anyone with the link can read them, nobody
+// can find them without it.
+//
+// The whole thing is a single client-rendered page (see the ChallengeCourse
+// component) — these markdown files are the five steps it shows, with
+// localStorage tracking progress in the browser. No auth, no server-side
+// progress.
 //
 // The token is the whole access model. It's a capability URL: unguessable,
 // unlinked from the rest of the site, noindexed (layout metadata +
@@ -26,20 +34,20 @@ export function challengeToken(): string {
 export type ChallengePage = {
 	slug: string; // filename without .md
 	title: string; // first "# " heading
-	time: string; // "**Time:** ..." line, e.g. "~15 min · Read + Plan"
-	teaser: string; // one-liner for the index cards, from the "> **This part:**" quote
+	time: string; // "**Time:** ..." line, e.g. "~30 min · Build"
+	teaser: string; // one-liner for the step list, from the "> **The goal:**" quote
 	body: string; // markdown after the Time line
 	order: number; // 0-based position
 };
 
-// Explicit ordering — five parts, read in sequence. Adding a part = add the
-// file and list it here.
-const PAGE_ORDER = ['brief', 'architecture', 'resolution', 'downloads', 'ship'];
+// Explicit ordering — five steps, read in any order the student likes.
+// Adding a step = add the file and list it here.
+const PAGE_ORDER = ['step-1', 'step-2', 'step-3', 'step-4', 'step-5'];
 
 const CHALLENGE_DIR = path.join(process.cwd(), 'challenge');
 const TITLE_RE = /^#\s+(.+?)\s*$/m;
 const TIME_RE = /^\*\*Time:\*\*\s*(.+?)\s*$/m;
-const TEASER_RE = /^>\s*\*\*This part:\*\*\s*(.+?)\s*$/m;
+const TEASER_RE = /^>\s*\*\*The goal:\*\*\s*(.+?)\s*$/m;
 
 export const getChallengePages = cache(async (): Promise<ChallengePage[]> => {
 	const pages: ChallengePage[] = [];

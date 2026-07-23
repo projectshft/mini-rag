@@ -16,9 +16,8 @@ const nextConfig: NextConfig = {
 		'/learn': ['./curriculum/**/*.md', './node_modules/.prisma/lms-client/**/*'],
 		'/learn/[slug]': ['./curriculum/**/*.md', './node_modules/.prisma/lms-client/**/*'],
 		'/admin': ['./curriculum/**/*.md', './node_modules/.prisma/lms-client/**/*'],
-		// The AI Build Challenge pages read challenge/*.md from disk the same way.
+		// The AI Advisor Challenge page reads challenge/*.md from disk the same way.
 		'/challenge/[token]': ['./challenge/**/*.md'],
-		'/challenge/[token]/[slug]': ['./challenge/**/*.md'],
 	},
 	// Belt and suspenders for the unlisted challenge pages: even if someone
 	// links the tokened URL somewhere public, crawlers are told not to index.
