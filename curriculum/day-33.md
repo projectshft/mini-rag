@@ -239,10 +239,6 @@ Three steps, all patterns you've built before: (1) call the LLM with a system pr
 
 </details>
 
-### Submit your code
-
-- [Code Submission](https://form.typeform.com/to/FNEjXTwk)
-
 Post your progress in Slack — WHERE-clause edge cases ("under $500" vs "between $200 and $500") make good discussion.
 
 ## Key takeaways

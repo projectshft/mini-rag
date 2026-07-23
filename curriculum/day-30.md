@@ -551,7 +551,7 @@ When you've completed the exercise, submit your `app/agents/__tests__/llm-judge.
 
 **Submit:**
 
-- [Code Submission - LLM-as-Judge](https://form.typeform.com/to/FNEjXTwk)
+- [Code Submission](https://form.typeform.com/to/TXjlfrlr)
 
 Post it in Slack too — comparing judge prompts and thresholds with other students is genuinely useful.
 
