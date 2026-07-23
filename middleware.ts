@@ -4,14 +4,18 @@ import { NextResponse } from 'next/server';
 // Private course platform. Everything requires sign-in EXCEPT the public
 // landing page (`/`) and the auth pages. The RAG chat demo that used to live
 // at `/` is gone — students clone the student-* branch for that.
-// Public: the landing, the auth pages, and the standalone lead quiz (a
-// no-auth marketing funnel that captures an email + optional phone).
+// Public: the landing, the auth pages, the standalone lead quiz (a
+// no-auth marketing funnel that captures an email + optional phone), and
+// the AI Build Challenge — public-but-unlisted pages whose access model is
+// an unguessable token in the URL (wrong token 404s in the route itself;
+// see lib/lms/challenge.ts).
 const isPublicRoute = createRouteMatcher([
 	'/',
 	'/sign-in(.*)',
 	'/sign-up(.*)',
 	'/ai-interview-quiz',
 	'/api/quiz-lead',
+	'/challenge(.*)',
 ]);
 
 // Known AI training/scraper user-agents. Real browsers never match these, so

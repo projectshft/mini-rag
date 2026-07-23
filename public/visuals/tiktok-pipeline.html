@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Queue-driven pipeline · AI Build Challenge</title>
+<style>
+  :root {
+    --ink: #1b2330;
+    --muted: #5b6675;
+    --line: #e3e7ec;
+    --bg: #ffffff;
+    --panel: #f6f8fa;
+    --accent: #2563eb;      /* work in flight */
+    --ok: #15803d;          /* succeeded */
+    --bad: #dc2626;         /* failing / retrying */
+    --spotify: #22c55e;
+    --store: #f59e0b;
+    --code-bg: #f4f6f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink); background: var(--bg); margin: 0; padding: 1.4rem;
+    line-height: 1.5;
+  }
+  h1 { font-size: 1.35rem; margin: 0 0 .25rem; }
+  .lead { color: var(--muted); font-size: .98rem; margin: 0 0 1rem; max-width: 56rem; }
+  .controls { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; margin: 0 0 1rem; }
+  button {
+    font: inherit; font-size: .9rem; cursor: pointer;
+    border: 1px solid var(--line); background: #fff; color: var(--ink);
+    padding: .42rem .85rem; border-radius: 999px;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.primary:hover { background: #1d4ed8; color: #fff; }
+  button.danger.on { background: #fef2f2; border-color: var(--bad); color: var(--bad); }
+  button:disabled { opacity: .45; cursor: default; }
+  .workers { display: inline-flex; align-items: center; gap: .35rem; margin-left: .4rem;
+             font-size: .85rem; color: var(--muted); }
+  .workers button { padding: .25rem .6rem; font-size: .85rem; }
+  .workers button.on { background: var(--code-bg); border-color: var(--accent); color: var(--accent); font-weight: 600; }
+
+  .pipe { display: grid; grid-template-columns: repeat(5, 1fr); gap: .6rem; }
+  .stage {
+    border: 1px solid var(--line); border-radius: 14px; background: var(--panel);
+    padding: .6rem .6rem .7rem; min-height: 230px; display: flex; flex-direction: column;
+  }
+  .stage h2 { font-size: .82rem; margin: 0; display: flex; justify-content: space-between; align-items: baseline; }
+  .stage h2 .n { font-weight: 400; color: var(--muted); font-variant-numeric: tabular-nums; font-size: .75rem; }
+  .stage .sub { font-size: .7rem; color: var(--muted); margin: 0 0 .5rem; }
+  .lane { font-size: .62rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: .35rem 0 .15rem; }
+  .queue, .working, .done-lane { display: flex; flex-wrap: wrap; gap: .28rem; min-height: 22px;
+    border: 1px dashed var(--line); border-radius: 8px; padding: .3rem; background: #fff; }
+  .done-lane { border-style: solid; }
+  .stage.src { border-top: 3px solid var(--spotify); }
+  .stage.mid { border-top: 3px solid var(--accent); }
+  .stage.dst { border-top: 3px solid var(--store); }
+
+  .chip {
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--accent); position: relative;
+    transition: transform .35s ease;
+  }
+  .chip.working { animation: spin-pulse 1s ease-in-out infinite; }
+  .chip.ok { background: var(--ok); }
+  .chip.fail { background: var(--bad); animation: shake .4s ease; }
+  .chip.retry::after {
+    content: attr(data-retries); position: absolute; top: -7px; right: -7px;
+    background: var(--bad); color: #fff; font-size: .55rem; font-weight: 700;
+    width: 12px; height: 12px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  }
+  .chip.enter { animation: pop-in .3s ease; }
+  @keyframes pop-in { from { transform: scale(.3); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  @keyframes spin-pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.25); } }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-3px); } 75% { transform: translateX(3px); }
+  }
+
+  .stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: .6rem; margin-top: .6rem; }
+  .stat { font-size: .72rem; color: var(--muted); text-align: center; font-variant-numeric: tabular-nums; }
+  .stat b { color: var(--ok); } .stat i { color: var(--bad); font-style: normal; }
+
+  .log {
+    margin-top: 1rem; background: #0f172a; color: #cbd5e1; border-radius: 10px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace; font-size: .74rem;
+    padding: .6rem .8rem; height: 108px; overflow-y: auto; line-height: 1.55;
+  }
+  .log .ok { color: #4ade80; } .log .bad { color: #f87171; } .log .info { color: #93c5fd; }
+  .note { background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+          padding: .7rem .9rem; color: var(--muted); font-size: .92rem; margin-top: 1rem; }
+  .note b { color: var(--ink); }
+  @media (max-width: 720px) {
+    .pipe, .stats { grid-template-columns: repeat(2, 1fr); }
+    .stage.dst { grid-column: span 2; min-height: 150px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .chip, .chip.working, .chip.enter, .chip.fail { animation: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+  <h1>The pipeline you're building</h1>
+  <p class="lead">
+    Songs flow left to right. Each stage pulls from a <b>queue</b>, does its work, and pushes to the next queue —
+    no stage ever calls another directly. Run it, then turn on <b>Chaos mode</b> and watch failures get retried
+    without the rest of the pipeline noticing. Then scale the download workers and watch its backlog drain.
+  </p>
+
+  <div class="controls">
+    <button id="run" class="primary">▶ Run the playlist (12 songs)</button>
+    <button id="chaos" class="danger">☠ Chaos mode: off</button>
+    <span class="workers">Download workers:
+      <button data-w="1">1</button>
+      <button data-w="2" class="on">2</button>
+      <button data-w="6">6</button>
+    </span>
+  </div>
+
+  <div class="pipe" id="pipe"></div>
+  <div class="stats" id="stats"></div>
+  <div class="log" id="log"></div>
+
+  <div class="note" id="note">
+    <b>Why queues matter:</b> a failed download goes <i>back on the queue</i> and is retried — resolution and
+    scraping never notice. And because each stage has its own workers, you can scale the slow, heavy stage
+    (downloads) without touching the fast ones. That isolation is the entire argument for this architecture.
+  </div>
+
+<script>
+(() => {
+  'use strict';
+
+  // ── Model ──────────────────────────────────────────────────────────────
+  // Stages: source (playlist) → three queue-fed worker stages → storage.
+  const STAGES = [
+    { id: 'playlist', name: 'Playlist',  sub: 'Spotify · TypeScript', cls: 'src', workers: 0, ms: 0 },
+    { id: 'resolve',  name: 'Resolve',   sub: 'Crawl4AI · Python',    cls: 'mid', workers: 2, ms: 900 },
+    { id: 'scrape',   name: 'Scrape',    sub: 'sound page · Python',  cls: 'mid', workers: 2, ms: 1100 },
+    { id: 'download', name: 'Download',  sub: 'yt-dlp → MP4',         cls: 'mid', workers: 2, ms: 1800 },
+    { id: 'storage',  name: 'Storage',   sub: 'videos/&lt;sound_id&gt;/', cls: 'dst', workers: 0, ms: 0 },
+  ];
+  const WORKER_STAGES = ['resolve', 'scrape', 'download'];
+  const MAX_RETRIES = 3;
+
+  let chaos = false;
+  let running = false;
+  let songSeq = 0;
+  const stats = {}; // id -> {ok, fail}
+  WORKER_STAGES.forEach(s => stats[s] = { ok: 0, fail: 0 });
+
+  // ── DOM scaffolding ────────────────────────────────────────────────────
+  const pipe = document.getElementById('pipe');
+  const els = {}; // stageId -> {queue, working, done}
+  for (const s of STAGES) {
+    const d = document.createElement('div');
+    d.className = 'stage ' + s.cls;
+    const isWorker = WORKER_STAGES.includes(s.id);
+    d.innerHTML =
+      '<h2>' + s.name + ' <span class="n" id="n-' + s.id + '"></span></h2>' +
+      '<p class="sub">' + s.sub + '</p>' +
+      (isWorker
+        ? '<div class="lane">queue</div><div class="queue" id="q-' + s.id + '"></div>' +
+          '<div class="lane">workers</div><div class="working" id="w-' + s.id + '"></div>'
+        : '<div class="lane">' + (s.id === 'playlist' ? 'songs' : 'videos on disk') + '</div>' +
+          '<div class="done-lane" id="q-' + s.id + '"></div>');
+    pipe.appendChild(d);
+    els[s.id] = {
+      queue: d.querySelector('#q-' + s.id),
+      working: d.querySelector('#w-' + s.id),
+      count: d.querySelector('#n-' + s.id),
+    };
+  }
+
+  const statsEl = document.getElementById('stats');
+  function renderStats() {
+    statsEl.innerHTML = STAGES.map(s => {
+      if (!WORKER_STAGES.includes(s.id)) return '<div class="stat"></div>';
+      const st = stats[s.id];
+      return '<div class="stat"><b>✓ ' + st.ok + '</b> · <i>✗ ' + st.fail + '</i> · ' +
+             s.workers + ' worker' + (s.workers === 1 ? '' : 's') + '</div>';
+    }).join('');
+    for (const s of STAGES) {
+      const q = els[s.id].queue.childElementCount +
+        (els[s.id].working ? els[s.id].working.childElementCount : 0);
+      if (els[s.id].count) els[s.id].count.textContent = q ? q + ' in stage' : '';
+    }
+  }
+
+  const logEl = document.getElementById('log');
+  function log(msg, cls) {
+    const line = document.createElement('div');
+    if (cls) line.className = cls;
+    line.textContent = msg;
+    logEl.appendChild(line);
+    while (logEl.childElementCount > 60) logEl.removeChild(logEl.firstChild);
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  // ── Song chips ─────────────────────────────────────────────────────────
+  function makeChip(id) {
+    const c = document.createElement('div');
+    c.className = 'chip enter';
+    c.title = 'song #' + id;
+    c.dataset.retriesCount = '0';
+    return c;
+  }
+  const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+  const jitter = (ms) => ms * (0.6 + Math.random() * 0.8);
+
+  // One worker loop per stage: pull a chip off the stage's queue DOM,
+  // "process" it, then hand it to the next stage's queue. Failures shake,
+  // gain a retry badge, and go back on the SAME queue — the pipeline's
+  // whole thesis in one function.
+  async function workerLoop(stageIdx, workerId) {
+    const stage = STAGES[stageIdx];
+    const next = STAGES[stageIdx + 1];
+    for (;;) {
+      if (stage.dead || stage.workers < workerId) return; // scaled down
+      const chip = els[stage.id].queue.firstElementChild;
+      if (!chip) { await sleep(120); if (!running && !anyWork()) return; continue; }
+      els[stage.id].working.appendChild(chip);
+      chip.classList.add('working');
+      chip.classList.remove('enter');
+      await sleep(jitter(stage.ms));
+
+      const failP = chaos ? 0.35 : 0.12;
+      const retries = +chip.dataset.retriesCount;
+      if (Math.random() < failP && retries < MAX_RETRIES) {
+        chip.dataset.retriesCount = String(retries + 1);
+        chip.setAttribute('data-retries', retries + 1);
+        chip.classList.remove('working');
+        chip.classList.add('fail', 'retry');
+        log('[' + stage.id + '] ' + chip.title + ' failed (' +
+            (stage.id === 'download' ? 'timeout' : 'rate limited') +
+            ') — retry ' + (retries + 1) + '/' + MAX_RETRIES + ' queued', 'bad');
+        stats[stage.id].fail++;
+        await sleep(450);
+        chip.classList.remove('fail');
+        els[stage.id].queue.appendChild(chip); // back of the line
+      } else if (retries >= MAX_RETRIES && Math.random() < failP) {
+        chip.classList.remove('working');
+        chip.remove(); // dead-letter: recorded, not retried forever
+        stats[stage.id].fail++;
+        log('[' + stage.id + '] ' + chip.title + ' exhausted retries — recorded as failed', 'bad');
+      } else {
+        chip.classList.remove('working', 'retry');
+        chip.removeAttribute('data-retries');
+        stats[stage.id].ok++;
+        if (next.id === 'storage') {
+          chip.classList.add('ok');
+          els.storage.queue.appendChild(chip);
+          log('[storage] ' + chip.title + ' → videos/' + (7350000 + +chip.title.slice(6)) +
+              '/v' + Math.floor(Math.random() * 9e5 + 1e5) + '.mp4', 'ok');
+        } else {
+          els[next.id].queue.appendChild(chip);
+        }
+      }
+      renderStats();
+    }
+  }
+
+  function anyWork() {
+    return WORKER_STAGES.some(id =>
+      els[id].queue.childElementCount || els[id].working.childElementCount);
+  }
+
+  function spawnWorkers() {
+    for (const [i, s] of STAGES.entries()) {
+      if (!WORKER_STAGES.includes(s.id)) continue;
+      const have = s.spawned || 0;
+      for (let w = have + 1; w <= s.workers; w++) workerLoop(i, w);
+      s.spawned = Math.max(have, s.workers);
+    }
+  }
+
+  // ── Controls ───────────────────────────────────────────────────────────
+  const runBtn = document.getElementById('run');
+  runBtn.addEventListener('click', async () => {
+    runBtn.disabled = true;
+    running = true;
+    log('[scheduler] run triggered — ingesting playlist 37i9dQZF1DX0XUsuxWHRQd', 'info');
+    spawnWorkers();
+    for (let i = 0; i < 12; i++) {
+      const chip = makeChip(++songSeq);
+      els.playlist.queue.appendChild(chip);
+      await sleep(180);
+      els.resolve.queue.appendChild(chip); // ingestion → resolution queue
+      renderStats();
+    }
+    log('[playlist] 12 songs extracted → resolution queue', 'info');
+    running = false;
+    // Re-enable once the pipeline drains (workers exit on empty+idle).
+    const wait = setInterval(() => {
+      if (!anyWork()) {
+        clearInterval(wait);
+        runBtn.disabled = false;
+        STAGES.forEach(s => s.spawned = 0);
+        log('[run] pipeline drained — stored ' + els.storage.queue.childElementCount +
+            ' videos total. Run it again or add chaos.', 'info');
+      }
+    }, 400);
+  });
+
+  const chaosBtn = document.getElementById('chaos');
+  chaosBtn.addEventListener('click', () => {
+    chaos = !chaos;
+    chaosBtn.classList.toggle('on', chaos);
+    chaosBtn.textContent = '☠ Chaos mode: ' + (chaos ? 'on' : 'off');
+    log(chaos
+      ? '[chaos] failure rate tripled — watch the retries. Everything still lands.'
+      : '[chaos] back to normal failure rates.', chaos ? 'bad' : 'info');
+  });
+
+  document.querySelectorAll('.workers button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.workers button').forEach(x => x.classList.remove('on'));
+      b.classList.add('on');
+      const dl = STAGES.find(s => s.id === 'download');
+      dl.workers = +b.dataset.w;
+      if (dl.workers > (dl.spawned || 0) && (running || anyWork())) spawnWorkers();
+      log('[scale] download stage → ' + dl.workers + ' worker' + (dl.workers === 1 ? '' : 's') +
+          ' (resolution & scraping untouched — that\'s independent scaling)', 'info');
+      renderStats();
+    });
+  });
+
+  renderStats();
+  log('[ready] press Run. This is a simulation of the system you\'re about to build for real.', 'info');
+})();
+</script>
+</body>
+</html>
