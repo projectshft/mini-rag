@@ -29,6 +29,11 @@ const nextConfig: NextConfig = {
 			},
 		];
 	},
+	// Nice public URL for the employer-facing curriculum PDF:
+	// ai.parsity.io/curriculum serves public/curriculum.pdf.
+	async rewrites() {
+		return [{ source: '/curriculum', destination: '/curriculum.pdf' }];
+	},
 };
 
 export default nextConfig;

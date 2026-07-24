@@ -16,6 +16,7 @@ const isPublicRoute = createRouteMatcher([
 	'/ai-interview-quiz',
 	'/api/quiz-lead',
 	'/challenge(.*)',
+	'/curriculum', // employer-facing curriculum PDF (rewritten in next.config)
 ]);
 
 // Known AI training/scraper user-agents. Real browsers never match these, so
@@ -77,7 +78,7 @@ export default clerkMiddleware(async (auth, req) => {
 export const config = {
 	matcher: [
 		// Skip Next internals and static files, run on everything else
-		'/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|txt|docx?|xlsx?|zip|webmanifest)).*)',
+		'/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|txt|pdf|docx?|xlsx?|zip|webmanifest)).*)',
 		// Always run on API/trpc routes
 		'/(api|trpc)(.*)',
 	],
