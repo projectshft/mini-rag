@@ -4,7 +4,7 @@
 
 > **The goal:** see these exact concepts running as a real product used by Roc Nation and Universal — and figure out your next move.
 
-<!-- video embed goes here -->
+<iframe src="https://share.descript.com/embed/q6CELbwsAg0" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
 ## What you built
 

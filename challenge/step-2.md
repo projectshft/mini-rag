@@ -4,7 +4,7 @@
 
 > **The goal:** add a system prompt so your advisor stays in its lane instead of answering random questions about wine or the weather.
 
-<!-- video embed goes here -->
+<iframe src="https://share.descript.com/embed/KUooyjeVWNS" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
 ## The problem
 

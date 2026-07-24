@@ -4,7 +4,7 @@
 
 > **The goal:** pull real YouTube transcripts and feed them to your advisor — actual creator knowledge, not static JSON.
 
-<!-- video embed goes here -->
+<iframe src="https://share.descript.com/embed/jAdWcQqbBSq" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
 ## Why transcripts?
 

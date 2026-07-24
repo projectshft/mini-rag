@@ -4,7 +4,7 @@
 
 > **The goal:** search a custom knowledge base, inject what you find into the prompt, and get answers grounded in your content. That's RAG.
 
-<!-- video embed goes here -->
+<iframe src="https://share.descript.com/embed/byvZIgKzVWT" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
 ## The limitation so far
 

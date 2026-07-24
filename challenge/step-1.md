@@ -4,7 +4,7 @@
 
 > **The goal:** the most fundamental thing in all of AI engineering — text goes to Gemini, text comes back. Get the starter running and make your first call.
 
-<!-- video embed goes here -->
+<iframe src="https://share.descript.com/embed/O63bxwYi9mM" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
 ## Before you start
 
