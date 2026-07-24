@@ -47,8 +47,10 @@ User-agent: Omgilibot
 Disallow: /
 
 # Everyone else: index the front door, leave the classrooms alone.
+# (/challenge is invite-only — the link is the key. Nothing to see here.)
 User-agent: *
 Allow: /
 Disallow: /learn
 Disallow: /admin
 Disallow: /api
+Disallow: /challenge

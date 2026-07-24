@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex, nofollow" />
+<title>How your advisor retrieves · AI Advisor Challenge</title>
+<style>
+  :root {
+    --ink: #1b2330;
+    --muted: #5b6675;
+    --line: #e3e7ec;
+    --bg: #ffffff;
+    --panel: #f6f8fa;
+    --accent: #2563eb;
+    --win: #15803d;
+    --code-bg: #f4f6f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink); background: var(--bg); margin: 0; padding: 1.5rem;
+    line-height: 1.5;
+  }
+  h1 { font-size: 1.4rem; margin: 0 0 .3rem; }
+  .lead { color: var(--muted); font-size: 1.02rem; margin: 0 0 1.2rem; max-width: 60rem; }
+  .presets { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 1rem; }
+  button {
+    font: inherit; font-size: .92rem; cursor: pointer;
+    border: 1px solid var(--line); background: #fff; color: var(--ink);
+    padding: .45rem .85rem; border-radius: 999px;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  button.on { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .rows { display: flex; flex-direction: column; gap: .55rem; }
+  .row {
+    border: 1px solid var(--line); border-radius: 12px; background: var(--panel);
+    padding: .7rem .9rem; transition: border-color .25s, background .25s, transform .25s;
+  }
+  .row .head { display: flex; align-items: baseline; justify-content: space-between; gap: .5rem; }
+  .row .who { font-weight: 600; font-size: 1.02rem; }
+  .row .who .topic { color: var(--muted); font-weight: 400; font-size: .9rem; margin-left: .35rem; }
+  .row .score { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .9rem; white-space: nowrap; }
+  .bar { height: 7px; border-radius: 999px; background: #e9edf2; overflow: hidden; margin: .5rem 0; }
+  .bar > i { display: block; height: 100%; width: 0; background: #cbd5e1; transition: width .5s ease; }
+  .kw { display: flex; flex-wrap: wrap; gap: .3rem; margin-top: .3rem; }
+  .chip { font-size: .74rem; padding: .1rem .45rem; border-radius: 6px; background: #eef1f4; color: var(--muted); }
+  .chip.hit { background: #dcfce7; color: var(--win); font-weight: 600; }
+  .row.win { border-color: var(--win); background: #f0fdf4; transform: translateX(3px); }
+  .row.win .who { color: var(--win); }
+  .row.win .bar > i { background: var(--win); }
+  .row.zero { opacity: .5; }
+  .row.zero .head .score { color: #b6bcc6; }
+  .picked { font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: var(--win); font-weight: 700; }
+  .note { background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+          padding: .75rem 1rem; color: var(--muted); font-size: .95rem; margin-top: 1.1rem; }
+  .note b { color: var(--ink); }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; background: var(--code-bg);
+         padding: .1em .35em; border-radius: 4px; font-size: .88em; }
+</style>
+</head>
+<body>
+  <h1>How your advisor retrieves</h1>
+  <p class="lead">
+    Pick a question. Each advisor entry is scored against it — <b>+10</b> if the question mentions the topic,
+    <b>+5</b> per matching keyword. Highest score wins and gets injected into Gemini's prompt as context.
+    This is the <b>Retrieve</b> in RAG, exactly as your <code>searchKnowledgeBase()</code> does it.
+  </p>
+
+  <div class="presets" id="presets"></div>
+  <div class="rows" id="rows"></div>
+
+  <div class="note" id="note"></div>
+
+<script>
+(() => {
+  'use strict';
+
+  // A slice of the real ai-advisor knowledge-base.json.
+  const KB = [
+    { advisor: 'Primeagen', topic: 'Performance & Optimization', keywords: ['performance','optimization','speed','profiling','slow','benchmark'] },
+    { advisor: 'Primeagen', topic: 'Developer Workflow', keywords: ['workflow','productivity','vim','editor','terminal','tools'] },
+    { advisor: 'Theo', topic: 'TypeScript Best Practices', keywords: ['typescript','types','type safety','interfaces','generics','any'] },
+    { advisor: 'Theo', topic: 'Modern Web Development', keywords: ['web dev','nextjs','react','framework','ssr','full stack'] },
+    { advisor: 'Brian Jenney', topic: 'Testing Strategy', keywords: ['testing','tests','tdd','unit tests','integration','quality'] },
+    { advisor: 'Brian Jenney', topic: 'Debugging Approach', keywords: ['debugging','bugs','errors','troubleshooting','logs'] },
+  ];
+
+  const QUESTIONS = [
+    "How do I make my slow code faster?",
+    "Should I ever use any in TypeScript?",
+    "How do I get better at debugging?",
+    "Is Vim actually worth learning?",
+    "What's the best way to test a Next.js app?",
+    "What does Theo think about React?",
+  ];
+
+  const presetsEl = document.getElementById('presets');
+  const rowsEl = document.getElementById('rows');
+  const noteEl = document.getElementById('note');
+  let current = 0;
+
+  function score(entry, q) {
+    const ql = q.toLowerCase();
+    let s = 0;
+    const hits = [];
+    if (ql.includes(entry.topic.toLowerCase())) s += 10;
+    for (const kw of entry.keywords) {
+      if (ql.includes(kw.toLowerCase())) { s += 5; hits.push(kw); }
+    }
+    return { s, hits };
+  }
+
+  function render() {
+    const q = QUESTIONS[current];
+    const scored = KB.map((e) => ({ e, ...score(e, q) }));
+    const max = Math.max(1, ...scored.map((x) => x.s));
+    const top = Math.max(...scored.map((x) => x.s));
+    // rank: winners first (score desc), then original order
+    const order = scored.map((x, i) => ({ ...x, i }))
+      .sort((a, b) => b.s - a.s || a.i - b.i);
+
+    rowsEl.innerHTML = order.map((x) => {
+      const isWin = x.s === top && x.s > 0;
+      const isZero = x.s === 0;
+      const kwChips = x.e.keywords
+        .map((kw) => `<span class="chip ${x.hits.includes(kw) ? 'hit' : ''}">${kw}</span>`)
+        .join('');
+      return `
+        <div class="row ${isWin ? 'win' : ''} ${isZero ? 'zero' : ''}">
+          <div class="head">
+            <span class="who">${x.e.advisor}<span class="topic">· ${x.e.topic}</span></span>
+            <span class="score">${isWin ? '<span class="picked">retrieved →</span> ' : ''}score ${x.s}</span>
+          </div>
+          <div class="bar"><i style="width:${(x.s / max) * 100}%"></i></div>
+          <div class="kw">${kwChips}</div>
+        </div>`;
+    }).join('');
+
+    const winners = order.filter((x) => x.s === top && x.s > 0);
+    noteEl.innerHTML = winners.length
+      ? `<b>Injected into the prompt:</b> ${winners.map((w) => `${w.e.advisor} on ${w.e.topic}`).join(', ')}.
+         Gemini now answers grounded in that content instead of guessing from training data.`
+      : `<b>Nothing matched.</b> Keyword search only matches literal words — reword the question and the
+         right advisor might still be missed. <b>This is exactly the limit embeddings fix.</b>`;
+  }
+
+  QUESTIONS.forEach((q, i) => {
+    const b = document.createElement('button');
+    b.textContent = q;
+    if (i === 0) b.classList.add('on');
+    b.addEventListener('click', () => {
+      current = i;
+      [...presetsEl.children].forEach((c, j) => c.classList.toggle('on', j === i));
+      render();
+    });
+    presetsEl.appendChild(b);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

@@ -300,3 +300,75 @@ li:hover > .rest-day-row .rest-day-label,
 		animation: none;
 	}
 }
+
+/* AI Build Challenge (/challenge/<token>) animations — same family as the
+   landing set: subtle, once-on-entry rises plus a living pipeline hero. */
+
+/* Content eases up and in; cards stagger via inline animation-delay. */
+@keyframes challenge-rise {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+.challenge-rise {
+	animation: challenge-rise 0.65s ease-out both;
+}
+
+/* Queue links: the dashes crawl forward so the pipeline reads as flowing. */
+@keyframes challenge-flow {
+	to {
+		stroke-dashoffset: -24;
+	}
+}
+.challenge-flow {
+	animation: challenge-flow 1.6s linear infinite;
+}
+
+/* Stage nodes pop in one after another when the hero mounts. */
+@keyframes challenge-node {
+	from {
+		opacity: 0;
+		transform: scale(0.85);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+.challenge-node {
+	animation: challenge-node 0.5s ease-out both;
+	transform-origin: center;
+	transform-box: fill-box;
+}
+
+/* Each node breathes a soft expanding ring, offset per stage. */
+@keyframes challenge-ping {
+	0% {
+		transform: scale(1);
+		opacity: 0.35;
+	}
+	70%,
+	100% {
+		transform: scale(1.35);
+		opacity: 0;
+	}
+}
+.challenge-ping {
+	animation: challenge-ping 3s ease-out infinite;
+	transform-origin: center;
+	transform-box: fill-box;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.challenge-rise,
+	.challenge-flow,
+	.challenge-node,
+	.challenge-ping {
+		animation: none;
+	}
+}
