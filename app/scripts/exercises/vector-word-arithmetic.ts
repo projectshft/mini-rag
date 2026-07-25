@@ -329,7 +329,152 @@ async function demonstrateWordArithmetic() {
 	console.log('• startup - funding + desperation ≈ ?');
 	console.log('• influencer - talent + followers ≈ ?');
 
+	// Example 7: Boyfriends
+	console.log('💌 My Example for Boyfriend: Platform Evolution');
+	console.log('Formula: Boyfriend - nice + rich ≈ ?');
+
+	const [boyfriendVec2, niceVec, richVec] = await Promise.all([
+		getEmbedding('Boyfriend'),
+		getEmbedding('nice'),
+		getEmbedding('rich'),
+	]);
+
+	const result7 = addVectors(
+		subtractVectors(boyfriendVec2, niceVec),
+		richVec
+	);
+	const candidates7 = [
+		'bachelor',
+		'player',
+		'authenticity',
+		'facade',
+		'commitment',
+		'freedom',
+		'family', // obviously wrong - should have low similarity
+	];
+	const matches7 = await findClosestWord(result7, candidates7);
+
+	console.log('Top matches:');
+	matches7.forEach((match, i) => {
+		const emoji = i === matches7.length - 1 ? '❌' : '✅';
+		console.log(
+			`${emoji} ${i + 1}. ${match.word} (similarity: ${match.similarity.toFixed(
+				3
+			)})`
+		);
+	});
+	console.log('');
+
+	// Example 8: Activity transformation
+	console.log('🏃 ACTIVITY EXAMPLE: Verb to Action');
+	console.log('Formula: running - run + eat ≈ ?');
+
+	const [runningVec, runVec, eatVec] = await Promise.all([
+		getEmbedding('running'),
+		getEmbedding('run'),
+		getEmbedding('eat'),
+	]);
+
+	const result8 = addVectors(
+		subtractVectors(runningVec, runVec),
+		eatVec
+	);
+	const candidates8 = [
+		'eating',
+		'dining',
+		'consuming',
+		'munching',
+		'feasting',
+		'devouring',
+		'sleeping', // control word
+	];
+	const matches8 = await findClosestWord(result8, candidates8);
+
+	console.log('Top matches:');
+	matches8.forEach((match, i) => {
+		const emoji = i === matches8.length - 1 ? '❌' : '✅';
+		console.log(
+			`${emoji} ${i + 1}. ${match.word} (similarity: ${match.similarity.toFixed(
+				3
+			)})`
+		);
+	});
+	console.log('');
+
 	//TODO: create your own examples and run them to gain some intuition on how vector math works
+
+	//*Example 9: Sewing Items
+	console.log('🪡 SEWING EXAMPLE: Common sewing items');
+	console.log('Formula: sewing - sew + cut ≈ ?')
+
+	const [sewingVec, sewVec, planeVec]
+	= await Promise.all([
+		getEmbedding('sewing'),
+		getEmbedding('sew'),
+		getEmbedding('plane'),
+	]);
+
+	const result9 = addVectors(subtractVectors(sewingVec, sewVec), planeVec
+	);
+	const candidates9 = [
+		'sewing',
+		'cutting',
+		'folding',
+		'ironing',
+		'pleating',
+		'measuring',
+		'banana', //control word
+	];
+	const matches9 = await
+	findClosestWord(result9, candidates9);
+
+	console.log('Top matches:');
+	matches9.forEach((match, i) => {
+		const emoji = i === matches9.length -1 ? '❌' : '✅';
+		console.log(
+			`${emoji} ${i + 1}. ${match.word} (similarity: ${match.similarity.toFixed(
+				3
+			)})`
+		);
+	});
+	console.log('');
+
+	// *Example 10: Religious text transformation
+	console.log('📖 RELIGIOUS TEXT EXAMPLE: Removing the supernatural');
+	console.log('Formula: bible - miracles + people ≈ ?');
+
+	const [bibleVec, miraclesVec, peopleVec] = await Promise.all([
+		getEmbedding('bible'),
+		getEmbedding('miracles'),
+		getEmbedding('people'),
+	]);
+
+	const result10 = addVectors(
+		subtractVectors(bibleVec, miraclesVec),
+		peopleVec
+	);
+	const candidates10 = [
+		'history',
+		'stories',
+		'mythology',
+		'fables',
+		'legends',
+		'literature',
+		'textbook',
+		'volcano', // control word
+	];
+	const matches10 = await findClosestWord(result10, candidates10);
+
+	console.log('Top matches:');
+	matches10.forEach((match, i) => {
+		const emoji = i === matches10.length - 1 ? '❌' : '✅';
+		console.log(
+			`${emoji} ${i + 1}. ${match.word} (similarity: ${match.similarity.toFixed(
+				3
+			)})`
+		);
+	});
+	console.log('');
 }
 
 // Run the demonstration
