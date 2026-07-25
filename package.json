@@ -21,6 +21,8 @@
 		"exercise:vectors:test": "npx ts-node app/scripts/exercises/vector-similarity-test.ts",
 		"exercise:word-math": "npx ts-node app/scripts/exercises/vector-word-arithmetic.ts",
 		"exercise:injection": "npx tsx app/scripts/exercises/prompt-injection-test.ts"
+		"exercise:hybrid": "npx ts-node app/scripts/exercises/hybrid-search-demo.ts",
+		"convert-curriculum": "node scripts/convert-md-to-kajabi-html.mjs"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [
