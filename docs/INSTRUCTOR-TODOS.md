@@ -18,6 +18,11 @@ text + interactive.
   the moment students shift from "follow along" to "build your own." A short
   (2–3 min) "how to pick and scope your project" pep-talk is worth more here
   than in any technical lesson — it drives completion.
+- [ ] **RAG System Design** (`curriculum/interview-04.md`). No video, and it may
+  be the highest-leverage of all: designing a RAG system live is what senior
+  interviews actually probe, and interview prep maps straight to placement.
+  Walk the reference architecture out loud + the tradeoffs to name (chunking,
+  hybrid retrieval, reranking, evals, cost) — how you'd defend each in a room.
 
 ### Optional — nice, not necessary
 
