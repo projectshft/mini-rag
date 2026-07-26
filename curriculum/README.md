@@ -82,6 +82,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 **Week 7 — Going Further (optional)**
 
 - [MCP in Production: Auth, Tools & Resources](day-43.md)
+- [Human in the Loop: Gating an Agent's Destructive Actions](human-in-the-loop.md)
 
 ## Assignments
 
