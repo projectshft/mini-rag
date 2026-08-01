@@ -21,7 +21,7 @@ flowchart LR
     E --> P[(Upsert to Pinecone)]
 ```
 
-Notice what's in the middle: the `chunkText()` function you completed on [Day 8](/learn/day-08). Today it goes to work on real web pages.
+Notice what's in the middle: the `chunkText()` function you completed in the chunking lesson. Today it goes to work on real web pages.
 
 ## Understanding the script
 
@@ -64,6 +64,25 @@ async function scrapeAndVectorize(urls: string[]) {
 }
 ```
 
+### The five metadata fields (memorize these)
+
+Every vector you store carries exactly these, and every lesson from here on
+reads them back by these names:
+
+| Field | What it holds | Why it matters |
+|-------|---------------|----------------|
+| `text` | the chunk itself | this is what the LLM reads — without it you retrieve IDs and scores and nothing else |
+| `url` | the page it came from | citations, and delete-by-source when a page changes |
+| `title` | the page title | human-readable sources in your UI |
+| `chunkIndex` | which chunk of that page | ordering, and stitching neighbours back together |
+| `totalChunks` | how many the page produced | tells you if a re-ingest produced fewer chunks than last time |
+
+Two habits worth forming now. **The vector ID is `url-chunkIndex`** — deterministic
+on purpose, so re-running the script overwrites the same chunk instead of
+duplicating it. And **`url` is the field you filter and delete on** when a page
+changes; there is no separate "source" field, even though your API might rename
+it to `source` on the way out.
+
 ### The flow, step by step
 
 **Step 1: Scrape and chunk**
@@ -96,6 +115,7 @@ Why batches of 100?
 const embeddingResponse = await openaiClient.embeddings.create({
 	model: 'text-embedding-3-small',
 	input: batch.map((chunk) => chunk.content),
+	dimensions: 512, // must match your Pinecone index, or the upsert fails
 });
 ```
 
@@ -270,12 +290,12 @@ Ideas to consider:
 - How would you update existing content?
 - How would you scale to thousands of URLs?
 
-We'll turn this pipeline into a proper API route on [Day 10](/learn/day-10).
+We'll turn this pipeline into a proper API route tomorrow.
 
 ## Key takeaways
 
 - The ingestion pipeline is always the same four moves: scrape -> chunk -> embed -> upsert
-- `DataProcessor` (`app/libs/dataProcessor.ts`) bundles scraping + your Day 8 `chunkText()` into one call
+- `DataProcessor` (`app/libs/dataProcessor.ts`) bundles scraping + your `chunkText()` into one call
 - Batching (100 chunks per API call) is how you respect rate limits and keep Pinecone upserts fast
 - Deterministic vector IDs (`url-chunkIndex`) make re-runs idempotent — upsert overwrites instead of duplicating
 - Metadata is the payload: Pinecone searches the vectors, but the `text` in metadata is what your LLM will actually read

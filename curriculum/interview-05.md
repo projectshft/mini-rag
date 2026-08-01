@@ -53,7 +53,7 @@ In AI engineering interviews, you'll face three types of questions:
 
 **What they're testing:** can you think through problems end-to-end? Do you consider different approaches? Can you explain your reasoning?
 
-These map directly onto the frameworks you built in [Your Signature Story](/learn/interview-02), [Strong Opinions on Tradeoffs](/learn/interview-03), and [RAG System Design Interviews](/learn/interview-04).
+These map directly onto the frameworks you built in Your Signature Story, Strong Opinions on Tradeoffs, and RAG System Design Interviews.
 
 ## Video 1: project question
 
@@ -63,7 +63,7 @@ Record yourself answering this question:
 
 **Requirements:**
 
-- Use the Problem -> Agitate -> Solve -> Reflect framework from [Your Signature Story](/learn/interview-02)
+- Use the Problem -> Agitate -> Solve -> Reflect framework from Your Signature Story
 - Don't read from notes
 - Record in one take
 
@@ -147,7 +147,7 @@ Record yourself answering ONE of these questions (your choice):
 
 **Requirements:**
 
-- Use the six-part framework from [RAG System Design Interviews](/learn/interview-04)
+- Use the six-part framework from RAG System Design Interviews
 - Explain your reasoning for each choice
 - Mention at least one tradeoff
 - Don't read from notes

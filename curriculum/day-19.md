@@ -14,7 +14,7 @@
 
 **The question:** does your entire application crash, or does it degrade gracefully?
 
-You've already shipped a small piece of this: your [Day 17](/learn/day-17) selector falls back to `'rag'` when parsing fails. Today generalizes that instinct into a toolkit.
+You've already shipped a small piece of this: your selector falls back to `'rag'` when parsing fails. Today generalizes that instinct into a toolkit.
 
 ## Degradation strategies
 
@@ -116,7 +116,7 @@ async function processQuery(query: string) {
 }
 ```
 
-Notice the shape: the core path throws if it fails; every enhancement fails *soft* with a sensible default. (You'll build reranking on [Day 23](/learn/day-23) — keep this pattern in mind when you do.)
+Notice the shape: the core path throws if it fails; every enhancement fails *soft* with a sensible default. (You'll build reranking next week — keep this pattern in mind when you do.)
 
 ## Implementation pattern: circuit breaker
 

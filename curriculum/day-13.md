@@ -1,7 +1,7 @@
-# Day 13 — Running Fine-Tuning + Assignment 1
+# Day 13 — Fine-Tuning as History + Assignment
 
 
-> **Today:** two things. First, a code archaeology session — you'll read the fine-tuning scripts as historical artifacts and understand the workflow they automated, plus the few-shot pattern that replaced them. Then, **Assignment 1 is due**: your document upload pipeline, hardened with sanitization, plus your first Feynman video.
+> **Today:** two things. First, a short code-archaeology session: you'll read the fine-tuning scripts as historical artifacts, then learn the technique you'll actually use — **few-shot prompting**, which turns out to be one small step from what you've already built. Then, **your Week 2 assignment is due**: your document upload pipeline, hardened with sanitization, plus your first Feynman video.
 
 > **Important: Historical Context**
 >
@@ -10,7 +10,7 @@
 > **Instead, you will:**
 > - Study the code to understand the workflow
 > - Examine the training data format (JSONL)
-> - Build the LinkedIn agent with **few-shot prompting** instead (on [Day 20](/learn/day-20)) — fine-tuned models, including the one previously provided for this course, can no longer be used
+> - Build the LinkedIn agent with **few-shot prompting** instead, in Week 3 — fine-tuned models, including the one previously provided for this course, can no longer be used
 >
 > **Why learn this anyway?**
 > - Fine-tuning is not limited to OpenAI — Anthropic, Cohere, and open-source models (via Hugging Face, Axolotl, etc.) still support it
@@ -19,7 +19,10 @@
 
 ## Video walkthrough
 
-Watch this guide to understand the fine-tuning process:
+Watch this to understand the fine-tuning process. **Heads up:** it was recorded
+while OpenAI fine-tuning still worked. Watch it for the mental model — don't try
+to follow along, the API is closed now. The section below shows what you'll do
+instead.
 
 <iframe src="https://share.descript.com/embed/nub6vmvmL3a" width="640" height="360" frameborder="0" allowfullscreen></iframe>
 
@@ -107,14 +110,6 @@ Statuses: `running` (be patient), `succeeded` (you have a model), `failed` (chec
 
 Common data errors: JSONL lines that aren't valid JSON, blank lines, trailing commas, or too few examples (minimum 10, recommended 100+).
 
-## What replaced it: few-shot prompting
-
-Since fine-tuned models can no longer be used (including the one previously provided for this course), the LinkedIn agent now uses **few-shot prompting**: real example posts embedded directly in the prompt, and a standard model (`gpt-4o`) imitates their style.
-
-The repo includes `data/brian_posts.csv` — 850+ real LinkedIn posts with engagement stats. On [Day 20](/learn/day-20) you'll pick a few examples from it (or from any creator whose style you like) and wire them into the agent.
-
-This is the modern pattern: **the examples in the prompt do the work that training data used to do** — no training cost, no custom model to maintain, instant iteration.
-
 ### Before vs after (what fine-tuning changed internally)
 
 ```
@@ -123,6 +118,106 @@ After:  Your Question -> Fine-Tuned Model -> Response in YOUR Voice
 ```
 
 Internally: base model weights + your training examples = adjusted weights. OpenAI moved millions of parameters to better match your data.
+
+---
+
+## What you'll actually use: few-shot prompting
+
+Fine-tuned models can no longer be used — including the one this course used to
+ship with. **You will not run a training job in this course, and you don't need
+to.** Everything fine-tuning bought us, we get from few-shot prompting: put a
+handful of real examples in the prompt and let a standard model imitate them.
+
+### You already have every piece of this
+
+This isn't a new technique. You've built all of it except the last step.
+
+A few days ago you retrieved chunks from Pinecone and assembled them into a
+block of text for a model to read. You stopped there — the query route returns
+JSON, it never actually calls a chat model. Sending that text is the one step
+you haven't taken yet, and it's the step the RAG agent takes in a couple of
+weeks.
+
+Few-shot prompting is that same send. The only thing that changes is **what**
+you put in:
+
+| | What goes in the prompt | What the model does with it |
+|---|---|---|
+| **Retrieval** | chunks you looked up | answers using those **facts** |
+| **Few-shot** | example outputs you like | writes in that **style** |
+
+Same mechanic, same request, no training step. That's the whole idea behind
+"context is all you really need."
+
+### First, how a chat request is actually shaped
+
+You haven't had to look at this yet, and the code below won't make sense
+without it.
+
+A chat request isn't one string — it's a **list of messages**, each tagged with
+who's speaking. `system` is standing instructions. `user` is a request.
+`assistant` is a reply. Normally you send one `user` message and the model
+writes the `assistant` one.
+
+Few-shot means you write a few `user`/`assistant` pairs **yourself** first —
+already-completed examples — so the model has something to imitate before it
+reaches the real question. Each pair is one "shot." Three to five is "few."
+
+### What it looks like in code
+
+Fine-tuning meant a JSONL file, a training job, and a model ID in your `.env`:
+
+```typescript
+// The old way — a custom model that only exists after a training run
+const response = await openai.chat.completions.create({
+	model: 'ft:gpt-4o-mini-2024-07-18:parsity::abc123', // <- had to be trained first
+	messages: [{ role: 'user', content: userQuestion }],
+});
+```
+
+Few-shot is a normal model plus examples in the messages:
+
+```typescript
+// The new way — a stock model, and the examples ARE the training
+const response = await openai.chat.completions.create({
+	model: 'gpt-4o',
+	messages: [
+		{ role: 'system', content: 'You write LinkedIn posts in the style of the examples below.' },
+
+		// Each pair is one "shot" — the exact same shape as one JSONL training line
+		{ role: 'user', content: 'Write a post about imposter syndrome.' },
+		{ role: 'assistant', content: examplePosts[0] },
+		{ role: 'user', content: 'Write a post about switching careers at 35.' },
+		{ role: 'assistant', content: examplePosts[1] },
+
+		// ...then the real request
+		{ role: 'user', content: userQuestion },
+	],
+});
+```
+
+Look at the two code blocks side by side. The JSONL training file you just read
+had `{"messages": [system, user, assistant]}` on every line. Few-shot prompting
+uses *the same message pairs* — it just sends them at request time instead of
+shipping them off to a training job first.
+
+**The tradeoffs, honestly:**
+
+- **Cost:** few-shot is often *more* expensive per request — your examples ride
+  along on every single call. It's cheaper overall because you skip training and
+  never maintain a custom model.
+- **Examples:** fine-tuning wanted 100+. Few-shot works with 3–5 good ones.
+  Pick your best, not your most.
+- **Iteration:** editing a string beats a 20-minute training run. This is the
+  big one.
+- **Context budget:** the examples eat tokens that could hold retrieved chunks.
+  On a RAG agent you're splitting the same context window between facts and
+  style.
+
+The repo includes `data/brian_posts.csv` — 850+ real LinkedIn posts with
+engagement stats. When you build the LinkedIn agent in Week 3, you'll pick a few
+examples from it (or from any creator whose style you like) and wire them into
+the prompt exactly like the snippet above.
 
 ```quiz
 [
@@ -170,7 +265,7 @@ Example posts for few-shot prompting: data/brian_posts.csv
 
 ## Assignment
 
-**Assignment 1: Document Upload — due today.** This is everything Week 2 built, wrapped up and submitted.
+**Assignment: Document Upload — due today.** This is everything Week 2 built, wrapped up and submitted.
 
 ### Video (3–4 minutes)
 
@@ -187,7 +282,7 @@ For each type, cover:
 - What metadata would you preserve?
 - What special handling is needed?
 
-No jargon without explanation. If you can't explain your chunk-size choice simply, that's a gap — go back to [Day 8](/learn/day-08) before recording.
+No jargon without explanation. If you can't explain your chunk-size choice simply, that's a gap — go back to the chunking lesson before recording.
 
 ### Code
 
@@ -195,8 +290,8 @@ No jargon without explanation. If you can't explain your chunk-size choice simpl
 
 **Files:**
 
-- [`app/api/upload-document/route.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/upload-document/route.ts) — the 9-step upload route from [Day 10](/learn/day-10)
-- [`app/libs/chunking.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/libs/chunking.ts) — including your `getLastWords()` from [Day 8](/learn/day-08)
+- [`app/api/upload-document/route.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/upload-document/route.ts) — the 9-step upload route you built
+- [`app/libs/chunking.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/libs/chunking.ts) — including your `getLastWords()`
 
 **Extension — add sanitization** (run it on content *before* chunking):
 
@@ -213,25 +308,26 @@ No jargon without explanation. If you can't explain your chunk-size choice simpl
 
 ### Submit your work
 
-- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
+- [Submit your assignment](https://form.typeform.com/to/ASSIGNMENT-FORM)
 
 Post your video and code in **Slack** for feedback — seeing how others chunked the same three document types is half the value.
 
 ## Key takeaways
 
+- **You will not fine-tune anything in this course** — OpenAI limited it in May 2026 and the course's old fine-tuned model is dead. The scripts are artifacts; read them, don't run them
 - The fine-tuning workflow was: JSONL training file -> upload -> training job -> new model ID in `.env.local` — study `app/scripts/upload-training-data.ts` as the artifact
 - In training data, the assistant messages are the product: consistent system message, varied user questions, your voice in every answer
-- Few-shot prompting replaced it here: examples in the prompt (from `data/brian_posts.csv`) do what training data did, with zero training cost and instant iteration
+- **Few-shot prompting is what you'll use instead**, and it's the move you're already set up for: putting text in the prompt, except the text is example *outputs* instead of retrieved *facts*
+- Same message shape as one JSONL line (system / user / assistant), sent at request time — 3–5 good examples, zero training cost, edit-and-it's-live iteration
 - Fine-tuning still exists at Anthropic, Cohere, Hugging Face, and Together AI — the concepts transfer
-- Assignment 1 is the whole Week 2 pipeline: chunking + upload route + sanitization, explained simply on video
+- This assignment is the whole Week 2 pipeline: chunking + upload route + sanitization, explained simply on video
 
 ## Work with AI
 
 ```ai-prompt
-title: Rehearse my Assignment 1 video
+title: Rehearse my assignment video
 ---
-I'm about to record my Assignment 1 video (3–4 minutes): chunking strategy tradeoffs for (1) medical records, (2) Confluence documentation, and (3) Twitter/X posts — chunk size, split points, metadata to preserve, and special handling for each.
+I'm about to record my assignment video (3–4 minutes): chunking strategy tradeoffs for (1) medical records, (2) Confluence documentation, and (3) Twitter/X posts — chunk size, split points, metadata to preserve, and special handling for each.
 
 Let me deliver my explanation to you in text, one document type at a time. After each one, respond as a sharp non-technical stakeholder: ask the obvious-but-hard questions ("why 500 characters and not 5,000?", "what happens to a patient's name in a chunk?", "a tweet is already tiny — why chunk at all?"). Point out jargon I didn't explain and claims I didn't justify. Then rate each explanation 1–10 and tell me the single weakest part to fix before I hit record.
 ```
@@ -239,7 +335,7 @@ Let me deliver my explanation to you in text, one document type at a time. After
 ```ai-prompt
 title: Design my sanitization function — test cases first
 ---
-For Assignment 1, I'm adding a sanitization step to my ingestion pipeline (app/api/upload-document/route.ts) that cleans scraped web content BEFORE it hits chunkText() in app/libs/chunking.ts. Requirements: strip HTML tags, normalize whitespace, handle special characters (smart quotes, em dashes), and remove boilerplate ("Click here", nav links, footers).
+For this assignment, I'm adding a sanitization step to my ingestion pipeline (app/api/upload-document/route.ts) that cleans scraped web content BEFORE it hits chunkText() in app/libs/chunking.ts. Requirements: strip HTML tags, normalize whitespace, handle special characters (smart quotes, em dashes), and remove boilerplate ("Click here", nav links, footers).
 
 Before I write any code: generate 10 nasty realistic input strings a scraper might produce (nested tags, &nbsp; entities, cookie banners, mixed newlines, unicode quotes) and the exact cleaned output my function should return for each. Then let me write the function myself and paste it back to you — check it against your cases and tell me which ones fail and why, without rewriting it for me.
 ```

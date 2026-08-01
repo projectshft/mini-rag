@@ -20,7 +20,7 @@ By the end of today, you'll have:
 
 ## The problem with text parsing
 
-Your [Day 17](/learn/day-17) implementation works, but it has limitations. The LLM might return unpredictable formats:
+Your selector works, but it has limitations. The LLM might return unpredictable formats:
 
 ```typescript
 // Expected:
@@ -345,7 +345,7 @@ agent: z.enum(['linkedin', 'rag'])
     "q": "With `agent: z.enum(['linkedin', 'rag'])`, what happens if the model 'wants' to answer with a third agent name?",
     "options": ["It can't — generation is constrained to the enum values, so you always get 'linkedin' or 'rag'", "It returns null and you fall back manually", "It returns the string with a warning field attached"],
     "answer": 0,
-    "explain": "That's why the Day 17 validate-and-fallback dance shrinks: the enum makes invalid agent names unrepresentable in the output."
+    "explain": "That's why yesterday's validate-and-fallback dance shrinks: the enum makes invalid agent names unrepresentable in the output."
   },
   {
     "q": "You switched to responses.parse() but responses still look like free text. Most likely cause?",
@@ -364,7 +364,7 @@ agent: z.enum(['linkedin', 'rag'])
 
 ## Testing your refactored implementation
 
-Run the same curl tests from [Day 17](/learn/day-17) — the responses should be identical.
+Run the same curl tests as before — the responses should be identical.
 
 ### Test 1: RAG query
 

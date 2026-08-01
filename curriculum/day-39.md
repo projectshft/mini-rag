@@ -8,8 +8,8 @@
 Reviewers (and future users) don't judge your capstone by its best answer — they judge it by its worst one. Today you hunt for that worst answer and fix it.
 
 - [ ] **Throw hostile queries at it**: empty strings, one-word queries, questions completely outside your data's domain, questions that are *almost* in domain but not answerable
-- [ ] **Handle the "no good match" case** — if top-k similarity scores are all low, say "I don't know" instead of letting the LLM improvise (the score-thresholding pattern from [Day 23](/learn/day-23))
-- [ ] **If you have agents/routing**: verify the selector sends ambiguous queries somewhere sensible, and add a fallback path when it can't decide ([Day 19](/learn/day-19)'s graceful degradation applies directly)
+- [ ] **Handle the "no good match" case** — if top-k similarity scores are all low, say "I don't know" instead of letting the LLM improvise (the score-thresholding pattern from your reranking work)
+- [ ] **If you have agents/routing**: verify the selector sends ambiguous queries somewhere sensible, and add a fallback path when it can't decide (Graceful Degradation's graceful degradation applies directly)
 - [ ] **Finish your unique feature** — it should be demoable by end of day, because tomorrow is polish, not construction
 - [ ] **Add 3 more saved test queries** covering the edge cases you just fixed
 

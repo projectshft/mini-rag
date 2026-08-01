@@ -1,7 +1,7 @@
 # Day 26 — Observability with LangSmith
 
 
-> **Today:** right now, when your agent gives a weird answer, you're guessing. In about ten lines of setup, LangSmith will show you every prompt, every token count, every latency spike — so you stop flying blind before Assignment 2.
+> **Today:** right now, when your agent gives a weird answer, you're guessing. In about ten lines of setup, LangSmith will show you every prompt, every token count, every latency spike — so you stop flying blind before this week's assignment.
 
 ## Video walkthrough
 
@@ -109,7 +109,7 @@ With this dashboard you can:
 - **Debug agent routing** — "wait, this went to the wrong agent" — now you can look inside the trace and see what happened
 - **Iterate confidently** — change a prompt, watch the effect on quality, cost, and latency
 
-You now have insight into how your app performs through every change you make as you iterate. This lands at the perfect time: tomorrow you finalize Assignment 2, and traces are exactly how you'll verify what your RAG agent retrieved and prompted.
+You now have insight into how your app performs through every change you make as you iterate. This lands at the perfect time: tomorrow you finalize this week's assignment, and traces are exactly how you'll verify what your RAG agent retrieved and prompted.
 
 ## Your task
 

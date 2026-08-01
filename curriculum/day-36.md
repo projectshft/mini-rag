@@ -70,7 +70,7 @@ You are not limited to the tools we used in class:
 
 ## What "done" looks like
 
-Know the bar before you scope. Your final submission (due [Day 42](/learn/day-42)) must hit these:
+Know the bar before you scope. Your final submission (due at the end of this week) must hit these:
 
 **Core requirements (all projects):**
 
@@ -136,7 +136,7 @@ flowchart LR
     G --> A[Grounded answer]
 ```
 
-If you're adding agents, add a selector in front of retrieval (you built exactly this in [Day 17](/learn/day-17) and [Day 18](/learn/day-18)). If your data is structured, remember RAG doesn't require vectors at all — revisit the SQL agent from [Day 33](/learn/day-33).
+If you're adding agents, add a selector in front of retrieval (you built exactly this). If your data is structured, remember RAG doesn't require vectors at all — revisit the SQL agent lab.
 
 ## Part 1: Submit your proposal (due today)
 
@@ -162,7 +162,7 @@ Record a video explaining your project plan:
 
 4. **Chunking strategy:**
    - How will you chunk this content?
-   - What chunk size and overlap make sense? (Revisit [Day 8](/learn/day-08) if you're unsure.)
+   - What chunk size and overlap make sense? (Revisit the chunking lesson if you're unsure.)
    - Any special considerations for this data type?
 
 5. **Architecture:**
@@ -171,8 +171,7 @@ Record a video explaining your project plan:
 
 ### Submit proposal
 
-- [Proposal Video Submission](https://form.typeform.com/to/Z9JApCkF)
-- [Proposal Notes](https://form.typeform.com/to/DXPyafyJ)
+- [Submit your proposal](https://form.typeform.com/to/ASSIGNMENT-FORM)
 
 Post your idea in Slack too — a quick sanity check from mentors or classmates today can save you two days of building the wrong thing.
 

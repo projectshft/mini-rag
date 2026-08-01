@@ -143,7 +143,7 @@ Think of it like a phone directory — given an agent name, quickly find the fun
 
 ## The agent selector: the brain
 
-Located at [`app/api/select-agent/route.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/select-agent/route.ts). This is the "triage nurse" of your system — you'll implement it on [Day 17](/learn/day-17).
+Located at [`app/api/select-agent/route.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/select-agent/route.ts). This is the "triage nurse" of your system — you'll implement it later this week.
 
 **Input:** conversation history (last 5 messages)
 

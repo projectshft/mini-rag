@@ -1,8 +1,8 @@
 # Day 43 — MCP in Production: Auth, Tools & Resources
 
-> **Today:** in [Day 32](/learn/day-32) you exposed one read-only tool over MCP. That's a demo. Today you make it real — more primitives, a sharper tool surface, and the authorization you cannot skip the moment your server touches data that matters.
+> **Today:** in The Reveal + MCP you exposed one read-only tool over MCP. That's a demo. Today you make it real — more primitives, a sharper tool surface, and the authorization you cannot skip the moment your server touches data that matters.
 
-On Day 32 you built `search_docs`: one tool, read-only, running on your own machine. Perfect for learning. But the instant an MCP server exposes *real* data — customer records, patient notes, internal wikis — three questions you got to ignore become the entire job:
+Earlier you built `search_docs`: one tool, read-only, running on your own machine. Perfect for learning. But the instant an MCP server exposes *real* data — customer records, patient notes, internal wikis — three questions you got to ignore become the entire job:
 
 1. **What** can the client actually do?
 2. **Who** is allowed to do it?
@@ -45,7 +45,7 @@ One `search_docs` is a start. A useful RAG server exposes a small, sharp set —
 Rules that keep it safe and legible:
 
 - **One job per tool.** Narrow beats clever.
-- **Descriptions are written for the model** — the same `.describe()` discipline from Day 32.
+- **Descriptions are written for the model** — the same `.describe()` discipline as the MCP lesson.
 - **Never expose a raw, do-anything tool.** A tool that runs arbitrary SQL or arbitrary shell is an injection and exfiltration hole. Constrain the schema so the *only* thing the caller can express is a safe request.
 
 ```blanks
@@ -62,13 +62,13 @@ Rules that keep it safe and legible:
 
 ## Auth & permissions — the part the demo skipped
 
-Here's the scenario that makes this real. Your MCP server wraps the clinic's notes. **Anyone whose client can reach the server can call `search_docs` and read *any* patient's notes.** On Day 32 that was fine — it was your laptop, your data. In production that's a HIPAA incident waiting to happen.
+Here's the scenario that makes this real. Your MCP server wraps the clinic's notes. **Anyone whose client can reach the server can call `search_docs` and read *any* patient's notes.** On your own machine that was fine — your laptop, your data. In production that's a HIPAA incident waiting to happen.
 
 Authorization is three layers, and they're not optional:
 
 1. **Authenticate the caller.** Who is this? A token in the client config `env` for stdio; OAuth for remote HTTP transport.
 2. **Authorize *per call*.** What is *this* caller allowed to see? Filter results by their permissions **before** retrieval — not by hiding rows after the fact. If Dr. Reyes queries, the vector search should only ever touch *her* patients' notes (metadata filter), so forbidden data never enters the pipeline.
-3. **Obscure sensitive fields by default.** Even an authorized caller rarely needs raw PII. Redact in the MCP channel unless a flag says otherwise — the same de-identification you built on [Day 34](/learn/day-34).
+3. **Obscure sensitive fields by default.** Even an authorized caller rarely needs raw PII. Redact in the MCP channel unless a flag says otherwise — the same de-identification you built in LLM & RAG Security.
 
 ```mermaid
 flowchart LR
@@ -113,7 +113,7 @@ Before you expose anything, do a quick threat pass. For each risk, the mitigatio
 
 - **Over-broad tool** (arbitrary query/SQL/shell) → injection + data exfiltration. *Mitigate:* constrain schemas; no raw-query tools.
 - **Secrets in the client config `env`** → leaked API keys. *Mitigate:* least-privilege keys, rotate, never commit configs.
-- **Poisoned documents in the index** → retrieved text becomes instructions the client model may follow (this is [Day 34](/learn/day-34), now with a new blast radius: a client you don't control). *Mitigate:* ingestion-time validation + treat retrieved text as data, never trusted instructions.
+- **Poisoned documents in the index** → retrieved text becomes instructions the client model may follow (this is LLM & RAG Security, now with a new blast radius: a client you don't control). *Mitigate:* ingestion-time validation + treat retrieved text as data, never trusted instructions.
 - **No rate limit / no timeout** → one runaway client drains your embedding budget. *Mitigate:* per-caller limits and hard timeouts on every external call.
 
 ```quiz
@@ -152,7 +152,7 @@ A failed call should never crash the protocol:
 
 And know your transport:
 
-| | **stdio** (Day 32) | **Streamable HTTP / SSE** |
+| | **stdio** (what you built) | **Streamable HTTP / SSE** |
 | --- | --- | --- |
 | Runs | Locally, one user | Remotely, many users |
 | Auth | Env-scoped keys | **OAuth — not optional** |
@@ -162,7 +162,7 @@ The jump from stdio to HTTP is exactly the jump from "my tool" to "our service" 
 
 ## Hands-on challenge
 
-Extend your Day 32 `mcp/rag-server.ts`:
+Extend your `mcp/rag-server.ts`:
 
 1. Add **`get_document`** (fetch one by id) and **`list_sources`**.
 2. Add a **caller token check** — read `MCP_API_KEY` from env and reject calls if a provided token doesn't match (simulate the auth layer).

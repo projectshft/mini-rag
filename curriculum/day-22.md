@@ -18,7 +18,7 @@ A working RAG agent that:
 - Builds context-aware prompts
 - Streams responses with document-grounded answers
 
-Every piece is something you've already touched: embeddings (Week 1), Pinecone queries ([Day 11](/learn/day-11)), and the agent architecture (Week 3). Today you connect them into one function.
+Every piece is something you've already touched: embeddings (Week 1), Pinecone queries (Week 2), and the agent architecture (Week 3). Today you connect them into one function.
 
 ## The RAG pipeline
 
@@ -44,7 +44,7 @@ flowchart LR
     L --> A[Grounded answer]
 ```
 
-Note what the agent receives: `request.query` is the *refined* query your selector produced ([Day 18](/learn/day-18)), and `request.originalQuery` is what the user literally typed. You'll use both.
+Note what the agent receives: `request.query` is the *refined* query your selector produced, and `request.originalQuery` is what the user literally typed. You'll use both.
 
 ```quiz
 [
@@ -115,7 +115,7 @@ const embedding = embeddingResponse.data[0].embedding;
 Search the index for the most relevant chunks. You want the metadata back, not just IDs.
 
 <details>
-<summary>Hint — same query you wrote on Day 11</summary>
+<summary>Hint — the same query you already wrote</summary>
 
 ```typescript
 const index = pineconeClient.Index(process.env.PINECONE_INDEX as string);
@@ -180,11 +180,11 @@ Return a streaming response so the frontend can render tokens as they arrive.
 <details>
 <summary>Hint — streamText, like the LinkedIn agent</summary>
 
-You built this pattern in the LinkedIn agent on [Day 20](/learn/day-20):
+You built this pattern in the LinkedIn agent:
 
 ```typescript
 return streamText({
-  model: openai('gpt-4o'),
+  model: openaiProvider('gpt-4o'),
   system: systemPrompt,
   prompt: `Context: ${retrievedContext}\n\nUser Query: ${request.query}`,
 });
@@ -230,7 +230,7 @@ Answer using the context. If insufficient, say so.`;
 
   // Step 5: Stream response
   return streamText({
-    model: openai('gpt-4o'),
+    model: openaiProvider('gpt-4o'),
     system: systemPrompt,
     prompt: `Context: ${retrievedContext}\n\nQuery: ${request.query}`,
   });
@@ -266,9 +266,9 @@ console.log('Number of matches:', queryResponse.matches.length);
 
 If the answer is bad, this tells you instantly whether the problem is retrieval (wrong chunks came back) or generation (right chunks, bad prompt). That distinction is the single most useful debugging skill in RAG.
 
-## Heads up: this is Assignment 2
+## Heads up: this is your Week 4 assignment
 
-The RAG agent you built today is the core of **Assignment 2 (due Day 27)** — you'll extend it with query preprocessing and record a video on evaluating retrieval quality. Full spec, checklist, and submission links on [Day 27](/learn/day-27). As you test today, start noticing: when retrieval misses, *why* does it miss?
+The RAG agent you built today is the core of **this week's assignment** — by the end of the week you'll extend it with query preprocessing, reranking, and a score threshold, then record a video on evaluating retrieval quality. It all lands in this one file. As you test today, start noticing: when retrieval misses, *why* does it miss?
 
 ## Key takeaways
 

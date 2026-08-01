@@ -11,7 +11,7 @@ Before we can build our RAG system, we need data. Lots of it.
 
 ## The problem: empty database
 
-Right now, your Pinecone database (set up on [Day 5](/learn/day-05)) is empty. We need to feed it information!
+Right now, your Pinecone database (the one you just set up) is empty. We need to feed it information!
 
 ```
 Empty Pinecone Index
@@ -260,7 +260,7 @@ With chunking:
 - LLM generates perfect answer
 ```
 
-This is why **chunking** is critical — it's the first thing we tackle next week, on [Day 8](/learn/day-08).
+This is why **chunking** is critical — it's the first thing we tackle next week.
 
 ### Preview: the chunking problem
 
@@ -327,7 +327,7 @@ According to experienced practitioners:
 - Ethical scraping = check `robots.txt`, respect its rules, rate-limit requests, prefer public APIs, and only touch public content
 - Real-world scraping is hard: messy HTML, JavaScript-rendered pages, and anti-scraping measures — we keep it simple with open docs
 - Content quality is a curation job: keep authoritative, complete, structured text; strip navigation, ads, and boilerplate
-- Big scraped pages can't become one embedding — chunking (Day 8) is how we turn raw pages into focused, retrievable pieces
+- Big scraped pages can't become one embedding — chunking (next week) is how we turn raw pages into focused, retrievable pieces
 
 ## Work with AI
 

@@ -41,6 +41,21 @@ type ScenarioData = {
 	debrief?: string;
 };
 
+// Authors write the strongest answer first (every scenario in the course did),
+// which makes position a giveaway. Shuffle at render, seeded by the `ask` text
+// so server and client agree and the order is stable across re-renders.
+function shuffleOptions(data: ScenarioData): ScenarioOption[] {
+	let h = 0;
+	for (let i = 0; i < data.ask.length; i++) h = (Math.imul(31, h) + data.ask.charCodeAt(i)) | 0;
+	const out = data.options.slice();
+	for (let i = out.length - 1; i > 0; i--) {
+		h = (Math.imul(h, 1103515245) + 12345) | 0;
+		const j = (h >>> 0) % (i + 1);
+		[out[i], out[j]] = [out[j], out[i]];
+	}
+	return out;
+}
+
 const VERDICT = {
 	best: {
 		label: '★ Strong answer',
@@ -77,7 +92,8 @@ export function Scenario({ source }: { source: string }) {
 		);
 	}
 
-	const chosen = picked !== null ? data.options[picked] : null;
+	const options = shuffleOptions(data);
+	const chosen = picked !== null ? options[picked] : null;
 
 	return (
 		<div className='not-prose my-6 rounded-xl border border-zinc-200 bg-white p-4 shadow-sm'>
@@ -103,7 +119,7 @@ export function Scenario({ source }: { source: string }) {
 						{data.note ?? 'What do you say? Pick the reply you’d actually give.'}
 					</p>
 					<div className='mt-2 space-y-2'>
-						{data.options.map((opt, i) => (
+						{options.map((opt, i) => (
 							<button
 								key={i}
 								type='button'
@@ -150,7 +166,7 @@ export function Scenario({ source }: { source: string }) {
 						</button>
 					) : (
 						<div className='mt-3 space-y-2 border-t border-zinc-100 pt-3'>
-							{data.options.map((opt, i) =>
+							{options.map((opt, i) =>
 								i === picked ? null : (
 									<div key={i} className='rounded-lg border border-zinc-100 bg-zinc-50/60 px-3.5 py-2.5'>
 										<p className='text-sm text-zinc-600'>&ldquo;{opt.text}&rdquo;</p>

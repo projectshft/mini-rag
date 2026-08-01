@@ -350,7 +350,7 @@ This exact conversation happens on every AI team — practice it:
       "feedback": "Retries belong in production, but as a safety net, not the fix. You'd pay full price for every failed generation to paper over a prompt you could improve in ten minutes — and retrying doesn't help at all when the output parses fine but the field names are wrong."
     }
   ],
-  "debrief": "The escalation ladder for inconsistent outputs: tighten instructions and temperature -> add 3–5 few-shot examples -> enforce structure with a schema (you'll do exactly this on Day 18) -> fine-tune, only if all of that plateaus and you have 100+ examples. Each rung costs roughly 10x the one before it — climb only as far as the failure demands."
+  "debrief": "The escalation ladder for inconsistent outputs: tighten instructions and temperature -> add 3–5 few-shot examples -> enforce structure with a schema (you'll do exactly this later this week) -> fine-tune, only if all of that plateaus and you have 100+ examples. Each rung costs roughly 10x the one before it — climb only as far as the failure demands."
 }
 ```
 
@@ -362,7 +362,7 @@ Before deploying any prompt, check:
 - **Explicit output format** — JSON schema, Markdown, or specific structure
 - **No unnecessary examples** — only include what's truly needed
 - **Static system prompts** — dynamic data goes in user messages
-- **Enforce structure with Zod** — use `zodTextFormat()` for type safety (you'll do exactly this on [Day 18](/learn/day-18))
+- **Enforce structure with Zod** — use `zodTextFormat()` for type safety (you'll do exactly this later this week)
 
 ### Example: a well-structured prompt
 

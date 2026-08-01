@@ -27,12 +27,31 @@ type QuizQuestion = {
 	explain?: string;
 };
 
+// Authors naturally write the correct option first, which makes position a
+// tell. Shuffle at render, seeded by the question text so server and client
+// agree (no hydration mismatch) and the order is stable across re-renders.
+function shuffle(item: QuizQuestion) {
+	let h = 0;
+	for (let i = 0; i < item.q.length; i++) h = (Math.imul(31, h) + item.q.charCodeAt(i)) | 0;
+	const order = item.options.map((_, i) => i);
+	for (let i = order.length - 1; i > 0; i--) {
+		h = (Math.imul(h, 1103515245) + 12345) | 0;
+		const j = (h >>> 0) % (i + 1);
+		[order[i], order[j]] = [order[j], order[i]];
+	}
+	return {
+		options: order.map((i) => item.options[i]),
+		answer: order.indexOf(item.answer),
+	};
+}
+
 function QuizItem({ item, index }: { item: QuizQuestion; index: number }) {
 	const [picked, setPicked] = useState<number | null>(null);
 	const [checked, setChecked] = useState(false);
 
-	const correct = checked && picked === item.answer;
-	const wrong = checked && picked !== null && picked !== item.answer;
+	const { options, answer } = shuffle(item);
+	const correct = checked && picked === answer;
+	const wrong = checked && picked !== null && picked !== answer;
 
 	return (
 		<div className='not-prose rounded-xl border border-zinc-200 bg-white p-4 shadow-sm'>
@@ -40,9 +59,9 @@ function QuizItem({ item, index }: { item: QuizQuestion; index: number }) {
 				{index + 1}. {item.q}
 			</p>
 			<div className='space-y-2'>
-				{item.options.map((opt, i) => {
+				{options.map((opt, i) => {
 					const isPick = picked === i;
-					const isAnswer = i === item.answer;
+					const isAnswer = i === answer;
 					let cls = 'border-zinc-200 hover:border-blue-400 cursor-pointer bg-white';
 					if (checked && isAnswer) cls = 'border-emerald-500 bg-emerald-50';
 					else if (checked && isPick && !isAnswer) cls = 'border-red-400 bg-red-50';
@@ -75,7 +94,7 @@ function QuizItem({ item, index }: { item: QuizQuestion; index: number }) {
 						<p className='font-semibold text-emerald-600'>✓ Correct</p>
 					) : wrong ? (
 						<p className='font-semibold text-red-500'>
-							✗ Not quite — the answer is &ldquo;{item.options[item.answer]}&rdquo;
+							✗ Not quite — the answer is &ldquo;{options[answer]}&rdquo;
 						</p>
 					) : null}
 					{item.explain && <p className='mt-1 text-zinc-500'>{item.explain}</p>}

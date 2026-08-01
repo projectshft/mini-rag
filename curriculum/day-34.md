@@ -1,7 +1,7 @@
-# Day 34 — LLM & RAG Security + Assignment 3
+# Day 34 — LLM & RAG Security + Assignment
 
 
-> **Today:** the two attacks every RAG engineer must understand — prompt injection and document poisoning — and the layered defenses that stop them. You'll watch an agent get hijacked by a poisoned document, then harden it yourself. Plus: Assignment 3 (Reranking) is due today.
+> **Today:** the two attacks every RAG engineer must understand — prompt injection and document poisoning — and the layered defenses that stop them. You'll watch an agent get hijacked by a poisoned document, then harden it yourself. Today's hardening work is the assignment.
 
 RAG pipelines have a security property most web apps don't: they feed **retrieved documents** — content you may not fully control — directly into the model as trusted context. Today covers cybersecurity fundamentals specific to LLM and RAG applications, focused on the two most critical RAG-specific vulnerabilities: **prompt injection** and **document poisoning**.
 
@@ -189,7 +189,7 @@ async function detectAnomalousDocument(doc: Document) {
 }
 ```
 
-(Yes — that's the same cosine similarity you implemented back in [/learn/day-03](/learn/day-03), now doing security work.)
+(Yes — that's the same cosine similarity you implemented by hand, now doing security work.)
 
 ### PII redaction
 
@@ -429,37 +429,53 @@ Use this when deploying RAG applications:
 
 ## Assignment
 
-**Assignment 3: Reranking — due today.**
+**Assignment: Security — due today.**
 
-You built reranking on [/learn/day-23](/learn/day-23) and hybrid search on [/learn/day-24](/learn/day-24). This assignment proves you can explain *and* productionize the two-stage retrieval pattern.
+The hands-on challenge above *is* the assignment. Harden the guarded agent until
+the poisoned document can't get through, then explain the attack to someone who
+hasn't seen it.
 
 ### What to build
 
-Extend your RAG agent with **reranking and score thresholding**:
+In `app/scripts/exercises/prompt-injection-test.ts`, both defenses start empty.
+Fill them in:
 
-- Add reranking to your `ragAgent` function (broad first-stage retrieval -> rerank -> keep the top results)
-- Enforce a **minimum confidence** — filter out low-scoring results after reranking
-- Return a graceful **"I don't know"** response when nothing clears the threshold, instead of generating from junk context
+- **The sanitizer** — strip injection patterns out of the document at ingestion
+  time, before the model ever sees them
+- **The guardrail system prompt** — establish a trust boundary so the model
+  treats retrieved text as data, not instructions
 
-**Files:** [`app/agents/rag.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/agents/rag.ts)
+**The bar: zero leaks across all trials.** The script runs each strategy three
+times because models are non-deterministic. A defense that holds 2-out-of-3 is a
+defense that fails in production — an attacker retries for free.
+
+**Files:** `app/scripts/exercises/prompt-injection-test.ts`
+
+Run it with `yarn exercise:injection`.
 
 ### Video (3–5 minutes)
 
-Feynman-style — explain it like you're teaching a sharp colleague who hasn't taken this course:
+Feynman-style, to a colleague who hasn't taken this course:
 
-- The **two-stage retrieval pattern**: why cosine similarity's top hits aren't always the best answers, and what the reranker adds
-- **When to rerank and when to skip it**
-- **Stage cutoffs**: why retrieve `topK: 25` then keep 5, and how you chose your numbers
-- **Cost analysis**: what reranking adds in latency and dollars, and when it's worth it
+- **Direct injection vs document poisoning** — why the second one is nastier,
+  and why the user who triggers it did nothing wrong
+- **Why the model can't just tell** the difference between your instructions and
+  the attacker's — what "it's all just tokens" actually means
+- **Your two layers** — show your sanitizer and your guardrail prompt, and
+  explain what each one catches that the other misses
+- **What you couldn't block** — be honest about it. Every real defense has a
+  gap, and naming yours is the senior-engineer move
 
-No slides required — talking over your code or a whiteboard is perfect. If you can't explain the two-stage pattern simply, that's the Feynman Technique telling you where to review before recording.
+Show a run where the naive agent gets owned and yours doesn't. That clip is the
+whole video.
 
 ### Submit
 
-- [Video Submission](https://form.typeform.com/to/pwjkAruL)
-- [Code Submission](https://form.typeform.com/to/q3mEuSmX)
+- [Submit your assignment](https://form.typeform.com/to/ASSIGNMENT-FORM)
 
-Post your video and code in Slack for feedback — threshold choices ("why 0.5 and not 0.7?") always generate the best discussion.
+Post it in Slack — sanitizer regexes and guardrail prompts vary a lot, and
+seeing what someone else's defense missed is the fastest way to find your own
+blind spot.
 
 ## Key takeaways
 
@@ -482,9 +498,9 @@ Act as a red-teamer. Design 5 NEW poisoned-document payloads that might slip pas
 ```
 
 ```ai-prompt
-title: Rehearse my Assignment 3 reranking video
+title: Rehearse my reranking assignment video
 ---
-I'm about to record my 3-5 minute Assignment 3 video on the two-stage retrieval pattern I built in app/agents/rag.ts: broad vector retrieval (topK ~25) -> Pinecone reranker -> score threshold -> graceful "I don't know" when nothing clears it.
+I'm about to record my 3-5 minute reranking assignment video on the two-stage retrieval pattern I built in app/agents/rag.ts: broad vector retrieval (over-fetching on topK) -> Pinecone reranker -> score threshold -> graceful "I don't know" when nothing clears it.
 
 Be my rehearsal audience: a smart engineer who knows web dev but not IR. I'll give my explanation in text. Then: (1) ask me the follow-ups a viewer would ("why not just retrieve 5 directly?", "what does the reranker see that cosine similarity doesn't?", "how did you pick your threshold?", "what does this cost per query?"), (2) flag jargon I used without defining (bi-encoder, cross-encoder, topK), (3) time-check — does my explanation fit in 4 minutes? — and (4) rate simplicity and accuracy 1-10 with the one thing to fix before I hit record.
 ```

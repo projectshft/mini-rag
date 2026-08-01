@@ -1,7 +1,7 @@
-# Day 38 — Capstone Development II + Assignment 4
+# Day 38 — Capstone Development II
 
 
-> **Today:** two things — push your capstone from "one query works" to "the real dataset works," and ship Assignment 4: the SQL agent you started in [Day 33](/learn/day-33).
+> **Today:** push your capstone from "one query works" to "the real dataset works" — the messy middle, where sample data stops flattering you.
 
 ## Capstone: from sample to real
 
@@ -23,11 +23,11 @@ Yesterday you proved the pipeline on a small sample. Today, make it real:
 
 ---
 
-## Assignment
+## Optional lab: finish the SQL agent
 
-**Assignment 4: SQL Agent — due today.**
+Not required, and not graded — but if the SQL agent caught your interest, this is a good week to finish it. It's self-contained and it makes a strong portfolio piece.
 
-RAG doesn't require vectors. When your data is structured, an LLM that writes *queries* instead of reading *chunks* is often the better retrieval tool — that's the pattern from [Day 33](/learn/day-33), and now you'll finish it.
+RAG doesn't require vectors. When your data is structured, an LLM that writes *queries* instead of reading *chunks* is often the better retrieval tool.
 
 ### What to build
 
@@ -54,20 +54,9 @@ Work backwards from the Prisma call. Decide what a valid `WHERE` clause needs (f
 
 </details>
 
-### Video (3–4 minutes)
+### If you finish it
 
-Feynman-style — explain it like you're teaching a teammate, not reading docs:
-
-- The **SQL query types** your agent can express: filtering, aggregation, joins, full-text search
-- What **pgvector** is and where it fits
-- **When SQL beats a dedicated vector DB** — and when it doesn't
-
-### Submit
-
-- [Video Submission](https://form.typeform.com/to/QR9Vohg0)
-- [Code Submission](https://form.typeform.com/to/FNEjXTwk)
-
-Post your working agent in Slack for feedback — especially any query your schema *couldn't* express; those make great discussion.
+There's nothing to submit — post it in Slack instead, especially any query your schema *couldn't* express. Those make great discussion.
 
 ```quiz
 [
@@ -75,7 +64,7 @@ Post your working agent in Slack for feedback — especially any query your sche
     "q": "Why define a Zod schema for the SQL agent's output instead of letting the LLM write raw SQL?",
     "options": ["The schema constrains the LLM to queries your code can safely build and execute — no injection, no unsupported syntax", "Zod makes the LLM respond faster", "Prisma requires Zod schemas to connect to the database"],
     "answer": 0,
-    "explain": "Structured outputs turn 'trust the LLM's SQL string' into 'validate a typed query plan, then build the query yourself' — the same graceful-degradation instinct from Day 18."
+    "explain": "Structured outputs turn 'trust the LLM's SQL string' into 'validate a typed query plan, then build the query yourself' — the same graceful-degradation instinct as structured outputs."
   },
   {
     "q": "Your data is 50k product rows with prices, categories, and stock counts, and users ask things like 'cheapest laptops in stock'. Best retrieval tool?",

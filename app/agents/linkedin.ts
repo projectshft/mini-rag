@@ -1,16 +1,15 @@
 import { AgentRequest, AgentResponse } from './types';
-import { openai } from '@ai-sdk/openai';
+import { openaiProvider } from '@/app/libs/openai/openai';
 import { streamText } from 'ai';
 
 export async function linkedInAgent(
 	request: AgentRequest
 ): Promise<AgentResponse> {
-	// TODO: Implement the LinkedIn agent
+	// TODO: Implement the LinkedIn agent with few-shot prompting
 	//
-	// Follow Module 8 in the curriculum:
-	//   1. Get the fine-tuned model ID from environment
-	//   2. Build a system prompt for LinkedIn content
-	//   3. Use streamText() to stream the response
+	//   1. Build an examples block from your example posts
+	//   2. Build a system prompt that imitates their style
+	//   3. streamText() with openaiProvider('gpt-4o')
 
 	throw new Error('LinkedIn agent not implemented yet!');
 }

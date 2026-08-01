@@ -13,7 +13,7 @@
 > - Focus on **understanding the concepts** — the scripts are now historical artifacts showing how fine-tuning worked
 > - Fine-tuning remains valuable knowledge because **other providers** (Anthropic, Cohere, open-source models via Hugging Face) still offer it
 >
-> The concepts in this module prepare you for the LinkedIn agent implementation on [Day 20](/learn/day-20), where you'll achieve the same style consistency with few-shot prompting.
+> The concepts here set up the LinkedIn agent you'll build in Week 3 — where you'll get the same style consistency with few-shot prompting, and no training at all.
 
 ## Video walkthrough
 
@@ -48,6 +48,12 @@
 
 - **LinkedIn Agent** uses few-shot prompting -> a specific voice and style, no training required
 - **RAG Agent** uses retrieval -> current technical documentation
+
+Notice that both of those put text into the prompt at request time — which is
+exactly what you already built when you pasted
+retrieved chunks into the context. Retrieval supplies **facts**; few-shot
+examples supply **style**. Neither one trains anything. Tomorrow you'll see the
+few-shot version in code.
 
 ### When to fine-tune
 
@@ -200,7 +206,7 @@ Many production systems still run on fine-tuned models. Knowing how they were cr
 
 ## What's next
 
-On [Day 13](/learn/day-13), you'll examine the fine-tuning code as an artifact, see how few-shot prompting replaces it in the LinkedIn agent — and submit **Assignment 1**.
+Tomorrow you'll read the fine-tuning code as an artifact, see exactly what few-shot prompting looks like in practice — and submit your Week 2 assignment.
 
 ## Key takeaways
 

@@ -3,7 +3,7 @@
 
 > **Today:** two things. First, the reveal — our tool-calling RAG implementation and the answers to yesterday's workflow-vs-tool-calling scenarios. Then the payoff: tool-calling standardized across every AI client is called **MCP**, and you'll build a real MCP server that lets Claude search your Pinecone index straight from your editor.
 
-If you haven't attempted yesterday's challenge from [/learn/day-31](/learn/day-31) yet, go do that first — the reveal lands much harder when you've fought with `toolChoice` and tool descriptions yourself.
+If you haven't attempted yesterday's challenge from Tool Calling Concepts yet, go do that first — the reveal lands much harder when you've fought with `toolChoice` and tool descriptions yourself.
 
 ## Part 1: The reveal — our implementation
 
@@ -12,7 +12,7 @@ Here's a complete tool-calling RAG agent:
 ```typescript
 // app/api/tool-calling-agent/route.ts
 import { streamText, tool } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { openaiProvider } from '@/app/libs/openai/openai';
 import { z } from 'zod';
 import { pineconeClient } from '@/app/libs/pinecone';
 import { openaiClient } from '@/app/libs/openai/openai';
@@ -74,7 +74,7 @@ export async function POST(request: NextRequest) {
 	const { messages } = await request.json();
 
 	const result = streamText({
-		model: openai('gpt-4o'),
+		model: openaiProvider('gpt-4o'),
 		tools: {
 			search_documentation: searchDocsTool,
 		},
@@ -139,7 +139,7 @@ export async function ragAgent(request: AgentRequest) {
 	const reranked = await rerank(results);
 
 	return streamText({
-		model: openai('gpt-4o'),
+		model: openaiProvider('gpt-4o'),
 		system: `Context: ${reranked}`,
 		messages: request.messages,
 	});
@@ -278,7 +278,7 @@ yarn add @modelcontextprotocol/sdk zod
 
 Create `mcp/rag-server.ts`. It's self-contained on purpose — it talks to Pinecone and OpenAI directly so you don't have to refactor your app to export anything.
 
-Before you look at the code below, try sketching it yourself: you already know how to embed a query and search Pinecone (you've done it since [/learn/day-11](/learn/day-11)), and you just saw that a tool is a name + description + Zod schema + execute function. The only new pieces are `McpServer` and the stdio transport.
+Before you look at the code below, try sketching it yourself: you already know how to embed a query and search Pinecone (you've done it since Week 2), and you just saw that a tool is a name + description + Zod schema + execute function. The only new pieces are `McpServer` and the stdio transport.
 
 <details>
 <summary>Hint — the skeleton</summary>
@@ -403,7 +403,7 @@ Cursor and Claude Desktop accept the same config block — check each client's d
 - [ ] The Inspector lists `search_docs` and returns real matches from your index.
 - [ ] One MCP client (Claude Code / Cursor / Desktop) calls the tool and answers from your docs.
 
-**Want to take this to production?** [Day 43 — MCP in Production](/learn/day-43) picks up where this leaves off: more than one tool, resources and prompts, and the authorization + PII handling you can't skip once your server exposes data that actually matters. Encouraged once you've got this single-tool server working.
+**Want to take this to production?** The *MCP in Production* lesson in Week 7 (Going Further) picks up where this leaves off: more than one tool, resources and prompts, and the authorization + PII handling you can't skip once your server exposes data that actually matters. Encouraged once you've got this single-tool server working.
 
 ## Key takeaways
 

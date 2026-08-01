@@ -165,6 +165,38 @@ Now chunk 2 has BOTH "useState" AND "return"
 ]
 ```
 
+```scenario
+{
+  "who": "A backend dev on your team",
+  "setting": "Code review. You've opened a PR adding sentence-aware chunking with 50-character overlap.",
+  "ask": "I read on LinkedIn that chunking is basically obsolete now — context windows are millions of tokens. Our whole docs site is maybe 400k. Why are we shredding documents into 500-character pieces instead of just pasting the entire thing into the prompt?",
+  "note": "This is the most common objection to chunking. 'Because token limits' is not the answer.",
+  "options": [
+    {
+      "text": "Fitting in the window was never the main reason. Retrieval returns whole units, so the unit IS the answer — if I embed the entire docs site as one vector, that vector is the average of every topic in it and matches nothing in particular. Chunking is how a query lands on the paragraph that answers it instead of the document that contains it.",
+      "verdict": "best",
+      "feedback": "This is the answer. It reframes chunking from a storage workaround into a retrieval-precision decision, which is what it actually is. The 'average of every topic' framing survives follow-up questions — and notice it stays true even if context windows were infinite."
+    },
+    {
+      "text": "Even if it fits, we'd pay for 400k input tokens on every question, and accuracy drops when the relevant fact is buried in the middle of a huge context. Chunking is cheaper and more accurate.",
+      "verdict": "ok",
+      "feedback": "Both facts are true — cost scales with input tokens, and lost-in-the-middle degradation is well documented. But you've argued efficiency, so you've conceded the architecture. The reply is 'fine, do it the simple way until it's expensive,' and now you're rewriting ingestion in six months. Lead with precision; cost is your second sentence."
+    },
+    {
+      "text": "Because 400k tokens exceeds what our embedding model accepts — text-embedding-3-small caps at 8,191 tokens per input.",
+      "verdict": "ok",
+      "feedback": "Literally correct, and it does force the issue. But it makes chunking sound like a workaround for a vendor limit. A bigger embedding model wouldn't fix anything — one vector for 400k words is a blurry average no matter who computed it. You've answered 'why can't we' instead of 'why shouldn't we'."
+    },
+    {
+      "text": "Fair point — let's stuff the whole corpus in for now and add chunking later if quality suffers.",
+      "verdict": "weak",
+      "feedback": "The trap is that it half-works, which is the worst outcome. You get plausible answers with no citations, no way to tell which document a claim came from, and no signal about which part of the context the model actually used. Then 'add chunking later' means rebuilding ingestion, retrieval, and evals at once. Chunk boundaries decide what your system can ever retrieve — that's a day-one decision."
+    }
+  ],
+  "debrief": "Chunking is not compression and it is not a token workaround. It's a decision about the size of your retrievable unit — the smallest thing your system can hand back as an answer. Too big and every result is diluted; too small and each result loses its context. Bigger context windows change the cost of getting this wrong. They don't change the shape of the problem."
+}
+```
+
 ## Your challenge: implement `getLastWords`
 
 The chunking logic in [`app/libs/chunking.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/libs/chunking.ts) is provided — **but you need to implement the critical `getLastWords()` helper**. It's the function that creates the overlap between chunks.
@@ -335,7 +367,7 @@ Embed each chunk into a vector
 Upsert vectors + metadata to Pinecone
 ```
 
-**Optional, but strongly encouraged.** There's a lab where you download the entire King James Bible — 4 MB, 66 books, ~31,000 verses — design your own chunking strategy for it, and store it in your own Pinecone index with citations intact: [Chunk the Bible](/learn/bonus-bible-chunking). It's not required to move on, but it's the single best rep for making chunking decisions from the corpus instead of from habit — do it if you can.
+**Optional, but strongly encouraged.** There's a lab where you download the entire King James Bible — 4 MB, 66 books, ~31,000 verses — design your own chunking strategy for it, and store it in your own Pinecone index with citations intact: Chunk the Bible. It's not required to move on, but it's the single best rep for making chunking decisions from the corpus instead of from habit — do it if you can.
 
 ## Beyond plain text: PDFs and other modalities
 

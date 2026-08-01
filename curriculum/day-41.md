@@ -18,7 +18,7 @@ Today's checklist:
 - [ ] **Pre-run every demo query** minutes before recording; never type a query on camera you haven't tested today
 - [ ] **Do one throwaway take** start to finish, watch it, then record the real one — take two is always dramatically better
 - [ ] **Watch your final take once** at 1.5x: can a stranger follow the architecture? Is any dead air worth trimming?
-- [ ] Keep the recording somewhere safe — you submit it tomorrow ([Day 42](/learn/day-42))
+- [ ] Keep the recording somewhere safe — you submit it tomorrow
 
 <details>
 <summary>Recording nerves? Lower the stakes</summary>

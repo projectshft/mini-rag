@@ -112,7 +112,7 @@ Before you run it, predict: for the query "How do I fix error E-4002?", which do
 <details>
 <summary>Hint 1 — if the demo errors immediately</summary>
 
-You need `OPENAI_API_KEY` and `PINECONE_API_KEY` in your `.env` — the same keys you've used since [Day 5](/learn/day-05). The demo creates its own serverless index called `hybrid-demo` (dimension 512, metric `dotproduct`), so it won't touch your main course index.
+You need `OPENAI_API_KEY` and `PINECONE_API_KEY` in your `.env` — the same keys you've used all course. The demo creates its own serverless index called `hybrid-demo` (dimension 512, metric `dotproduct`), so it won't touch your main course index.
 
 </details>
 
@@ -217,6 +217,38 @@ Note the `inputType` option on the sparse encoder: use `'passage'` when embeddin
 
 - You're just getting started (keep it simple)
 - Your content is conversational without critical exact-match terms
+
+```scenario
+{
+  "who": "A classmate",
+  "setting": "Slack, the evening after the hybrid demo. They've been reading AI takes all week.",
+  "ask": "I read on LinkedIn that any serious production RAG system uses hybrid search, reranking, AND query rewriting — the post said dense-only retrieval is 'amateur hour.' Should we be adding all of that? Ours feels like a toy now.",
+  "note": "You'll get some version of this every week of your career. Pick what you'd actually reply.",
+  "options": [
+    {
+      "text": "Those are all real techniques, but the post skipped the preconditions. Hybrid earns its complexity when documents are semantically near-identical and differ by an identifier — SKUs, versions, error codes. Do ours? If our content is conversational docs with no exact-match terms, hybrid buys us a second vector type and a full re-embed to solve a problem we don't have. What does OUR data look like?",
+      "verdict": "best",
+      "feedback": "The correction isn't 'the post is wrong,' it's 'the post answered a general question and you have a specific one.' Naming the precondition turns an authority argument into a testable one, and ending on 'what does our data look like' puts the decision back where it belongs — on evidence you can actually go and check."
+    },
+    {
+      "text": "Engagement bait. Anyone writing 'amateur hour' about a technical choice is optimizing for reach, not accuracy — half of what does well on LinkedIn is confident oversimplification.",
+      "verdict": "ok",
+      "feedback": "Healthy instinct about the medium, and you're right that certainty performs better than nuance there. But you've critiqued the messenger and left the question unanswered — and the underlying advice genuinely IS the mainstream production stack. Dismiss the tone, then engage the substance, or you'll be the person arguing against hybrid when you're finally indexing part numbers."
+    },
+    {
+      "text": "We already have reranking, so we're most of the way there. Let's add hybrid this weekend and see if answers get better.",
+      "verdict": "weak",
+      "feedback": "'See if it gets better' with no metric means you'll judge it on vibes, and you'd have to recreate the index with the dotproduct metric and re-embed everything just to run the experiment. That's a large irreversible change to satisfy a stranger's checklist. Pick ten queries you can score first — then the experiment means something."
+    },
+    {
+      "text": "Our demo showed hybrid putting the exact SKU at #1 with a huge score gap. That proves it works, so let's ship it.",
+      "verdict": "weak",
+      "feedback": "The demo proved hybrid works on a corpus built specifically to make hybrid look good — near-identical documents separated only by identifiers. That was the point of it. Generalizing from a demo designed to showcase a technique is exactly the reasoning the demo should have inoculated you against."
+    }
+  ],
+  "debrief": "Social feeds reward confident, unconditioned advice — the caveats are what get cut for engagement. Every item on that list is real and every item has a precondition: hybrid needs exact identifiers, reranking needs crowded score bands and latency headroom, query rewriting needs messy user input. The post can't know whether yours hold. Don't trust it and don't dismiss it — extract the precondition, then go look at your own data."
+}
+```
 
 ## Alternative: metadata filtering
 

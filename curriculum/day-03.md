@@ -31,21 +31,36 @@ npm install
 
 ### Set up environment variables
 
-Before running any exercises, configure your API keys:
+**We provide your API key — you don't need an OpenAI account.** We email you a
+class key that works for every lesson in this course, with the budget already
+covered. If you haven't received yours yet, email
+[assistant@parsity.io](mailto:assistant@parsity.io) and we'll get one to you.
 
 ```bash
 # Copy the example environment file
 cp .env.example .env
-
-# Open .env and add your OpenAI API key
-# Get one at: https://platform.openai.com/api-keys
 ```
 
-Your `.env` file should have at minimum:
+Then open `.env` and set **both** of these:
 
 ```bash
-OPENAI_API_KEY=sk-your-key-here
+OPENAI_API_KEY=<the class key we emailed you>
+OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1
 ```
+
+`OPENAI_BASE_URL` is what points your code at the class endpoint. Miss it and
+your key gets sent to OpenAI directly, which rejects it — so if you see a 401,
+that's the first thing to check.
+
+<details>
+<summary>Prefer to use your own OpenAI account?</summary>
+
+That works too. Put your own `sk-...` key in `OPENAI_API_KEY`, and leave
+`OPENAI_BASE_URL` commented out or unset so your code talks to OpenAI directly.
+You'll be paying for your own usage — the exercises are cheap (cents), but the
+class key exists so you don't have to think about it.
+
+</details>
 
 **Important:** never commit `.env` to git! It's already in `.gitignore` for your protection.
 
@@ -473,7 +488,7 @@ title: Explain my solution back and poke holes
 ---
 Here is my implementation of findTopSimilarDocuments from app/scripts/exercises/vector-similarity.ts (I'll paste it below). I'm going to explain, line by line, WHY each step exists — the scoring map, the threshold filter, the descending sort, and the topK slice — as if teaching a junior dev.
 
-Your job: poke holes. Ask me why filter must come before slice, what happens with sort((a, b) => a.similarity - b.similarity), why cosine similarity beats raw dot product here, and what my function does when documents have different embedding lengths than the query. Rate my understanding 1-10 and tell me what to review before Day 4.
+Your job: poke holes. Ask me why filter must come before slice, what happens with sort((a, b) => a.similarity - b.similarity), why cosine similarity beats raw dot product here, and what my function does when documents have different embedding lengths than the query. Rate my understanding 1-10 and tell me what to review before the next lesson.
 
 [paste your implementation here]
 ```

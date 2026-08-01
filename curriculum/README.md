@@ -36,7 +36,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - [Building the Upload API Route](day-10.md)
 - [Querying Documents](day-11.md)
 - [Fine-Tuning Overview](day-12.md)
-- [Running Fine-Tuning + Assignment 1](day-13.md) 🎥
+- [Fine-Tuning as History + Assignment](day-13.md) 🎥
 - Rest day
 
 **Week 3 — Agent Architecture**
@@ -46,7 +46,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - [Implementing the Selector (Text-Based)](day-17.md)
 - [Upgrading to Structured Outputs](day-18.md)
 - [Graceful Degradation](day-19.md)
-- [Implementing the LinkedIn Agent](day-20.md)
+- [Implementing the LinkedIn Agent + Assignment](day-20.md) 🎥
 - Rest day
 
 **Week 4 — RAG Agent**
@@ -56,7 +56,7 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - [Sparse + Dense Vectors (Hybrid Search)](day-24.md)
 - [Understanding the Chat Interface](day-25.md)
 - [Observability with LangSmith](day-26.md)
-- [Assignment 2: RAG Agent](day-27.md) 🎥
+- [Assignment: RAG Agent](day-27.md) 🎥
 - Rest day
 
 **Week 5 — Testing & Tools**
@@ -66,14 +66,14 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - [Tool Calling Concepts](day-31.md)
 - [The Reveal + MCP](day-32.md)
 - [RAG Without Vectors: The SQL Agent](day-33.md)
-- [LLM & RAG Security + Assignment 3](day-34.md) 🎥
+- [LLM & RAG Security + Assignment](day-34.md) 🎥
 - Rest day
 
 **Week 6 — Capstone**
 
 - [Capstone Kickoff: Your Final Project](day-36.md) 🎥
 - [Capstone Development I](day-37.md)
-- [Capstone Development II + Assignment 4](day-38.md) 🎥
+- [Capstone Development II](day-38.md)
 - [Capstone Development III](day-39.md)
 - [Capstone Polish & Documentation](day-40.md)
 - [Capstone Demo Recording](day-41.md)
@@ -86,16 +86,28 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 
 ## Assignments
 
-| # | Name | Due | Day |
-|---|------|-----|-----|
-| 1 | Document Upload | End of Week 2 | Day 13 |
-| 2 | RAG Agent | End of Week 4 | Day 27 |
-| 3 | Reranking | Mid Week 5 | Day 34 |
-| 4 | SQL Agent | Week 6 | Day 38 |
-| 5 | Capstone | End of course | Day 42 |
+Assignments are **not numbered** — a number in the lesson text goes stale the
+moment a day moves. Each one is named for what you build, and lives on the day
+it's due. Link to the day, never to "Assignment 3".
 
-Submission stays on Typeform (links live inline in the day files).
-Post your work in Slack for feedback.
+Every assignment is due in the same week its material is taught, on the
+lightest day of that week. One per week, plus the capstone bookends.
+
+| Assignment | Due | Covers |
+|------------|-----|--------|
+| [Word Math](day-04.md) | Week 1 | embeddings, vector arithmetic |
+| [Document Upload](day-13.md) | Week 2 | chunking, ingestion, sanitization |
+| [Agent Router](day-20.md) | Week 3 | selector, structured outputs, few-shot |
+| [RAG Agent](day-27.md) | Week 4 | retrieval, preprocessing, reranking, threshold |
+| [Security](day-34.md) | Week 5 | prompt injection, document poisoning, layered defense |
+| [Capstone proposal](day-36.md) | Week 6 | scope and plan |
+| [Capstone](day-42.md) | End of course | the whole thing |
+
+**One Typeform for all of them** — name, which assignment, video link, repo link.
+The same link appears in every assignment day. Post your work in Slack too.
+
+Optional and ungraded: the [SQL agent lab](day-33.md), the
+[LLM-as-judge exercise](day-30.md), and the [Bible chunking lab](bonus-bible-chunking.md).
 
 ## Bonus lessons
 

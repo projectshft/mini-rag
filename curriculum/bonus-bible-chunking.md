@@ -4,11 +4,11 @@
 
 ## Why this corpus
 
-On [Day 8](/learn/day-08) you chunked scraped pages with `chunkText` — sentence-aware splitting with overlap, and it works. But the pages you've been chunking are _unstructured_ blobs, so a generic strategy is the right call.
+Earlier you chunked scraped pages with `chunkText` — sentence-aware splitting with overlap, and it works. But the pages you've been chunking are _unstructured_ blobs, so a generic strategy is the right call.
 
 The Bible is the opposite shape: **4+ MB of text with real joints** — 66 books, ~1,189 chapters, ~31,000 verses. Run a generic chunker over it and you get retrieval-sized pieces that have thrown away the thing that makes this corpus valuable: **the citation**. A chunk that can't say "Genesis 1:1–5" can match a query, but it can't be cited, filtered, or traced.
 
-The transferable lesson — the whole reason this lab exists: **decide your chunking from the corpus in front of you, not from habit.** This is exactly the "Confluence pages vs. scanned PDFs" decision from Day 8, practiced on a corpus that punishes laziness.
+The transferable lesson — the whole reason this lab exists: **decide your chunking from the corpus in front of you, not from habit.** This is exactly the "Confluence pages vs. scanned PDFs" decision from the chunking lesson, practiced on a corpus that punishes laziness.
 
 ## Get the text
 

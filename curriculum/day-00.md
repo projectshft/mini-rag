@@ -19,28 +19,52 @@ And there's a second reason, the career one: after this program, you will likely
 
 **Non-negotiable habit:** record the video even when it's rough. Especially when it's rough. Rough videos are where the learning is.
 
-## Your mentor: use them like a professional would
+## Your mentor: the most important part of this program
 
-You have access to a human mentor — a working engineer who has built the things you're learning to build. This is the single most underused resource in every cohort. Here's how to not waste it:
+You get a human mentor — a working engineer who has built the things you're
+learning to build. Of everything in this program, **this is the piece that
+matters most.** It's also the one people quietly let slide.
 
-**Make the check-in your metronome.** A recurring mentor session is the best forcing function in this program: it's the deadline your brain actually respects. Never cancel for "having nothing to talk about" — that meeting is the reason you'll have something.
+Think of your mentor as a rubber duck that talks back.
 
-**Show up with what you built.** The default agenda is simple: *here's what I built this week, watch me walk through it.* Built nothing this week? Say that out loud too — accountability is the feature, not a bug.
+You say the thing out loud. Someone who's done it before tells you where you're
+off. That's it. It doesn't need to be more formal than that.
 
-**Ask them to push back.** Don't just use your mentor to explain ideas — ask them to **disagree with you**. "Here's the chunking strategy I picked and why — argue with me." A different point of view from someone with scars is worth ten lessons. If your mentor is only nodding, you're not using them hard enough.
+**Try to bring something.** A problem you're stuck on. A section that didn't
+land. A decision you weren't sure about. One thing in your pocket makes the
+session flow.
 
-**Interview them.** Ask what they're working on at their job right now. What's frustrating them. What they think you should be learning that isn't in any curriculum yet. This is free industry signal.
+Show up with nothing? Also fine —
 
-**If you're ever out of things to bring, steal from this list:**
+**"Can I just walk you through what I learned this week?"** is a completely
+legitimate agenda. So is "do you mind if I go over my understanding of
+something and you tell me where I'm off?" Talking through what you've done is
+genuinely useful, not filler.
 
-- "Here's my assignment — code-review it like I'm your coworker."
-- "I explained X in my video this week — poke holes in my explanation."
-- "When would you NOT use the approach this course teaches?"
-- "What does your team's RAG/AI stack actually look like in production?"
-- "What breaks in real systems that tutorials never mention?"
-- "Mock-interview me on what I learned this week."
+**Some things that tend to make for a good session:**
 
-**Don't have a mentor yet?** Reach out **right now** — message us in Slack or email [brian@parsity.io](mailto:brian@parsity.io) and we'll get you paired. Do not quietly go without one; that's playing the program on hard mode for no reason.
+- Going over your homework together, or a section you just finished
+- Debugging something together — that's a great use of the time
+- The **tradeoffs** behind a decision: why this chunking strategy, why rerank
+  here, when you *wouldn't* do it this way
+- What they're actually working on at their job, and what they've run into
+- Anything AI you're curious about — where it's going, what they make of it
+
+**One thing to steer away from:** syntax. "Why won't this compile" is exactly
+what AI tools are already great at, and it's the worst possible use of a human
+hour. Save the human for the judgment calls — the stuff with no single right
+answer.
+
+And go easy on both of you. **Nobody has 100% of the answers**, including your
+mentor. "I don't know, let's look" is a good outcome. This is two engineers
+talking, not an exam.
+
+**Office hours are worth showing up to as well** — same idea, more people in the
+room, and you'll pick things up just from hearing what others are stuck on.
+
+**Don't have a mentor yet?** Message us in Slack or email
+[brian@parsity.io](mailto:brian@parsity.io) and we'll get you paired. It's worth
+sorting out early — the program is a lot better with one.
 
 ## Slack: the 2% cheat code
 
@@ -66,7 +90,7 @@ There is no such thing as reliable motivation — nobody feels like it on week f
 - **The schedule is built for this**: 6 days on, 1 day off, 1–2 hours a day. Rest days are real rest days — take them, they're part of the design.
 - **Use your mentor check-in as the weekly heartbeat** and the daily block as the pulse.
 
-If you take exactly one thing from this page: **calendar-block the daily time before Day 1, and book the recurring mentor session today.**
+If you take exactly one thing from this page: **calendar-block the daily time before your first lesson, and book the recurring mentor session today.**
 
 ## What this curriculum is (honest version)
 
@@ -78,14 +102,14 @@ A few things to set straight expectations:
 - **The humans are the product.** Weekly live sessions, office hours, mentors, Slack. A curriculum this compressed can't cover everything under the sun — and it deliberately doesn't try. When you hit the edge of what's written, that's what the humans are for. You're working with people who have actually built what you want to build.
 - **We teach foundations, not tools.** Frameworks will churn; the principles here — embeddings, retrieval, chunking, agents, evals, security — transfer to whatever stack you touch next. Learn the foundations well and every future tool is a variation on something you already understand.
 
-## Your Day 0 checklist
+## Your setup checklist
 
 - [ ] Calendar-block your daily time (even 30 minutes)
 - [ ] Book the recurring mentor session — or [reach out](mailto:brian@parsity.io) if you don't have a mentor yet
 - [ ] Join Slack, and post an intro: who you are, what you want out of this
 - [ ] Save your class API key when it arrives by email (you'll use it inside lessons)
 - [ ] Skim the [full 42-day schedule](/learn) so you know the shape of the next six weeks
-- [ ] Start [Day 1](/learn/day-01)
+- [ ] Start your first lesson (hit **Next** at the bottom of this page)
 
 ## Work with AI
 
@@ -98,9 +122,11 @@ Interview me one question at a time to build my personal success plan: when my d
 ```
 
 ```ai-prompt
-title: Rehearse my first mentor session
+title: Warm up for my first mentor session
 ---
-Play a senior AI engineer who is my new mentor. It's our first 30-minute session. I'll drive the agenda — my goal is to leave with (1) you understanding where I am technically, (2) one concrete push-back on an assumption I hold, and (3) a standing agenda for our weekly check-ins.
+I have my first 30-minute session with a human mentor coming up — a working engineer — and I want to walk in feeling relaxed rather than like I'm about to be quizzed.
 
-Stay in character, be warm but busy — make me earn the value by asking good questions. If I'm vague, say "what specifically?" like a real mentor would. After we wrap, break character and grade how I used the session, with two things to do differently in the real one.
+Help me get ready in two steps. First, ask me a few easy questions about where I'm at: what I've built so far, what clicked, what's still fuzzy, and anything I've been curious about. Then, based on my answers, suggest two or three things that would be genuinely good to talk through together — the kind of open-ended stuff a conversation between two engineers goes to, not syntax questions.
+
+Keep it low-key. The goal is a short list of things I'd actually enjoy discussing, plus a sentence I can open with if my mind goes blank.
 ```

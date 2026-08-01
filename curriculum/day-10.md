@@ -31,7 +31,7 @@ flowchart TD
     E --> F[Content ready for RAG]
 ```
 
-The URL route (`/api/upload-document`) does all four steps; the text route (`/api/upload-text`) skips scraping and starts at chunking. The "read" side — retrieval — comes on [Day 11](/learn/day-11).
+The URL route (`/api/upload-document`) does all four steps; the text route (`/api/upload-text`) skips scraping and starts at chunking. The "read" side — retrieval — comes tomorrow.
 
 ### Why this pipeline exists
 
@@ -80,7 +80,7 @@ const chunks = await processor.processUrls(['https://example.com']);
 ]
 ```
 
-Chunks overlap by ~50 characters to maintain context at boundaries — the strategy you implemented on [Day 8](/learn/day-08).
+Chunks overlap by ~50 characters to maintain context at boundaries — the strategy you implemented in the chunking lesson.
 
 ### 2. OpenAI embeddings
 
@@ -189,7 +189,7 @@ Open [`app/api/upload-document/route.ts`](https://github.com/projectshft/mini-ra
 8. **Upload each batch** — upsert, tracking the success count
 9. **Return results** — success/failure summary as JSON
 
-You've already seen every ingredient: the script from [Day 9](/learn/day-09) does the same pipeline, and the finished [`/api/upload-text`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/upload-text/route.ts) route shows the route-shaped version minus scraping. **Try it from memory first** — resist opening those references until you're stuck.
+You've already seen every ingredient: the upload script does the same pipeline, and the finished [`/api/upload-text`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/upload-text/route.ts) route shows the route-shaped version minus scraping. **Try it from memory first** — resist opening those references until you're stuck.
 
 <details>
 <summary>Hint 1 — validation and scraping (steps 1–2)</summary>
@@ -207,6 +207,7 @@ The embeddings API takes an **array of strings** and returns embeddings in the s
 const embeddingResponse = await openaiClient.embeddings.create({
 	model: 'text-embedding-3-small',
 	input: batch.map((chunk) => chunk.content),
+	dimensions: 512, // must match your Pinecone index, or the upsert fails
 });
 
 // embeddingResponse.data[0].embedding — first embedding
@@ -330,7 +331,7 @@ Once your route works (or you've genuinely exhausted the hints), watch the imple
 - Batches of 100 keep you inside rate limits and make Pinecone upserts efficient
 - The already-built `/api/upload-text` route is the same pipeline minus scraping — a useful reference for isolating what each piece does
 
-**Put the whole pipeline to work (optional, encouraged).** You've now built the write side end to end. The [Chunk the Bible lab](/learn/bonus-bible-chunking) runs this exact pipeline — chunk -> embed -> upsert — on a big, richly structured corpus (66 books, ~31,000 verses) where your chunking choices visibly change what's retrievable. Not required to continue, but it's the best way to feel the pipeline on real-scale data before you meet it at work.
+**Put the whole pipeline to work (optional, encouraged).** You've now built the write side end to end. The Chunk the Bible lab runs this exact pipeline — chunk -> embed -> upsert — on a big, richly structured corpus (66 books, ~31,000 verses) where your chunking choices visibly change what's retrievable. Not required to continue, but it's the best way to feel the pipeline on real-scale data before you meet it at work.
 
 ## Work with AI
 

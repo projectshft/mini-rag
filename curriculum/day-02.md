@@ -181,7 +181,7 @@ It's a balance:
 
 ## Finding similar documents
 
-Here's the whole retrieval idea in one snippet — this is exactly what you'll implement yourself on [Day 3](/learn/day-03):
+Here's the whole retrieval idea in one snippet — this is exactly what you'll implement yourself tomorrow:
 
 ```typescript
 // Documents

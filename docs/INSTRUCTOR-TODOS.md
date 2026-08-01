@@ -41,6 +41,15 @@ text + interactive.
 
 ## Other open items
 
+- [ ] **Create the single assignment Typeform.** Every assignment day now links to
+  `https://form.typeform.com/to/ASSIGNMENT-FORM` (a placeholder). Build one form
+  with four fields — **name/email**, **which assignment** (dropdown: Word Math,
+  Document Upload, Agent Router, RAG Agent, Security, Capstone Proposal,
+  Capstone), **video link**, **repo link** — then find-and-replace
+  `ASSIGNMENT-FORM` with the real id across `curriculum/`. Replaces the old 12
+  forms; don't delete those, past cohort responses live in them. Check whether
+  any Zapier automation was wired to the old forms before retiring the links.
+
 - [ ] **Test the invite flow end-to-end.** The ticket-drop bug is fixed and
   deployed — send yourself (a second email) a real invite from `/admin`, click
   the email link, confirm you land signed-in. Just to see it work once.

@@ -1,9 +1,9 @@
-# Day 20 — Implementing the LinkedIn Agent
+# Day 20 — Implementing the LinkedIn Agent + Assignment
 
 
 > **Today:** your first specialized agent. You'll use few-shot prompting to lock in a specific LinkedIn writing voice and stream the response — the selector you built this week will route to it automatically.
 
-> **Note on fine-tuning:** this agent was originally built on a fine-tuned model. OpenAI deprecated fine-tuning (May 2026), so we now use **few-shot prompting** instead: show the model a handful of real example posts in the prompt and ask it to imitate their style. This is how style transfer is done with modern models anyway — "context is all you really need." The fine-tuning module ([Day 12](/learn/day-12)) covers the old approach conceptually.
+> **Note on fine-tuning:** this agent was originally built on a fine-tuned model. OpenAI deprecated fine-tuning (May 2026), so we now use **few-shot prompting** instead: show the model a handful of real example posts in the prompt and ask it to imitate their style. This is how style transfer is done with modern models anyway — "context is all you really need." The fine-tuning lessons cover the old approach conceptually.
 
 ## Video walkthrough
 
@@ -41,7 +41,7 @@ flowchart LR
 
 ## Implementation steps
 
-The agent implementation is in [`app/agents/linkedin.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/agents/linkedin.ts). Remember the contract from [Day 15](/learn/day-15): it receives an `AgentRequest` (with `query`, `originalQuery`, and `messages`) and must return a stream.
+The agent implementation is in [`app/agents/linkedin.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/agents/linkedin.ts). Remember the agent contract: it receives an `AgentRequest` (with `query`, `originalQuery`, and `messages`) and must return a stream.
 
 ### 1. Pick your example posts
 
@@ -93,7 +93,7 @@ Without the "style, not content" instruction, the model will recycle topics from
 
 ```typescript
 return streamText({
-	model: openai('gpt-4o'),
+	model: openaiProvider('gpt-4o'),
 	system: systemPrompt,
 	messages: request.messages,
 });
@@ -125,7 +125,7 @@ Refined query: "${request.query}"
 Use the refined query to understand the user's intent and write a new LinkedIn post on that topic in the style of the examples.`;
 
 return streamText({
-	model: openai('gpt-4o'),
+	model: openaiProvider('gpt-4o'),
 	system: systemPrompt,
 	messages: request.messages,
 });
@@ -211,15 +211,56 @@ Expect this question in code review — practice the answer:
       "feedback": "'Use all the data' sounds rigorous, which is what makes this tempting — but it mistakes what the model is missing. It doesn't lack knowledge about the topics; it needs a voice to write in. You'd ship a slower, more complex agent whose posts read like remixes of the retrieved ones."
     }
   ],
-  "debrief": "This is Day 12's question, inverted: there the goal was knowledge (docs that change weekly, citations required), so retrieval won. Here the goal is voice, so examples win. The sorting question for any 'should we RAG this?' debate: does the model need to KNOW something, or SOUND like someone? Knowledge belongs in the index; voice belongs in examples in the prompt — or, before the May 2026 deprecation, in fine-tuned weights."
+  "debrief": "This is the fine-tuning question, inverted: there the goal was knowledge (docs that change weekly, citations required), so retrieval won. Here the goal is voice, so examples win. The sorting question for any 'should we RAG this?' debate: does the model need to KNOW something, or SOUND like someone? Knowledge belongs in the index; voice belongs in examples in the prompt — or, before the May 2026 deprecation, in fine-tuned weights."
 }
 ```
 
 ## Testing
 
-Once implemented, the selector agent you built on [Day 17](/learn/day-17)–[18](/learn/day-18) will route LinkedIn-post requests to this agent automatically — try "Write a LinkedIn post about learning RAG" in the app and watch it stream.
+Once implemented, the selector agent you built will route LinkedIn-post requests to this agent automatically — try "Write a LinkedIn post about learning RAG" in the app and watch it stream.
 
 Then try the same topic with different example posts swapped into `app/agents/example-posts.ts` — the change in voice should be obvious. That's the whole point: the examples ARE the model's training, and you can hot-swap them.
+
+## Assignment
+
+**Assignment: Agent Router — due today.** This is everything Week 3 built: the
+selector that decides *who* answers, and the first specialized agent it routes to.
+
+### Video (3–4 minutes)
+
+Feynman-style, to a smart colleague who hasn't taken this course. Cover:
+
+1. **Why route at all** — what breaks if you hand every message to one model
+   with one giant prompt?
+2. **Text parsing vs structured outputs** — you built the selector both ways.
+   What actually went wrong with parsing free text, and what does a Zod schema
+   guarantee that a careful prompt can't?
+3. **Few-shot vs fine-tuning** — the LinkedIn agent gets its voice from examples
+   in the prompt. Explain why that replaced training a model, and what you'd
+   give up if you went back.
+
+The middle one is the interview question. If you can't say concretely what
+structured outputs buy you, that's the gap to close before recording.
+
+### Code
+
+- `app/api/select-agent/route.ts` — the selector, using `responses.parse()` with
+  `zodTextFormat()` for type-safe `{ agent, query }`
+- `app/agents/linkedin.ts` — the LinkedIn agent with your example posts wired in
+
+**What "done" looks like:**
+
+- "Write a LinkedIn post about learning RAG" routes to the LinkedIn agent and streams
+- A technical question routes to the RAG agent instead
+- An unknown or ambiguous agent name degrades gracefully instead of throwing
+- Swapping the posts in `app/agents/example-posts.ts` visibly changes the voice
+
+### Submit your work
+
+- [Submit your assignment](https://form.typeform.com/to/ASSIGNMENT-FORM)
+
+Post it in **Slack** too — everyone's selector prompt is a little different, and
+the routing edge cases people hit are worth comparing.
 
 ## Resources
 
@@ -231,7 +272,7 @@ Then try the same topic with different example posts swapped into `app/agents/ex
 - Few-shot prompting does what fine-tuning used to: 3–5 example posts in the system prompt lock in a voice, with instant iteration
 - Examples belong in the system prompt as style reference — and you must explicitly say "imitate the style, not the content"
 - Format variety in your examples teaches the voice; identical formats teach a template
-- The agent honors the Day 15 contract: it takes an `AgentRequest` (both queries + messages) and returns `streamText()` directly
+- The agent honors the agent contract: it takes an `AgentRequest` (both queries + messages) and returns `streamText()` directly
 - Tuning is an edit-and-re-run loop: swap examples, tighten instructions, add constraints — no training jobs
 
 ## Work with AI

@@ -22,11 +22,11 @@ Here's how tool-calling works:
 
 ```typescript
 import { streamText, tool } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { openaiProvider } from '@/app/libs/openai/openai';
 import { z } from 'zod';
 
 const result = await streamText({
-  model: openai('gpt-4o'),
+  model: openaiProvider('gpt-4o'),
   tools: {
     webSearch: tool({
       description: 'Search the web for current information',
@@ -278,7 +278,7 @@ And the inverse conversation — where tools ARE the right call and someone's pu
 
 ## Your challenge: implement tool-calling RAG
 
-Now it's your turn. Take your existing RAG workflow — the embed -> search -> rerank pipeline from [/learn/day-22](/learn/day-22) and [/learn/day-23](/learn/day-23) — and refactor it to use tool-calling.
+Now it's your turn. Take your existing RAG workflow — the embed -> search -> rerank pipeline you already built — and refactor it to use tool-calling.
 
 **Create:** `app/api/tool-calling-agent/route.ts`
 
@@ -311,7 +311,7 @@ Wrap your whole retrieval pipeline (embed -> search -> rerank) inside a single t
 
 </details>
 
-You'll see a complete reference implementation tomorrow in [/learn/day-32](/learn/day-32) — genuinely try it first.
+You'll see a complete reference implementation tomorrow — genuinely try it first.
 
 ## Think about it
 
@@ -324,7 +324,7 @@ Before tomorrow, consider these scenarios. For each one, would you use tool-call
 5. **A research assistant** that needs to search multiple sources, cross-reference information, and synthesize findings.
 6. **A form-filling assistant** that extracts data from documents and populates a database.
 
-Write down your answers. We'll go through them tomorrow in [/learn/day-32](/learn/day-32) — where we reveal our implementation and discuss when workflows beat tool-calling (spoiler: most of the time).
+Write down your answers. We'll go through them tomorrow — where we reveal our implementation and discuss when workflows beat tool-calling (spoiler: most of the time).
 
 ## Key takeaways
 

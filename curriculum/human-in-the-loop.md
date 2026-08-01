@@ -10,7 +10,7 @@
 
 ## Why gate an agent at all
 
-On [Day 33](/learn/day-33) you built an agent that turns "find gaming influencers under $500" into a SQL query. That agent only **reads** — worst case, it returns the wrong rows and the user shrugs.
+On the SQL Agent you built an agent that turns "find gaming influencers under $500" into a SQL query. That agent only **reads** — worst case, it returns the wrong rows and the user shrugs.
 
 Now the client asks for one more feature: *"let me clean up dead accounts — 'delete all micro-tier influencers we haven't booked in a year.'"* Suddenly the same agent can **write**. And here's the uncomfortable truth: an LLM occasionally extracts the wrong parameters. "Delete influencers under $500" with a mis-parsed threshold, or a `WHERE` clause that's emptier than you meant, and you've just wiped your database. There's no undo on `deleteMany`.
 

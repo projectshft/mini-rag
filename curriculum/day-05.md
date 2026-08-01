@@ -28,55 +28,61 @@ Watch the complete setup of OpenAI and Pinecone step-by-step:
 
 ## Part 1: Set up OpenAI
 
-### Get your OpenAI API key
+### Your OpenAI API key
 
-**Have a class API key from us?** You can skip the OpenAI signup and billing below — the class key we email you is enough to get you through the lessons. Set two env vars and point your clients at the class endpoint:
+**We provide this — you should already have it in your `.env`.** The class key
+we email you covers every lesson in this course, so there's no OpenAI signup and
+no billing to set up. Haven't received yours? Email
+[assistant@parsity.io](mailto:assistant@parsity.io).
+
+Both values need to be set:
 
 ```bash
-OPENAI_API_KEY=<your class key>
+OPENAI_API_KEY=<the class key we emailed you>
 OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1
 ```
+
+Here's how that gets wired up in `app/libs/openai/openai.ts` — one file
+configures both SDKs:
 
 ```typescript
 import OpenAI from 'openai';
 import { createOpenAI } from '@ai-sdk/openai';
 
-// One place that configures how we talk to OpenAI. The same OPENAI_BASE_URL
-// routes both the OpenAI SDK and the Vercel AI SDK through your class key.
-export const openai = new OpenAI({
+export const openaiClient = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY,
 	baseURL: process.env.OPENAI_BASE_URL,
 });
 
+// Both SDKs have to be configured. The OpenAI SDK above would read
+// OPENAI_BASE_URL from the environment on its own — the Vercel AI SDK will
+// NOT. Its default `openai` export is hardcoded to api.openai.com, so
+// importing that directly sends your class key to OpenAI and 401s.
 export const openaiProvider = createOpenAI({
 	apiKey: process.env.OPENAI_API_KEY,
 	baseURL: process.env.OPENAI_BASE_URL,
 });
 ```
 
-Don't have a class key yet? Email [assistant@parsity.io](mailto:assistant@parsity.io).
+**The rule for the rest of the course:** use `openaiClient` for embeddings, and
+`openaiProvider('gpt-4o')` for anything that streams. Never import `openai`
+straight from `@ai-sdk/openai` — that's the one path that skips your key.
 
-**Prefer your own OpenAI account?** Follow the steps below instead.
+<details>
+<summary>Prefer to use your own OpenAI account?</summary>
 
-1. Go to [platform.openai.com](https://platform.openai.com)
-2. Sign up or log in
-3. Navigate to the "API Keys" section in your dashboard
-4. Click "Create new secret key"
-5. **Important:** copy the key immediately — you won't see it again!
+Put your own key in `OPENAI_API_KEY`, leave `OPENAI_BASE_URL` unset, and the
+same code talks to OpenAI directly.
 
-### Add credits
+1. Go to [platform.openai.com](https://platform.openai.com), sign up or log in
+2. "API Keys" -> "Create new secret key" — copy it immediately, you won't see it again
+3. Under "Billing", add a payment method and $5–10 in credits
 
-The OpenAI API is pay-per-use:
+Costs are small: embeddings (`text-embedding-3-small`) run ~$0.0001 per 1K
+tokens and GPT-4o-mini ~$0.15 per 1M input tokens, so $5 covers the course
+comfortably. The class key exists so you don't have to bother.
 
-1. Go to "Billing" in your OpenAI dashboard
-2. Add a payment method
-3. Add $5–10 in credits — this will last you a long time for learning
-
-**Cost breakdown:**
-
-- Embeddings (`text-embedding-3-small`): ~$0.0001 per 1K tokens (very cheap!)
-- GPT-4o-mini: ~$0.15 per 1M input tokens
-- For this course, $5 is more than enough
+</details>
 
 ### The models we'll use
 
@@ -188,7 +194,7 @@ export const searchDocuments = async (
 };
 ```
 
-Look familiar? This is [Day 3's](/learn/day-03) `findTopSimilarDocuments` with Pinecone doing the score-filter-sort-slice work at scale.
+Look familiar? This is your `findTopSimilarDocuments` with Pinecone doing the score-filter-sort-slice work at scale.
 
 ## Key concepts
 
@@ -357,7 +363,7 @@ Save your analysis and keep it as a reference — these trade-offs come back in 
 - The RAG query path is: text -> embedding (OpenAI) -> similarity search (Pinecone) -> matching docs -> LLM answer (OpenAI)
 - One shared client per service, authenticated via env vars — never hardcode or commit API keys
 - **Index dimensions must exactly match embedding dimensions** (512 in this project) — the #1 setup bug
-- `searchDocuments` is Day 3's similarity function running at database scale: Pinecone scores by cosine, returns topK with metadata
+- `searchDocuments` is your similarity function running at database scale: Pinecone scores by cosine, returns topK with metadata
 - Dimension count is a cost/accuracy/speed dial, and storage scales linearly with it
 
 ## Work with AI

@@ -136,7 +136,7 @@ async function findClosestWord(
 }
 ```
 
-Notice `findClosestWord` is yesterday's `findTopSimilarDocuments` with `topK = 1` — same cosine similarity ([Day 3](/learn/day-03)), different packaging.
+Notice `findClosestWord` is yesterday's `findTopSimilarDocuments` with `topK = 1` — same cosine similarity you already implemented, different packaging.
 
 ### The three example equations
 
@@ -358,8 +358,7 @@ Be specific with your explanations — show you understand the geometry, not jus
 
 ### Submit your work
 
-- [Video Submission](https://form.typeform.com/to/xIimMBMs)
-- [Code Submission](https://form.typeform.com/to/oftSQs08)
+- [Submit your assignment](https://form.typeform.com/to/ASSIGNMENT-FORM)
 
 Post your favorite equation (especially the surprising failures) in Slack — they make great discussion.
 
@@ -367,7 +366,7 @@ Post your favorite equation (especially the surprising failures) in Slack — th
 
 - Embeddings preserve *relationships* as geometry: `king − man + woman` lands near `queen` because concepts are directions in the space
 - Vector subtraction removes a concept's contribution; addition injects one — the arithmetic is meaningful because the space is
-- The "answer" is found by cosine similarity against candidates — the same operation as Day 3's document retrieval, with `topK = 1`
+- The "answer" is found by cosine similarity against candidates — the same operation as your document retrieval, with `topK = 1`
 - This is the deep reason RAG works: a query vector sits near the document vectors that *mean* the same thing, even with zero shared keywords
 - Clean single-concept relationships (country->capital, verb tense) work best; fuzzy ones (antonyms) get messy — good instincts for debugging retrieval later
 
@@ -384,7 +383,7 @@ Don't just hand me equations. Instead: (1) ask me which relationship types I fin
 ```ai-prompt
 title: Poke holes in my geometry explanation
 ---
-For my Day 4 video I have to explain why word math works: what subtracting a word vector does, what adding one does, and why cosine similarity finds the answer — then connect it to RAG retrieval.
+For my word-math video I have to explain why word math works: what subtracting a word vector does, what adding one does, and why cosine similarity finds the answer — then connect it to RAG retrieval.
 
 I'll explain it to you now as if you're a smart 12-year-old. Afterwards: ask me the naive-but-sharp follow-ups ("if you subtract 'man' from 'king', where does the man GO?", "why isn't the answer exactly queen with similarity 1.0?", "so when I search your RAG app, which side of the equation is my question?"). Flag any jargon I used without explaining. Rate me 1-10 on simplicity and accuracy, and name the one gap to fix before I record.
 ```

@@ -64,7 +64,7 @@ We'll start with the simplest approach: ask the LLM to return text in a specific
 - LLM might not always follow the format exactly
 - Extra error handling needed
 
-(You'll fix the cons on [Day 18](/learn/day-18) by upgrading to structured outputs.)
+(You'll fix the cons tomorrow by upgrading to structured outputs.)
 
 ## Understanding the setup
 
@@ -260,13 +260,13 @@ QUERY: [refined query]`,
     "q": "The LLM responds with 'Sure! AGENT: rag\\nQUERY: useState hook' — your parser breaks. What's the root issue with text-based parsing?",
     "options": ["The LLM isn't constrained to your format — parsing free text is inherently brittle", "gpt-4o-mini is too weak to follow instructions", "split('\\n') doesn't work on streamed responses"],
     "answer": 0,
-    "explain": "Nothing forces the model to emit exactly 'AGENT: ...\\nQUERY: ...'. Preambles, case changes, and missing colons all break naive parsing — the core motivation for structured outputs on Day 18."
+    "explain": "Nothing forces the model to emit exactly 'AGENT: ...\\nQUERY: ...'. Preambles, case changes, and missing colons all break naive parsing — the core motivation for structured outputs tomorrow."
   },
   {
     "q": "Why does the fallback default to 'rag' when the parsed agent name isn't in agentConfigs?",
     "options": ["A wrong-but-valid route to the generalist agent beats crashing or returning an invalid agent the registry can't look up", "'rag' is alphabetically first", "The RAG agent is the cheapest to run"],
     "answer": 0,
-    "explain": "The registry lookup would fail on an unknown name. Falling back to the general-purpose agent degrades gracefully — a preview of Day 19's theme."
+    "explain": "The registry lookup would fail on an unknown name. Falling back to the general-purpose agent degrades gracefully — a preview of graceful degradation."
   },
   {
     "q": "User asks 'Tell me about React hooks', then follows up with 'How about the state one?'. How does the selector handle the follow-up?",

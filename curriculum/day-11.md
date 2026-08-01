@@ -25,7 +25,7 @@ sequenceDiagram
     A-->>U: relevant chunks (the actual text)
 ```
 
-**Key insight:** we never search by text directly. We search by *semantic similarity* using vector math — the same cosine similarity you implemented on [Day 3](/learn/day-03), now running at database scale.
+**Key insight:** we never search by text directly. We search by *semantic similarity* using vector math — the same cosine similarity you implemented by hand, now running at database scale.
 
 ## Understanding vector similarity search
 
@@ -119,9 +119,9 @@ export const searchDocuments = async (
 		id: 'react-docs-chunk-42',
 		score: 0.94,
 		metadata: {
-			source: 'https://react.dev/learn/hooks',
-			content:
-				'React Hooks let you use state and other React features...',
+			url: 'https://react.dev/learn/hooks',
+			title: 'Using Hooks',
+			text: 'React Hooks let you use state and other React features...',
 			chunkIndex: 42,
 			totalChunks: 150,
 		},
@@ -130,8 +130,9 @@ export const searchDocuments = async (
 		id: 'react-docs-chunk-15',
 		score: 0.89,
 		metadata: {
-			source: 'https://react.dev/reference/react/useState',
-			content: 'useState is a React Hook that lets you add state...',
+			url: 'https://react.dev/reference/react/useState',
+			title: 'useState',
+			text: 'useState is a React Hook that lets you add state...',
 			chunkIndex: 15,
 			totalChunks: 150,
 		},
@@ -140,8 +141,9 @@ export const searchDocuments = async (
 		id: 'typescript-docs-chunk-8',
 		score: 0.76,
 		metadata: {
-			source: 'https://typescriptlang.org/docs',
-			content: 'TypeScript provides static typing...',
+			url: 'https://typescriptlang.org/docs',
+			title: 'TypeScript Docs',
+			text: 'TypeScript provides static typing...',
 			chunkIndex: 8,
 			totalChunks: 200,
 		},
@@ -198,7 +200,7 @@ export async function POST(request: NextRequest) {
 		id: doc.id,
 		score: doc.score,
 		content: doc.metadata?.text || '',
-		source: doc.metadata?.source || 'unknown',
+		source: doc.metadata?.url || 'unknown',
 		chunkIndex: doc.metadata?.chunkIndex,
 		totalChunks: doc.metadata?.totalChunks,
 	}));
@@ -216,7 +218,7 @@ It works — until someone sends it garbage. **Extend it with production-quality
 1. **Add Zod schema validation**
     - Validate `query` as a required string
     - Make `topK` optional with a default (e.g. 5)
-    - Parse the request body through your schema — this mirrors what you did in [`upload-document/route.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/upload-document/route.ts) on [Day 10](/learn/day-10)
+    - Parse the request body through your schema — this mirrors what you did in [`upload-document/route.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/upload-document/route.ts) when you built the upload route
 
 2. **Add try/catch error handling**
     - Wrap the function body in try/catch
@@ -278,7 +280,7 @@ export async function POST(request: NextRequest) {
 			id: doc.id,
 			score: doc.score,
 			content: doc.metadata?.text || '',
-			source: doc.metadata?.source || 'unknown',
+			source: doc.metadata?.url || 'unknown',
 			chunkIndex: doc.metadata?.chunkIndex,
 			totalChunks: doc.metadata?.totalChunks,
 		}));
@@ -412,7 +414,7 @@ const docs = await index.query({
 	topK: 5,
 	includeMetadata: true,
 	filter: {
-		source: { $eq: 'https://react.dev' }, // Only React docs
+		url: { $eq: 'https://react.dev/learn/hooks' }, // only this page's chunks
 	},
 });
 ```
@@ -429,7 +431,7 @@ Getting retrieval working is one thing — keeping it truthful as documents chan
   "note": "Several of these genuinely work — pick the one you'd reach for first.",
   "options": [
     {
-      "text": "Re-ingest by source: delete every vector whose metadata source is the pricing page, then chunk and upsert the new version. With deterministic IDs like source-chunkIndex, the upsert overwrites matching chunks in place — the delete step is what catches the tail when the new doc has fewer chunks than the old one. Either way, it's an ingestion fix, not a prompt fix.",
+      "text": "Re-ingest by source: delete every vector whose metadata `url` is the pricing page, then chunk and upsert the new version. With deterministic IDs like `url-chunkIndex`, the upsert overwrites matching chunks in place — the delete step is what catches the tail when the new doc has fewer chunks than the old one. Either way, it's an ingestion fix, not a prompt fix.",
       "verdict": "best",
       "feedback": "The workhorse answer: simple, correct, and scoped to the one doc that changed. Mentioning the tail case is what marks real experience — plain upsert-in-place with the same IDs silently strands orphan chunks whenever the new version is shorter, and those orphans are exactly the stale prices."
     },
@@ -461,7 +463,7 @@ Getting retrieval working is one thing — keeping it truthful as documents chan
 
 **3. Score thresholds** — retrieve 10 results, then `results.filter((doc) => doc.score > 0.8)`. How many pass? What threshold separates genuinely useful chunks from noise in *your* data?
 
-That third experiment matters: **Assignment 1** is due on [Day 13](/learn/day-13), and it asks you to reason about exactly these retrieval-quality tradeoffs.
+That third experiment matters: the Week 2 assignment asks you to reason about exactly these retrieval-quality tradeoffs.
 
 ## Key takeaways
 

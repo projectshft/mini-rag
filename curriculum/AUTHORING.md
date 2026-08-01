@@ -254,9 +254,34 @@ full answers, `Expected output` for what running it should print.
 Lessons that hand students big code blocks inline should be converted to
 try-first + reveal.
 
-## Assignment days ()
+## Assignment days
 
 Assignment days keep: what to build, the exact files to touch (linked to
 the student branch), the video requirements (3–4 min, Feynman-style), and
 the **Typeform submission links unchanged**. Remind students they can post
 in Slack for feedback.
+
+**Never number an assignment.** Write "Assignment: RAG Agent", not
+"Assignment 2". Numbers drift the moment a lesson moves, and they contradict
+each other across files (we shipped two "Assignment 1"s that way). Refer to
+one as "this week's assignment" or by its name, and link to the day it's due.
+
+## Don't link to other lessons, and don't cite day numbers
+
+Lessons don't link to each other at all, and they never say "you built X on
+Day N." Both go stale the moment a lesson moves, and students who are off the
+official pace read the day number as an accusation.
+
+Name the thing instead:
+
+- ✅ "the `chunkText()` function you completed in the chunking lesson"
+- ✅ "the same cosine similarity you implemented by hand"
+- ✅ "tomorrow", "later this week", "in Week 3", "last week"
+- ❌ "the strategy you implemented on [Day 8](/learn/day-08)"
+- ❌ "you built reranking on Day 23"
+
+Every lesson page already has **Next**/**Prev**, and the week index is one
+click away. `yarn check:curriculum` fails the build on any `/learn/` link or
+`Day N` reference in a lesson body.
+
+External links (GitHub, docs, Typeform) are fine and unaffected.

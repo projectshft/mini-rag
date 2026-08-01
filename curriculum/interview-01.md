@@ -37,7 +37,7 @@ By the end of these sessions, you'll have:
 
 ## The four sessions
 
-### 1. [Your Signature Story](/learn/interview-02) — most important
+### 1. Your Signature Story — most important
 
 Craft a clear, compelling story about your RAG project using the **Problem -> Agitate -> Solve -> Reflect** framework.
 
@@ -45,7 +45,7 @@ Craft a clear, compelling story about your RAG project using the **Problem -> Ag
 
 Nail this, and you'll stand out in every interview.
 
-### 2. [Strong Opinions on Tradeoffs](/learn/interview-03)
+### 2. Strong Opinions on Tradeoffs
 
 Develop defensible positions on agents vs workflows, vector search vs SQL, RAG patterns (chunking + re-ranking), model selection, and observability.
 
@@ -53,7 +53,7 @@ Develop defensible positions on agents vs workflows, vector search vs SQL, RAG p
 
 Most candidates describe. Strong candidates take positions and defend them.
 
-### 3. [RAG System Design Interviews](/learn/interview-04)
+### 3. RAG System Design Interviews
 
 Design RAG systems for different scenarios — legal documents, customer support, code documentation — with clear reasoning at every step.
 
@@ -61,7 +61,7 @@ Design RAG systems for different scenarios — legal documents, customer support
 
 "Design a RAG system for X" is the most common technical interview question you'll face.
 
-### 4. [Live Practice](/learn/interview-05) — optional
+### 4. Live Practice — optional
 
 Extra reps: three recorded answers (project, opinion, design questions) with self-assessment, plus the option to schedule a mock interview.
 

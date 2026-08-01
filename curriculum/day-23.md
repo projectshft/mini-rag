@@ -220,7 +220,7 @@ Use the context above to answer the user's question. If the context doesn't cont
 
 	// Step 5: Stream the response
 	return streamText({
-		model: openai('gpt-4o'),
+		model: openaiProvider('gpt-4o'),
 		system: systemPrompt,
 		prompt: `Context: ${retrievedContext}\n\nUser Query: ${request.query}`,
 	});
@@ -314,7 +314,7 @@ You should see bigger gaps between relevant and irrelevant content in the re-ran
 
 ## Looking ahead
 
-Re-ranking is the core of **Assignment 3 (due Day 34)**, where you'll extend today's work with score thresholding — filtering out low-confidence results and answering "I don't have enough information" when nothing passes. Full spec and submission links on [Day 34](/learn/day-34). Keep your logging in place; you'll want that score data.
+Re-ranking is part of **this week's assignment**, due at the end of the week — alongside query preprocessing, you'll extend today's work with score thresholding, filtering out low-confidence results and answering "I don't have enough information" when nothing passes. Keep your logging in place; you'll want that score data to defend your threshold on video.
 
 ## Additional reading
 

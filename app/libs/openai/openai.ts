@@ -33,7 +33,22 @@
  */
 
 import OpenAI from 'openai';
+import { createOpenAI } from '@ai-sdk/openai';
 
+// OPENAI_BASE_URL points at the class LiteLLM proxy when a student is using
+// the key we mint for them; unset, both clients fall back to OpenAI directly.
+//
+// Both SDKs have to be configured here. The `openai` SDK would read
+// OPENAI_BASE_URL from the environment on its own, but `@ai-sdk/openai` does
+// NOT — its default provider is hardcoded to api.openai.com. Importing
+// `{ openai }` from '@ai-sdk/openai' anywhere in the app silently bypasses
+// the proxy and 401s on a class key. Import `openaiProvider` instead.
 export const openaiClient = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY as string,
+	baseURL: process.env.OPENAI_BASE_URL,
+});
+
+export const openaiProvider = createOpenAI({
+	apiKey: process.env.OPENAI_API_KEY as string,
+	baseURL: process.env.OPENAI_BASE_URL,
 });

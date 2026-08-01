@@ -1,7 +1,7 @@
 # Day 37 — Capstone Development I
 
 
-> **Today:** get your core retrieval pipeline working end-to-end — real data in, real answer out — even if it's ugly. A thin working slice today beats a beautiful half-pipeline on Day 41.
+> **Today:** get your core retrieval pipeline working end-to-end — real data in, real answer out — even if it's ugly. A thin working slice today beats a beautiful half-pipeline at the end of the week.
 
 ## The goal: one honest query, answered
 
@@ -11,7 +11,7 @@ Build in this order — each step is testable on its own:
 
 - [ ] Get a **sample of your data** locally (10–50 documents is plenty for today — don't ingest everything yet)
 - [ ] Write the **ingest + chunking** step and print a few chunks — eyeball them: would *you* be able to answer a question from one chunk alone?
-- [ ] **Embed and upsert** the chunks into your vector DB (your `scrapeAndVectorizeContent`-style script from [Day 9](/learn/day-09) is a good template)
+- [ ] **Embed and upsert** the chunks into your vector DB (your `scrapeAndVectorizeContent`-style script from Uploading Documents with a Script is a good template)
 - [ ] Write a **retrieval function**: query in, top-k chunks out — log the scores
 - [ ] Wire retrieval into **generation**: stuff the chunks into the prompt, get an answer
 - [ ] Run **3 test queries** you know the answers to, and save them — they're your regression suite for the rest of the week

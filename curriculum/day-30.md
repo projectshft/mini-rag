@@ -50,7 +50,7 @@ flowchart LR
 **Not ideal for:**
 
 - Testing exact output (use string matching)
-- Testing routing logic (use yesterday's selector tests — [/learn/day-29](/learn/day-29))
+- Testing routing logic (use yesterday's selector tests)
 - High-frequency CI runs (expensive and slow)
 
 ## Creating golden responses
@@ -106,7 +106,7 @@ IMPORTANT:
 - Penalize incorrect information heavily`;
 ```
 
-And to get the score back reliably, we use **structured outputs** with a Zod schema — the same technique from [/learn/day-18](/learn/day-18) — so the judge is *guaranteed* to return `{ score, reason }`. No JSON parsing gymnastics:
+And to get the score back reliably, we use **structured outputs** with a Zod schema — the same structured-outputs technique you already used — so the judge is *guaranteed* to return `{ score, reason }`. No JSON parsing gymnastics:
 
 ```typescript
 const JudgeResultSchema = z.object({
@@ -549,11 +549,10 @@ When you've completed the exercise, submit your `app/agents/__tests__/llm-judge.
 - At least 3 test cases with golden responses
 - A working `judgeResponse` function implementation
 
-**Submit:**
-
-- [Code Submission](https://form.typeform.com/to/TXjlfrlr)
-
-Post it in Slack too — comparing judge prompts and thresholds with other students is genuinely useful.
+**This one is optional and ungraded** — there's nothing to submit. Post it in
+Slack instead; comparing judge prompts and thresholds with other students is
+genuinely useful, and it's the fastest way to see how differently people define
+a "good" answer.
 
 ## Key takeaways
 

@@ -40,7 +40,7 @@ sequenceDiagram
     UI->>U: complete response (auto-scrolled)
 ```
 
-Two round trips per message: first the selector ([Day 17](/learn/day-17)–[19](/learn/day-19)) picks the agent and refines the query, then the chat route runs that agent and streams the answer.
+Two round trips per message: first the selector picks the agent and refines the query, then the chat route runs that agent and streams the answer.
 
 ## Documentation resources
 
