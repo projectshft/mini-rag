@@ -463,9 +463,80 @@ What you're looking at:
 If the tool works here, it will work everywhere. If it doesn't work here, no
 amount of client config will save you.
 
-### Phase 3 — Expose it to Claude Code
+### Phase 3 — Expose it to a real client
 
-Now hand it to a real client. **Use the CLI — don't hand-edit config files:**
+Now hand it to something with a model in it. Two clients, two very different
+setups: **Claude Desktop** (edit a JSON file) and **Claude Code** (run a CLI
+command). Do at least one; they use the same server file.
+
+#### Claude Desktop
+
+Desktop has no CLI — you edit JSON by hand via **Settings → Developer → Edit
+Config**, which opens:
+
+```
+~/Library/Application Support/Claude/claude_desktop_config.json
+```
+
+```json
+{
+	"mcpServers": {
+		"ai-search-tools": {
+			"command": "/absolute/path/to/your-project/node_modules/.bin/ts-node",
+			"args": [
+				"--project",
+				"/absolute/path/to/your-project/tsconfig.json",
+				"/absolute/path/to/your-project/app/mcp/server.ts"
+			],
+			"env": {
+				"OPENAI_API_KEY": "sk-...",
+				"PINECONE_API_KEY": "...",
+				"PINECONE_INDEX": "rag-tutorial"
+			}
+		}
+	}
+}
+```
+
+This points at your project's local `ts-node` rather than `npx tsx` — one less
+download at startup, and `--project` picks up your `tsconfig.json` so the same
+TypeScript settings your app uses apply to the server.
+
+Then **fully quit and relaunch** the app — reloading the window isn't enough.
+
+**When Desktop can't start your server, the errors are in a log file, not the
+UI:**
+
+```bash
+tail -f ~/Library/Logs/Claude/mcp-server-ai-search-tools.log
+```
+
+That's where you'll see the real stack trace — the chat window will only tell
+you the server disconnected. Two failures live there almost every time:
+
+```
+Error: Cannot find module './server.ts'
+```
+
+A bad path in your config. Desktop runs with a minimal `PATH`, so use absolute
+paths everywhere, and never `~/` or `$HOME` — those are literal strings in this
+file, not expanded. Proofread character by character: one letter (`min-rag`
+instead of `mini-rag`) produces exactly this, followed by "Server transport
+closed unexpectedly," which reads like a code bug and is not one.
+
+```
+OpenAIError: The OPENAI_API_KEY environment variable is missing or empty
+```
+
+Either you left it out of the `env` block, or you hit the `dotenv` ordering
+problem from gotcha #3 above.
+
+Once it connects, the tool appears under the tools icon in the composer, and you
+can ask: _"Search my docs for what reranking does."_
+
+#### Claude Code
+
+Claude Code does have a CLI. **Use it — don't hand-edit config files:**
 
 ```bash
 claude mcp add rag-server \
@@ -504,51 +575,6 @@ Then ask for something that forces a tool call:
 You should see the tool call happen, then an answer grounded in your own
 documents — in a chat window that has never seen your Pinecone index.
 
-<details>
-<summary>Using Claude Desktop instead? (Developer settings)</summary>
-
-Claude Desktop has no CLI — you edit JSON by hand via
-**Settings → Developer → Edit Config**, which opens:
-
-```
-~/Library/Application Support/Claude/claude_desktop_config.json
-```
-
-```json
-{
-	"mcpServers": {
-		"ai-search-tools": {
-			"command": "/absolute/path/to/your-project/node_modules/.bin/ts-node",
-			"args": [
-				"--project",
-				"/absolute/path/to/your-project/tsconfig.json",
-				"/absolute/path/to/your-project/app/mcp/server.ts"
-			],
-			"env": {
-				"OPENAI_API_KEY": "sk-...",
-				"PINECONE_API_KEY": "...",
-				"PINECONE_INDEX": "rag-tutorial"
-			}
-		}
-	}
-}
-```
-
-This points at your project's local `ts-node` rather than `npx tsx` — one less
-download at startup, and it picks up your `tsconfig.json` so the same TypeScript
-settings your app uses apply to the server.
-
-Then **fully quit and relaunch** the app — reloading the window isn't enough.
-
-Desktop runs with a minimal `PATH`, so most failures here are path failures.
-Use absolute paths everywhere, and don't use `~/` or `$HOME` — those are
-literal strings in this file, not expanded. And proofread the path character by
-character: a one-letter typo (`min-rag` instead of `mini-rag`) surfaces as
-`Cannot find module './server.ts'` followed by "Server transport closed
-unexpectedly" — which reads like a code bug and is not one.
-
-</details>
-
 ### When it doesn't work
 
 Six things account for almost every failure:
@@ -573,8 +599,9 @@ Six things account for almost every failure:
 
 - [ ] The Inspector lists `search_docs`, returns real matches, *and* shows you a
       readable error when you call it wrong.
-- [ ] `claude mcp list` shows your server connected.
-- [ ] Claude Code calls the tool and answers from your docs.
+- [ ] Your client shows the server connected — `claude mcp list` in Claude Code,
+      or the tools icon in Claude Desktop after a full quit and relaunch.
+- [ ] That client calls the tool and answers from your docs.
 
 **Want to take this to production?** The *MCP in Production* lesson in Week 7 (Going Further) picks up where this leaves off: more than one tool, resources and prompts, and the authorization + PII handling you can't skip once your server exposes data that actually matters. Encouraged once you've got this single-tool server working.
 
