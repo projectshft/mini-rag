@@ -1,6 +1,6 @@
 # Day 43 — MCP in Production: Auth, Tools & Resources
 
-> **Today:** in The Reveal + MCP you exposed one read-only tool over MCP. That's a demo. Today you make it real — more primitives, a sharper tool surface, and the authorization you cannot skip the moment your server touches data that matters.
+> **Today:** you exposed one read-only tool over MCP earlier. That's a demo. Today you make it real — more primitives, a sharper tool surface, and the authorization you cannot skip the moment your server touches data that matters.
 
 Earlier you built `search_docs`: one tool, read-only, running on your own machine. Perfect for learning. But the instant an MCP server exposes *real* data — customer records, patient notes, internal wikis — three questions you got to ignore become the entire job:
 
@@ -113,7 +113,7 @@ Before you expose anything, do a quick threat pass. For each risk, the mitigatio
 
 - **Over-broad tool** (arbitrary query/SQL/shell) → injection + data exfiltration. *Mitigate:* constrain schemas; no raw-query tools.
 - **Secrets in the client config `env`** → leaked API keys. *Mitigate:* least-privilege keys, rotate, never commit configs.
-- **Poisoned documents in the index** → retrieved text becomes instructions the client model may follow (this is LLM & RAG Security, now with a new blast radius: a client you don't control). *Mitigate:* ingestion-time validation + treat retrieved text as data, never trusted instructions.
+- **Poisoned documents in the index** → retrieved text becomes instructions the client model may follow (this is document poisoning, now with a new blast radius: a client you don't control). *Mitigate:* ingestion-time validation + treat retrieved text as data, never trusted instructions.
 - **No rate limit / no timeout** → one runaway client drains your embedding budget. *Mitigate:* per-caller limits and hard timeouts on every external call.
 
 ```quiz

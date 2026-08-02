@@ -8,7 +8,7 @@
 Every OpenAI API request has three main layers:
 
 ```typescript
-await openai.chat.completions.create({
+await openaiClient.chat.completions.create({
 	model: 'gpt-4o-mini',
 	messages: [
 		{
@@ -148,10 +148,12 @@ Output: { agent: 'linkedin', query: 'LinkedIn post celebrating promotion' }"
 
 ## System caching: why consistency matters
 
-OpenAI's API **caches identical system messages** to save latency and cost.
+OpenAI can **cache a repeated prompt prefix** to save latency and cost — but only once that prefix passes roughly **1,024 tokens**. Every prompt in this week is well under that, so caching won't fire for your selector yet.
 
-- System prompt stays the same -> cached (fast + cheap)
-- System prompt changes often -> no caching (slow + expensive)
+Structure for it anyway. It costs nothing now and it's the difference between a system that caches and one that can't once your prompts grow:
+
+- Static prefix, dynamic suffix -> cacheable when it gets long enough
+- Prefix changes every request -> can never cache, at any size
 
 ### Best practice: static system, dynamic user messages
 
@@ -165,7 +167,7 @@ system: `You are a song search agent for ${artistName}.` // <- Changes every req
 user: "Find top 5 TikTok sounds."
 ```
 
-**Rule of thumb:** keep system prompts static. Inject dynamic data (user names, filters, etc.) into user messages. And keep total prompt tokens under ~2,000 unless you truly need more — more tokens = more cost + latency.
+**Rule of thumb:** keep system prompts static. Inject dynamic data (user names, filters, etc.) into user messages. And keep total prompt tokens lean — more tokens = more cost + latency, caching or not.
 
 ## Temperature: controlling randomness
 
@@ -200,7 +202,7 @@ Temperature 2.0 (Creative):
 ### For agent routing: use low temperature
 
 ```typescript
-const response = await openai.chat.completions.create({
+const response = await openaiClient.chat.completions.create({
 	model: 'gpt-4o-mini',
 	temperature: 0.1, // <- Consistent routing decisions
 	messages: [...],
@@ -215,7 +217,7 @@ Prove you'd set the dial right for each job:
 {
   "title": "Set the temperature for each call",
   "note": "Same API, three very different jobs. Pick the value you'd ship.",
-  "code": "// The selector: route a message to exactly one agent\nawait openai.chat.completions.create({\n  model: 'gpt-4o-mini',\n  temperature: ___1___,\n  messages: selectorMessages,\n});\n\n// The docs Q&A answer, grounded in retrieved chunks\nawait openai.chat.completions.create({\n  model: 'gpt-4o-mini',\n  temperature: ___2___,\n  messages: ragMessages,\n});\n\n// Brainstorming 10 LinkedIn hook variations\nawait openai.chat.completions.create({\n  model: 'gpt-4o-mini',\n  temperature: ___3___,\n  messages: hookMessages,\n});",
+  "code": "// The selector: route a message to exactly one agent\nawait openaiClient.chat.completions.create({\n  model: 'gpt-4o-mini',\n  temperature: ___1___,\n  messages: selectorMessages,\n});\n\n// The docs Q&A answer, grounded in retrieved chunks\nawait openaiClient.chat.completions.create({\n  model: 'gpt-4o-mini',\n  temperature: ___2___,\n  messages: ragMessages,\n});\n\n// Brainstorming 10 LinkedIn hook variations\nawait openaiClient.chat.completions.create({\n  model: 'gpt-4o-mini',\n  temperature: ___3___,\n  messages: hookMessages,\n});",
   "blanks": [
     { "options": ["0.1", "1.0", "1.8"], "answer": "0.1", "explain": "Routing is classification — 'Write a LinkedIn post' must route the same way every time. Low temperature = deterministic decisions." },
     { "options": ["0.0", "0.7", "2.0"], "answer": "0.7", "explain": "Grounded Q&A wants natural phrasing without inventing beyond the context — the balanced middle. At 0.0 answers get robotic; at 2.0 they drift from the retrieved facts." },
@@ -237,7 +239,7 @@ Then feel it — same prompt, both ends of the dial, real API calls:
 | **gpt-5**       | Medium | Very High | Most advanced reasoning, complex analysis |
 | **gpt-4o**      | Slow   | High      | Complex reasoning, multi-step tasks       |
 | **gpt-4o-mini** | Fast   | Low       | Classification, search, simple tasks      |
-| **gpt-4-turbo** | Medium | Medium    | Balanced use cases, chat applications     |
+| **gpt-4-turbo** | Slow   | High      | Previous generation — superseded by gpt-4o, and pricier |
 
 ### Guidelines for your RAG system
 
@@ -247,14 +249,14 @@ Then feel it — same prompt, both ends of the dial, real API calls:
 
 ```typescript
 // Selector agent (fast classification)
-await openai.chat.completions.create({
+await openaiClient.chat.completions.create({
 	model: 'gpt-4o-mini', // <- Fast and cheap
 	temperature: 0.1,
 	messages: [...],
 });
 
 // RAG agent (complex synthesis)
-await openai.chat.completions.create({
+await openaiClient.chat.completions.create({
 	model: 'gpt-4o', // <- Powerful reasoning
 	temperature: 0.7,
 	messages: [...],
@@ -375,7 +377,7 @@ const agentSelectionSchema = z.object({
 	query: z.string(),
 });
 
-const response = await openai.responses.parse({
+const response = await openaiClient.responses.parse({
 	model: 'gpt-4o-mini',
 	input: [
 		{
@@ -453,7 +455,7 @@ Your task:
 **API call pattern:**
 
 ```typescript
-const response = await openai.responses.parse({
+const response = await openaiClient.responses.parse({
 	model: 'gpt-4o-mini',
 	input: [
 		{ role: 'system', content: systemPrompt },

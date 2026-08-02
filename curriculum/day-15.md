@@ -30,7 +30,7 @@ Imagine you have a chatbot that needs to:
 
 ```typescript
 // The naive approach
-const response = await openai.chat.completions.create({
+const response = await openaiClient.chat.completions.create({
 	model: 'gpt-4o',
 	messages: [
 		{ role: 'system', content: 'Answer any question' },

@@ -11,7 +11,7 @@ Build in this order — each step is testable on its own:
 
 - [ ] Get a **sample of your data** locally (10–50 documents is plenty for today — don't ingest everything yet)
 - [ ] Write the **ingest + chunking** step and print a few chunks — eyeball them: would *you* be able to answer a question from one chunk alone?
-- [ ] **Embed and upsert** the chunks into your vector DB (your `scrapeAndVectorizeContent`-style script from Uploading Documents with a Script is a good template)
+- [ ] **Embed and upsert** the chunks into your vector DB (your `scrapeAndVectorizeContent`-style script is a good template)
 - [ ] Write a **retrieval function**: query in, top-k chunks out — log the scores
 - [ ] Wire retrieval into **generation**: stuff the chunks into the prompt, get an answer
 - [ ] Run **3 test queries** you know the answers to, and save them — they're your regression suite for the rest of the week
@@ -59,7 +59,7 @@ Do NOT cut: chunking quality, the retrieval -> generation wiring, or your test q
     },
     {
       "text": "Kill it and fix the chunk size first — I've been having second thoughts about 500 characters for this corpus.",
-      "verdict": "ok",
+      "verdict": "weak",
       "feedback": "Tuning before you've seen a single end-to-end answer is optimizing blind. You have no evidence 500 is wrong yet, and retrieval quality is exactly what the thin slice is going to show you. Get one query answered, look at what came back, THEN change the number with a reason."
     },
     {

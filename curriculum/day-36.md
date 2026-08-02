@@ -76,7 +76,7 @@ Know the bar before you scope. Your final submission (due at the end of this wee
 
 - Working RAG system that retrieves relevant context and generates responses
 - Proper chunking strategy for your data
-- Vector embeddings stored in a vector database
+- Vector embeddings stored in a vector database (or documented SQL/hybrid retrieval, with your reasoning)
 - Working demo with example queries
 - One unique feature not covered in the curriculum
 
@@ -136,7 +136,7 @@ flowchart LR
     G --> A[Grounded answer]
 ```
 
-If you're adding agents, add a selector in front of retrieval (you built exactly this). If your data is structured, remember RAG doesn't require vectors at all — revisit the SQL agent lab.
+If you're adding agents, add a selector in front of retrieval (you built exactly this). If your data is structured, remember RAG doesn't require vectors at all — see the SQL agent lab.
 
 ## Part 1: Submit your proposal (due today)
 

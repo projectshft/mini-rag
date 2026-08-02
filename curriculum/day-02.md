@@ -62,7 +62,7 @@ Embedding Model
 ### Using OpenAI's embedding API
 
 ```typescript
-const response = await openai.embeddings.create({
+const response = await openaiClient.embeddings.create({
 	model: 'text-embedding-3-small',
 	dimensions: 512,
 	input: 'artificial intelligence',

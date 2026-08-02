@@ -3,7 +3,7 @@
 
 > **Today:** two things. First, the reveal — our tool-calling RAG implementation and the answers to yesterday's workflow-vs-tool-calling scenarios. Then the payoff: tool-calling standardized across every AI client is called **MCP**, and you'll build a real MCP server that lets Claude search your Pinecone index straight from your editor.
 
-If you haven't attempted yesterday's challenge from Tool Calling Concepts yet, go do that first — the reveal lands much harder when you've fought with `toolChoice` and tool descriptions yourself.
+If you haven't attempted yesterday's tool-calling challenge yet, go do that first — the reveal lands much harder when you've fought with `toolChoice` and tool descriptions yourself.
 
 ## Part 1: The reveal — our implementation
 

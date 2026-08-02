@@ -21,6 +21,23 @@ Yesterday you proved the pipeline on a small sample. Today, make it real:
 
 </details>
 
+```quiz
+[
+  {
+    "q": "Your 3 saved test queries all passed on 40 sample documents. After ingesting all 900, two return worse answers. Where do you look first?",
+    "options": ["Move to a larger embedding model — a bigger corpus needs more dimensions to stay separable", "Read the chunks that actually came back: at 20x the corpus, boilerplate and near-duplicate chunks now outrank the ones that used to win", "Raise top-k so the good chunk is somewhere in the window and let the model sort it out"],
+    "answer": 1,
+    "explain": "Nothing about your pipeline changed except what it's competing against. Headers, footers and duplicated passages that were harmless in a 40-document index are now the most numerous thing in it. Print the top-k chunks for the failing queries before touching a parameter — the answer is usually visible in the text. Swapping models rewrites the whole index to fix a problem you haven't diagnosed; padding top-k just buries the good chunk in more noise."
+  },
+  {
+    "q": "Your ingest script dies at document 400 of 900 on a rate limit. What's the fix that makes tomorrow better, not just today?",
+    "options": ["Rerun with a longer timeout and bigger retry backoff", "Append each completed document id to a local file and skip those ids on rerun, so a failure never costs work you already paid to embed", "Cut the corpus to the 400 that made it in and call it a scoping decision"],
+    "answer": 1,
+    "explain": "You'll run this script again — after a chunking change, before the demo, on polish day. A checkpoint file turns every future failure into a resume instead of a restart, for about five lines. Retries alone still lose everything on the failure they don't survive."
+  }
+]
+```
+
 ---
 
 ## Optional lab: finish the SQL agent
@@ -39,7 +56,7 @@ Complete the `databaseSearchAgent`:
 
 ### The code
 
-This assignment lives in its own repo. Clone the `sql-agent` branch:
+The lab lives in its own repo. Clone the `sql-agent` branch:
 
 ```bash
 git clone -b sql-agent https://github.com/projectshft/killer_agents.git
@@ -93,9 +110,9 @@ Generate 12 test questions in three tiers: (1) four my schema clearly supports, 
 ```
 
 ```ai-prompt
-title: Rehearse my SQL agent video
+title: Make my ingestion survive going 10x
 ---
-I'm recording a 3–4 minute Feynman-style video covering: SQL query types (filtering, aggregation, joins, full-text search), pgvector, and when SQL beats a dedicated vector database.
+I'm scaling my capstone ingestion from a sample to my full corpus (roughly [N] documents). Right now the script embeds in batches and upserts to Pinecone, with no checkpointing — if it dies partway I start over.
 
-I'll explain each to you as if you're a backend dev who's never touched RAG. After each section, ask me one sharp follow-up ("why not just embed the rows?", "so when would you still want Pinecone?"). Flag jargon I didn't define. Then rate my explanation 1–10 and tell me the weakest section to redo before I record.
+Ask me what my current script does, then help me make it resumable: where to record progress, what to record (document id? chunk id?), how to skip already-done work on rerun, and how to handle a partial batch that failed mid-upsert. Push back if my scheme would double-write or silently skip. Then tell me the smallest version that's actually worth writing tonight versus what's over-engineering for a capstone.
 ```

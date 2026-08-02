@@ -14,7 +14,7 @@
 
 **The question:** does your entire application crash, or does it degrade gracefully?
 
-You've already shipped a small piece of this: your selector falls back to `'rag'` when parsing fails. Today generalizes that instinct into a toolkit.
+You've already met a small piece of this: the text-parsing selector fell back to `'rag'` when parsing failed. Structured outputs then made that *specific* guard unnecessary — an invalid agent name became unrepresentable. The instinct behind it doesn't go away though, it just moves up a level, and today generalizes it into a toolkit.
 
 ## Degradation strategies
 
@@ -81,7 +81,7 @@ async function queryWithCache(query: string): Promise<string> {
 		return response;
 	} catch (error) {
 		// On failure, try semantic cache match
-		const similar = await cache.findSimilar(query, threshold: 0.95);
+		const similar = await cache.findSimilar(query, { threshold: 0.95 });
 		if (similar) return similar;
 		throw error;
 	}
@@ -180,7 +180,7 @@ class CircuitBreaker {
 const openaiBreaker = new CircuitBreaker(5, 30000);
 
 async function callOpenAI(prompt: string) {
-	return openaiBreaker.call(() => openai.chat.completions.create({
+	return openaiBreaker.call(() => openaiClient.chat.completions.create({
 		model: 'gpt-4o',
 		messages: [{ role: 'user', content: prompt }],
 	}));

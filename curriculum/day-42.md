@@ -14,7 +14,7 @@ Before you submit, run through the bar you scoped against at kickoff:
 - [ ] **One unique feature** not covered in the curriculum, named explicitly in the README
 - [ ] **README** covers: what it does, tech stack and why, how to run it, chunking strategy, example queries with expected behavior
 - [ ] **Repo is clean**: no committed secrets, `.env.example` present, fresh clone runs from README alone
-- [ ] **Demo video** from Capstone Demo Recording is exported and watchable
+- [ ] **Demo video** is exported and watchable
 
 If you extended the class project, double-check the Option A additions: new data source, new vector index, new agent, and routing updated so the selector reaches it.
 
@@ -45,7 +45,7 @@ Your complete RAG application for the domain you chose — either **Option A** (
 
 ### Video (5–7 minutes)
 
-Your Capstone Demo Recording recording should demonstrate:
+Your demo video should demonstrate:
 
 1. **Demo** — your RAG system in action with real queries
 2. **Data** — your data source and how you collected/processed it
@@ -67,7 +67,7 @@ Then **post your project in Slack** — repo link, one screenshot or query examp
 
 ## You built the whole thing
 
-Six weeks ago, RAG was an acronym. Since then you've built vector similarity from raw math, a chunking and ingestion pipeline, a multi-agent router with structured outputs and graceful degradation, a RAG agent with reranking, agent tests and an LLM judge, a SQL agent that does retrieval without vectors, and a security mindset for all of it. The capstone proves you can do it without training wheels — keep it running, keep using it, and let it be the project you talk about in your next technical interview.
+Six weeks ago, RAG was an acronym. Since then you've built vector similarity from raw math, a chunking and ingestion pipeline, a multi-agent router with structured outputs and graceful degradation, a RAG agent with reranking, agent tests and an LLM judge, (if you did the optional lab) a SQL agent that does retrieval without vectors, and a security mindset for all of it. The capstone proves you can do it without training wheels — keep it running, keep using it, and let it be the project you talk about in your next technical interview.
 
 ## Key takeaways
 

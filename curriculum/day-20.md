@@ -179,7 +179,7 @@ If the output doesn't sound right:
 
 ## When would fine-tuning still make sense?
 
-An extremely niche domain few examples can't capture, very high-volume generation where prompt tokens cost more than training, or a style that drifts with few-shot. For a personal LinkedIn agent, few-shot prompting wins on every axis that matters: speed, cost, and iteration time.
+An extremely niche domain few examples can't capture, very high-volume generation where prompt tokens cost more than training, or a style that drifts with few-shot. For a personal LinkedIn agent at low volume, few-shot wins on setup cost and iteration speed — you do still pay for those examples on every request.
 
 Expect this question in code review — practice the answer:
 
@@ -196,7 +196,7 @@ Expect this question in code review — practice the answer:
       "feedback": "The distinction is right and worth knowing — retrieval changes what the model KNOWS, examples change how it WRITES. But it answers a narrower question than the one asked. Your teammate didn't say 'stuff the posts in as context,' they said 'use the 850 posts.' There IS a way to do that which respects the style/knowledge split, and dismissing the whole idea means you miss it."
     },
     {
-      "text": "Good instinct — there's a real version of that. Retrieve the 3 closest posts for the topic and inject them as few-shot examples, instead of the hard-coded three. Retrieval picks WHICH examples; the examples still do the style work. That genuinely uses the 850 and usually beats a static set, because a post about career advice is a better stylistic template for a career-advice post. Worth building once the static version works — and watch that retrieving topically-similar posts doesn't tip the model into recycling their content.",
+      "text": "Good instinct — there's a real version of that. Retrieve the 3 closest posts for the topic and inject them as few-shot examples, instead of the hard-coded three. Retrieval picks WHICH examples; the examples still do the style work. That genuinely uses the 850 and may beat a static set — a post about career advice could be a better stylistic template for a career-advice post, though that's worth A/B-ing rather than assuming. Worth building once the static version works — and watch that retrieving topically-similar posts doesn't tip the model into recycling their content.",
       "verdict": "best",
       "feedback": "This is the answer that takes the suggestion seriously instead of correcting it. Retrieval-selected few-shot is a real production pattern, and it's the thing your teammate was reaching for. It keeps the architecture honest — examples carry voice, retrieval just chooses them — while actually using the data. Naming the failure mode (topical similarity pulling toward content reuse) is what makes it a plan rather than a yes."
     },
@@ -252,7 +252,7 @@ structured outputs buy you, that's the gap to close before recording.
 
 - "Write a LinkedIn post about learning RAG" routes to the LinkedIn agent and streams
 - A technical question routes to the RAG agent instead
-- An unknown or ambiguous agent name degrades gracefully instead of throwing
+- The selector still routes sensibly when a request is ambiguous — it picks one and the app answers, rather than erroring out
 - Swapping the posts in `app/agents/example-posts.ts` visibly changes the voice
 
 ### Submit your work

@@ -37,7 +37,7 @@ Setup narration ("first I'll open my terminal…"), the second easy query, tool 
 ```scenario
 {
   "who": "You, watching your first take back",
-  "setting": "Six minutes recorded. The demo works, but you spent the first two explaining what RAG is before showing anything.",
+  "setting": "You recorded a take. The demo works, but two of the minutes are you explaining what RAG is before anything appears on screen.",
   "ask": "Re-record, or ship it? It's late and the system genuinely works.",
   "note": "Pick what you'd do.",
   "options": [
@@ -54,7 +54,7 @@ Setup narration ("first I'll open my terminal…"), the second easy query, tool 
     {
       "text": "Keep the take and edit the first two minutes out.",
       "verdict": "ok",
-      "feedback": "Pragmatic and often the right call — if the demo section stands on its own, cutting to it is a two-minute edit rather than a re-record. Just check the audio doesn't jump and that you're not cutting a setup line the rest depends on. If the edit works, this is the fastest good outcome."
+      "feedback": "Often the right call, and much cheaper than re-recording — if the demo section stands on its own, cutting to it takes two minutes. What you're accepting: you keep a take you already know was mis-structured, the pacing right after the cut is untested, and you can't fix the fact that you never wrote a proper opening. Watch it start-to-finish once after the edit before you decide it worked."
     },
     {
       "text": "Keep it and add a title card at the front saying the demo starts at 2:00.",

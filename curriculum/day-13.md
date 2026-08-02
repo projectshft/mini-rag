@@ -47,7 +47,7 @@ Training Data (JSONL)
 **Step 1: upload the file**
 
 ```typescript
-const file = await openai.files.create({
+const file = await openaiClient.files.create({
   file: fs.createReadStream(filePath),
   purpose: 'fine-tune',
 });
@@ -56,7 +56,7 @@ const file = await openai.files.create({
 **Step 2: start the training job**
 
 ```typescript
-const job = await openai.fineTuning.jobs.create({
+const job = await openaiClient.fineTuning.jobs.create({
   training_file: fileId,
   model: 'gpt-4o-mini-2024-07-18',
 });
@@ -169,7 +169,7 @@ Fine-tuning meant a JSONL file, a training job, and a model ID in your `.env`:
 
 ```typescript
 // The old way — a custom model that only exists after a training run
-const response = await openai.chat.completions.create({
+const response = await openaiClient.chat.completions.create({
 	model: 'ft:gpt-4o-mini-2024-07-18:parsity::abc123', // <- had to be trained first
 	messages: [{ role: 'user', content: userQuestion }],
 });
@@ -179,7 +179,7 @@ Few-shot is a normal model plus examples in the messages:
 
 ```typescript
 // The new way — a stock model, and the examples ARE the training
-const response = await openai.chat.completions.create({
+const response = await openaiClient.chat.completions.create({
 	model: 'gpt-4o',
 	messages: [
 		{ role: 'system', content: 'You write LinkedIn posts in the style of the examples below.' },

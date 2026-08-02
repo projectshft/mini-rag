@@ -383,11 +383,15 @@ User input often has conversational fluff that's not useful for retrieval:
 
 ## Why gpt-4o-mini for the selector?
 
-| Model       | Cost (per 1M tokens) | Speed  | Capability          |
-| ----------- | -------------------- | ------ | ------------------- |
-| gpt-4o      | $2.50                | Slow   | Best reasoning      |
-| gpt-4o-mini | $0.15                | Fast   | Good classification |
-| gpt-4-turbo | $1.00                | Medium | Balanced            |
+| Model       | Input cost (per 1M tokens) | Speed  | Capability          |
+| ----------- | -------------------------- | ------ | ------------------- |
+| gpt-4o-mini | $0.15                      | Fast   | Good classification |
+| gpt-4o      | $2.50                      | Medium | Best reasoning      |
+| gpt-4-turbo | $10.00                     | Slow   | Older, superseded   |
+
+Note the ordering: `gpt-4-turbo` is the *previous* generation and costs **4x more
+than `gpt-4o`** while being slower. Newer rarely means pricier — check before you
+assume. (Prices move; treat these as relative, not current.)
 
 **Why mini?** Routing is simple classification (not complex reasoning), faster response = better UX, it runs on every single message (cost adds up), and mini is excellent at classification.
 

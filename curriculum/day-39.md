@@ -9,7 +9,7 @@ Reviewers (and future users) don't judge your capstone by its best answer — th
 
 - [ ] **Throw hostile queries at it**: empty strings, one-word queries, questions completely outside your data's domain, questions that are *almost* in domain but not answerable
 - [ ] **Handle the "no good match" case** — if top-k similarity scores are all low, say "I don't know" instead of letting the LLM improvise (the score-thresholding pattern from your reranking work)
-- [ ] **If you have agents/routing**: verify the selector sends ambiguous queries somewhere sensible, and add a fallback path when it can't decide (Graceful Degradation's graceful degradation applies directly)
+- [ ] **If you have agents/routing**: verify the selector sends ambiguous queries somewhere sensible, and add a fallback path when it can't decide — graceful degradation applies directly
 - [ ] **Finish your unique feature** — it should be demoable by end of day, because tomorrow is polish, not construction
 - [ ] **Add 3 more saved test queries** covering the edge cases you just fixed
 
@@ -31,7 +31,7 @@ Unique feature not done? **Shrink it, don't drop it** — the requirement is one
 
 </details>
 
-**Optional extension:** if your capstone involves multi-step agent workflows, the two bonus LangGraph lessons (LangGraph concepts, and building custom state graphs) are worth a look — they live in the course repo's curriculum source, not on this site.
+**Optional extension:** if your capstone involves multi-step agent workflows, the LangGraph material (LangGraph concepts, and building custom state graphs) are worth a look — they live in the course repo's curriculum source, not on this site.
 
 ```quiz
 [
