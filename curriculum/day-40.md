@@ -34,6 +34,23 @@ README first — it's read by 100% of reviewers. Then the "no results" / API-fai
 
 </details>
 
+```quiz
+[
+  {
+    "q": "A stranger clones your capstone repo. What stops them fastest?",
+    "options": ["No README section explaining what the project does", "Missing setup steps — no .env.example, no note about which index to create or how to load data", "Inconsistent code formatting"],
+    "answer": 1,
+    "explain": "They'll forgive rough code and figure out the concept from a demo. What kills them is a repo that won't run: undocumented env vars, an empty vector index with no ingestion instructions, a script that assumes data you never shipped. 'Clone, configure, seed, run' has to be four steps a stranger can complete."
+  },
+  {
+    "q": "It's feature-freeze day and you notice retrieval is weak on one category of question. What now?",
+    "options": ["Fix it — retrieval quality is the whole point of the project", "Leave the code alone and document it: what's weak, why you think so, what you'd do with another week", "Quietly avoid that category in your demo"],
+    "answer": 1,
+    "explain": "Feature freeze means freeze. A known, documented limitation reads as engineering maturity — you measured your own system and were honest about it. An undocumented one that a reviewer stumbles into reads as a system you never evaluated. Hiding it is the worst option: demos invite exactly the question you're dodging."
+  }
+]
+```
+
 ## Key takeaways
 
 - Feature freeze is a discipline: from here on you're reducing risk, not adding scope

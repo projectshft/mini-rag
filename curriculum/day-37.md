@@ -40,6 +40,38 @@ Do NOT cut: chunking quality, the retrieval -> generation wiring, or your test q
 
 </details>
 
+```scenario
+{
+  "who": "Yourself, at 9pm on day one of capstone build",
+  "setting": "Your ingestion script has been running for 40 minutes. You've embedded about a third of your corpus. Retrieval works on the 20 documents you tested this morning.",
+  "ask": "Do I keep ingesting everything tonight so tomorrow is clean, or stop and go end-to-end on what I already have?",
+  "note": "Pick what you'd actually do.",
+  "options": [
+    {
+      "text": "Stop. Wire the thin slice end to end on the third that's already in — query, retrieve, answer, in the UI. If the pipeline is broken I want to know tonight, on a small index I can re-ingest cheaply, not tomorrow after paying to embed everything.",
+      "verdict": "best",
+      "feedback": "The whole point of today is one honest query answered end to end. A third of a corpus is more than enough to prove the pipeline. Finding a metadata bug now costs you 40 minutes of re-ingestion; finding it after a full run costs the full run — and it's always a metadata bug."
+    },
+    {
+      "text": "Let it finish — it's already running, and stopping wastes the 40 minutes. I'll go end to end first thing tomorrow with the complete index.",
+      "verdict": "weak",
+      "feedback": "Sunk cost, and it front-loads the wrong risk. You'd be spending tonight on volume and tomorrow discovering whether the thing works at all. If the chunks are missing a field you needed, you re-ingest everything anyway — so you paid twice for the privilege of finding out later."
+    },
+    {
+      "text": "Kill it and fix the chunk size first — I've been having second thoughts about 500 characters for this corpus.",
+      "verdict": "ok",
+      "feedback": "Tuning before you've seen a single end-to-end answer is optimizing blind. You have no evidence 500 is wrong yet, and retrieval quality is exactly what the thin slice is going to show you. Get one query answered, look at what came back, THEN change the number with a reason."
+    },
+    {
+      "text": "Keep it running and start building the UI in parallel so nothing is blocked.",
+      "verdict": "weak",
+      "feedback": "Feels efficient, and it splits your attention across two unproven layers. If retrieval turns out to be broken, the UI you built tonight was styling for data that never arrives. Prove the spine first — ugly output in a terminal counts."
+    }
+  ],
+  "debrief": "Thin slice beats deep slice, every time, on day one. A working path through every layer — even over a partial corpus with no styling — tells you what's actually broken. A beautiful half-pipeline tells you nothing until the end, which is exactly when you have no time left to fix it."
+}
+```
+
 ## Key takeaways
 
 - End-to-end first, quality second: a thin working pipeline gives you something to improve every remaining day

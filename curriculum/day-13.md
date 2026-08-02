@@ -125,7 +125,7 @@ Internally: base model weights + your training examples = adjusted weights. Open
 
 Fine-tuned models can no longer be used — including the one this course used to
 ship with. **You will not run a training job in this course, and you don't need
-to.** Everything fine-tuning bought us, we get from few-shot prompting: put a
+to.** Most of what fine-tuning bought us, few-shot prompting covers: put a
 handful of real examples in the prompt and let a standard model imitate them.
 
 ### You already have every piece of this

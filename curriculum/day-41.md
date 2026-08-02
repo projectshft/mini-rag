@@ -34,6 +34,38 @@ Setup narration ("first I'll open my terminal…"), the second easy query, tool 
 
 </details>
 
+```scenario
+{
+  "who": "You, watching your first take back",
+  "setting": "Six minutes recorded. The demo works, but you spent the first two explaining what RAG is before showing anything.",
+  "ask": "Re-record, or ship it? It's late and the system genuinely works.",
+  "note": "Pick what you'd do.",
+  "options": [
+    {
+      "text": "Re-record, and open with the working query instead. Show it answering something real in the first fifteen seconds, then explain how it got there. The explanation lands better once they've seen the thing work.",
+      "verdict": "best",
+      "feedback": "Demo first, theory second — always. Two minutes of preamble before anything happens is the most common way a good project loses its audience, and whoever is watching may not reach minute three. Leading with a real answer buys you the attention to explain the architecture."
+    },
+    {
+      "text": "Ship it. The content is all there, and re-recording risks a worse take when I'm tired.",
+      "verdict": "ok",
+      "feedback": "A submitted rough video beats a perfect unsubmitted one, and the fatigue point is real. But this is a fixable structural problem, not a polish nitpick — and if this clip is going to a hiring manager, the first fifteen seconds are the ones that decide whether there's a sixteenth."
+    },
+    {
+      "text": "Keep the take and edit the first two minutes out.",
+      "verdict": "ok",
+      "feedback": "Pragmatic and often the right call — if the demo section stands on its own, cutting to it is a two-minute edit rather than a re-record. Just check the audio doesn't jump and that you're not cutting a setup line the rest depends on. If the edit works, this is the fastest good outcome."
+    },
+    {
+      "text": "Keep it and add a title card at the front saying the demo starts at 2:00.",
+      "verdict": "weak",
+      "feedback": "You've documented the problem instead of fixing it. Anyone who needs the card has already decided how engaged they are, and asking a viewer to skip your own opening is a strange thing to advertise about your work."
+    }
+  ],
+  "debrief": "The rule for any technical demo: working thing first, explanation second, caveats last. You already know the system works, so the preamble feels like necessary setup — to someone who's never seen it, it's two minutes of claims with no evidence. Show, then tell."
+}
+```
+
 ## Key takeaways
 
 - Four beats: problem -> architecture -> live demo -> one hard tradeoff — in that order, weighted toward the demo

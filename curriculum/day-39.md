@@ -33,6 +33,29 @@ Unique feature not done? **Shrink it, don't drop it** — the requirement is one
 
 **Optional extension:** if your capstone involves multi-step agent workflows, the two bonus LangGraph lessons (LangGraph concepts, and building custom state graphs) are worth a look — they live in the course repo's curriculum source, not on this site.
 
+```quiz
+[
+  {
+    "q": "Your capstone returns a confident, fluent answer to a question your corpus has nothing to say about. Where do you fix it?",
+    "options": ["Strengthen the system prompt until the model stops doing it", "At the score threshold — if nothing clears your minimum, return 'I don't have information on that' instead of calling the model at all", "Switch to a model that hallucinates less"],
+    "answer": 1,
+    "explain": "Prompt instructions help but they're advisory — the model can always talk itself past them. A threshold is a hard gate in your code: no confident chunks, no generation. That's the difference between asking the model to behave and not giving it the chance to misbehave."
+  },
+  {
+    "q": "You're hunting edge cases. Which query is most likely to expose a real weakness?",
+    "options": ["A question you know your top document answers well", "A question that sits between two documents — plausibly covered, actually answered by neither", "A completely unrelated question, like asking a legal-docs bot about pizza"],
+    "answer": 1,
+    "explain": "The unrelated question is easy — scores crater and your threshold catches it. The well-covered one just confirms the happy path. The dangerous zone is the middle: scores high enough to clear the gate, context that doesn't actually contain the answer. That's where confident wrong answers live."
+  },
+  {
+    "q": "In a demo, which is worse?",
+    "options": ["The system says \"I don't have enough information to answer that\"", "The system gives a fluent, specific answer that turns out to be invented"],
+    "answer": 1,
+    "explain": "An honest 'I don't know' reads as engineering judgment — you built a system that knows its limits. A confident fabrication in front of a hiring manager reads as a system nobody can trust, and it's the one thing they'll remember."
+  }
+]
+```
+
 ## Key takeaways
 
 - A capstone is judged by its worst answer: hunt for it deliberately with hostile queries

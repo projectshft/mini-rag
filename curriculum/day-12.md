@@ -5,7 +5,7 @@
 
 > **Important Update (May 2026)**
 >
-> As of May 7, 2026, OpenAI has limited access to fine-tuning and announced plans to eventually deprecate it fully. This change reflects the industry's recognition that **"context is all you really need"** — modern models like GPT-4o and Claude have become so capable that few-shot prompting and RAG can achieve results that previously required fine-tuning.
+> As of May 7, 2026, OpenAI has limited access to fine-tuning and announced plans to eventually deprecate it fully. The bet behind that call: modern models are capable enough that few-shot prompting and RAG get *close enough* to what fine-tuning used to be needed for — often summarized as **"context is all you really need."** Worth holding that slogan loosely. It's a claim about what's good enough for most applications, not proof that fine-tuning was never better.
 >
 > **What this means for this course:**
 > - You will **not** run fine-tuning scripts yourself
@@ -95,7 +95,7 @@ few-shot version in code.
     "q": "You have 30 example responses and want a consistent support-bot voice. What's the pragmatic move?",
     "options": ["Fine-tune anyway — 30 is plenty", "Few-shot prompting: put your best examples directly in the prompt", "Collect 70 more examples before doing anything"],
     "answer": 1,
-    "explain": "Fine-tuning wants 100+ examples to work well. With a small set, few-shot prompting typically wins: no training cost, instant iteration, and modern models imitate style well from a handful of examples."
+    "explain": "Fine-tuning wants 100+ examples to work well. With a small set, few-shot prompting wins on practicality: no training cost, instant iteration, and modern models imitate style well from a handful of examples. You do pay for those examples on every request — that's the trade."
   }
 ]
 ```
@@ -178,7 +178,9 @@ You'll get asked this at work. Practice the conversation:
 
 ### 1. Context for industry decisions
 
-Modern models are so capable that **"context is all you really need"** for most use cases. Few-shot prompting and RAG now achieve what previously required fine-tuning. This shift is why OpenAI deprecated it — not because the technique is flawed, but because it's no longer necessary for most applications.
+Modern models are capable enough that **"context is all you really need"** for most use cases. Few-shot prompting and RAG cover most of what previously required fine-tuning. That's why OpenAI stepped back from it — not because the technique was flawed, but because it stopped being worth supporting for the majority of applications.
+
+Be precise about what that does and doesn't say. Fine-tuning still did some things better: the style lived in the weights, so you paid no per-request token cost for it, and you didn't spend context budget on examples. If you're on a provider that still offers it and you have the examples, it remains a real option.
 
 ### 2. Fine-tuning still exists elsewhere
 
@@ -212,7 +214,7 @@ Tomorrow you'll read the fine-tuning code as an artifact, see exactly what few-s
 
 - Fine-tuning adjusts model *weights* from your examples; RAG supplies *context* at query time — style vs knowledge is the core split
 - Choose RAG when information changes or you need citations; fine-tuning only made sense for stable, style-heavy, high-volume tasks with 100+ quality examples
-- OpenAI's May 2026 deprecation reflects "context is all you really need" — few-shot prompting and RAG now cover most former fine-tuning use cases
+- OpenAI's May 2026 deprecation reflects a bet that "context is all you really need" — few-shot and RAG cover *most* former fine-tuning use cases, not all; fine-tuning still wins on per-request cost and context budget
 - Training data quality (diverse questions, one consistent voice, JSONL format) mattered more than quantity
 - Fine-tuning still lives at Anthropic, Cohere, Hugging Face, and Together AI — and in interviews
 

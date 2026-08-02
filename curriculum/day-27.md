@@ -121,6 +121,38 @@ Then in `ragAgent`: `const query = preprocessQuery(request.query);` and embed `q
 
 </details>
 
+```scenario
+{
+  "who": "A friend on another team",
+  "setting": "You showed them your preprocessQuery function — a filler-word Set, an abbreviation map, and a split/filter/map/join.",
+  "ask": "Why are you maintaining a hardcoded dictionary in 2026? Just send the raw query to gpt-4o with 'rewrite this as a clean search query' and it'll handle every abbreviation, typo, and rambling sentence you'll ever get. One prompt replaces that whole file.",
+  "note": "Pick the reply you'd give.",
+  "options": [
+    {
+      "text": "LLM query rewriting is a real technique and it beats my dictionary on coverage — no argument. But it adds an API call before every retrieval: latency on the critical path, cost on every message, and a nondeterministic step I can't unit-test. Mine is pure — same input, same output, ~0ms. I'd reach for the rewrite when I have evidence the dictionary is the bottleneck, and I'd log the rewritten query either way so I can see when it changes what the user meant.",
+      "verdict": "best",
+      "feedback": "Names the tradeoff in both directions instead of defending the code you already wrote. The killer detail is nondeterminism: a rewrite step that occasionally reinterprets the question turns 'why did retrieval miss?' into an unanswerable question, because the query that was actually embedded is gone unless you logged it."
+    },
+    {
+      "text": "There's already an LLM step upstream — the selector refines the raw message into request.query before the RAG agent sees it. Adding a rewrite would be a third model call for one user message.",
+      "verdict": "ok",
+      "feedback": "A genuinely strong point that most people miss: the semantic rewriting largely already happened. It slightly overstates the case — the selector routes and summarizes, it isn't optimizing a string for vector search, and it won't reliably expand 'JS' for you. Right instinct, incomplete argument. Pair it with the determinism point and it's airtight."
+    },
+    {
+      "text": "You're right, that's cleaner. I'll replace the function with a gpt-4o call and drop the maps entirely.",
+      "verdict": "weak",
+      "feedback": "You just traded a pure function for a network call, a bill, and a step whose behavior changes when the provider updates the model — to fix a problem you never measured. It's also the harder version to demo: the assignment wants a before/after where you point at exactly what changed. 'The model rewrote it somehow' is not that."
+    },
+    {
+      "text": "An LLM would be overkill for string cleanup. Regexes are faster and I don't want another model dependency.",
+      "verdict": "weak",
+      "feedback": "Right conclusion, and it'll lose the argument. 'Overkill' is a taste claim, and the counter is obvious: an LLM handles typos, multilingual input, and phrasings your map will never enumerate. If you can't say what it costs you specifically — latency, per-query price, untestability, a silently altered query — you're just expressing a preference for code you already understand."
+    }
+  ],
+  "debrief": "'Just use the LLM' is the reflex of the era, and it's right often enough to be dangerous. The sorting question: is this task deterministic and enumerable? Expanding 'JS' to 'JavaScript' is a lookup — one correct answer, so it should be a map, and a map costs nothing and never surprises you. Handling arbitrary human phrasing is genuinely open-ended, and that's where the model earns its round trip. Ship the map, log the queries, let the failures tell you when you've outgrown it."
+}
+```
+
 ```quiz
 [
   {

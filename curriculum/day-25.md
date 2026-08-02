@@ -334,11 +334,24 @@ This is a **bare-bones** interface. Obvious upgrades you could make:
 6. **Agent indicator** — show whether RAG or LinkedIn handled each response
 7. **Source references** — your challenge, below
 
-## Your challenge: add source references
+## Optional challenge: add source references
 
-When the RAG agent responds, it retrieves documents from Pinecone — but the user has no idea which ones. Your task: display source references under RAG responses.
+When the RAG agent responds, it retrieves documents from Pinecone — but the user has no idea which ones. This challenge: display source references under RAG responses.
 
-**Time estimate:** 1–2 hours. This one's genuinely open-ended — there's no single right answer.
+**Optional and ungraded — but do it if you have the time.** It's the single best
+artifact for this week's assignment video: instead of *describing* how you
+evaluate retrieval quality, you point at the exact chunks the model used, with
+their scores, on screen. That's the difference between a 6/10 explanation and a
+9/10 one.
+
+**Time estimate:** 1–2 hours. Genuinely open-ended — there's no single right answer.
+
+> **Heads up if you've already added reranking:** `queryResponse.matches` is now
+> your over-fetched candidate pool, not what the model actually read — the
+> context comes from `reranked.data`. Listing the raw matches would show sources
+> the model never saw. Keep the original `match` objects around (they carry
+> `title` and `url`, which the reranked results don't) and use the reranked text
+> to pick which of them survived.
 
 ### What you need to do
 

@@ -3,7 +3,7 @@
 
 > **Today:** your first specialized agent. You'll use few-shot prompting to lock in a specific LinkedIn writing voice and stream the response — the selector you built this week will route to it automatically.
 
-> **Note on fine-tuning:** this agent was originally built on a fine-tuned model. OpenAI deprecated fine-tuning (May 2026), so we now use **few-shot prompting** instead: show the model a handful of real example posts in the prompt and ask it to imitate their style. This is how style transfer is done with modern models anyway — "context is all you really need." The fine-tuning lessons cover the old approach conceptually.
+> **Note on fine-tuning:** this agent was originally built on a fine-tuned model. OpenAI deprecated fine-tuning (May 2026), so we now use **few-shot prompting** instead: show the model a handful of real example posts in the prompt and ask it to imitate their style. Be honest about why: we're doing this because the door closed, not because few-shot is strictly better. Fine-tuning genuinely was good at this — it baked the voice into the weights, so you paid nothing per request and the style held without being re-taught every time. Few-shot gets you most of the way there for free, with tradeoffs you'll see below. The fine-tuning lessons cover the old approach conceptually.
 
 ## Video walkthrough
 
@@ -191,14 +191,14 @@ Expect this question in code review — practice the answer:
   "note": "Pick the reply you'd leave on the review.",
   "options": [
     {
-      "text": "Retrieval fetches facts — it doesn't shape how the model writes. RAG would hand the model Brian's old post about a topic as context, which is what you'd want for quoting or referencing it, not for imitating him. Style lives in examples (or, historically, in fine-tuned weights); knowledge lives in the index. Three varied examples already carry the voice — 850 retrieved chunks wouldn't carry it better, they'd just tempt the model to recycle old content.",
-      "verdict": "best",
-      "feedback": "This is the distinction that settles it: retrieval changes what the model KNOWS for one answer; examples change how it WRITES. The 'wasting the data' framing assumes more input is always better — pointing out that the 850 posts are style-reference-shaped, not knowledge-shaped, reframes the whole question."
+      "text": "Retrieval fetches facts — it doesn't shape how the model writes. Style lives in examples; knowledge lives in the index. Three varied examples already carry the voice, and 850 retrieved chunks wouldn't carry it better — they'd just tempt the model to recycle old content.",
+      "verdict": "ok",
+      "feedback": "The distinction is right and worth knowing — retrieval changes what the model KNOWS, examples change how it WRITES. But it answers a narrower question than the one asked. Your teammate didn't say 'stuff the posts in as context,' they said 'use the 850 posts.' There IS a way to do that which respects the style/knowledge split, and dismissing the whole idea means you miss it."
     },
     {
-      "text": "There's a decent hybrid in that direction, actually: retrieve the 3 stylistically closest posts per topic and inject them as dynamic few-shot examples instead of the hard-coded ones. Still few-shot doing the style work — retrieval just picks which examples.",
-      "verdict": "ok",
-      "feedback": "A real production pattern (retrieval-selected few-shot), and it shows you understand that examples, not context, carry the voice. But it's an optimization to earn: it adds a retrieval hop and per-request prompt churn before the static version has even failed — and topically-similar examples pull the model toward recycling content, the exact failure the 'style, not content' instruction guards against."
+      "text": "Good instinct — there's a real version of that. Retrieve the 3 closest posts for the topic and inject them as few-shot examples, instead of the hard-coded three. Retrieval picks WHICH examples; the examples still do the style work. That genuinely uses the 850 and usually beats a static set, because a post about career advice is a better stylistic template for a career-advice post. Worth building once the static version works — and watch that retrieving topically-similar posts doesn't tip the model into recycling their content.",
+      "verdict": "best",
+      "feedback": "This is the answer that takes the suggestion seriously instead of correcting it. Retrieval-selected few-shot is a real production pattern, and it's the thing your teammate was reaching for. It keeps the architecture honest — examples carry voice, retrieval just chooses them — while actually using the data. Naming the failure mode (topical similarity pulling toward content reuse) is what makes it a plan rather than a yes."
     },
     {
       "text": "Mostly cost — indexing 850 posts means embedding and Pinecone storage, and the agent already works fine.",
@@ -211,7 +211,7 @@ Expect this question in code review — practice the answer:
       "feedback": "'Use all the data' sounds rigorous, which is what makes this tempting — but it mistakes what the model is missing. It doesn't lack knowledge about the topics; it needs a voice to write in. You'd ship a slower, more complex agent whose posts read like remixes of the retrieved ones."
     }
   ],
-  "debrief": "This is the fine-tuning question, inverted: there the goal was knowledge (docs that change weekly, citations required), so retrieval won. Here the goal is voice, so examples win. The sorting question for any 'should we RAG this?' debate: does the model need to KNOW something, or SOUND like someone? Knowledge belongs in the index; voice belongs in examples in the prompt — or, before the May 2026 deprecation, in fine-tuned weights."
+  "debrief": "The sorting question for any 'should we RAG this?' debate: does the model need to KNOW something, or SOUND like someone? Knowledge belongs in the index; voice belongs in examples. But notice those aren't mutually exclusive — retrieval can choose your examples without ever becoming the mechanism that transfers style. That's the move worth remembering: when someone proposes RAG for the wrong reason, look for the version of their idea that IS right before you argue against it."
 }
 ```
 
@@ -270,7 +270,7 @@ the routing edge cases people hit are worth comparing.
 
 ## Key takeaways
 
-- Few-shot prompting does what fine-tuning used to: 3–5 example posts in the system prompt lock in a voice, with instant iteration
+- Few-shot prompting covers most of what fine-tuning did for style: 3–5 example posts lock in a voice, with instant iteration — at the cost of carrying those examples on every request
 - Examples belong in the system prompt as style reference — and you must explicitly say "imitate the style, not the content"
 - Format variety in your examples teaches the voice; identical formats teach a template
 - The agent honors the agent contract: it takes an `AgentRequest` (both queries + messages) and returns `streamText()` directly

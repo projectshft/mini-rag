@@ -266,6 +266,38 @@ console.log('Number of matches:', queryResponse.matches.length);
 
 If the answer is bad, this tells you instantly whether the problem is retrieval (wrong chunks came back) or generation (right chunks, bad prompt). That distinction is the single most useful debugging skill in RAG.
 
+```scenario
+{
+  "who": "Your tech lead",
+  "setting": "You just demoed the RAG agent. It confidently answered a question about your docs with details that aren't in anything you uploaded.",
+  "ask": "That's a hallucination. gpt-4o is old news at this point — swap in the newest reasoning model and it'll stop making things up. Can you have that in by Friday?",
+  "note": "Pick the reply you'd give in the room.",
+  "options": [
+    {
+      "text": "Let me check what got retrieved first. If the chunks that came back didn't contain the answer, no model fixes this — a smarter one just invents more convincingly. If the right chunks DID come back and it still made things up, that's a generation problem and the model is fair game. One console.log tells us which conversation we're having.",
+      "verdict": "best",
+      "feedback": "This is the whole discipline of today in one answer. 'Retrieval problem or generation problem' is the first fork, and you can't pick a fix before you've taken it. It also doesn't reject the model swap — it says the evidence decides, which is much harder to argue with than 'no.'"
+    },
+    {
+      "text": "It won't help. Hallucination comes from bad retrieval, not from the model — the fix is better chunking and a score threshold.",
+      "verdict": "ok",
+      "feedback": "Almost certainly the right diagnosis and the right fixes. But you asserted it instead of showing it, and you're betting your credibility on a guess. If the correct chunk WAS in context and the prompt was just weak, you've spent that credibility on the wrong hill. Same answer, one log line earlier, is unarguable."
+    },
+    {
+      "text": "Sure — I'll swap the model and we can compare answers across the same set of questions.",
+      "verdict": "weak",
+      "feedback": "An A/B sounds rigorous, which is what makes it tempting. But you'd be testing the generation stage against a bug that may live in the retrieval stage: both models get the same wrong chunks, both answer wrong, and you conclude 'models don't matter' — or worse, that the pricier one is better because it hedged. Cheap experiments on the wrong variable are still wasted weeks."
+    },
+    {
+      "text": "The real issue is our system prompt — I'll strengthen the 'only use the provided context' instruction and add 'do not use prior knowledge.'",
+      "verdict": "weak",
+      "feedback": "Prompt hardening is real and you should have that line. But reaching for it before looking at the context is the same mistake as reaching for a bigger model — tuning the last stage to compensate for a possible failure two stages earlier. If the chunks were junk, the strongest instruction in the world produces 'I don't have enough information' to a question your docs could have answered."
+    }
+  ],
+  "debrief": "The model is the last thing you should reach for and usually the first thing suggested, because it's the one knob everyone outside the team knows exists. In RAG the answer is mostly decided before the LLM is called: the query vector and the chunk vectors do the work, and the model writes up whatever you hand it. Frontier models don't fix bad retrieval — they make it sound more authoritative. Log the context, take the fork, then spend money."
+}
+```
+
 ## Heads up: this is your Week 4 assignment
 
 The RAG agent you built today is the core of **this week's assignment** — by the end of the week you'll extend it with query preprocessing, reranking, and a score threshold, then record a video on evaluating retrieval quality. It all lands in this one file. As you test today, start noticing: when retrieval misses, *why* does it miss?
