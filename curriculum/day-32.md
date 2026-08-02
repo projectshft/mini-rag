@@ -291,7 +291,7 @@ yarn add @modelcontextprotocol/sdk zod
 
 #### Write the server
 
-Create `mcp/rag-server.ts`. It's self-contained on purpose — it talks to Pinecone and OpenAI directly so you don't have to refactor your app to export anything.
+Create `app/mcp/server.ts`. It's short because it doesn't re-implement retrieval — it imports the `searchDocuments` you already wrote in `app/libs/pinecone.ts`. The MCP server is a thin protocol wrapper around code you have.
 
 Before you look at the code below, try sketching it yourself: you already know how to embed a query and search Pinecone (you've done it since Week 2), and you just saw that a tool is a name + description + Zod schema + execute function. The only new pieces are `McpServer` and the stdio transport.
 
@@ -299,20 +299,25 @@ Before you look at the code below, try sketching it yourself: you already know h
 <summary>Hint — the skeleton</summary>
 
 ```typescript
-const server = new McpServer({ name: 'rag-server', version: '1.0.0' });
+const server = new McpServer({ name: 'ai-research-assistant', version: '1.0.0' });
 
-server.tool(
+server.registerTool(
 	'search_docs',
-	'<description the client model will read>',
-	{ /* Zod fields (not wrapped in z.object) */ },
+	{
+		description: '<description the client model will read>',
+		inputSchema: { /* Zod fields (not wrapped in z.object) */ },
+		outputSchema: { /* Zod fields describing what you return */ },
+	},
 	async (args) => {
-		// embed -> index.query -> map matches
-		return { content: [{ type: 'text', text: '...' }] };
+		const structuredContent = { /* must match outputSchema */ };
+		return {
+			content: [{ type: 'text', text: JSON.stringify(structuredContent, null, 2) }],
+			structuredContent,
+		};
 	},
 );
 
-const transport = new StdioServerTransport();
-await server.connect(transport);
+server.connect(new StdioServerTransport());
 ```
 
 </details>
@@ -321,67 +326,88 @@ await server.connect(transport);
 <summary>Solution — the full server</summary>
 
 ```typescript
+// app/mcp/server.ts
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { Pinecone } from '@pinecone-database/pinecone';
-import OpenAI from 'openai';
-import { z } from 'zod';
+import { searchDocuments } from '../libs/pinecone';
+import z from 'zod';
 
-const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
-// Standalone process — it can't import your app's configured client, so wire
-// the base URL here too or your class key goes straight to OpenAI and 401s.
-const openai = new OpenAI({
-	apiKey: process.env.OPENAI_API_KEY!,
-	baseURL: process.env.OPENAI_BASE_URL,
+const server = new McpServer({
+	name: 'ai-research-assistant',
+	version: '1.0.0',
+	description: 'AI Research Assistant',
 });
-const index = pinecone.index(process.env.PINECONE_INDEX!);
 
-const server = new McpServer({ name: 'rag-server', version: '1.0.0' });
-
-server.tool(
+server.registerTool(
 	'search_docs',
-	'Search the knowledge base for relevant document chunks',
 	{
-		query: z.string().min(1).max(1000).describe('What to search for'),
-		topK: z
-			.number()
-			.int()
-			.min(1)
-			.max(20)
-			.default(5)
-			.describe('Number of results'),
+		description:
+			'Search the vector database for relevant information about open source AI libraries and tools',
+		inputSchema: {
+			query: z
+				.string()
+				.describe(
+					'The query to search the vector database for (example: how does vector search work in Pinecone)',
+				),
+		},
+		outputSchema: {
+			results: z.array(
+				z.object({
+					title: z.string().describe('The title of the result'),
+					content: z.string().describe('The content of the result'),
+				}),
+			),
+		},
 	},
-	async ({ query, topK }) => {
-		const embed = await openai.embeddings.create({
-			model: 'text-embedding-3-small',
-			dimensions: 512,
-			input: query,
-		});
+	async ({ query }) => {
+		const results = await searchDocuments(query, 5);
 
-		const { matches } = await index.query({
-			vector: embed.data[0].embedding,
-			topK,
-			includeMetadata: true,
-		});
-
-		const results = matches.map((m) => ({
-			score: m.score,
-			text: m.metadata?.text,
-			source: m.metadata?.url,
-		}));
+		const structuredContent = {
+			results: results.map((result) => ({
+				title: String(result.metadata?.title ?? ''),
+				content: String(result.metadata?.content ?? ''),
+			})),
+		};
 
 		return {
-			content: [{ type: 'text', text: JSON.stringify(results, null, 2) }],
+			content: [
+				{
+					type: 'text' as const,
+					text: JSON.stringify(structuredContent, null, 2),
+				},
+			],
+			structuredContent,
 		};
 	},
 );
 
-const transport = new StdioServerTransport();
-await server.connect(transport);
-console.error('rag-server running on stdio');
+server.connect(new StdioServerTransport());
 ```
 
 </details>
+
+#### Three things in that file that will bite you
+
+**1. `registerTool`, not `tool`.** Older tutorials (and older SDK versions) use `server.tool(name, description, schema, handler)`. Current SDKs use `registerTool(name, config, handler)`, where `config` is an object with `description`, `inputSchema`, and optionally `outputSchema`. Same four ingredients, different shape.
+
+**2. Why the response has the data twice.** `structuredContent` is typed JSON validated against your `outputSchema` — it was added in MCP spec revision 2025-06-18. Clients on older revisions only read `content[]`. So when you declare an `outputSchema`, return **both**: `structuredContent` for new clients, the same object JSON-stringified into a text block for old ones. Skip the text block and older clients see an empty tool result.
+
+**3. Env vars load later than you think.** This bites everyone:
+
+```typescript
+import { config } from 'dotenv';
+config(); // ← too late, and not obviously so
+import { searchDocuments } from '../libs/pinecone';
+```
+
+TypeScript compiles to CommonJS, which hoists *every* `import` into `require()` calls above your first statement. So `../libs/pinecone` — and the OpenAI client it constructs at module scope — already ran before `config()` did. The client got `undefined` for its API key and threw.
+
+The fix is a side-effect import at the top of the file that constructs the client (`app/libs/openai/openai.ts`), so it runs before anything else in that module:
+
+```typescript
+import 'dotenv/config'; // first line, before the client is constructed
+import OpenAI from 'openai';
+```
 
 > Note: `console.log` would corrupt the protocol — MCP uses stdout for JSON-RPC. Log to `stderr` (`console.error`) only.
 
@@ -392,10 +418,25 @@ protocol directly to your server. No model, no chat, no guessing — you call th
 tool yourself and see exactly what comes back.
 
 ```bash
-npx @modelcontextprotocol/inspector npx tsx mcp/rag-server.ts
+npx @modelcontextprotocol/inspector npx tsx app/mcp/server.ts
 ```
 
-It opens a browser automatically. What you're looking at:
+It opens a browser automatically. If the left panel comes up blank, you can fill
+it in by hand — that's all the command above does for you:
+
+| Field | Value |
+|-------|-------|
+| **Transport Type** | `STDIO` |
+| **Command** | `npx` |
+| **Arguments** | `tsx app/mcp/server.ts` |
+| **Environment Variables** | your `PINECONE_*` and `OPENAI_*` keys, if they aren't coming from `.env` |
+
+Then hit **Connect**. The History pane at the bottom is your receipt: you should
+see `initialize`, then `tools/list`, then a `tools/call` for every run. If
+`initialize` is the only entry, your server died on startup — check
+Notifications.
+
+What you're looking at:
 
 | Tab | What it's for |
 |-----|---------------|
@@ -432,7 +473,7 @@ claude mcp add rag-server \
   --env OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1 \
   --env PINECONE_API_KEY=... \
   --env PINECONE_INDEX=rag-tutorial \
-  -- npx tsx /absolute/path/to/mcp/rag-server.ts
+  -- npx tsx /absolute/path/to/your-project/app/mcp/server.ts
 ```
 
 Everything after `--` is the command that launches your server. Everything
@@ -476,9 +517,13 @@ Claude Desktop has no CLI — you edit JSON by hand via
 ```json
 {
 	"mcpServers": {
-		"rag-server": {
-			"command": "npx",
-			"args": ["tsx", "/absolute/path/to/mcp/rag-server.ts"],
+		"ai-search-tools": {
+			"command": "/absolute/path/to/your-project/node_modules/.bin/ts-node",
+			"args": [
+				"--project",
+				"/absolute/path/to/your-project/tsconfig.json",
+				"/absolute/path/to/your-project/app/mcp/server.ts"
+			],
 			"env": {
 				"OPENAI_API_KEY": "sk-...",
 				"PINECONE_API_KEY": "...",
@@ -489,25 +534,39 @@ Claude Desktop has no CLI — you edit JSON by hand via
 }
 ```
 
+This points at your project's local `ts-node` rather than `npx tsx` — one less
+download at startup, and it picks up your `tsconfig.json` so the same TypeScript
+settings your app uses apply to the server.
+
 Then **fully quit and relaunch** the app — reloading the window isn't enough.
 
 Desktop runs with a minimal `PATH`, so most failures here are path failures.
 Use absolute paths everywhere, and don't use `~/` or `$HOME` — those are
-literal strings in this file, not expanded.
+literal strings in this file, not expanded. And proofread the path character by
+character: a one-letter typo (`min-rag` instead of `mini-rag`) surfaces as
+`Cannot find module './server.ts'` followed by "Server transport closed
+unexpectedly" — which reads like a code bug and is not one.
 
 </details>
 
 ### When it doesn't work
 
-Four things account for almost every failure:
+Six things account for almost every failure:
 
 1. **You logged to stdout.** `console.log` corrupts the JSON-RPC stream and
    kills the session. One stray log is enough. Use `console.error`.
-2. **A relative path.** The client spawns your server from somewhere else.
-   Absolute paths only.
+2. **A relative path — or a typo in an absolute one.** The client spawns your
+   server from somewhere else, so absolute paths only. `Cannot find module
+   './server.ts'` means the path in your config doesn't exist; read it again.
 3. **Missing env vars.** Your shell has them; the spawned process doesn't
    inherit them. Pass them explicitly with `--env` (or `"env"` in Desktop).
-4. **It timed out on first run** while `npx` downloaded packages. Retry, or
+4. **`dotenv` ran after your client was constructed.** `OPENAI_API_KEY ... is
+   missing or empty` even though it's right there in `.env` — see gotcha #3
+   above. Use `import 'dotenv/config'` in the file that builds the client.
+5. **Your `structuredContent` doesn't match your `outputSchema`.** The SDK
+   validates it and the call fails. The Inspector shows you the validation
+   error; a chat client just shrugs.
+6. **It timed out on first run** while `npx` downloaded packages. Retry, or
    start with `MCP_TIMEOUT=60000 claude`.
 
 ### Done when
@@ -532,7 +591,7 @@ Four things account for almost every failure:
 ```ai-prompt
 title: Extend my MCP server with a second tool
 ---
-I built an MCP server (mcp/rag-server.ts) with one tool, search_docs, that embeds a query with text-embedding-3-small and searches my Pinecone index. It uses McpServer + StdioServerTransport from @modelcontextprotocol/sdk.
+I built an MCP server (app/mcp/server.ts) with one tool, search_docs, registered with server.registerTool and backed by my existing searchDocuments helper in app/libs/pinecone.ts. It declares an outputSchema and returns both structuredContent and a JSON text block. It uses McpServer + StdioServerTransport from @modelcontextprotocol/sdk.
 
 Help me design and implement a second tool, but make me do the thinking: first ask me what my index's metadata looks like (source, url, date?), then propose 3 candidate tools (e.g., list_sources, get_document_by_source, search_docs_filtered) with the exact tool name, description, and Zod parameter schema for each — the description and .describe() text matter because the client model reads them. Let me pick one, then guide me through implementing it step by step, asking me to write each piece before you show yours. Finish by giving me 3 Inspector test queries to verify it.
 ```
