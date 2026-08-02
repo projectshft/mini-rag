@@ -57,21 +57,13 @@ text + interactive.
 
 ## Other open items
 
-- [ ] **Retitle the two submission forms + add an assignment question.** Every
-  assignment now points at the same two forms, reused across all seven:
-  - **Video** → `NdVcsThQ`
-  - **Code** → `A0pGKPqU`
-
-  Both were the old "Document Upload" pair, so their titles still say that.
-  Two things to do in Typeform: rename them to something generic
-  ("Assignment — Video" / "Assignment — Code"), and **add a required
-  "Which assignment?" dropdown** — Word Math, Document Upload, Agent Router,
-  RAG Agent, Security, Capstone Proposal, Capstone. Without that field you
-  can't tell submissions apart.
-
-  The other ten forms are now unused. Don't delete them — past cohort
-  responses live there. Also check whether any Zapier automation was wired to
-  the retired ones.
+- [x] **Submission forms** — every assignment points at the same two forms:
+  **Video** `NdVcsThQ`, **Code** `A0pGKPqU`. Both retitled via the API to
+  "Assignment — Video Submission" / "Assignment — Code Submission". No
+  assignment field by choice: submissions arrive with an email and a link, and
+  you identify the assignment from the work itself. The other ten forms are
+  unused — keep them, past cohort responses live there, and check whether any
+  Zapier automation was wired to them before retiring the links.
 
 - [ ] **Test the invite flow end-to-end.** The ticket-drop bug is fixed and
   deployed — send yourself (a second email) a real invite from `/admin`, click
