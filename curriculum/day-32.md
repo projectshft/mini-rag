@@ -268,13 +268,28 @@ You (in Claude Code): "search my docs for chunking strategies"
 
 That's the whole project. No UI, no API route, no auth. One tool that does retrieval.
 
-### Step 1 — Install
+**Do it in three phases, in this order:**
+
+1. **Build** the server locally — one file, one tool.
+2. **Inspect** it in isolation, with no chat client involved. Prove the tool
+   exists and returns real data before anything else touches it.
+3. **Expose** it to Claude Code and watch a model actually call it.
+
+Phase 2 is the one people skip, and skipping it is why MCP feels like
+witchcraft. If you wire a broken server straight into a chat client, the only
+symptom you get is a model that vaguely declines to use your tool — no stack
+trace, no error, nothing to grep. Debug it standalone first and the whole thing
+stops being mysterious.
+
+### Phase 1 — Build the server
+
+#### Install
 
 ```bash
 yarn add @modelcontextprotocol/sdk zod
 ```
 
-### Step 2 — Write the server
+#### Write the server
 
 Create `mcp/rag-server.ts`. It's self-contained on purpose — it talks to Pinecone and OpenAI directly so you don't have to refactor your app to export anything.
 
@@ -364,24 +379,97 @@ console.error('rag-server running on stdio');
 
 > Note: `console.log` would corrupt the protocol — MCP uses stdout for JSON-RPC. Log to `stderr` (`console.error`) only.
 
-### Step 3 — Test it before touching any client
+### Phase 2 — Inspect it before any client touches it
 
-The Inspector is the fastest feedback loop:
+**Do not skip this.** The MCP Inspector is a local web UI that speaks the
+protocol directly to your server. No model, no chat, no guessing — you call the
+tool yourself and see exactly what comes back.
 
 ```bash
 npx @modelcontextprotocol/inspector npx tsx mcp/rag-server.ts
 ```
 
-Open the web UI it prints, pick `search_docs`, and run a query you know is in your index. You should get matches back with scores. If you don't, fix it here — not inside Claude.
+It opens a browser automatically. What you're looking at:
 
-### Step 4 — Connect a real client
+| Tab | What it's for |
+|-----|---------------|
+| **Tools** | your `search_docs` should be listed here. Click it, fill in the argument, run it |
+| **Resources** | empty for now — you'll use this in the Going Further lesson |
+| **Prompts** | also empty for now |
+| **Notifications** | your server's stderr output and protocol events — this is where errors show up |
 
-**Claude Code** — add to `~/.claude.json` (or run `claude mcp add`):
+**Work through it in this order:**
+
+1. **Does the tool appear at all?** If `search_docs` isn't in the Tools list,
+   your server didn't register it — nothing else matters yet. Check the
+   Notifications pane for a crash on startup.
+2. **Does the schema look right?** The Inspector renders your Zod schema as a
+   form. If the argument is missing or has the wrong type, your model will
+   later "fail to use the tool" for reasons that are invisible in a chat window.
+3. **Call it with a query you know is in your index.** You should get matches
+   back with scores. Real ones, from your Pinecone data.
+4. **Now break it on purpose.** Call it with an empty string, or a nonsense
+   argument. Watch the error appear in the Inspector. This is the whole point —
+   you can see failures here. Inside a chat client, the same failure looks like
+   the model politely ignoring your tool.
+
+If the tool works here, it will work everywhere. If it doesn't work here, no
+amount of client config will save you.
+
+### Phase 3 — Expose it to Claude Code
+
+Now hand it to a real client. **Use the CLI — don't hand-edit config files:**
+
+```bash
+claude mcp add rag-server \
+  --env OPENAI_API_KEY=sk-... \
+  --env PINECONE_API_KEY=... \
+  --env PINECONE_INDEX=rag-tutorial \
+  -- npx tsx /absolute/path/to/mcp/rag-server.ts
+```
+
+Everything after `--` is the command that launches your server. Everything
+before it configures how Claude Code registers it.
+
+**Pick a scope** with `--scope`:
+
+- `local` (default) — just you, just this project
+- `project` — writes `.mcp.json` at the repo root, meant to be committed so
+  teammates get the same server. First connection prompts each person for
+  approval, which is a feature, not a bug
+- `user` — you, across every project
+
+**Verify it connected** before you try to use it:
+
+```bash
+claude mcp list          # all servers + connection status
+claude mcp get rag-server # details for one
+```
+
+Inside a session, `/mcp` shows status and lets you reconnect or view the tools.
+If something's wrong, `claude mcp remove rag-server` and re-add it.
+
+Then ask for something that forces a tool call:
+
+> _"Use search_docs to find what my notes say about reranking."_
+
+You should see the tool call happen, then an answer grounded in your own
+documents — in a chat window that has never seen your Pinecone index.
+
+<details>
+<summary>Using Claude Desktop instead? (Developer settings)</summary>
+
+Claude Desktop has no CLI — you edit JSON by hand via
+**Settings → Developer → Edit Config**, which opens:
+
+```
+~/Library/Application Support/Claude/claude_desktop_config.json
+```
 
 ```json
 {
 	"mcpServers": {
-		"rag": {
+		"rag-server": {
 			"command": "npx",
 			"args": ["tsx", "/absolute/path/to/mcp/rag-server.ts"],
 			"env": {
@@ -394,14 +482,33 @@ Open the web UI it prints, pick `search_docs`, and run a query you know is in yo
 }
 ```
 
-Restart, then ask: _"Use search_docs to find what my notes say about reranking."_
+Then **fully quit and relaunch** the app — reloading the window isn't enough.
 
-Cursor and Claude Desktop accept the same config block — check each client's docs for where its config file lives.
+Desktop runs with a minimal `PATH`, so most failures here are path failures.
+Use absolute paths everywhere, and don't use `~/` or `$HOME` — those are
+literal strings in this file, not expanded.
+
+</details>
+
+### When it doesn't work
+
+Four things account for almost every failure:
+
+1. **You logged to stdout.** `console.log` corrupts the JSON-RPC stream and
+   kills the session. One stray log is enough. Use `console.error`.
+2. **A relative path.** The client spawns your server from somewhere else.
+   Absolute paths only.
+3. **Missing env vars.** Your shell has them; the spawned process doesn't
+   inherit them. Pass them explicitly with `--env` (or `"env"` in Desktop).
+4. **It timed out on first run** while `npx` downloaded packages. Retry, or
+   start with `MCP_TIMEOUT=60000 claude`.
 
 ### Done when
 
-- [ ] The Inspector lists `search_docs` and returns real matches from your index.
-- [ ] One MCP client (Claude Code / Cursor / Desktop) calls the tool and answers from your docs.
+- [ ] The Inspector lists `search_docs`, returns real matches, *and* shows you a
+      readable error when you call it wrong.
+- [ ] `claude mcp list` shows your server connected.
+- [ ] Claude Code calls the tool and answers from your docs.
 
 **Want to take this to production?** The *MCP in Production* lesson in Week 7 (Going Further) picks up where this leaves off: more than one tool, resources and prompts, and the authorization + PII handling you can't skip once your server exposes data that actually matters. Encouraged once you've got this single-tool server working.
 

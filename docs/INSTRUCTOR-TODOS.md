@@ -10,10 +10,26 @@ text + interactive.
 
 ### High value — worth recording
 
-- [ ] **Day 32 — MCP** (`curriculum/day-32.md`). No video today, and it's the
-  hottest, most-confusing topic in the course. A 4–5 min screen-share building
-  the single-tool `search_docs` server and calling it from Claude/Cursor would
-  carry the whole MCP arc. **Highest-leverage video you could add.**
+- [ ] **Day 32 — MCP** (`curriculum/day-32.md`). No video, and it's the hottest,
+  most-confusing topic in the course. **Highest-leverage video you could add.**
+  Three beats, ~6–8 min total — the value is in showing the *loop*, not the
+  finished server:
+  1. **Build the local server.** `mcp/rag-server.ts` — one tool, `search_docs`,
+     wrapping the retrieval they already have. Say out loud why it's stdio and
+     why `console.log` would corrupt the protocol.
+  2. **Inspect it before any client touches it.** Launch the MCP Inspector,
+     show the tool appearing in the list, call it with a query you know is in
+     the index, show real matches coming back. This is the beat students will
+     rewatch — it's the difference between "MCP is magic config" and "MCP is a
+     server I can poke at." Show a failure too if you can: call it with a bad
+     arg and let them see the error surface in the Inspector rather than
+     silently inside a chat client.
+  3. **Expose it to Claude Code.** Register it, restart, verify it's connected,
+     then ask a question that makes the model call the tool — and show the tool
+     call happening, not just the answer.
+
+  The arc to narrate: *build it → prove it works in isolation → then let a
+  client use it.* Most people skip the middle step and then can't debug.
 - [ ] **Day 36 — Capstone Kickoff** (`curriculum/day-36.md`). No video. This is
   the moment students shift from "follow along" to "build your own." A short
   (2–3 min) "how to pick and scope your project" pep-talk is worth more here
