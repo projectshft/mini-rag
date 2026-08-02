@@ -88,6 +88,7 @@ Chunks overlap by ~50 characters to maintain context at boundaries — the strat
 // What happens under the hood
 const response = await openaiClient.embeddings.create({
   model: 'text-embedding-3-small',
+  dimensions: 512,
   input: ['Hello world', 'Machine learning basics']
 });
 

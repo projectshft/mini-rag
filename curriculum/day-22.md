@@ -102,6 +102,7 @@ Look at how [`app/scripts/scrapeAndVectorizeContent.ts`](https://github.com/proj
 ```typescript
 const embeddingResponse = await openaiClient.embeddings.create({
   model: 'text-embedding-3-small',
+  dimensions: 512,
   input: request.query,
 });
 
@@ -200,6 +201,7 @@ export async function ragAgent(request: AgentRequest): Promise<AgentResponse> {
   // Step 1: Generate embedding
   const embeddingResponse = await openaiClient.embeddings.create({
     model: 'text-embedding-3-small',
+    dimensions: 512,
     input: request.query,
   });
   const embedding = embeddingResponse.data[0].embedding;

@@ -171,6 +171,7 @@ const openai = new OpenAI();
 // 1. Generate dense embedding from OpenAI
 const embeddingResponse = await openai.embeddings.create({
 	model: 'text-embedding-3-small',
+	dimensions: 512,
 	input: 'Your document text here',
 });
 const denseVector = embeddingResponse.data[0].embedding; // [0.12, 0.45, 0.23, ...]

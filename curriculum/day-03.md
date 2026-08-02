@@ -412,6 +412,7 @@ const userQuestion = 'How do I use React hooks?';
 // 2. Convert to embedding
 const queryEmbedding = await openai.embeddings.create({
 	model: 'text-embedding-3-small',
+	dimensions: 512,
 	input: userQuestion,
 });
 

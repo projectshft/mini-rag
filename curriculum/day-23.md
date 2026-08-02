@@ -170,6 +170,7 @@ export async function ragAgent(request: AgentRequest): Promise<AgentResponse> {
 	// Step 1: Generate embedding for the refined query
 	const embeddingResponse = await openaiClient.embeddings.create({
 		model: 'text-embedding-3-small',
+		dimensions: 512,
 		input: request.query,
 	});
 

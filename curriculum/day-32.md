@@ -328,7 +328,12 @@ import OpenAI from 'openai';
 import { z } from 'zod';
 
 const pinecone = new Pinecone({ apiKey: process.env.PINECONE_API_KEY! });
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
+// Standalone process — it can't import your app's configured client, so wire
+// the base URL here too or your class key goes straight to OpenAI and 401s.
+const openai = new OpenAI({
+	apiKey: process.env.OPENAI_API_KEY!,
+	baseURL: process.env.OPENAI_BASE_URL,
+});
 const index = pinecone.index(process.env.PINECONE_INDEX!);
 
 const server = new McpServer({ name: 'rag-server', version: '1.0.0' });
@@ -349,6 +354,7 @@ server.tool(
 	async ({ query, topK }) => {
 		const embed = await openai.embeddings.create({
 			model: 'text-embedding-3-small',
+			dimensions: 512,
 			input: query,
 		});
 
@@ -361,7 +367,7 @@ server.tool(
 		const results = matches.map((m) => ({
 			score: m.score,
 			text: m.metadata?.text,
-			source: m.metadata?.source,
+			source: m.metadata?.url,
 		}));
 
 		return {
@@ -422,7 +428,8 @@ Now hand it to a real client. **Use the CLI — don't hand-edit config files:**
 
 ```bash
 claude mcp add rag-server \
-  --env OPENAI_API_KEY=sk-... \
+  --env OPENAI_API_KEY=<your class key> \
+  --env OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1 \
   --env PINECONE_API_KEY=... \
   --env PINECONE_INDEX=rag-tutorial \
   -- npx tsx /absolute/path/to/mcp/rag-server.ts

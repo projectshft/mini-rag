@@ -258,7 +258,8 @@ The response contains:
 Make sure your `.env` file has all four values:
 
 ```bash
-OPENAI_API_KEY=sk-proj-...
+OPENAI_API_KEY=<your class key>
+OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1
 PINECONE_API_KEY=...
 PINECONE_INDEX=rag-tutorial
 ```

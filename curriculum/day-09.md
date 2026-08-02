@@ -42,6 +42,7 @@ async function scrapeAndVectorize(urls: string[]) {
 		// Generate embeddings
 		const embeddingResponse = await openaiClient.embeddings.create({
 			model: 'text-embedding-3-small',
+			dimensions: 512,
 			input: batch.map((chunk) => chunk.content),
 		});
 
@@ -167,7 +168,8 @@ await index.upsert(vectors);
 Ensure `.env.local` has:
 
 ```bash
-OPENAI_API_KEY=sk-...
+OPENAI_API_KEY=<your class key>
+OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1
 PINECONE_API_KEY=...
 PINECONE_INDEX=your-index-name
 ```

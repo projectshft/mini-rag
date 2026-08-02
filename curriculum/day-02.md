@@ -64,6 +64,7 @@ Embedding Model
 ```typescript
 const response = await openai.embeddings.create({
 	model: 'text-embedding-3-small',
+	dimensions: 512,
 	input: 'artificial intelligence',
 });
 

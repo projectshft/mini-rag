@@ -98,6 +98,7 @@ import { openaiClient } from '../libs/openai/openai';
 async function getEmbedding(text: string): Promise<number[]> {
 	const response = await openaiClient.embeddings.create({
 		model: 'text-embedding-3-small',
+		dimensions: 512,
 		input: text,
 	});
 	return response.data[0].embedding;
