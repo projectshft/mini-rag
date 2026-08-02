@@ -137,15 +137,33 @@ PINECONE_INDEX=rag-tutorial
 
 ### OpenAI client
 
-[`app/libs/openai/openai.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/libs/openai/openai.ts) is already configured and exports the OpenAI client:
+[`app/libs/openai/openai.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/libs/openai/openai.ts) is already configured and exports **two** clients — both wired to `OPENAI_BASE_URL` so your class key works:
 
 ```typescript
 import OpenAI from 'openai';
+import { createOpenAI } from '@ai-sdk/openai';
 
 export const openaiClient = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY as string,
+	baseURL: process.env.OPENAI_BASE_URL,
+});
+
+export const openaiProvider = createOpenAI({
+	apiKey: process.env.OPENAI_API_KEY as string,
+	baseURL: process.env.OPENAI_BASE_URL,
 });
 ```
+
+**Why two?** They're different SDKs for different jobs:
+
+- `openaiClient` — the OpenAI SDK. Use it for **embeddings**.
+- `openaiProvider` — the Vercel AI SDK. Use it for anything that **streams**: `openaiProvider('gpt-4o')` inside `streamText()`.
+
+Both need `baseURL` set explicitly. The OpenAI SDK would actually read
+`OPENAI_BASE_URL` from the environment on its own — the AI SDK will not. Its
+default export is hardcoded to `api.openai.com`, which is why you should never
+write `import { openai } from '@ai-sdk/openai'` in this project. Do that and
+your class key gets sent to OpenAI directly, which rejects it with a 401.
 
 ### Pinecone client
 
