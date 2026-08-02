@@ -280,13 +280,125 @@ function getUserMessage(error: unknown): string {
 
 Users prefer "limited service" to cryptic errors.
 
+## Your challenge: make the selector survive an outage
+
+Everything above is a pattern until something actually fails. This is small —
+about 20 lines — and it's the one piece of today you can run.
+
+Right now your selector in
+[`app/api/select-agent/route.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/api/select-agent/route.ts)
+has exactly one way to route: ask the model. If that call fails — rate limit,
+network blip, provider outage — the `catch` returns a 500 and the user gets
+nothing. The whole app is down because the *router* is down, even though both
+agents behind it are fine.
+
+Give it a second way to route that doesn't need an LLM at all.
+
+**1. Write a keyword fallback.** A pure function, no API call:
+
+```typescript
+const LINKEDIN_HINTS = ['linkedin', 'post', 'write me', 'draft', 'caption'];
+
+function routeByKeyword(message: string): { agent: AgentType; query: string } {
+	const hit = LINKEDIN_HINTS.some((w) => message.toLowerCase().includes(w));
+	return { agent: hit ? 'linkedin' : 'rag', query: message };
+}
+```
+
+It's dumber than the model. That's fine — dumber and available beats smarter
+and down.
+
+**2. Use it when the model call throws.** Wrap only the LLM call, not the whole
+handler — you still want a real 500 for a malformed request body:
+
+```typescript
+let selection;
+let degraded = false;
+try {
+	selection = await callSelectorModel(recentMessages, agentDescriptions);
+} catch (err) {
+	console.error('Selector LLM failed, falling back to keywords:', err);
+	selection = routeByKeyword(messages.at(-1)!.content);
+	degraded = true;
+}
+```
+
+**3. Tell the truth about it.** Return `degraded` in the response so the UI can
+say "routing is running in reduced mode" instead of pretending nothing happened.
+
+### Now force it to fail
+
+This is the part that matters, and it's the answer to question 3 below. You
+don't wait for a real outage — you cause one:
+
+```bash
+# Point at an endpoint that doesn't exist, then send a message
+OPENAI_BASE_URL=https://localhost:9999/v1 yarn dev
+```
+
+Ask for a LinkedIn post. It should still route to the LinkedIn agent. Ask a
+technical question — it should still land on RAG.
+
+**What "done" looks like:**
+
+- [ ] With a broken base URL, the app still answers instead of 500-ing
+- [ ] "Write me a LinkedIn post about RAG" routes to `linkedin` with no LLM call
+- [ ] A malformed request body still returns a real error — you didn't swallow it
+- [ ] The response carries `degraded: true` so the failure is visible, not silent
+
+<details>
+<summary>Why keywords and not a second model?</summary>
+
+A model fallback chain (Strategy 1 above) protects you when *one provider* is
+having a bad day. It does nothing when your API key is wrong, your billing
+lapsed, or the network is gone — every model call fails together, and a chain of
+three is just three failures and three timeouts.
+
+The keyword router has no shared dependency with the thing that broke. That's
+the property worth designing for: a fallback that fails for the same reason as
+the primary isn't a fallback.
+
+</details>
+
+```scenario
+{
+  "who": "Your co-founder",
+  "setting": "You've just added a circuit breaker, a three-model fallback chain, retry-with-backoff, and a response cache to an app with about forty daily users.",
+  "ask": "This is a lot of reliability machinery for a product nobody uses yet. Half of it has never fired. Can we ship features instead?",
+  "note": "Pick your reply.",
+  "options": [
+    {
+      "text": "Mostly agreed. I'd keep the two that are nearly free and pay off on day one — classify errors so we don't retry a bad API key, and a user-facing message that isn't a stack trace. I'd cut the circuit breaker and the fallback chain until we have traffic that makes cascading failure a real shape. Untested fallback code is worse than none: it gives us confidence we haven't earned, and the first real outage is when we'd find out it doesn't work.",
+      "verdict": "best",
+      "feedback": "This grades each pattern separately instead of defending 'reliability' as a package. Error classification and a decent user message are a handful of lines that help at any scale. A circuit breaker only earns its keep when concurrent requests can pile onto a failing service — at forty users a day there's nothing to cascade. And the last line ends the argument: fallback code you've never exercised is a liability wearing a safety vest."
+    },
+    {
+      "text": "Let's keep it but add monitoring so we can see whether any of it ever fires.",
+      "verdict": "ok",
+      "feedback": "Good instinct — you can't reason about degradation you can't observe, and 'has this ever fired?' is the right question. But you answered a scoping question by adding a fifth thing. Instrument what you keep; that's not a reason to keep all of it."
+    },
+    {
+      "text": "Reliability isn't a feature you bolt on later — by the time we have users, an outage costs us those users. I'd keep all of it.",
+      "verdict": "weak",
+      "feedback": "The principle is real and the conclusion doesn't follow. 'Add it later' isn't the alternative to 'add it now' — 'add it when the failure mode exists' is. You're also maintaining four code paths that have never run once, which is exactly how untested fallback logic rots into something that fails when it's finally needed."
+    },
+    {
+      "text": "You're right, let's rip it all out and add it back when we're bigger.",
+      "verdict": "weak",
+      "feedback": "Overcorrection. Some of this is genuinely free — not retrying an authentication error is three lines that stop you burning your rate limit on a request that can never succeed, and it's just as right at forty users as at forty thousand. Ripping out everything because most of it is premature throws away the cheap wins with the expensive ones."
+    }
+  ],
+  "debrief": "Every pattern in this lesson is correct and not all of them are correct *yet*. Sort by two questions: how many lines does it cost, and does the failure it prevents exist in my system today? Error classification and honest messaging are near-free and always apply. Circuit breakers need concurrency to protect anything. Fallback chains need a second provider you've actually tested against. The checklist below is a menu, not a to-do list — and anything you keep, you should be able to make fire on purpose."
+}
+```
+
 ## Think about it
 
 Actually write down answers — these come back when you plan your capstone in Week 6.
 
 1. **Your capstone project:** what's the minimum viable response if your LLM fails? Can you return raw search results without summarization? Show a cached response? What message do you show users?
 2. **Cost vs reliability tradeoff:** running multiple providers costs more. When is it worth it?
-3. **Testing failures:** how would you test your fallback logic without waiting for a real outage? (Hint: what if `callModel` could be forced to throw for a specific provider?)
+3. **Testing failures:** you just forced one outage with an env var. How would you test the *other* patterns above — a circuit breaker opening, a cache serving a stale hit — without waiting for the real thing? What would have to be injectable for that to be easy?
 
 ## Quick reference: degradation checklist
 
