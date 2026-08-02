@@ -358,7 +358,8 @@ Be specific with your explanations — show you understand the geometry, not jus
 
 ### Submit your work
 
-- [Submit your assignment](https://form.typeform.com/to/ASSIGNMENT-FORM)
+- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
+- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
 
 Post your favorite equation (especially the surprising failures) in Slack — they make great discussion.
 

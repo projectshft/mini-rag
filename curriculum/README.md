@@ -103,8 +103,9 @@ lightest day of that week. One per week, plus the capstone bookends.
 | [Capstone proposal](day-36.md) | Week 6 | scope and plan |
 | [Capstone](day-42.md) | End of course | the whole thing |
 
-**One Typeform for all of them** — name, which assignment, video link, repo link.
-The same link appears in every assignment day. Post your work in Slack too.
+Two forms, reused for every assignment — one for your video, one for your code —
+linked inline on each assignment day. Tell the form which assignment you're
+submitting. Post your work in Slack too.
 
 Optional and ungraded: the [SQL agent lab](day-33.md), the
 [LLM-as-judge exercise](day-30.md), and the [Bible chunking lab](bonus-bible-chunking.md).

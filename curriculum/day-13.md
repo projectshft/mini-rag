@@ -308,7 +308,8 @@ No jargon without explanation. If you can't explain your chunk-size choice simpl
 
 ### Submit your work
 
-- [Submit your assignment](https://form.typeform.com/to/ASSIGNMENT-FORM)
+- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
+- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
 
 Post your video and code in **Slack** for feedback — seeing how others chunked the same three document types is half the value.
 

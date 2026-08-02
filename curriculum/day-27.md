@@ -62,7 +62,8 @@ confident wrong answer is worse than an honest "I don't know."
 
 ### Submit your work
 
-- [Submit your assignment](https://form.typeform.com/to/ASSIGNMENT-FORM)
+- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
+- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
 
 And **post your work in Slack** — the before/after preprocessing demo makes a great post, and feedback from the group regularly catches things the rubric doesn't.
 

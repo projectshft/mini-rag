@@ -58,7 +58,8 @@ Feynman-style, as always: explain it like you're teaching a smart colleague who 
 
 ### Submit final project
 
-- [Submit your capstone](https://form.typeform.com/to/ASSIGNMENT-FORM) — demo video + GitHub repo
+- [Final Video Submission](https://form.typeform.com/to/NdVcsThQ)
+- [Code Submission](https://form.typeform.com/to/A0pGKPqU) (GitHub repo link)
 
 Then **post your project in Slack** — repo link, one screenshot or query example, and the problem it solves. Your classmates' capstones are worth studying too: every one is a different answer to "how do I make retrieval work for *this* data?"
 

@@ -257,7 +257,8 @@ structured outputs buy you, that's the gap to close before recording.
 
 ### Submit your work
 
-- [Submit your assignment](https://form.typeform.com/to/ASSIGNMENT-FORM)
+- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
+- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
 
 Post it in **Slack** too — everyone's selector prompt is a little different, and
 the routing edge cases people hit are worth comparing.

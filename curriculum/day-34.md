@@ -471,7 +471,8 @@ whole video.
 
 ### Submit
 
-- [Submit your assignment](https://form.typeform.com/to/ASSIGNMENT-FORM)
+- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
+- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
 
 Post it in Slack — sanitizer regexes and guardrail prompts vary a lot, and
 seeing what someone else's defense missed is the fastest way to find your own

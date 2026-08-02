@@ -171,7 +171,8 @@ Record a video explaining your project plan:
 
 ### Submit proposal
 
-- [Submit your proposal](https://form.typeform.com/to/ASSIGNMENT-FORM)
+- [Proposal Video](https://form.typeform.com/to/NdVcsThQ)
+- [Proposal Notes](https://form.typeform.com/to/A0pGKPqU)
 
 Post your idea in Slack too — a quick sanity check from mentors or classmates today can save you two days of building the wrong thing.
 
