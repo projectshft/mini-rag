@@ -13,7 +13,7 @@
 
 ```bash
 git clone https://github.com/projectshft/mini-rag.git
-cd mini_rag
+cd mini-rag
 git checkout student-todo-exercises
 ```
 
@@ -41,7 +41,7 @@ covered. If you haven't received yours yet, email
 cp .env.example .env
 ```
 
-Then open `.env` and set **both** of these:
+Then open `.env` and set **both** of these — note `OPENAI_BASE_URL` ships commented out, so remove the leading `#`:
 
 ```bash
 OPENAI_API_KEY=<the class key we emailed you>

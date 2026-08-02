@@ -46,12 +46,17 @@ const results = await index.query({
 
 | Question | SQL | Vector |
 |----------|-----|--------|
-| Do I know the exact field names? | | |
-| Is the data structured with a schema? | | |
-| Do I need aggregations (COUNT, SUM, AVG)? | | |
-| Is the query about meaning/similarity? | | |
-| Is the content unstructured text? | | |
-| Do users ask in natural language? | Depends | |
+| Do I know the exact field names? | Yes | No |
+| Is the data structured with a schema? | Yes | No |
+| Do I need aggregations (COUNT, SUM, AVG)? | Yes | No |
+| Is the query about meaning/similarity? | No | Yes |
+| Is the content unstructured text? | No | Yes |
+| Do users ask in natural language? | Depends | Depends |
+
+Read it as: the more rows landing in one column, the more obvious your answer.
+Natural-language input is the row people over-weight — an LLM can translate a
+plain-English question into either a SQL query or an embedding, so *how the user
+phrases it* tells you almost nothing. **What the data looks like decides.**
 
 ## Hybrid approach: best of both
 
@@ -235,7 +240,7 @@ Case-insensitive matching matters — users type "la", "LA", and "Los Angeles".
 <details>
 <summary>Hint 3 — the agent flow</summary>
 
-Three steps, all patterns you've built before: (1) call the LLM with a system prompt describing the extraction task + `zodResponseFormat(QueryParamsSchema, ...)` to get params (day 18's structured outputs), (2) `prisma.influencer.findMany({ where })` with your constructed clause, (3) format the rows into a readable response — either template the results directly or hand them to the LLM as context for a natural-language summary.
+Three steps, all patterns you've built before: (1) call the LLM with a system prompt describing the extraction task + `zodResponseFormat(QueryParamsSchema, ...)` to get params (the structured-outputs pattern you already built), (2) `prisma.influencer.findMany({ where })` with your constructed clause, (3) format the rows into a readable response — either template the results directly or hand them to the LLM as context for a natural-language summary.
 
 </details>
 
@@ -244,7 +249,7 @@ Post your progress in Slack — WHERE-clause edge cases ("under $500" vs "betwee
 ## Key takeaways
 
 - "Retrieval" in RAG doesn't have to mean vectors — structured data with a known schema is SQL territory: exact matches, aggregations, joins, sorting
-- Vector search earns its keep on unstructured text and meaning-based queries; production systems often route between both (your day-17 router pattern)
+- Vector search earns its keep on unstructured text and meaning-based queries; production systems often route between both (the same selector pattern you built)
 - The safe SQL agent pattern: LLM extracts **typed parameters** via structured outputs -> your code builds a **parameterized** Prisma query — the model never writes SQL
 - Optional Zod fields + enums make extraction robust to partial queries and impossible values
 - Parameterized queries treat user input as data, never code — that's why Prisma is injection-safe by construction
@@ -262,5 +267,5 @@ Generate 12 test queries in 4 groups: (1) clean single-filter queries, (2) multi
 ```ai-prompt
 title: Feynman practice — SQL vs vector retrieval
 ---
-I'm going to explain to you, as if you're a smart PM with no ML background, why our app answers "what's the refund policy?" with vector search but would answer "how many refunds did we approve in March?" with SQL. Play the PM: after my explanation, ask the naive-but-sharp follow-ups ("why can't the vector thing count?", "if SQL is cheaper why not use it for everything?", "what happens if the question is kind of both?"). Flag any jargon I didn't define (embedding, schema, aggregation). Then rate my explanation 1-10 on simplicity and accuracy, and tell me the one gap to study before my SQL agent video.
+I'm going to explain to you, as if you're a smart PM with no ML background, why our app answers "what's the refund policy?" with vector search but would answer "how many refunds did we approve in March?" with SQL. Play the PM: after my explanation, ask the naive-but-sharp follow-ups ("why can't the vector thing count?", "if SQL is cheaper why not use it for everything?", "what happens if the question is kind of both?"). Flag any jargon I didn't define (embedding, schema, aggregation). Then rate my explanation 1-10 on simplicity and accuracy, and tell me the one gap I'd most want to close before explaining this to someone.
 ```

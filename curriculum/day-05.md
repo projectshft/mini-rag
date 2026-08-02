@@ -42,31 +42,8 @@ OPENAI_API_KEY=<the class key we emailed you>
 OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1
 ```
 
-Here's how that gets wired up in `app/libs/openai/openai.ts` — one file
-configures both SDKs:
-
-```typescript
-import OpenAI from 'openai';
-import { createOpenAI } from '@ai-sdk/openai';
-
-export const openaiClient = new OpenAI({
-	apiKey: process.env.OPENAI_API_KEY,
-	baseURL: process.env.OPENAI_BASE_URL,
-});
-
-// Both SDKs have to be configured. The OpenAI SDK above would read
-// OPENAI_BASE_URL from the environment on its own — the Vercel AI SDK will
-// NOT. Its default `openai` export is hardcoded to api.openai.com, so
-// importing that directly sends your class key to OpenAI and 401s.
-export const openaiProvider = createOpenAI({
-	apiKey: process.env.OPENAI_API_KEY,
-	baseURL: process.env.OPENAI_BASE_URL,
-});
-```
-
-**The rule for the rest of the course:** use `openaiClient` for embeddings, and
-`openaiProvider('gpt-4o')` for anything that streams. Never import `openai`
-straight from `@ai-sdk/openai` — that's the one path that skips your key.
+`app/libs/openai/openai.ts` reads both of these and is already wired up — we'll
+look at exactly how further down, in "Understanding the code."
 
 <details>
 <summary>Prefer to use your own OpenAI account?</summary>
@@ -116,22 +93,25 @@ comfortably. The class key exists so you don't have to bother.
 
 ## Part 3: Environment configuration
 
-Add both API keys to your `.env` or `.env.local` file:
+Your OpenAI values are already set from the first exercise. Today you're adding
+the two Pinecone ones, so `.env` ends up with **four**:
 
 ```bash
-# OpenAI Configuration
-OPENAI_API_KEY=sk-proj-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+# OpenAI — already set, don't change these
+OPENAI_API_KEY=<the class key we emailed you>
+OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1
 
-# Pinecone Configuration
+# Pinecone — add these today
 PINECONE_API_KEY=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
 PINECONE_INDEX=rag-tutorial
 ```
 
-**Where to get these:**
+**Where to get the Pinecone ones:**
 
-- **OPENAI_API_KEY**: OpenAI Platform -> API Keys
 - **PINECONE_API_KEY**: Pinecone console -> API Keys
 - **PINECONE_INDEX**: the name you chose when creating your index (`rag-tutorial`)
+
+Pinecone is your own free account — only the OpenAI key comes from us.
 
 ## Understanding the code
 
@@ -275,7 +255,7 @@ The response contains:
 
 ## Test your setup
 
-Make sure your `.env` file has all three values:
+Make sure your `.env` file has all four values:
 
 ```bash
 OPENAI_API_KEY=sk-proj-...

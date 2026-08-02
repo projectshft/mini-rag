@@ -63,18 +63,18 @@ word-math | king − man + woman ≈ queen — try it
   },
   {
     "q": "Why does the exercise ask you to use words from the cached list?",
-    "options": ["Uncached words produce wrong answers", "Cached embeddings skip the OpenAI API call, so experiments cost nothing", "The cache contains higher-quality embeddings"],
+    "options": ["Uncached words produce wrong answers", "Cached embeddings skip the API round-trip, so those experiments return instantly", "The cache contains higher-quality embeddings"],
     "answer": 1,
-    "explain": "Any word works — uncached words just hit the OpenAI embeddings API, which costs (a little) money. The cache exists purely to keep experimentation free."
+    "explain": "Any word works, and your class key covers the usage either way. The cache just removes the network round-trip so iterating on an equation is instant — that's the only difference."
   }
 ]
 ```
 
 ## Exercise: try word math
 
-### Important: use cached words
+### Cached words (optional shortcut)
 
-To save API costs, we've pre-cached embeddings for specific words. **Use these words in your experiments** — they won't require OpenAI API calls:
+We've pre-computed embeddings for these words, so experiments using them return instantly with no API call:
 
 ```
 king, man, woman, queen, princess, empress, lady, ruler, monarch,
@@ -86,7 +86,7 @@ dating, authenticity, filters, catfish, Instagram, facade, performance, theater,
 pizza, accountant, banana, library, sunshine, broccoli
 ```
 
-If you use words outside this list, they'll still work but will call the OpenAI API (costs money).
+**Any word works.** Words outside this list just hit the embeddings API to get computed — that's covered by your class key, so use whatever makes your equation interesting. Several of the examples below deliberately go outside the list. The cache is here for speed, not to fence you in.
 
 ### Setup
 

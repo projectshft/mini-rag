@@ -95,7 +95,7 @@ Note that the user in this flow did nothing wrong. That's what makes data poison
   {
     "q": "Why do we defend at BOTH ingestion time (sanitizer) and prompt time (guardrail system prompt)?",
     "options": ["Redundancy is required for SOC 2", "Each layer is brittle alone — keyword filters miss novel encodings, prompts can be argued around; layered defenses force the attacker to beat all of them at once", "The sanitizer only works on PDFs"],
-    "answer": 2,
+    "answer": 1,
     "explain": "Defense in depth: the sanitizer strips known attack patterns before the model sees them; the guardrail prompt catches what slips through. Neither is sufficient — together they raise the bar dramatically."
   }
 ]
@@ -332,11 +332,11 @@ You'll run two agents against the same poisoned document:
 - **Naive agent** — no defenses. Watch it get owned.
 - **Guarded agent** — defended by a system prompt **and** a sanitizer that **you** write. Both start empty, so right now it's just as vulnerable as the naive agent. Your job is to harden it.
 
-The script uses the same Vercel AI SDK (`ai` + `@ai-sdk/openai`) you've used all course — no new framework to learn.
+The script uses the same Vercel AI SDK (`ai`) and your existing `openaiProvider` — no new framework to learn, and it routes through your class key like everything else.
 
 ### Step 1 — Find the script
 
-It's already in your repo at:
+It's already in your repo (on the `student-todo-exercises` branch) at:
 
 ```
 app/scripts/exercises/prompt-injection-test.ts
@@ -346,7 +346,7 @@ app/scripts/exercises/prompt-injection-test.ts
 
 ### Step 2 — Run it
 
-Nothing extra to install — your app already depends on `ai`, `@ai-sdk/openai`, `zod`, and `dotenv`. Confirm your `.env` has a valid `OPENAI_API_KEY`, then:
+Nothing extra to install — your app already depends on `ai`, `zod`, and `dotenv`. Confirm your `.env` has a valid `OPENAI_API_KEY`, then:
 
 ```bash
 yarn exercise:injection
@@ -499,9 +499,9 @@ Act as a red-teamer. Design 5 NEW poisoned-document payloads that might slip pas
 ```
 
 ```ai-prompt
-title: Rehearse my reranking assignment video
+title: Rehearse my security assignment video
 ---
-I'm about to record my 3-5 minute reranking assignment video on the two-stage retrieval pattern I built in app/agents/rag.ts: broad vector retrieval (over-fetching on topK) -> Pinecone reranker -> score threshold -> graceful "I don't know" when nothing clears it.
+I'm about to record a 3-5 minute video on prompt injection and document poisoning in a RAG system. I'll cover: the difference between direct injection and indirect (document) poisoning, why the model can't tell instructions from data, the two defenses I built (an ingestion-time sanitizer and a guardrail system prompt), and what my defenses still couldn't block.
 
-Be my rehearsal audience: a smart engineer who knows web dev but not IR. I'll give my explanation in text. Then: (1) ask me the follow-ups a viewer would ("why not just retrieve 5 directly?", "what does the reranker see that cosine similarity doesn't?", "how did you pick your threshold?", "what does this cost per query?"), (2) flag jargon I used without defining (bi-encoder, cross-encoder, topK), (3) time-check — does my explanation fit in 4 minutes? — and (4) rate simplicity and accuracy 1-10 with the one thing to fix before I hit record.
+Be my rehearsal audience: a competent engineer who's never thought about LLM security. I'll give my explanation in text. Then: (1) ask the follow-ups a skeptic would ("if you sanitize on ingestion why do you also need the prompt?", "couldn't an attacker just phrase it differently?", "how do you know your defense works and didn't just get lucky?"), (2) flag any jargon I used without defining it, (3) push me hard on the "what I couldn't block" section — if I claim my defense is airtight, don't let me get away with it, and (4) rate simplicity and honesty 1-10 with the one thing to fix before I record.
 ```
