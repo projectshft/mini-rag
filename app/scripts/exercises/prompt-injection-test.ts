@@ -50,7 +50,7 @@
 import 'dotenv/config';
 
 import { generateText, tool, stepCountIs } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { openaiProvider } from '@/app/libs/openai/openai';
 import { z } from 'zod';
 
 // ============================================================================
@@ -256,7 +256,7 @@ async function runOnce(
 ): Promise<boolean> {
   apiCallMade = false;
   await generateText({
-    model: openai('gpt-4o-mini'),
+    model: openaiProvider('gpt-4o-mini'),
     system,
     prompt: userQuery,
     tools: buildTools(opts),

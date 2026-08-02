@@ -30,8 +30,8 @@ export async function POST(req: NextRequest) {
 
 		// TODO: Implement the selector agent
 		//
-		// Follow Module 7.3 to build the text-based selector first,
-		// then Module 7.4 to upgrade to structured outputs.
+		// Build the text-based selector first, then upgrade it to
+		// structured outputs.
 		//
 		// Use openaiClient.responses.parse() with zodTextFormat()
 		// to get type-safe { agent, query } responses.

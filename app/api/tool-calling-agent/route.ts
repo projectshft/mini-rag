@@ -8,18 +8,15 @@
  * - AI-driven decision making (toolChoice: 'auto')
  * - When to use tool-calling vs fixed workflows
  *
- * See curriculum/10.5-tool-calling-exploration/1-exploring-tool-calling.md
- *
  * Note: This is exploratory - we won't use this in production, but understanding
  * the pattern is valuable for future projects.
  */
 
 import { NextRequest } from 'next/server';
 import { streamText, tool } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { openaiClient, openaiProvider } from '@/app/libs/openai/openai';
 import { z } from 'zod';
 import { pineconeClient } from '@/app/libs/pinecone';
-import { openaiClient } from '@/app/libs/openai/openai';
 
 // ============================================================================
 // TODO 1: Define the search_documentation Tool
@@ -107,7 +104,7 @@ export async function POST(request: NextRequest) {
 		// TODO: Implement streamText with tools
 		//
 		// Required configuration:
-		// - model: openai('gpt-4o')
+		// - model: openaiProvider('gpt-4o')
 		// - tools: { search_documentation: searchDocumentationTool }
 		// - toolChoice: 'auto' (let AI decide)
 		// - maxSteps: 5 (prevent infinite loops)

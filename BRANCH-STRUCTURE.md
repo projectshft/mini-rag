@@ -240,11 +240,16 @@ git push origin solution
 
 ## Current Branch: student-todo-exercises ✅
 
-You are currently on the student branch with exercises to complete. Follow the curriculum at `15-applied-ai/` to get started!
+You are currently on the student branch with exercises to complete.
+
+The curriculum lives on the course site under `/learn` — not in this repo. Each
+lesson tells you which file to open and which TODO to work on. This branch is
+just the code.
 
 **Next steps:**
-1. Complete [Pre-Course Homework](./15-applied-ai/week-0-setup/PRE-COURSE-HOMEWORK.md)
-2. Set up your environment: [Week 0 Setup](./15-applied-ai/week-0-setup/README.md)
-3. Start with Module 1: [Introduction to RAG](./15-applied-ai/1-intro-to-rag/)
+1. Sign in to the course site and open `/learn`
+2. Work through the lessons in order — start at the top
+3. Copy `.env.example` to `.env` and fill in your keys before the first lesson
+   that hits an API
 
 **Happy coding! 🚀**

@@ -1,68 +1,104 @@
 import { AgentRequest, AgentResponse } from './types';
 import { pineconeClient } from '@/app/libs/pinecone';
-import { openaiClient } from '@/app/libs/openai/openai';
-import { openai } from '@ai-sdk/openai';
+import { openaiClient, openaiProvider } from '@/app/libs/openai/openai';
 import { streamText } from 'ai';
 
 export async function ragAgent(request: AgentRequest): Promise<AgentResponse> {
+	// You'll come back to this file several times. Do the phases in order —
+	// each builds on the last, and Phase 1 has to work before the rest make
+	// any sense. Each lesson tells you which phase you're on.
+	//
+	// What you get in `request` (see ./types.ts):
+	//   request.query          -> refined/summarized query from the selector
+	//   request.originalQuery  -> what the user actually typed
+	//   request.messages       -> conversation history
+	//
 	// ============================================================================
-	// PHASE 1: Basic RAG Pipeline (Module 9.1, Assignment 2)
+	// PHASE 1: Basic RAG pipeline
 	// ============================================================================
 	//
 	// TODO: Implement the 5-step RAG pipeline:
 	//
-	// Step 1: Generate embedding for the query
-	//   - Use openaiClient.embeddings.create() with model 'text-embedding-3-small'
-	//   - Pass request.message as the input
-	//   - Extract the embedding vector from response.data[0].embedding
+	// Step 1: Generate an embedding for the query
+	//   - openaiClient.embeddings.create() with model 'text-embedding-3-small'
+	//   - Pass request.query as the input
+	//   - The vector is at response.data[0].embedding
 	//
 	// Step 2: Query Pinecone for similar documents
-	//   - Get the index using pineconeClient.index('your-index-name')
-	//   - Use index.query() with the embedding vector
-	//   - Set topK to retrieve the top 5 most similar documents
-	//   - Set includeMetadata to true to get the document text
+	//   - const index = pineconeClient.Index(process.env.PINECONE_INDEX as string)
+	//   - index.query() with the embedding as `vector`
+	//   - topK: 5 to start
+	//   - includeMetadata: true — without this you get IDs and scores but no text
 	//
-	// Step 3: Extract text from results
-	//   - Map over the matches array from the Pinecone response
-	//   - Extract the 'text' field from each match's metadata
-	//   - Join the texts to create your context string
+	// Step 3: Extract text from the results
+	//   - Map over queryResponse.matches
+	//   - Pull match.metadata?.text (older docs may use .content)
+	//   - Join them into one context string
 	//
-	// Step 4: Build system prompt with context
-	//   - Create a system prompt that includes the retrieved context
-	//   - Instruct the model to answer based on the provided context
-	//   - Handle the case where no relevant documents are found
+	// Step 4: Build a system prompt containing that context
+	//   - Include both request.originalQuery and request.query so the model
+	//     can see what was asked and what was searched for
+	//   - Instruct it to answer ONLY from the provided context
+	//   - Say what to do when the context is empty (don't let it improvise)
 	//
 	// Step 5: Stream the response
-	//   - Use streamText() from the 'ai' SDK
-	//   - Pass the openai model, system prompt, and user message
-	//   - Return the streaming response in the correct format
+	//   - streamText() from the 'ai' SDK, with openaiProvider('gpt-4o')
+	//   - Pass your system prompt and request.messages
+	//   - Return the result directly — no await
 	//
 	// ============================================================================
-	// PHASE 2: Add Reranking (Module 9.2, Assignment 3)
+	// PHASE 2: Add reranking
 	// ============================================================================
 	//
-	// TODO: After completing Phase 1, enhance retrieval with reranking:
+	// TODO: Once Phase 1 works, improve retrieval quality with a reranker.
 	//
-	// Step 1: Increase initial retrieval
-	//   - Change topK from 5 to 20 to get more candidate documents
+	// Step 1: Over-fetch
+	//   - Raise topK (10 is a good start — try higher and see what changes).
+	//     A reranker can reorder candidates but can't invent them, so the
+	//     good chunk has to be in the pool for it to get promoted.
 	//
-	// Step 2: Implement reranking
-	//   - Use a cross-encoder model to score query-document relevance
-	//   - Consider using Cohere's rerank API or a local cross-encoder
-	//   - Score each retrieved document against the original query
+	// Step 2: Rerank with Pinecone's inference API
+	//     const reranked = await pineconeClient.inference.rerank(
+	//       'bge-reranker-v2-m3',
+	//       request.query,
+	//       documents,                            // array of strings
+	//       { topN: 5, returnDocuments: true },   // returnDocuments -> get text back
+	//     );
 	//
-	// Step 3: Select top results after reranking
-	//   - Sort documents by reranking score (highest first)
-	//   - Take the top 5 reranked documents as your final context
+	// Step 3: Build your context from reranked.data instead of
+	//   queryResponse.matches — result.document?.text. Everything downstream
+	//   (system prompt, streamText) stays the same.
 	//
-	// Step 4: Use reranked context
-	//   - Build your system prompt using only the top reranked documents
-	//   - The rest of the pipeline remains the same
+	// Why it works: embedding similarity compares query and document
+	// separately (fast, approximate). A cross-encoder reads both together
+	// (slow, accurate). Retrieve many -> rerank few = both.
 	//
-	// Why reranking helps:
-	//   - Embedding similarity is fast but approximate
-	//   - Cross-encoders are slower but more accurate
-	//   - Retrieve many (fast) -> Rerank few (accurate) = best of both worlds
+	// ============================================================================
+	// PHASE 3: Query preprocessing
+	// ============================================================================
+	//
+	// TODO: Clean the query before you embed it.
+	//
+	//   - Write a pure preprocessQuery(raw: string): string
+	//   - Expand abbreviations (js -> JavaScript, ts -> TypeScript, db -> database)
+	//   - Strip filler words (um, uh, like, basically, actually)
+	//   - Then: const query = preprocessQuery(request.query) — and embed `query`
+	//
+	// Keeping it pure means you can unit-test it without touching the network.
+	//
+	// ============================================================================
+	// PHASE 4: Score threshold + graceful "I don't know"
+	// ============================================================================
+	//
+	// TODO: Stop the agent from answering out of junk context.
+	//
+	//   - After reranking, drop results scoring below a minimum you pick
+	//   - If NOTHING clears the threshold, return a response that says so
+	//     instead of generating from weak context
+	//   - Log the scores while you tune — you need real numbers to defend
+	//     your threshold in the assignment video
+	//
+	// A confident wrong answer is worse than "I don't have enough information."
 	//
 	// ============================================================================
 

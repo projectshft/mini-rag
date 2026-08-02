@@ -33,10 +33,28 @@
  */
 
 import OpenAI from 'openai';
+import { createOpenAI } from '@ai-sdk/openai';
 import { wrapOpenAI } from 'langsmith/wrappers';
+
+// If we minted you a class API key, OPENAI_BASE_URL points at the class proxy
+// and OPENAI_API_KEY is that key. Using your own OpenAI account instead? Leave
+// OPENAI_BASE_URL unset and both clients talk to OpenAI directly.
+//
+// Both SDKs get configured here on purpose. The `openai` SDK below would pick
+// up OPENAI_BASE_URL from the environment by itself, but `@ai-sdk/openai` will
+// NOT — its default `openai` export is hardcoded to api.openai.com. If you
+// import `{ openai }` from '@ai-sdk/openai' directly in an agent, your class
+// key gets sent to OpenAI and you'll get a 401. Import `openaiProvider` here.
 
 const baseClient = new OpenAI({
 	apiKey: process.env.OPENAI_API_KEY as string,
+	baseURL: process.env.OPENAI_BASE_URL,
 });
 
 export const openaiClient = wrapOpenAI(baseClient);
+
+/** Use this for streamText()/generateObject() — NOT `openai` from '@ai-sdk/openai'. */
+export const openaiProvider = createOpenAI({
+	apiKey: process.env.OPENAI_API_KEY as string,
+	baseURL: process.env.OPENAI_BASE_URL,
+});
