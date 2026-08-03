@@ -253,27 +253,29 @@ Notice what carries over from tool-calling: an MCP tool is still a **name + desc
 
 ## Part 3: Build it — "Ask My Docs" MCP server
 
-You've seen what MCP is. Now build a small, real one — a single-tool server that lets **any** MCP client (Claude Code, Cursor, the Inspector) search the knowledge base you already loaded into Pinecone, straight from your editor.
+You've seen what MCP is. Now build a real one — a server that lets **any** MCP client (Claude Desktop, Claude Code, Cursor, the Inspector) search the knowledge base you already loaded into Pinecone.
 
-Timebox: ~1 hour. One file, one tool.
-
-**Goal:** Expose your Pinecone index as one MCP tool, `search_docs`, and query it from a real client.
+Timebox: ~1 hour. One file, two tools — one you fill in from a skeleton, one you design yourself.
 
 ```
-You (in Claude Code): "search my docs for chunking strategies"
+You (in Claude Desktop): "search my docs for chunking strategies"
         │
         ▼
   search_docs tool  ──►  embed query  ──►  Pinecone  ──►  top matches back to the chat
 ```
 
-That's the whole project. No UI, no API route, no auth. One tool that does retrieval.
+No UI, no API route, no auth. Tools that do retrieval, callable from a chat window that has never seen your data.
 
-**Do it in three phases, in this order:**
+**Four phases, in this order:**
 
-1. **Build** the server locally — one file, one tool.
+1. **Fill in** the skeleton below — the wiring is given, you write the
+   description, the schema, and the handler.
 2. **Inspect** it in isolation, with no chat client involved. Prove the tool
    exists and returns real data before anything else touches it.
-3. **Expose** it to Claude Code and watch a model actually call it.
+3. **Connect it to Claude Desktop** and watch a model actually call it. This is
+   the payoff — not required to pass, but skip it and MCP stays abstract.
+4. **Add a second tool of your own design.** This is the phase you actually
+   learn from. Everything before it is typing.
 
 Phase 2 is the one people skip, and skipping it is why MCP feels like
 witchcraft. If you wire a broken server straight into a chat client, the only
@@ -281,7 +283,7 @@ symptom you get is a model that vaguely declines to use your tool — no stack
 trace, no error, nothing to grep. Debug it standalone first and the whole thing
 stops being mysterious.
 
-### Phase 1 — Build the server
+### Phase 1 — Fill in the skeleton
 
 #### Install
 
@@ -289,29 +291,72 @@ stops being mysterious.
 yarn add @modelcontextprotocol/sdk zod
 ```
 
-#### Write the server
+#### Start from this file
 
-Create `app/mcp/server.ts`. It's short because it doesn't re-implement retrieval — it imports the `searchDocuments` you already wrote in `app/libs/pinecone.ts`. The MCP server is a thin protocol wrapper around code you have.
+Create `app/mcp/server.ts` and paste this in. The protocol wiring is done — the
+imports, the `McpServer`, the transport. **Your job is the four TODOs**, which
+are the only parts of an MCP tool that are ever really yours: what the tool is
+called, what you tell the model about it, what arguments it takes, and what it
+does.
 
-Before you look at the code below, try sketching it yourself: you already know how to embed a query and search Pinecone (you've done it since Week 2), and you just saw that a tool is a name + description + Zod schema + execute function. The only new pieces are `McpServer` and the stdio transport.
-
-<details>
-<summary>Hint — the skeleton</summary>
+Note what's *not* here: any retrieval code. You already wrote `searchDocuments`
+in `app/libs/pinecone.ts` already. An MCP server is a thin protocol
+wrapper around functions you already have — if you find yourself re-embedding
+queries in this file, stop and import instead.
 
 ```typescript
-const server = new McpServer({ name: 'ai-research-assistant', version: '1.0.0' });
+// app/mcp/server.ts
+import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
+import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
+import { searchDocuments } from '../libs/pinecone';
+import z from 'zod';
+
+const server = new McpServer({
+	name: 'ai-research-assistant',
+	version: '1.0.0',
+	description: 'AI Research Assistant',
+});
 
 server.registerTool(
+	// TODO 1: name the tool. snake_case, verb_noun, obvious from the outside.
+	//         The model sees this before it sees anything else.
 	'search_docs',
 	{
-		description: '<description the client model will read>',
-		inputSchema: { /* Zod fields (not wrapped in z.object) */ },
-		outputSchema: { /* Zod fields describing what you return */ },
+		// TODO 2: write the description the client model reads to decide
+		//         whether to call this. Say what's IN the index, not just
+		//         "searches the database" — the model can't guess your data.
+		description: '',
+
+		// TODO 3: the arguments. Zod fields, NOT wrapped in z.object().
+		//         .describe() every field — that text ships to the model too.
+		inputSchema: {
+			query: z.string().describe(''),
+		},
+
+		// TODO 4: the shape you promise to return. The SDK validates your
+		//         structuredContent against this, so it has to match exactly.
+		outputSchema: {
+			results: z.array(
+				z.object({
+					title: z.string(),
+					content: z.string(),
+				}),
+			),
+		},
 	},
-	async (args) => {
-		const structuredContent = { /* must match outputSchema */ };
+	async ({ query }) => {
+		// TODO 5: call searchDocuments(query, 5), then map the Pinecone
+		//         matches into the shape you declared above. Metadata fields
+		//         can be undefined — coerce them.
+		const structuredContent = { results: [] };
+
 		return {
-			content: [{ type: 'text', text: JSON.stringify(structuredContent, null, 2) }],
+			content: [
+				{
+					type: 'text' as const,
+					text: JSON.stringify(structuredContent, null, 2),
+				},
+			],
 			structuredContent,
 		};
 	},
@@ -320,7 +365,10 @@ server.registerTool(
 server.connect(new StdioServerTransport());
 ```
 
-</details>
+Write TODO 2 last, after the tool works. It's tempting to dash off "searches the
+vector database" and move on — but that description is the entire user interface
+your tool has. The model reads it and nothing else when deciding whether this
+tool is relevant. Vague description, unused tool.
 
 <details>
 <summary>Solution — the full server</summary>
@@ -441,7 +489,7 @@ What you're looking at:
 | Tab | What it's for |
 |-----|---------------|
 | **Tools** | your `search_docs` should be listed here. Click it, fill in the argument, run it |
-| **Resources** | empty for now — you'll use this in the Going Further lesson |
+| **Resources** | empty — this server only exposes tools |
 | **Prompts** | also empty for now |
 | **Notifications** | your server's stderr output and protocol events — this is where errors show up |
 
@@ -575,6 +623,56 @@ Then ask for something that forces a tool call:
 You should see the tool call happen, then an answer grounded in your own
 documents — in a chat window that has never seen your Pinecone index.
 
+### Phase 4 — Now build a tool nobody handed you
+
+Copying a working `search_docs` teaches you the SDK's function signatures. It
+does not teach you MCP. What teaches you MCP is deciding, on your own, what a
+tool should expose and how to describe it to a model you don't control.
+
+So add a **second** tool to the same file. Three candidates, in rough order of
+difficulty:
+
+| Tool | What it does | The interesting part |
+|------|--------------|----------------------|
+| `list_sources` | Return the distinct documents/urls in your index | Takes no arguments at all — what does `inputSchema: {}` do to the model's willingness to call it? |
+| `get_document` | Fetch one full document by title or id | The model has to get the id from a *prior* `search_docs` call. Does your description tell it that? |
+| `search_by_source` | Search, but restricted to one source | A second argument the model must infer from context, plus a Pinecone metadata filter |
+
+Whichever you pick, the work is the same four decisions from Phase 1 — name,
+description, `inputSchema`, `outputSchema` — plus a handler. That repetition is
+the point: after the second one, the shape of an MCP tool is yours.
+
+**Then test it the hard way.** Don't ask Claude to "use get_document." Ask a
+question that *requires* it, and see whether your description was good enough to
+get the tool picked without you naming it:
+
+> _"What does my index say about chunking — and show me the full document it came from, not just the snippet."_
+
+If the model searches but never fetches the document, your description is the
+bug, not your code. Rewrite it to say when the tool applies, not just what it
+does, and try again. Watching a model ignore a tool you wrote, then reach for it
+after a one-line description change, is the fastest way to internalize what that
+field is for.
+
+<details>
+<summary>Stuck on the handler for `list_sources`?</summary>
+
+Pinecone has no "list distinct metadata values" call. The cheap approach: query
+with a dummy vector and a high `topK`, then dedupe the metadata field in JS.
+
+```typescript
+const matches = await searchDocuments('overview', 100);
+const sources = [...new Set(matches.map((m) => String(m.metadata?.title ?? '')))]
+	.filter(Boolean)
+	.sort();
+```
+
+It's approximate — you only see sources among the top 100 matches. Say so in the
+tool description. A tool that quietly returns partial data is worse than one that
+admits it.
+
+</details>
+
 ### When it doesn't work
 
 Six things account for almost every failure:
@@ -597,13 +695,14 @@ Six things account for almost every failure:
 
 ### Done when
 
-- [ ] The Inspector lists `search_docs`, returns real matches, *and* shows you a
-      readable error when you call it wrong.
-- [ ] Your client shows the server connected — `claude mcp list` in Claude Code,
-      or the tools icon in Claude Desktop after a full quit and relaunch.
+- [ ] All five TODOs are filled in and the Inspector lists `search_docs`,
+      returns real matches, *and* shows you a readable error when you call it
+      wrong.
+- [ ] Your client shows the server connected — the tools icon in Claude Desktop
+      after a full quit and relaunch, or `claude mcp list` in Claude Code.
 - [ ] That client calls the tool and answers from your docs.
-
-**Want to take this to production?** The *MCP in Production* lesson in Week 7 (Going Further) picks up where this leaves off: more than one tool, resources and prompts, and the authorization + PII handling you can't skip once your server exposes data that actually matters. Encouraged once you've got this single-tool server working.
+- [ ] **A second tool you designed yourself** shows up in the same client, and a
+      model calls it without you naming it in the prompt.
 
 ## Key takeaways
 
