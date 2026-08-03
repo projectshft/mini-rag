@@ -466,8 +466,14 @@ protocol directly to your server. No model, no chat, no guessing — you call th
 tool yourself and see exactly what comes back.
 
 ```bash
-npx @modelcontextprotocol/inspector npx tsx app/mcp/server.ts
+npx @modelcontextprotocol/inspector ./node_modules/.bin/ts-node --project tsconfig.json app/mcp/server.ts
 ```
+
+Use the `ts-node` that's already in this project rather than `npx tsx`. Tutorials
+reach for `tsx` constantly, but it isn't a dependency here — so `npx` has to
+fetch it, and when that fetch fails the Inspector reports `Command not found,
+transports removed` and disconnects. That error is about the *runner*, not your
+server.
 
 It opens a browser automatically. If the left panel comes up blank, you can fill
 it in by hand — that's all the command above does for you:
@@ -592,7 +598,9 @@ claude mcp add rag-server \
   --env OPENAI_BASE_URL=https://parsity-litellm.fly.dev/v1 \
   --env PINECONE_API_KEY=... \
   --env PINECONE_INDEX=rag-tutorial \
-  -- npx tsx /absolute/path/to/your-project/app/mcp/server.ts
+  -- /absolute/path/to/your-project/node_modules/.bin/ts-node \
+     --project /absolute/path/to/your-project/tsconfig.json \
+     /absolute/path/to/your-project/app/mcp/server.ts
 ```
 
 Everything after `--` is the command that launches your server. Everything
@@ -675,7 +683,7 @@ admits it.
 
 ### When it doesn't work
 
-Six things account for almost every failure:
+Seven things account for almost every failure:
 
 1. **You logged to stdout.** `console.log` corrupts the JSON-RPC stream and
    kills the session. One stray log is enough. Use `console.error`.
@@ -690,7 +698,11 @@ Six things account for almost every failure:
 5. **Your `structuredContent` doesn't match your `outputSchema`.** The SDK
    validates it and the call fails. The Inspector shows you the validation
    error; a chat client just shrugs.
-6. **It timed out on first run** while `npx` downloaded packages. Retry, or
+6. **`Command not found, transports removed`.** The client couldn't launch your
+   *runner*, never mind your server. You asked for `npx tsx` when this project
+   only has `ts-node` — use `./node_modules/.bin/ts-node --project
+   tsconfig.json`, or the absolute path to it in a client config.
+7. **It timed out on first run** while `npx` downloaded packages. Retry, or
    start with `MCP_TIMEOUT=60000 claude`.
 
 ### Done when
