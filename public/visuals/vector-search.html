@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>How vector search works · RAG &amp; AI Agents</title>
+<style>
+  :root {
+    --ink: #1b2330;
+    --muted: #5b6675;
+    --line: #e3e7ec;
+    --bg: #ffffff;
+    --panel: #f6f8fa;
+    --accent: #2563eb;      /* query */
+    --doc: #94a3b8;         /* documents */
+    --win: #15803d;         /* top match */
+    --code-bg: #f4f6f8;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink); background: var(--bg); margin: 0; padding: 2rem;
+    line-height: 1.5;
+  }
+  h1 { font-size: 1.7rem; margin: 0 0 .3rem; }
+  .lead { color: var(--muted); font-size: 1.15rem; margin: 0 0 1.4rem; max-width: 60rem; }
+  .wrap { display: flex; gap: 1.6rem; flex-wrap: wrap; align-items: flex-start; }
+  .stage { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); padding: 10px; touch-action: none; }
+  svg { display: block; }
+  .panel { flex: 1 1 320px; min-width: 300px; }
+  .presets { display: flex; flex-wrap: wrap; gap: .5rem; margin: 0 0 1rem; }
+  button {
+    font: inherit; font-size: .95rem; cursor: pointer;
+    border: 1px solid var(--line); background: #fff; color: var(--ink);
+    padding: .45rem .8rem; border-radius: 999px;
+  }
+  button:hover { border-color: var(--accent); color: var(--accent); }
+  .row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: .5rem .8rem;
+         padding: .55rem 0; border-bottom: 1px solid var(--line); }
+  .row:last-child { border-bottom: 0; }
+  .name { font-size: 1.02rem; }
+  .name .rank { color: var(--muted); font-variant-numeric: tabular-nums; margin-right: .4rem; }
+  .score { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .95rem; }
+  .bar { grid-column: 1 / -1; height: 7px; border-radius: 999px; background: #e9edf2; overflow: hidden; }
+  .bar > i { display: block; height: 100%; background: var(--doc); }
+  .row.win .name { color: var(--win); font-weight: 600; }
+  .row.win .bar > i { background: var(--win); }
+  .note { background: var(--code-bg); border: 1px solid var(--line); border-radius: 10px;
+          padding: .8rem 1rem; color: var(--muted); font-size: .98rem; margin-top: 1.2rem; }
+  .note b { color: var(--ink); }
+  code { font-family: ui-monospace, "SF Mono", Menlo, monospace; background: var(--code-bg);
+         padding: .1em .35em; border-radius: 4px; font-size: .9em; }
+  .readout { font-variant-numeric: tabular-nums; }
+  .hint { color: var(--accent); font-size: .95rem; margin: .2rem 0 1rem; }
+</style>
+</head>
+<body>
+  <h1>How vector search works</h1>
+  <p class="lead">
+    Every document in your knowledge base becomes a <b>point in meaning-space</b> (an embedding). A search query becomes a point too.
+    “Most similar” = <b>smallest angle</b> between the arrows — that’s <b>cosine similarity</b>.
+    Real embeddings live in 1536 dimensions; we can’t draw that, so here it’s 2-D. <b>The math is identical.</b>
+  </p>
+
+  <div class="wrap">
+    <div class="stage">
+      <svg id="svg" width="520" height="520" viewBox="0 0 520 520" aria-label="vector space">
+        <defs>
+          <marker id="head-doc" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto">
+            <path d="M0,0 L7,3 L0,6 Z" fill="var(--doc)"/>
+          </marker>
+          <marker id="head-q" markerWidth="10" markerHeight="10" refX="7" refY="3.2" orient="auto">
+            <path d="M0,0 L7,3.2 L0,6.4 Z" fill="var(--accent)"/>
+          </marker>
+        </defs>
+        <g id="grid"></g>
+        <g id="arcs"></g>
+        <g id="docs"></g>
+        <line id="qline" stroke="var(--accent)" stroke-width="3" marker-end="url(#head-q)"/>
+        <circle id="qhandle" r="9" fill="var(--accent)" stroke="#fff" stroke-width="2" cursor="grab"/>
+        <text id="qlabel" font-size="13" font-weight="600" fill="var(--accent)">query</text>
+      </svg>
+    </div>
+
+    <div class="panel">
+      <div class="presets" id="presets"></div>
+      <div id="results"></div>
+
+      <div class="note">
+        <b>Drag the blue dot.</b> The ranking re-sorts by cosine similarity in real time.
+      </div>
+      <div class="note">
+        <b>Length doesn’t matter.</b> Drag the query far out then close in — the scores don’t change,
+        only the <i>angle</i> does. Cosine divides out magnitude on purpose (a 3-word doc and a
+        3-paragraph doc about the same thing should still match).
+        <div class="readout" style="margin-top:.5rem">query length ‖q‖ = <b id="qmag">–</b> · top match: <b id="qtop">–</b></div>
+      </div>
+      <div class="note">
+        In the real pipeline: OpenAI <code>text-embedding-3-small</code> turns each document into a
+        1536-D vector → Pinecone stores them → a query is embedded the same way → Pinecone returns
+        the nearest by cosine. Same picture, more dimensions.
+      </div>
+    </div>
+  </div>
+
+<script>
+(() => {
+  const SVG = document.getElementById('svg');
+  const NS = 'http://www.w3.org/2000/svg';
+  const W = 520, cx = W/2, cy = W/2, R = 210;   // R = full-length arrow radius
+
+  // Each "document" is a fixed direction in meaning-space (unit vector at an angle).
+  // Clusters are intentional: the two deploy docs sit close together.
+  const DOCS = [
+    { label: 'Deploys failing on staging',  deg: 74 },
+    { label: 'Runbook: deploy rollback',    deg: 61 },
+    { label: 'Expense policy: travel',      deg: 205 },
+    { label: 'Rotating leaked API keys',    deg: 318 },
+    { label: 'New-hire onboarding guide',   deg: 150 },
+  ].map(d => ({ ...d, ux: Math.cos(d.deg*Math.PI/180), uy: Math.sin(d.deg*Math.PI/180) }));
+
+  const PRESETS = [
+    { text: '“staging deploys keep breaking”', deg: 70,  len: .9 },
+    { text: '“how do I expense a flight?”',    deg: 200, len: .8 },
+    { text: '“I leaked an API key”',           deg: 322, len: .85 },
+    { text: '“first-day laptop setup”',        deg: 146, len: .75 },
+  ];
+
+  // math-space (unit circle, +y up) -> screen coords (+y down)
+  const sx = mx => cx + mx*R;
+  const sy = my => cy - my*R;
+
+  // ---- static grid ----
+  const grid = document.getElementById('grid');
+  const mk = (tag, attrs) => { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); return e; };
+  [0.5,1].forEach(r => grid.appendChild(mk('circle',{cx,cy,r:r*R,fill:'none',stroke:'var(--line)','stroke-dasharray': r<1?'3 5':'0'})));
+  grid.appendChild(mk('line',{x1:cx-R-14,y1:cy,x2:cx+R+14,y2:cy,stroke:'var(--line)'}));
+  grid.appendChild(mk('line',{x1:cx,y1:cy-R-14,x2:cx,y2:cy+R+14,stroke:'var(--line)'}));
+
+  // ---- document arrows (static) ----
+  const docsG = document.getElementById('docs');
+  DOCS.forEach((d,i) => {
+    const x = sx(d.ux), y = sy(d.uy);
+    d.line = mk('line',{x1:cx,y1:cy,x2:x,y2:y,stroke:'var(--doc)','stroke-width':2.5,'marker-end':'url(#head-doc)'});
+    docsG.appendChild(d.line);
+    // label placed just past the arrow tip, nudged to stay on-canvas
+    const lx = cx + d.ux*(R+16), ly = cy - d.uy*(R+16);
+    d.tag = mk('text',{x:lx,y:ly,'font-size':12,fill:'var(--muted)',
+      'text-anchor': d.ux> .25?'start': d.ux<-.25?'end':'middle',
+      'dominant-baseline': d.uy>0?'auto':'hanging'});
+    d.tag.textContent = shortLabel(d.label);
+    docsG.appendChild(d.tag);
+  });
+  function shortLabel(s){ return s.length>26 ? s.replace(/\s*\(.*?\)/,'').slice(0,26)+'…' : s; }
+
+  const qline = document.getElementById('qline');
+  const qhandle = document.getElementById('qhandle');
+  const qlabel = document.getElementById('qlabel');
+  const arcs = document.getElementById('arcs');
+  const results = document.getElementById('results');
+
+  let q = { x: Math.cos(70*Math.PI/180)*0.9, y: Math.sin(70*Math.PI/180)*0.9 };
+
+  function cosine(ax,ay,bx,by){
+    const dot = ax*bx + ay*by;
+    const ma = Math.hypot(ax,ay), mb = Math.hypot(bx,by);
+    return (ma===0||mb===0) ? 0 : dot/(ma*mb);
+  }
+
+  function render(){
+    const hx = sx(q.x), hy = sy(q.y);
+    qline.setAttribute('x1',cx); qline.setAttribute('y1',cy);
+    qline.setAttribute('x2',hx); qline.setAttribute('y2',hy);
+    qhandle.setAttribute('cx',hx); qhandle.setAttribute('cy',hy);
+    qlabel.setAttribute('x',hx+12); qlabel.setAttribute('y',hy - 10);
+
+    const scored = DOCS.map(d => ({ d, s: cosine(q.x,q.y,d.ux,d.uy) }))
+                       .sort((a,b) => b.s - a.s);
+    const top = scored[0];
+
+    // angle arc between query and top match
+    arcs.innerHTML = '';
+    const a0 = Math.atan2(q.y,q.x), a1 = Math.atan2(top.d.uy,top.d.ux);
+    const rr = 54;
+    const large = Math.abs(normalize(a1-a0)) > Math.PI ? 1 : 0;
+    const sweep = normalize(a1-a0) > 0 ? 0 : 1;
+    arcs.appendChild(mk('path',{
+      d:`M ${cx+Math.cos(a0)*rr} ${cy-Math.sin(a0)*rr} A ${rr} ${rr} 0 ${large} ${sweep} ${cx+Math.cos(a1)*rr} ${cy-Math.sin(a1)*rr}`,
+      fill:'none',stroke:'var(--win)','stroke-width':2}));
+
+    // highlight winning doc arrow
+    DOCS.forEach(d => d.line.setAttribute('stroke', d===top.d ? 'var(--win)' : 'var(--doc)'));
+    DOCS.forEach(d => d.line.setAttribute('marker-end', d===top.d ? 'url(#head-doc)' : 'url(#head-doc)'));
+
+    // results list
+    results.innerHTML = '';
+    scored.forEach((r,i) => {
+      const row = mk2('div','row'+(i===0?' win':''));
+      const name = mk2('div','name');
+      name.innerHTML = `<span class="rank">${i+1}.</span>${r.d.label}`;
+      const sc = mk2('div','score'); sc.textContent = r.s.toFixed(3);
+      const bar = mk2('div','bar'); const fill = document.createElement('i');
+      fill.style.width = Math.max(0, r.s*100).toFixed(1)+'%'; bar.appendChild(fill);
+      row.append(name, sc, bar); results.appendChild(row);
+    });
+
+    document.getElementById('qmag').textContent = Math.hypot(q.x,q.y).toFixed(2);
+    document.getElementById('qtop').textContent = top.d.label.replace(/\s*\(.*?\)/,'') + '  (' + top.s.toFixed(3) + ')';
+  }
+  const normalize = a => { while(a> Math.PI) a-=2*Math.PI; while(a<-Math.PI) a+=2*Math.PI; return a; };
+  const mk2 = (t,c)=>{ const e=document.createElement(t); if(c)e.className=c; return e; };
+
+  // ---- dragging ----
+  let dragging = false;
+  const toMath = evt => {
+    const pt = SVG.getBoundingClientRect();
+    const px = (evt.touches?evt.touches[0]:evt).clientX - pt.left;
+    const py = (evt.touches?evt.touches[0]:evt).clientY - pt.top;
+    return { x: (px - cx)/R, y: (cy - py)/R };
+  };
+  const start = e => { dragging = true; qhandle.style.cursor='grabbing'; e.preventDefault(); };
+  const move  = e => { if(!dragging) return; q = toMath(e); if(Math.hypot(q.x,q.y)<0.05) q={x:0.05,y:0.05}; render(); e.preventDefault(); };
+  const end   = () => { dragging=false; qhandle.style.cursor='grab'; };
+  qhandle.addEventListener('mousedown',start); qhandle.addEventListener('touchstart',start,{passive:false});
+  window.addEventListener('mousemove',move); window.addEventListener('touchmove',move,{passive:false});
+  window.addEventListener('mouseup',end); window.addEventListener('touchend',end);
+  // clicking anywhere on the plane also moves the query — nice for demos
+  SVG.addEventListener('mousedown', e => { if(e.target!==qhandle){ q=toMath(e); render(); dragging=true; qhandle.style.cursor='grabbing'; }});
+
+  // ---- presets ----
+  const pbar = document.getElementById('presets');
+  PRESETS.forEach(p => {
+    const b = document.createElement('button'); b.textContent = p.text;
+    b.onclick = () => { q = { x: Math.cos(p.deg*Math.PI/180)*p.len, y: Math.sin(p.deg*Math.PI/180)*p.len }; render(); };
+    pbar.appendChild(b);
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>

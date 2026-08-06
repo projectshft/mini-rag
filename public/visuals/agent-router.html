@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>The selector agent · RAG &amp; AI Agents</title>
+<style>
+  :root{--ink:#1b2330;--muted:#5b6675;--line:#e3e7ec;--bg:#fff;--panel:#f6f8fa;
+        --accent:#2563eb;--answer:#b45309;--answer-bg:#fef3e2;--good:#15803d;--warn:#b91c1c;
+        --code-bg:#f4f6f8;}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);margin:0;padding:2rem;line-height:1.5;background:var(--bg)}
+  h1{font-size:1.7rem;margin:0 0 .3rem}
+  .lead{color:var(--muted);font-size:1.1rem;max-width:66rem;margin:0 0 1.1rem}
+  .callout{max-width:66rem;background:#eef4ff;border:1px solid #cfe0ff;border-radius:10px;padding:.7rem 1rem;font-size:.98rem;margin:0 0 1.3rem}
+  .callout b{color:var(--ink)}
+  .controls{display:flex;flex-direction:column;gap:.7rem;margin:0 0 1.2rem;padding:1rem 1.2rem;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+  .row .lbl{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);min-width:7.5rem}
+  .modes{display:flex;gap:.4rem;flex-wrap:wrap}
+  .modes button{font:inherit;font-size:.9rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:.4rem .8rem;border-radius:999px;text-align:left}
+  .modes button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .modes.out button.on{background:var(--ink)}
+  .msg{font-size:1.08rem;border:1px solid var(--line);background:#fff;border-radius:10px;padding:.8rem 1rem;max-width:66rem}
+  .msg .sig{background:#e5edff;border-bottom:2px solid var(--accent);border-radius:3px;padding:0 .1em}
+  .stage{display:flex;gap:1rem;flex-wrap:wrap;align-items:stretch;margin-bottom:1.2rem}
+  .agents{display:flex;flex-direction:column;gap:.6rem;flex:1 1 240px;min-width:220px}
+  .agent{border:1.5px solid var(--line);border-radius:12px;background:#fff;padding:.7rem .9rem;transition:all .2s;opacity:.65}
+  .agent.pick{border-color:var(--good);background:#e7f6ec;opacity:1;box-shadow:0 2px 10px rgba(21,128,61,.12)}
+  .agent h3{margin:0 0 .15rem;font-size:.98rem;display:flex;align-items:center;gap:.45rem}
+  .agent p{margin:0;font-size:.85rem;color:var(--muted)}
+  .agent .badge{font-size:.7rem;font-weight:700;border-radius:999px;padding:.1em .55em;background:#e9edf2;color:var(--muted)}
+  .agent .badge:empty{display:none}
+  .agent.pick .badge{background:#d6efdd;color:var(--good)}
+  .brain{flex:1.4 1 340px;min-width:300px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:1rem 1.1rem}
+  .brain h2{font-size:.8rem;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--muted);margin:0 0 .6rem}
+  .sigrow{display:flex;align-items:center;gap:.6rem;margin-bottom:.45rem;font-size:.9rem}
+  .sigrow .txt{flex:1}
+  .sigrow .to{font-size:.75rem;font-weight:700;color:var(--muted);min-width:4.6rem;text-align:right}
+  .sigbar{height:6px;border-radius:999px;background:#e9edf2;overflow:hidden;flex:0 0 90px}
+  .sigbar>i{display:block;height:100%;background:var(--accent);border-radius:999px}
+  .out{margin-top: .9rem;border-top:1px dashed var(--line);padding-top:.9rem}
+  .out h2{margin-bottom:.4rem}
+  pre.raw{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.86rem;background:var(--code-bg);border:1px solid var(--line);border-radius:8px;padding:.7rem .9rem;margin:0;white-space:pre-wrap}
+  pre.raw .bad{color:var(--warn);font-weight:700}
+  pre.raw .key{color:var(--accent)}
+  pre.raw .str{color:var(--good)}
+  .verdict{margin-top:1rem;padding:.9rem 1.1rem;border-radius:10px;font-size:.98rem}
+  .verdict.good{background:#e7f6ec;color:var(--good)}
+  .verdict.bad{background:#fbe9e9;color:var(--warn)}
+  code{font-family:ui-monospace,"SF Mono",Menlo,monospace;background:var(--code-bg);padding:.1em .35em;border-radius:4px;font-size:.9em}
+  .foot{color:var(--muted);font-size:.84rem;margin-top:.2rem;max-width:66rem}
+</style>
+</head>
+<body>
+  <h1>The selector agent</h1>
+  <p class="lead">
+    Your app has multiple agents — one writes LinkedIn posts, one answers questions from your documents.
+    Something has to read each incoming message and decide <b>which agent gets it</b>. That something is the
+    <b>selector</b>: an LLM whose only job is routing. Pick a message and watch it decide.
+  </p>
+  <div class="callout">
+    <b>The Day 17 → Day 18 arc:</b> first you'll build the selector <b>text-based</b> — the LLM answers with a
+    bare agent name and you parse the string. It mostly works… until the model gets chatty. Then you'll upgrade to
+    <b>structured outputs</b> (JSON + a zod schema) and the parsing problem disappears. Toggle the output mode
+    below to see both.
+  </div>
+
+  <div class="controls">
+    <div class="row"><span class="lbl">Message</span><div class="modes" id="presets"></div></div>
+    <div class="row"><span class="lbl">Output mode</span>
+      <div class="modes out" id="outmodes">
+        <button id="mText" class="on">Text-based (Day 17)</button>
+        <button id="mJson">Structured output (Day 18)</button>
+      </div>
+    </div>
+  </div>
+
+  <p class="msg" id="msg"></p>
+
+  <div class="stage">
+    <div class="brain">
+      <h2>What the selector weighs</h2>
+      <div id="signals"></div>
+      <div class="out">
+        <h2 id="outTitle">Raw LLM output</h2>
+        <pre class="raw" id="raw"></pre>
+      </div>
+    </div>
+    <div class="agents">
+      <div class="agent" id="ag-linkedin">
+        <h3>✍️ LinkedIn agent <span class="badge" id="b-linkedin"></span></h3>
+        <p>Fine-tuned on real posts. Writes content in your voice: hooks, line breaks, no hashtag soup.</p>
+      </div>
+      <div class="agent" id="ag-rag">
+        <h3>📚 RAG agent <span class="badge" id="b-rag"></span></h3>
+        <p>Searches your Pinecone index, retrieves relevant chunks, answers grounded in your documents.</p>
+      </div>
+      <div class="agent" id="ag-general">
+        <h3>💬 General agent <span class="badge" id="b-general"></span></h3>
+        <p>The fallback. No retrieval, no fine-tune — just answers when neither specialist fits.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict"></div>
+  <p class="foot" id="foot"></p>
+
+<script>
+// Each preset: the message (with [signal] spans), the signals the selector
+// weighs (text, strength 0..1, which agent it points to), the routing
+// decision, and the raw model output in both modes. Preset 4's text-mode
+// output is intentionally chatty — the parsing failure IS the lesson.
+const PRESETS = [
+  {
+    label: 'Write a LinkedIn post…',
+    msg: 'Write a [LinkedIn post] about [shipping our new API]',
+    signals: [
+      { t: '"LinkedIn post" — explicit platform ask', s: .95, to: 'linkedin' },
+      { t: '"write … about" — content generation intent', s: .8, to: 'linkedin' },
+      { t: 'no question about stored knowledge', s: .3, to: 'rag' },
+    ],
+    pick: 'linkedin',
+    text: 'linkedin',
+    textOk: true,
+    json: { agent: 'linkedin', confidence: 0.97, reasoning: 'Explicit request to write a LinkedIn post.' },
+    note: 'Easy case — the platform is named. Both output modes route cleanly.',
+  },
+  {
+    label: 'What does the handbook say…',
+    msg: '[What does] the [handbook say] about parental leave?',
+    signals: [
+      { t: '"what does … say" — question about stored docs', s: .9, to: 'rag' },
+      { t: '"handbook" — names a document in the knowledge base', s: .85, to: 'rag' },
+      { t: 'no content-writing intent', s: .2, to: 'linkedin' },
+    ],
+    pick: 'rag',
+    text: 'rag',
+    textOk: true,
+    json: { agent: 'rag', confidence: 0.95, reasoning: 'Question answerable from indexed documents.' },
+    note: 'A question about YOUR data → retrieval. The selector never answers it; it just routes.',
+  },
+  {
+    label: 'Draft something spicy…',
+    msg: '[Draft something spicy] about tech interviews [for my feed]',
+    signals: [
+      { t: '"for my feed" — social content, platform implied', s: .75, to: 'linkedin' },
+      { t: '"draft" — generation intent, personal voice', s: .7, to: 'linkedin' },
+      { t: 'topic is opinion, not stored knowledge', s: .25, to: 'rag' },
+    ],
+    pick: 'linkedin',
+    text: 'Sure thing! This sounds like a job for the LinkedIn agent 🚀 — routing you there now.',
+    textOk: false,
+    json: { agent: 'linkedin', confidence: 0.88, reasoning: '"My feed" implies social post authorship.' },
+    note: 'No keyword "LinkedIn" anywhere — the selector reads INTENT ("my feed", "draft"). Keyword matching could never route this.',
+  },
+  {
+    label: "What's 2 + 2?",
+    msg: "What's [2 + 2]?",
+    signals: [
+      { t: 'general knowledge — nothing to retrieve', s: .9, to: 'general' },
+      { t: 'no writing/platform intent', s: .15, to: 'linkedin' },
+      { t: 'not about indexed documents', s: .15, to: 'rag' },
+    ],
+    pick: 'general',
+    text: 'general',
+    textOk: true,
+    json: { agent: 'general', confidence: 0.92, reasoning: 'General question; no retrieval or authorship needed.' },
+    note: 'The fallback matters: forcing every message through a specialist produces confidently wrong answers.',
+  },
+];
+
+const AGENTS = ['linkedin', 'rag', 'general'];
+let cur = 0, jsonMode = false;
+
+const presetsEl = document.getElementById('presets');
+PRESETS.forEach((p, i) => {
+  const b = document.createElement('button');
+  b.textContent = p.label;
+  b.addEventListener('click', () => { cur = i; render(); });
+  presetsEl.appendChild(b);
+});
+document.getElementById('mText').addEventListener('click', () => { jsonMode = false; render(); });
+document.getElementById('mJson').addEventListener('click', () => { jsonMode = true; render(); });
+
+function render() {
+  const p = PRESETS[cur];
+  [...presetsEl.children].forEach((b, i) => b.classList.toggle('on', i === cur));
+  document.getElementById('mText').classList.toggle('on', !jsonMode);
+  document.getElementById('mJson').classList.toggle('on', jsonMode);
+
+  document.getElementById('msg').innerHTML =
+    '“' + p.msg.replace(/\[([^\]]+)\]/g, '<span class="sig">$1</span>') + '”';
+
+  document.getElementById('signals').innerHTML = p.signals.map(s => `
+    <div class="sigrow">
+      <span class="txt">${s.t}</span>
+      <span class="sigbar"><i style="width:${s.s * 100}%"></i></span>
+      <span class="to">→ ${s.to}</span>
+    </div>`).join('');
+
+  // agents
+  AGENTS.forEach(a => {
+    const routed = !jsonMode && !p.textOk ? null : p.pick; // text-parse failure routes nobody
+    document.getElementById('ag-' + a).classList.toggle('pick', routed === a);
+    document.getElementById('b-' + a).textContent = routed === a ? 'ROUTED HERE' : '';
+  });
+
+  // raw output
+  const rawEl = document.getElementById('raw');
+  document.getElementById('outTitle').textContent = jsonMode ? 'Structured output (validated by zod)' : 'Raw LLM output (a string you must parse)';
+  if (jsonMode) {
+    const j = p.json;
+    rawEl.innerHTML =
+`{
+  <span class="key">"agent"</span>: <span class="str">"${j.agent}"</span>,
+  <span class="key">"confidence"</span>: ${j.confidence},
+  <span class="key">"reasoning"</span>: <span class="str">"${j.reasoning}"</span>
+}`;
+  } else {
+    rawEl.innerHTML = p.textOk
+      ? `"${p.text}"`
+      : `"<span class="bad">${p.text}</span>"`;
+  }
+
+  // verdict
+  const v = document.getElementById('verdict');
+  if (!jsonMode && !p.textOk) {
+    v.className = 'verdict bad';
+    v.innerHTML = `<b>Parse failure.</b> Your code does <code>if (output === 'linkedin')</code> — but the model
+      answered with a friendly sentence instead of a bare name. String-matching an LLM's prose is a coin flip.
+      Switch to <b>Structured output</b> and watch the same message route cleanly.`;
+  } else {
+    v.className = 'verdict good';
+    v.innerHTML = `<b>Routed to the ${p.pick} agent.</b> ${p.note}` + (jsonMode
+      ? ' With a schema, the model <i>must</i> return <code>{ agent, confidence, reasoning }</code> — nothing to parse by hand, and invalid answers get rejected before they reach your routing code.'
+      : '');
+  }
+
+  document.getElementById('foot').textContent = jsonMode
+    ? 'This is what you build on Day 18: zod schema + structured outputs. The selector stops being stringly-typed.'
+    : 'This is what you build on Day 17: prompt the LLM to answer with exactly one agent name, then parse the string. Try every message — one of them breaks it.';
+}
+
+render();
+</script>
+</body>
+</html>

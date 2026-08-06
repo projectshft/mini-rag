@@ -20,7 +20,10 @@
 		"exercise:vectors:test": "npx ts-node app/scripts/exercises/vector-similarity-test.ts",
 		"exercise:word-math": "npx ts-node app/scripts/exercises/vector-word-arithmetic.ts",
 		"exercise:hybrid": "npx ts-node app/scripts/exercises/hybrid-search-demo.ts",
-		"convert-curriculum": "node scripts/convert-md-to-kajabi-html.mjs"
+		"convert-curriculum": "node scripts/convert-md-to-kajabi-html.mjs",
+		"postinstall": "prisma generate --schema prisma/lms/schema.prisma",
+		"lms:generate": "prisma generate --schema prisma/lms/schema.prisma",
+		"lms:push": "prisma db push --schema prisma/lms/schema.prisma"
 	},
 	"lint-staged": {
 		"*.{js,jsx,ts,tsx}": [
@@ -30,8 +33,11 @@
 	"dependencies": {
 		"@ai-sdk/openai": "^2.0.19",
 		"@ai-sdk/react": "^2.0.22",
+		"@clerk/nextjs": "^6.14.3",
 		"@pinecone-database/pinecone": "6.1.0",
+		"@prisma/client": "^6.8.2",
 		"@tailwindcss/postcss": "^4.1.10",
+		"@tailwindcss/typography": "^0.5.16",
 		"@types/cheerio": "1.0.0",
 		"@types/node-fetch": "3.0.2",
 		"ai": "^5.0.22",
@@ -45,12 +51,16 @@
 		"js-tiktoken": "^1.0.19",
 		"lucide-react": "^0.514.0",
 		"marked": "^17.0.1",
-		"next": "15.1.6",
+		"mermaid": "^11.6.0",
+		"next": "15",
 		"node-fetch": "^3.3.2",
 		"openai": "5.15.0",
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-markdown": "^10.1.0",
+		"rehype-highlight": "^7.0.2",
+		"rehype-raw": "^7.0.0",
+		"remark-gfm": "^4.0.1",
 		"zod": "^3.24.2"
 	},
 	"devDependencies": {
@@ -61,11 +71,12 @@
 		"@types/react-dom": "^19",
 		"autoprefixer": "^10.4.21",
 		"eslint": "^9",
-		"eslint-config-next": "15.1.6",
+		"eslint-config-next": "15",
 		"jest": "30.0.0",
 		"jest-environment-jsdom": "30.0.0",
 		"lint-staged": "^16.0.0",
 		"postcss": "^8",
+		"prisma": "^6.8.2",
 		"tailwindcss": "^4.1.10",
 		"ts-jest": "^29.1.2",
 		"ts-node": "^10.9.2",

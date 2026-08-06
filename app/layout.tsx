@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
+import { ClerkProvider } from '@clerk/nextjs';
 import './globals.css';
 
 export const metadata: Metadata = {
-	title: 'Mini RAG Chat',
-	description: 'RAG chatbot with document upload',
+	title: 'RAG & AI Agents',
+	description: 'Build production RAG applications with TypeScript, Next.js, Pinecone, and OpenAI',
 };
 
 export default function RootLayout({
@@ -12,10 +13,12 @@ export default function RootLayout({
 	children: React.ReactNode;
 }>) {
 	return (
-		<html lang='en'>
-			<body>
-				<main className='pt-16'>{children}</main>
-			</body>
-		</html>
+		<ClerkProvider>
+			<html lang='en'>
+				<body>
+					<main className='pt-16'>{children}</main>
+				</body>
+			</html>
+		</ClerkProvider>
 	);
 }

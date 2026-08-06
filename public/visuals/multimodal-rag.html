@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>PDFs &amp; multimodal RAG · RAG &amp; AI Agents</title>
+<style>
+  :root{--ink:#1b2330;--muted:#5b6675;--line:#e3e7ec;--bg:#fff;--panel:#f6f8fa;
+        --accent:#2563eb;--answer:#b45309;--answer-bg:#fef3e2;--good:#15803d;--warn:#b91c1c;
+        --code-bg:#f4f6f8;}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);margin:0;padding:2rem;line-height:1.5;background:var(--bg)}
+  h1{font-size:1.7rem;margin:0 0 .3rem}
+  .lead{color:var(--muted);font-size:1.1rem;max-width:66rem;margin:0 0 1.1rem}
+  .callout{max-width:66rem;background:#eef4ff;border:1px solid #cfe0ff;border-radius:10px;padding:.7rem 1rem;font-size:.98rem;margin:0 0 1.3rem}
+  .callout b{color:var(--ink)}
+  .controls{display:flex;flex-wrap:wrap;gap:.6rem;align-items:center;margin:0 0 1.2rem;padding:1rem 1.2rem;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  .modes{display:flex;gap:.4rem;flex-wrap:wrap}
+  .modes button{font:inherit;font-size:.92rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:.4rem .8rem;border-radius:999px}
+  .modes button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .wrap{display:flex;gap:1.6rem;flex-wrap:wrap;align-items:flex-start}
+  .left{flex:1 1 430px;min-width:330px}
+  .right{flex:1 1 320px;min-width:300px}
+  h2{font-size:1.05rem;margin:0 0 .6rem}
+  .hint{color:var(--muted);font-size:.9rem;margin:.2rem 0 .8rem}
+
+  /* ── PDF mode ── */
+  .pdfpage{border:1px solid var(--line);border-radius:12px;background:#fff;padding:1.4rem 1.6rem;box-shadow:0 1px 6px rgba(27,35,48,.06);max-width:34rem}
+  .pdfpage .pgnum{color:var(--muted);font-size:.72rem;text-align:right;margin-top:.8rem}
+  .el{border:1.5px dashed transparent;border-radius:8px;padding:.45rem .6rem;margin-bottom:.55rem;cursor:pointer;transition:all .15s;position:relative}
+  .el:hover{border-color:#b9cdf5;background:#f6f9ff}
+  .el.on{border-color:var(--accent);border-style:solid;background:#eef4ff}
+  .el .eltag{position:absolute;top:-9px;right:8px;font-size:.66rem;font-weight:700;letter-spacing:.03em;background:#e9edf2;color:var(--muted);border-radius:999px;padding:.05em .5em;opacity:0;transition:opacity .15s}
+  .el:hover .eltag,.el.on .eltag{opacity:1}
+  .el.on .eltag{background:var(--accent);color:#fff}
+  .el h3{margin:0;font-size:1.05rem;font-family:Georgia,serif}
+  .el p{margin:0;font-size:.8rem;color:#3c4654;font-family:Georgia,serif;line-height:1.45}
+  .el table{border-collapse:collapse;font-size:.72rem;width:100%}
+  .el th,.el td{border:1px solid #d7dde5;padding:.15rem .4rem;text-align:left;font-family:Georgia,serif}
+  .el th{background:#f2f4f7}
+  .fig{display:flex;align-items:center;gap:.7rem}
+  .fig .chart{flex:0 0 110px;height:64px;display:flex;align-items:flex-end;gap:5px;padding:6px;border:1px solid #d7dde5;border-radius:6px;background:#fbfcfe}
+  .fig .chart i{display:block;width:16px;background:var(--accent);border-radius:2px 2px 0 0}
+  .fig figcaption{font-size:.72rem;color:var(--muted);font-family:Georgia,serif}
+  .el.scan{background:repeating-linear-gradient(-40deg,#fafafa,#fafafa 6px,#f1f1f1 6px,#f1f1f1 12px)}
+  .el.scan p{filter:blur(.4px);color:#6b7684}
+  .detail{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:1rem 1.1rem}
+  .detail .step{display:flex;gap:.55rem;margin-bottom:.55rem;font-size:.92rem;align-items:baseline}
+  .detail .step .n{flex:0 0 1.4rem;height:1.4rem;border-radius:50%;background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;display:flex;align-items:center;justify-content:center;align-self:flex-start}
+  .detail .step.warn .n{background:var(--warn)}
+  pre.rec{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.78rem;background:#fff;border:1px solid var(--line);border-radius:8px;padding:.6rem .8rem;margin:.7rem 0 0;white-space:pre-wrap;line-height:1.5}
+  pre.rec .k{color:var(--accent)} pre.rec .s{color:var(--good)} pre.rec .dim{color:var(--muted)}
+  .verdict{margin:1rem 0 0;padding:.8rem 1rem;border-radius:10px;font-size:.94rem;max-width:64rem}
+  .verdict.good{background:#e7f6ec;color:var(--good)}
+  .verdict.warn{background:#fdf0e3;color:#9a3412}
+
+  /* ── space mode ── */
+  .plot{border:1px solid var(--line);border-radius:12px;background:#fff;width:100%;height:auto}
+  .legend{display:flex;gap:1rem;flex-wrap:wrap;margin:.7rem 0 0;font-size:.86rem;color:var(--muted)}
+  .swatch{display:inline-block;width:.9em;height:.9em;border-radius:50%;vertical-align:-1px;margin-right:.3em}
+  .swatch.sq{border-radius:3px}
+  .cand{border:1px solid var(--line);border-radius:10px;padding:.55rem .8rem;margin-bottom:.5rem;background:var(--panel)}
+  .cand.img{border-left:3px solid var(--answer)}
+  .cand .top{display:flex;justify-content:space-between;font-size:.9rem;align-items:baseline;gap:.6rem}
+  .cand .w{font-weight:600}
+  .cand .score{font-variant-numeric:tabular-nums;font-weight:600;color:var(--muted);font-size:.85rem}
+  .cand .mod{font-size:.7rem;font-weight:700;border-radius:999px;padding:.08em .55em;margin-left:.35em}
+  .cand .mod.txt{background:#e5edff;color:var(--accent)}
+  .cand .mod.im{background:var(--answer-bg);color:var(--answer)}
+  .bar{height:6px;border-radius:999px;background:#e9edf2;overflow:hidden;margin-top:.4rem}
+  .bar>i{display:block;height:100%;background:var(--accent);border-radius:999px}
+  code{font-family:ui-monospace,"SF Mono",Menlo,monospace;background:var(--code-bg);padding:.1em .35em;border-radius:4px;font-size:.9em}
+  .foot{color:var(--muted);font-size:.84rem;margin-top:.6rem;max-width:66rem}
+</style>
+</head>
+<body>
+  <h1>PDFs &amp; multimodal RAG</h1>
+  <p class="lead">
+    This course vectorizes <b>plain text</b> — because that's what most real RAG systems retrieve. But the data
+    you'll meet at work isn't always a clean string: it's PDFs with tables and figures, screenshots, diagrams,
+    audio. The pipeline is the same — <b>extract → represent → embed → upsert</b> — what changes is <i>how each
+    kind of content becomes a vector</i>.
+  </p>
+  <div class="callout">
+    <b>Pinecone doesn't know (or care) what a vector came from.</b> An index stores vectors of one fixed dimension
+    — text, image, or audio, it's all the same to the index. Multimodal RAG is really a question about the
+    <b>embedding model</b>: use one that maps different modalities into one shared space (CLIP-style, or newer
+    models like voyage-multimodal-3 / Cohere Embed v3), tag each record's <code>metadata.modality</code>, and
+    embed queries with the <i>same model</i>. Some databases (e.g. Weaviate) bundle the multimodal model into the
+    DB; with Pinecone, you bring your own — which is exactly what you're already doing with text.
+  </div>
+
+  <div class="controls">
+    <div class="modes">
+      <button id="mPdf" class="on">📄 Inside a PDF</button>
+      <button id="mSpace">🌌 One meaning-space</button>
+    </div>
+    <span class="hint" id="modeHint" style="margin:0"></span>
+  </div>
+
+  <!-- ═══ PDF mode ═══ -->
+  <div id="pdfMode">
+    <div class="wrap">
+      <div class="left">
+        <h2>q3-engineering-report.pdf — page 4</h2>
+        <p class="hint">A PDF is a <b>layout</b>, not a string. Click each element to see how it becomes a Pinecone record.</p>
+        <div class="pdfpage" id="pdfpage"></div>
+      </div>
+      <div class="right">
+        <h2>Element → record</h2>
+        <div class="detail" id="detail"></div>
+      </div>
+    </div>
+    <div class="verdict warn" id="pdfVerdict">
+      <b>The honest rule:</b> PDF ingestion quality is decided at <i>extraction</i> time, before any embedding happens.
+      Naive "grab all the text" extraction scrambles tables, drops figures, and returns nothing for scans. Use a
+      layout-aware parser (Unstructured, Docling, Marker) and give every element the treatment its type needs.
+    </div>
+  </div>
+
+  <!-- ═══ space mode ═══ -->
+  <div id="spaceMode" style="display:none">
+    <div class="wrap">
+      <div class="left">
+        <h2>Text and images in one embedding space</h2>
+        <p class="hint">A CLIP-style model embeds text <b>and</b> images into the same space. Pick a text query — watch it retrieve an image.</p>
+        <div class="modes" id="queries" style="margin-bottom:.8rem"></div>
+        <svg id="plot" class="plot" viewBox="0 0 520 340" role="img" aria-label="2-D projection of a shared text-and-image embedding space"></svg>
+        <div class="legend">
+          <span><span class="swatch" style="background:var(--accent)"></span>text chunks</span>
+          <span><span class="swatch sq" style="background:var(--answer)"></span>images (screenshots, charts, diagrams)</span>
+          <span><span class="swatch" style="background:#1b2330"></span>your query</span>
+        </div>
+      </div>
+      <div class="right">
+        <h2>Top matches</h2>
+        <div id="cands"></div>
+        <p class="foot" id="spaceFoot"></p>
+      </div>
+    </div>
+    <div class="verdict good">
+      <b>Why this works:</b> the model was trained so that an image and the text describing it land near each other.
+      "Same direction = same meaning" — exactly the property you learned with word math, extended across modalities.
+      In Pinecone that's one index (or one namespace per modality), <code>metadata.modality</code> on every record,
+      and queries embedded with the same multimodal model.
+    </div>
+  </div>
+
+<script>
+// ═══════════════ PDF mode ═══════════════
+const ELEMENTS = [
+  {
+    id: 'heading', tag: 'HEADING',
+    html: '<h3>4. Infrastructure Costs &amp; Reliability</h3>',
+    steps: [
+      ['Extract', 'The text layer gives it to you directly — no OCR needed.'],
+      ['Represent', 'Headings rarely become their own chunks. Prepend to child chunks ("4. Infrastructure Costs — …") or store as metadata.title.'],
+      ['Embed', 'Travels inside its children\'s text — context-aware chunking in practice.'],
+    ],
+    rec: null,
+    note: 'Structure like headings is metadata gold: it makes every chunk under it self-describing.',
+  },
+  {
+    id: 'para', tag: 'PARAGRAPH',
+    html: '<p>Cloud spend decreased 12% quarter-over-quarter after the storage migration completed in July. The remaining overage is driven by egress fees from the analytics cluster, which we plan to address by co-locating the warehouse.</p>',
+    steps: [
+      ['Extract', 'Digital PDFs carry a text layer — pull the string straight out (pdf-parse, PyMuPDF).'],
+      ['Represent', 'Exactly what you built today: sentence-aware chunks with overlap.'],
+      ['Embed', 'text-embedding-3-small → 1536-dim vector. This is the 90% case.'],
+    ],
+    rec: { id: 'q3-report#p4-c2', modality: 'text', type: 'paragraph', preview: 'Cloud spend decreased 12% quarter-over-quarter…' },
+    note: 'Paragraphs are the home game: everything from this week applies unchanged.',
+  },
+  {
+    id: 'table', tag: 'TABLE',
+    html: '<table><tr><th>Region</th><th>Spend</th><th>Δ QoQ</th></tr><tr><td>us-east</td><td>$41k</td><td>−18%</td></tr><tr><td>eu-west</td><td>$27k</td><td>−9%</td></tr><tr><td>ap-south</td><td>$12k</td><td>+4%</td></tr></table>',
+    steps: [
+      ['Extract', 'The danger zone: naive text extraction reads cells in visual order and scrambles rows into word soup.', 'warn'],
+      ['Represent', 'Serialize with structure intact — markdown or "Region: us-east | Spend: $41k | Δ QoQ: −18%" per row, headers repeated per chunk.'],
+      ['Embed', 'Embed the serialized text. For big tables, one chunk per row-group + a summary chunk.'],
+    ],
+    rec: { id: 'q3-report#p4-t1', modality: 'table', type: 'table-rows', preview: 'Region: us-east | Spend: $41k | Δ QoQ: −18% …' },
+    note: 'Layout-aware parsers (Unstructured, Docling) emit tables as typed elements so you can treat them differently — that\'s the whole reason to use one.',
+  },
+  {
+    id: 'figure', tag: 'FIGURE',
+    html: '<div class="fig"><div class="chart"><i style="height:58%"></i><i style="height:44%"></i><i style="height:38%"></i><i style="height:30%"></i><i style="height:26%"></i></div><figcaption>Fig. 7 — Monthly cloud spend, Mar–Jul (declining after migration)</figcaption></div>',
+    steps: [
+      ['Extract', 'Export the figure as an image + grab its caption text.'],
+      ['Represent', 'Three options, cheapest first: (a) embed the caption text only; (b) have a vision LLM write a description, embed that; (c) embed the image itself with a multimodal model.'],
+      ['Embed', 'Options a/b → your normal text model. Option c → CLIP-style / voyage-multimodal-3 / Cohere Embed v3 → image vector in a shared space.'],
+    ],
+    rec: { id: 'q3-report#p4-f7', modality: 'image', type: 'figure', preview: '[image vector] + caption: "Monthly cloud spend, Mar–Jul…"' },
+    note: 'Most teams start with (a) or (b) — text-only pipelines stretch surprisingly far. Reach for (c) when users search for what figures LOOK like, not what captions say.',
+  },
+  {
+    id: 'scan', tag: 'SCANNED',
+    html: '<p class="scanp">— appendix page scanned from the signed vendor agreement; no text layer, just pixels —</p>',
+    cls: 'scan',
+    steps: [
+      ['Extract', 'There is NO text to extract — a scan is a photo of a page. Text extraction returns an empty string and your pipeline silently indexes nothing.', 'warn'],
+      ['Represent', 'OCR first (Tesseract, AWS Textract, Azure Document Intelligence), then chunk the recognized text — expect noise, fix headers/footers.'],
+      ['Embed', 'After OCR it\'s ordinary text. Flag metadata.ocr = true so you can debug bad retrievals later.'],
+    ],
+    rec: { id: 'vendor-agreement#p12-c1', modality: 'text', type: 'ocr', preview: 'This Agreement is entered into as of… [OCR]' },
+    note: 'The silent failure mode: a "successfully ingested" PDF where half the pages were scans that contributed zero vectors. Count your chunks per page.',
+  },
+];
+
+const pageEl = document.getElementById('pdfpage');
+const detailEl = document.getElementById('detail');
+let pickedEl = 'table';
+
+pageEl.innerHTML = ELEMENTS.map(e =>
+  `<div class="el ${e.cls ?? ''}" data-id="${e.id}"><span class="eltag">${e.tag}</span>${e.html}</div>`
+).join('') + '<div class="pgnum">4 / 12</div>';
+
+pageEl.querySelectorAll('.el').forEach(node => {
+  node.addEventListener('click', () => { pickedEl = node.dataset.id; renderPdf(); });
+});
+
+function renderPdf() {
+  const e = ELEMENTS.find(x => x.id === pickedEl);
+  pageEl.querySelectorAll('.el').forEach(n => n.classList.toggle('on', n.dataset.id === pickedEl));
+  let html = e.steps.map(([name, txt, warn], i) =>
+    `<div class="step ${warn ? 'warn' : ''}"><span class="n">${i + 1}</span><span><b>${name}.</b> ${txt}</span></div>`
+  ).join('');
+  if (e.rec) {
+    html += `<pre class="rec">{
+  <span class="k">"id"</span>: <span class="s">"${e.rec.id}"</span>,
+  <span class="k">"values"</span>: <span class="dim">[0.021, -0.043, …]  // one vector, same dim as the rest of the index</span>,
+  <span class="k">"metadata"</span>: {
+    <span class="k">"modality"</span>: <span class="s">"${e.rec.modality}"</span>,
+    <span class="k">"type"</span>: <span class="s">"${e.rec.type}"</span>,
+    <span class="k">"page"</span>: 4,
+    <span class="k">"text"</span>: <span class="s">"${e.rec.preview}"</span>
+  }
+}</pre>`;
+  }
+  html += `<p class="foot" style="margin-top:.7rem">${e.note}</p>`;
+  detailEl.innerHTML = html;
+}
+
+// ═══════════════ space mode ═══════════════
+// One shared embedding space: text chunks (circles) + images (squares).
+// Coordinates hand-placed; scores computed honestly from distance.
+const POINTS = [
+  { w: 'Deploy rollback runbook', mod: 'text', p: [120, 90] },
+  { w: 'Incident postmortem: API outage', mod: 'text', p: [200, 140] },
+  { w: 'Screenshot: deploy dashboard, failed run', mod: 'image', p: [150, 55] },
+  { w: 'Q3 revenue summary paragraph', mod: 'text', p: [432, 272] },
+  { w: 'Bar chart: revenue by quarter', mod: 'image', p: [428, 190] },
+  { w: 'New-hire onboarding checklist', mod: 'text', p: [255, 300] },
+  { w: 'Architecture diagram: ingest pipeline', mod: 'image', p: [330, 80] },
+  { w: 'Whiteboard photo: roadmap brainstorm', mod: 'image', p: [258, 225] },
+];
+const QUERIES = [
+  { label: 'how do I undo a bad deploy?', p: [135, 75] },
+  { label: 'revenue growth last quarter', p: [415, 220] },
+  { label: 'how does data get into the index?', p: [325, 105] },
+];
+let curQ = 0;
+
+const queriesEl = document.getElementById('queries');
+QUERIES.forEach((q, i) => {
+  const b = document.createElement('button');
+  b.textContent = '“' + q.label + '”';
+  b.addEventListener('click', () => { curQ = i; renderSpace(); });
+  queriesEl.appendChild(b);
+});
+
+function closeness(p, q) { return 1 / (1 + Math.hypot(p[0] - q[0], p[1] - q[1]) / 90); }
+
+function renderSpace() {
+  const q = QUERIES[curQ];
+  [...queriesEl.children].forEach((b, i) => b.classList.toggle('on', i === curQ));
+
+  const ranked = POINTS.map(pt => ({ ...pt, s: closeness(pt.p, q.p) })).sort((a, b) => b.s - a.s);
+  const top = ranked.slice(0, 3);
+  const topSet = new Set(top.map(t => t.w));
+
+  const svg = document.getElementById('plot');
+  let out = '';
+  for (let gx = 40; gx < 520; gx += 60) out += `<line x1="${gx}" y1="16" x2="${gx}" y2="324" stroke="#f0f2f5"/>`;
+  for (let gy = 40; gy < 340; gy += 60) out += `<line x1="16" y1="${gy}" x2="504" y2="${gy}" stroke="#f0f2f5"/>`;
+  for (const pt of POINTS) {
+    const hit = topSet.has(pt.w);
+    const color = pt.mod === 'image' ? 'var(--answer)' : 'var(--accent)';
+    if (pt.mod === 'image') {
+      out += `<rect x="${pt.p[0] - 6}" y="${pt.p[1] - 6}" width="12" height="12" rx="2.5" fill="${color}" stroke="#fff" stroke-width="2"/>`;
+    } else {
+      out += `<circle cx="${pt.p[0]}" cy="${pt.p[1]}" r="6.5" fill="${color}" stroke="#fff" stroke-width="2"/>`;
+    }
+    if (hit) {
+      out += `<circle cx="${pt.p[0]}" cy="${pt.p[1]}" r="13" fill="none" stroke="var(--good)" stroke-width="2" stroke-dasharray="4 3"/>`;
+      out += `<line x1="${q.p[0]}" y1="${q.p[1]}" x2="${pt.p[0]}" y2="${pt.p[1]}" stroke="#c9d6ef" stroke-width="1.5" stroke-dasharray="3 4"/>`;
+    }
+    const short = pt.w.length > 26 ? pt.w.slice(0, 25) + '…' : pt.w;
+    out += `<text x="${pt.p[0]}" y="${pt.p[1] - 12}" text-anchor="middle" font-size="10.5" fill="${hit ? 'var(--ink)' : 'var(--muted)'}" ${hit ? 'font-weight="700"' : ''}>${short}</text>`;
+  }
+  out += `<circle cx="${q.p[0]}" cy="${q.p[1]}" r="7.5" fill="#1b2330" stroke="#fff" stroke-width="2"/>
+    <text x="${q.p[0]}" y="${q.p[1] + 22}" text-anchor="middle" font-size="11" font-weight="700" fill="#1b2330">query</text>`;
+  svg.innerHTML = out;
+
+  document.getElementById('cands').innerHTML = top.map(t => `
+    <div class="cand ${t.mod === 'image' ? 'img' : ''}">
+      <div class="top"><span class="w">${t.w}<span class="mod ${t.mod === 'image' ? 'im' : 'txt'}">${t.mod}</span></span>
+      <span class="score">${t.s.toFixed(3)}</span></div>
+      <div class="bar"><i style="width:${(t.s * 100).toFixed(1)}%"></i></div>
+    </div>`).join('');
+
+  const gotImage = top.some(t => t.mod === 'image');
+  document.getElementById('spaceFoot').innerHTML = gotImage
+    ? 'A <b>text</b> query just retrieved an <b>image</b> — no caption matching, no keywords. The query vector and the image vector simply live near each other in the shared space.'
+    : 'All-text results this time — cross-modal retrieval only wins when an image genuinely carries the answer.';
+}
+
+// ═══════════════ mode toggle ═══════════════
+const pdfBtn = document.getElementById('mPdf');
+const spaceBtn = document.getElementById('mSpace');
+function setMode(pdf) {
+  pdfBtn.classList.toggle('on', pdf);
+  spaceBtn.classList.toggle('on', !pdf);
+  document.getElementById('pdfMode').style.display = pdf ? '' : 'none';
+  document.getElementById('spaceMode').style.display = pdf ? 'none' : '';
+  document.getElementById('modeHint').textContent = pdf
+    ? 'Extraction decides quality — click every element type.'
+    : 'One index, two modalities, one embedding model.';
+}
+pdfBtn.addEventListener('click', () => setMode(true));
+spaceBtn.addEventListener('click', () => setMode(false));
+
+renderPdf();
+renderSpace();
+setMode(true);
+</script>
+</body>
+</html>

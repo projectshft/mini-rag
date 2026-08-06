@@ -24,8 +24,20 @@ import { openaiClient } from '../libs/openai/openai';
 
 // Initialize Pinecone client with your API key
 // Get your free API key at: https://app.pinecone.io/
-export const pineconeClient = new Pinecone({
-	apiKey: process.env.PINECONE_API_KEY as string,
+//
+// Lazily constructed: the real client is created on first use, not at import.
+// The course platform gates the RAG routes and has no PINECONE_API_KEY, and
+// `new Pinecone()` throws at construction without one — which would break
+// `next build`. The proxy defers that until a request actually calls it.
+let _pineconeClient: Pinecone | null = null;
+export const pineconeClient = new Proxy({} as Pinecone, {
+	get(_target, prop) {
+		_pineconeClient ??= new Pinecone({
+			apiKey: process.env.PINECONE_API_KEY as string,
+		});
+		const value = _pineconeClient[prop as keyof Pinecone];
+		return typeof value === 'function' ? value.bind(_pineconeClient) : value;
+	},
 });
 
 /**
