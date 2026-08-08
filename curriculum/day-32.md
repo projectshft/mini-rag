@@ -221,11 +221,23 @@ flowchart LR
     P --> T
 ```
 
+**JSON-RPC** is worth ten seconds of your attention because the name sounds
+scarier than it is. RPC is Remote Procedure Call: one computer invoking a
+function that lives on another computer. That's a decades-old idea with nothing
+to do with LLMs — and the SDK implements all of it for you. You write functions;
+something else gets to call them.
+
 MCP servers can expose:
 
 - **Tools** — functions the AI can call (search, create, update)
 - **Resources** — data the AI can read (files, database records)
 - **Prompts** — pre-built prompt templates
+
+One thing that surprises people: the client doesn't load your tool *code* to
+decide what to use. On connect it asks for the list, and gets back each tool's
+name, description, and schemas — nothing else. That handshake is the model's
+entire picture of what you built, which is why a lazy description is a broken
+tool.
 
 For RAG, you typically expose **tools**: `search_documents`, `get_document`, `list_sources`.
 
@@ -253,6 +265,15 @@ Notice what carries over from tool-calling: an MCP tool is still a **name + desc
 
 ## Part 3: Build it — "Ask My Docs" MCP server
 
+### Video walkthrough
+
+<iframe src="https://share.descript.com/embed/5pqfMrNHMJn" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
+Watch this first if you'd rather see the whole thing built end to end — server,
+Inspector, then Claude Desktop calling the tool for real. The phases below are
+the same build, written down, so you can work at your own pace and have
+something to grep when a path or an env var bites you.
+
 You've seen what MCP is. Now build a real one — a server that lets **any** MCP client (Claude Desktop, Claude Code, Cursor, the Inspector) search the knowledge base you already loaded into Pinecone.
 
 Timebox: ~1 hour. One file, two tools — one you fill in from a skeleton, one you design yourself.
@@ -265,6 +286,12 @@ You (in Claude Desktop): "search my docs for chunking strategies"
 ```
 
 No UI, no API route, no auth. Tools that do retrieval, callable from a chat window that has never seen your data.
+
+**Expect friction.** Getting a client to launch your server involves absolute
+paths, environment variables, and a runtime spawned outside your shell — it
+rarely works on the first try, for anyone. That's not you being new; it's the
+awkward part of MCP. Bring what breaks to office hours or Slack rather than
+grinding on it alone.
 
 **Four phases, in this order:**
 
@@ -368,7 +395,16 @@ server.connect(new StdioServerTransport());
 Write TODO 2 last, after the tool works. It's tempting to dash off "searches the
 vector database" and move on — but that description is the entire user interface
 your tool has. The model reads it and nothing else when deciding whether this
-tool is relevant. Vague description, unused tool.
+tool is relevant. Vague description, unused tool. Name what's actually *in* your
+index: "open source AI libraries and tools like Pinecone, LangChain, the Vercel
+AI SDK" beats "documents" every time, because the model can't see your data.
+
+**The argument name is yours, and it has to match in two places.** Try renaming
+`query` to `cats` in the `inputSchema` and watch TypeScript light up the handler
+below — `async ({ query })` no longer destructures anything that exists. Silly,
+but it makes the wiring concrete: `inputSchema` declares what callers may send,
+and your handler destructures the exact same names. (Call it `query`. `cats` was
+to prove a point.)
 
 <details>
 <summary>Solution — the full server</summary>
@@ -466,14 +502,23 @@ protocol directly to your server. No model, no chat, no guessing — you call th
 tool yourself and see exactly what comes back.
 
 ```bash
-npx @modelcontextprotocol/inspector ./node_modules/.bin/ts-node --project tsconfig.json app/mcp/server.ts
+npx @modelcontextprotocol/inspector npx ts-node app/mcp/server.ts
 ```
 
-Use the `ts-node` that's already in this project rather than `npx tsx`. Tutorials
-reach for `tsx` constantly, but it isn't a dependency here — so `npx` has to
-fetch it, and when that fetch fails the Inspector reports `Command not found,
-transports removed` and disconnects. That error is about the *runner*, not your
-server.
+**That last path is yours to get right.** The Inspector runs whatever file you
+point it at — `app/mcp/server.ts` here. If your server lives somewhere else,
+change it.
+
+Use `ts-node`, which this project already depends on, and `npx` will find it in
+`node_modules/.bin`. Most MCP tutorials say `npx tsx` instead; `tsx` isn't a
+dependency here, so npx has to fetch it from the network, and when that fails the
+Inspector reports `Command not found, transports removed` and disconnects. That
+error is about the *runner*, not your server.
+
+The Inspector prints a URL with a **session token** in it and opens your browser.
+That token is the point: your server is running on your machine with your API
+keys, and without it anyone who could reach the port could call your tools and
+run up your bill. Don't paste that URL into Slack.
 
 It opens a browser automatically. If the left panel comes up blank, you can fill
 it in by hand — that's all the command above does for you:
@@ -482,7 +527,7 @@ it in by hand — that's all the command above does for you:
 |-------|-------|
 | **Transport Type** | `STDIO` |
 | **Command** | `npx` |
-| **Arguments** | `tsx app/mcp/server.ts` |
+| **Arguments** | `ts-node app/mcp/server.ts` |
 | **Environment Variables** | your `PINECONE_*` and `OPENAI_*` keys, if they aren't coming from `.env` |
 
 Then hit **Connect**. The History pane at the bottom is your receipt: you should
@@ -586,7 +631,15 @@ Either you left it out of the `env` block, or you hit the `dotenv` ordering
 problem from gotcha #3 above.
 
 Once it connects, the tool appears under the tools icon in the composer, and you
-can ask: _"Search my docs for what reranking does."_
+can ask: _"Use my vector search tool to find info about the AI SDK."_
+
+The first time the model reaches for it, Desktop stops and asks permission —
+_"Claude wants to use search_docs from ai-search-tools"_ — with an **Always
+allow** option. That prompt is the security model: nothing you expose runs
+without you saying yes at least once. Then watch it execute your function, in an
+app you didn't write, against data it has no other way to reach.
+
+You don't need a paid Claude plan for this.
 
 #### Claude Code
 
@@ -599,7 +652,6 @@ claude mcp add rag-server \
   --env PINECONE_API_KEY=... \
   --env PINECONE_INDEX=rag-tutorial \
   -- /absolute/path/to/your-project/node_modules/.bin/ts-node \
-     --project /absolute/path/to/your-project/tsconfig.json \
      /absolute/path/to/your-project/app/mcp/server.ts
 ```
 
@@ -646,6 +698,12 @@ difficulty:
 | `get_document` | Fetch one full document by title or id | The model has to get the id from a *prior* `search_docs` call. Does your description tell it that? |
 | `search_by_source` | Search, but restricted to one source | A second argument the model must infer from context, plus a Pinecone metadata filter |
 
+Or leave your index entirely — a tool doesn't have to touch a vector database,
+or an LLM at all. A calculator. A web search. Something that reads a specific
+directory on your machine and hands the contents to Claude. That last one is
+where this stops being an exercise: you're giving a chat window abilities it
+structurally cannot have on its own.
+
 Whichever you pick, the work is the same four decisions from Phase 1 — name,
 description, `inputSchema`, `outputSchema` — plus a handler. That repetition is
 the point: after the second one, the shape of an MCP tool is yours.
@@ -681,6 +739,13 @@ admits it.
 
 </details>
 
+**A note on sharing what you build.** Everything here runs locally: your machine,
+your keys, your data, one client. The moment you want *other people* using your
+server, you need authentication in front of it — OAuth, typically — because
+otherwise anyone who can reach it can call your tools and spend your money. That
+work is ordinary web auth, not AI, and it's the boundary between a local
+experiment and a product. Worth knowing it exists; not worth doing today.
+
 ### When it doesn't work
 
 Seven things account for almost every failure:
@@ -699,9 +764,9 @@ Seven things account for almost every failure:
    validates it and the call fails. The Inspector shows you the validation
    error; a chat client just shrugs.
 6. **`Command not found, transports removed`.** The client couldn't launch your
-   *runner*, never mind your server. You asked for `npx tsx` when this project
-   only has `ts-node` — use `./node_modules/.bin/ts-node --project
-   tsconfig.json`, or the absolute path to it in a client config.
+   *runner*, never mind your server. Usually `npx tsx` when this project only
+   has `ts-node` — use `npx ts-node`, or the absolute path to
+   `node_modules/.bin/ts-node` in a client config.
 7. **It timed out on first run** while `npx` downloaded packages. Retry, or
    start with `MCP_TIMEOUT=60000 claude`.
 
