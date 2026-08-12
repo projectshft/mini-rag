@@ -52,7 +52,7 @@ Rules that keep it safe and legible:
 {
   "title": "Constrain the get_document schema",
   "note": "The wrong choice here is a plausible one — that's the point.",
-  "code": "server.tool('get_document',\n  'Fetch one document by its id for citation',\n  {\n    id: z.string().___1___.describe('The document id from a prior search result'),\n    maxChars: z.number().int().min(100).___2___.default(4000)\n  },\n  handler);",
+  "code": "server.registerTool('get_document',\n  {\n    description: 'Fetch one document by its id for citation',\n    inputSchema: {\n      id: z.string().___1___.describe('The document id from a prior search result'),\n      maxChars: z.number().int().min(100).___2___.default(4000)\n    }\n  },\n  handler);",
   "blanks": [
     { "options": ["uuid()", "min(1)", "any()"], "answer": "uuid()", "explain": "If ids are UUIDs, validating the format rejects garbage and injection attempts before they ever hit your database." },
     { "options": ["max(20000)", "positive()", "nullable()"], "answer": "max(20000)", "explain": "A cap stops a caller from asking for a 10 MB document that blows your token budget and the client's context window." }
@@ -162,7 +162,7 @@ The jump from stdio to HTTP is exactly the jump from "my tool" to "our service" 
 
 ## Hands-on challenge
 
-Extend your `mcp/rag-server.ts`:
+Extend your `app/mcp/server.ts`:
 
 1. Add **`get_document`** (fetch one by id) and **`list_sources`**.
 2. Add a **caller token check** — read `MCP_API_KEY` from env and reject calls if a provided token doesn't match (simulate the auth layer).
