@@ -535,6 +535,21 @@ see `initialize`, then `tools/list`, then a `tools/call` for every run. If
 `initialize` is the only entry, your server died on startup — check
 Notifications.
 
+![The MCP Inspector connected to a stdio server: STDIO transport with an npx/ts-node command on the left, a green Connected indicator, two registered tools with their descriptions in the middle, and initialize plus tools/list in the History pane.](/lesson-images/day-32/inspector-connected.png)
+
+That's a working connection — note it's a *different* server than the one you're
+building (a medical-notes one, with its own tools), so read the shape, not the
+names. Four things worth seeing:
+
+- **Connected**, in green, under the Restart/Disconnect buttons. Until you see
+  that, nothing else on the screen means anything.
+- **Each tool renders with its description.** That text is exactly what a model
+  gets. Read yours here and ask whether it would convince you to call it.
+- **`Error output from MCP server`** shows the server's stderr — here, its
+  startup line. This is why you log with `console.error`: it lands in a pane you
+  can read instead of corrupting the protocol.
+- **History** with `initialize` then `tools/list`, the handshake described above.
+
 What you're looking at:
 
 | Tab | What it's for |
