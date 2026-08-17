@@ -128,6 +128,7 @@ day files, but no "Day N —" title prefix.
 - [Strong Opinions on Tradeoffs](interview-03.md)
 - [RAG System Design Interviews](interview-04.md)
 - [Live Practice](interview-05.md)
+- [Putting This on Your Résumé](interview-06.md)
 
 ## Code
 

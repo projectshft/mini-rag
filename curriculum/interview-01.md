@@ -1,7 +1,7 @@
 # The AI Engineering Interview Playbook
 
 
-> **This session:** how AI engineering interviews actually work, why the conversation portion — not the coding portion — is where most candidates lose the offer, and the plan for the next four sessions: a signature story, defensible opinions, system design frameworks, and live practice.
+> **This session:** how AI engineering interviews actually work, why the conversation portion — not the coding portion — is where most candidates lose the offer, and the plan for the next five sessions: a signature story, defensible opinions, system design frameworks, live practice, and a résumé section you can defend line by line.
 
 ## The hardest part of AI interviews
 
@@ -34,8 +34,9 @@ By the end of these sessions, you'll have:
 - System design answers for common scenarios
 - Video recordings of your practice sessions
 - Written artifacts you can review before any interview
+- A résumé section and capstone entry describing what you actually built
 
-## The four sessions
+## The five sessions
 
 ### 1. Your Signature Story — most important
 
@@ -66,6 +67,14 @@ Design RAG systems for different scenarios — legal documents, customer support
 Extra reps: three recorded answers (project, opinion, design questions) with self-assessment, plus the option to schedule a mock interview.
 
 Optional because you'll already have submitted videos in the earlier sessions — but extra practice builds confidence and exposes patterns you might miss.
+
+### 5. Putting This on Your Résumé
+
+Turn the program and your capstone into a résumé block and a Projects entry — four or five bullets you can defend under questioning, with every unmeasured number and unearned claim stripped out.
+
+**Deliverables:** a training section, a capstone entry, and an updated LinkedIn headline.
+
+This is where the other four sessions cash out. The résumé earns the conversation; everything above is how you win it.
 
 ## How to use this
 

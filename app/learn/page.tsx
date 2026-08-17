@@ -246,8 +246,8 @@ export default async function LearnPage() {
 								</p>
 								<p className='mt-1 text-xs text-zinc-400'>
 									{interviewLessons.length} sessions — signature stories, tradeoff
-									opinions, RAG system design, live practice. Your instructor unlocks
-									this near the end of the program.
+									opinions, RAG system design, live practice, and your résumé
+									section. Your instructor unlocks this near the end of the program.
 								</p>
 							</div>
 						)}

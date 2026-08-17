@@ -23,7 +23,10 @@ for (const file of readdirSync('curriculum').sort()) {
 			errors.push(`${at}  numbered assignment (name it instead: "Assignment: RAG Agent")`);
 		}
 		// Case-insensitive: "day 18's structured outputs" slipped past the strict form.
-		if (/\bday[ -]\d+/i.test(line) && i > 0) {
+		// Link/image targets are exempt — `/lesson-images/day-32/x.png` is an asset
+		// path, not a prose reference. Visible link text is outside the parens, so
+		// "[Day 8](/learn/day-08)" is still caught (by this and the check above).
+		if (/\bday[ -]\d+/i.test(line.replace(/\]\([^)]*\)/g, ']()')) && i > 0) {
 			errors.push(`${at}  day-number reference (say "last week"/"the chunking lesson" instead)`);
 		}
 	});
