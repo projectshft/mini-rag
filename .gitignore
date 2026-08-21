@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local tool artifacts
+.clerk/
+.gstack/
+clerk-ai.parsity.io.zone

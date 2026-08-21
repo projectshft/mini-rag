@@ -32,6 +32,7 @@
  * Learn more about LangSmith: https://docs.langchain.com/langsmith
  */
 
+import 'dotenv/config'; // Next.js loads .env itself; this is for standalone scripts/tests
 import OpenAI from 'openai';
 import { wrapOpenAI } from 'langsmith/wrappers';
 
