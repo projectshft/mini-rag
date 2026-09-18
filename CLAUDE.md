@@ -1,236 +1,80 @@
-Use yarn as package manager.
+# Repo guide (branch: `student-todo-exercises`)
 
-# Branch Structure
+Package manager: **yarn**.
 
-This repository has two main branches:
+This branch is the **student starting point**. The app does not work yet. Types
+and imports are intact, implementations are replaced with TODO comments that
+walk through what to build.
 
-## `curriculum` (Main Branch)
+## Branches that matter
 
-The primary branch with complete working implementations.
+| Branch | What it is |
+| --- | --- |
+| `student-todo-exercises` | **This branch.** The exercises students clone and complete. |
+| `student-working-version` | Complete RAG app, used for demos and when a student is stuck. See the drift warning below. |
+| `lms` | The course platform: `/learn` and `/admin`, plus the current lessons in `curriculum/day-NN.md`. |
+| `main` | Deploy branch for the course site per `docs/LMS-SETUP.md` on `lms`, but well behind `lms`. Confirm before trusting it. |
 
-### Purpose:
+Everything else on origin (`cohort-*`, `solution*`, `curriculum`, `music-rag`,
+`langgraph`, `working_version`, `claude/*`, `cursor/*`) is historical. Ignore it
+unless you were sent there by name.
 
--   Complete reference implementation
--   All features fully implemented
--   Clean, well-structured code
--   Ready to run and test
+Older docs referenced a `student-starter` branch. It does not exist.
 
-### Key Files:
+Lessons are the day files on `lms`, ordered by the "## Week index" in
+`curriculum/README.md` there. The numbered module folders (`0-how-to-learn/`,
+`1-intro-to-rag/`, …) on the `curriculum` branch are the superseded format.
 
--   `app/agents/linkedin.ts` - Complete LinkedIn agent implementation
--   `app/agents/rag.ts` - Complete RAG agent with reranking
--   `app/api/select-agent/route.ts` - Complete selector with structured outputs
--   `app/agents/__tests__/selector.test.ts` - Full test suite
+## Where the TODOs are
 
-### Use This Branch:
+- `app/agents/linkedin.ts` — few-shot LinkedIn post generator.
+- `app/agents/rag.ts` — retrieval plus reranking.
+- `app/api/select-agent/route.ts` — the router, using structured outputs.
+- `app/api/upload-document/route.ts` — the document upload pipeline.
+- `app/libs/chunking.ts` — chunking, including `getLastWords()`.
+- `app/scripts/exercises/` — the vector-math exercises students run first.
 
--   For instructor demos and live coding
--   To verify expected behavior
--   To show working examples when students are stuck
--   As the source of truth for the complete system
+Supporting code that is already built: `app/libs/pinecone.ts`,
+`app/libs/openai/openai.ts`, `app/libs/scrapers/`, `app/agents/registry.ts`,
+`app/agents/config.ts`, `app/agents/types.ts`.
 
----
+## Fine-tuning is gone (May 2026)
 
-## `student-todo-exercises` (Exercise Branch)
+OpenAI closed fine-tuning access and the model this course used to ship with is
+dead. The LinkedIn agent uses **few-shot prompting** instead.
 
-Code with implementations removed and detailed TODOs for students to complete.
+- Example posts live in `app/agents/example-posts.ts`, with defaults drawn from `data/brian_posts.csv` (850+ real posts with engagement stats).
+- Students pick their own examples from that CSV or from any creator whose style they like.
+- `yarn train` is disabled and exits with an explanation. The fine-tuning scripts in `app/scripts/` remain as historical artifacts.
 
-### Purpose:
-
--   Hands-on learning exercises
--   Step-by-step guidance via TODO comments
--   Students implement features themselves
--   Follows curriculum modules in `curriculum/`
-
-### Key Files:
-
--   `app/agents/linkedin.ts` - TODOs for LinkedIn agent
--   `app/agents/rag.ts` - TODOs for RAG agent with reranking
--   `app/api/select-agent/route.ts` - TODOs for selector
--   All imports and types intact, only implementations removed
-
-### Use This Branch:
-
--   For students to work through exercises
--   Pair with curriculum modules in `curriculum/`
--   Students build everything from scratch with guided TODOs
-
----
-
-## Curriculum Structure
-
-The curriculum is organized in `curriculum/`:
-
-1. **How to Learn** (`0-how-to-learn/`)
-2. **Intro to RAG** (`1-intro-to-rag/`)
-3. **Vector Math Basics** (`2-vector-math-basics/`)
-4. **Pinecone Integration** (`3-pinecone-integration/`)
-5. **Chunking Fundamentals** (`4-chunking-fundamentals/`)
-6. **Document Upload** (`5-document-upload/`)
-7. **Fine-tuning** (`6-fine-tuning/`) ⚠️ DEPRECATED - Conceptual only; LinkedIn agent uses few-shot prompting instead
-8. **Agent Architecture** (`7-agent-architecture/`)
-    - Understanding agents
-    - Prompting strategies
-    - Text-based selector
-    - Structured outputs
-9. **LinkedIn Agent** (`8-linkedin-agent/`)
-10. **RAG Agent** (`9-rag-agent/`)
-    - Basic implementation
-    - Reranking
-    - Sparse and dense vectors
-11. **AI Frameworks** (`10-ai-frameworks/`) ⚠️ DRAFT
-12. **Chat Interface** (`11-chat-interface/`)
-13. **Observability** (`12-observability/`)
-14. **Testing Agents** (`13-testing-agents/`)
-15. **Tool Calling** (`14-tool-calling-exploration/`)
-    - Tool calling concepts
-    - MCP basics (draft)
-16. **SQL Agent** (`15-sql-agent/`)
-17. **Agent Patterns** (`16-agent-patterns/`) ⚠️ DRAFT
-18. **Capstone Project** (`17-capstone-project/`)
-19. **Interview Prep** (`18-interview-prep/`)
-20. **MCP Integration** (`19-mcp-integration/`)
-21. **Security** (`20-security/`)
-    - LLM/RAG security fundamentals
-    - Prompt injection defense
-    - Data poisoning prevention
-
----
-
-## Testing
-
-### Run All Tests:
+## Commands
 
 ```bash
-yarn test
-```
-
-### Run Specific Tests:
-
-```bash
-yarn test:selector    # Selector agent routing tests
-yarn test:chunking    # Text chunking tests
-```
-
-### Test Setup:
-
--   Jest configured for TypeScript
--   Environment variables loaded from `.env` or `.env.local`
--   Tests call API handlers directly (no server needed)
--   ~15 second runtime for selector tests
-
----
-
-## Quick Start
-
-### For Instructors (Complete Code):
-
-```bash
-git checkout curriculum
 yarn install
 yarn dev
-yarn test:selector  # Verify everything works
+yarn test            # jest, everything
+yarn test:selector   # agent routing, ~15s
+yarn test:chunking   # chunking
+yarn exercise:word-math
 ```
 
-### For Students (Learning Exercises):
+Tests call the API handlers directly, so no dev server is needed. Environment
+variables load from `.env` or `.env.local`.
+
+## Environment
 
 ```bash
-git checkout student-todo-exercises
-yarn install
-
-# Work through curriculum modules in order
-# Implement TODOs in:
-# - app/agents/linkedin.ts
-# - app/agents/rag.ts
-# - app/api/select-agent/route.ts
-
-# Test your implementations:
-yarn test:selector
-```
-
----
-
-## Environment Variables Needed
-
-Create `.env` or `.env.local`:
-
-```bash
-# OpenAI
 OPENAI_API_KEY=sk-...
-# Pinecone
 PINECONE_API_KEY=...
-PINECONE_INDEX=your-index-name
-
-# LangSmith (Observability)
+PINECONE_INDEX=your-index-name        # 512 dims, cosine
 LANGSMITH_TRACING=true
 LANGSMITH_ENDPOINT=https://api.smith.langchain.com
 LANGSMITH_API_KEY=lsv2_pt_...
 LANGSMITH_PROJECT="your-project-name"
 ```
 
-### Fine-Tuning Deprecation Note (May 2026)
+## Gotchas
 
-OpenAI has deprecated fine-tuning access, so fine-tuned models (including the course's old pre-trained model) are no longer used. The LinkedIn agent now uses **few-shot prompting**:
-
-- Example posts live in `app/agents/example-posts.ts` (defaults pulled from `data/brian_posts.csv`, 850+ real posts with engagement stats)
-- Students pick their own examples from the CSV or from any creator whose style they like
-- Students **do not** run `yarn train` — the script is now disabled
-- The fine-tuning module (`6-fine-tuning/`) teaches concepts using the scripts as historical artifacts
-- This module may be fully deprecated in a future curriculum update
-
----
-
-## Branch Workflow
-
-### For Instructors:
-
-1. Keep `curriculum` as the source of truth
-2. Direct students to `student-todo-exercises` for hands-on learning
-3. Show working examples from `curriculum` branch when students need help
-4. Update both branches when curriculum changes
-
-### For Students:
-
-1. Work in `student-todo-exercises` branch
-2. Follow curriculum modules in order
-3. Implement features with TODO guidance
-4. Ask instructors or attend office hours when stuck (working code shown selectively)
-
----
-
-## Draft Modules (Do Not Reference)
-
-The following modules are in draft state and should NOT be referenced from other curriculum materials:
-
--   **`10-ai-frameworks/`** - LangGraph content (draft)
--   **`16-agent-patterns/`** - Agent patterns content (draft)
-
-When writing or editing curriculum:
-
--   Do not add "What's Next" or cross-references pointing to draft modules
--   Do not assume students have completed draft module content
--   These modules may be removed or significantly changed
-
----
-
-## Curriculum Alignment Checklist
-
-**After making changes to curriculum, verify alignment:**
-
-1. **Check `student-todo-exercises` branch:**
-   ```bash
-   git checkout student-todo-exercises
-   # Verify TODOs match curriculum instructions
-   # Ensure no references to draft modules
-   git checkout curriculum
-   ```
-
-2. **Verify cross-references:**
-   - "What's Next" sections point to non-draft modules
-   - Assignment instructions match what students can access
-   - No broken links to draft content
-
-3. **Check ASSIGNMENTS.md:**
-   - Assignment numbering is consistent
-   - Submission links are correct
-   - Prerequisites don't require draft modules
+- **Import `openaiProvider` from `app/libs/openai/openai.ts`**, never `{ openai }` from `@ai-sdk/openai`. The bare import is hardcoded to api.openai.com, bypasses the class LiteLLM proxy, and 401s on a student key.
+- **Drift warning:** `student-working-version` still solves the LinkedIn agent with a fine-tuned model and the bare `@ai-sdk/openai` import. It has not caught up to the few-shot rewrite here, so it is not a line-for-line answer key for `app/agents/linkedin.ts`.
+- When you change the shape of an exercise here, change the matching solution on `student-working-version` too. The two drift easily.

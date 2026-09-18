@@ -1,5 +1,10 @@
 # AI-Powered Content Generation and RAG
 
+> **Branch: `student-todo-exercises` â€” the student starting point.** The app
+> does not work yet; you build it by completing the TODOs. `student-working-version`
+> holds the reference solution, and the lessons live on the `lms` branch.
+> See `CLAUDE.md` for the repo map.
+
 A full-stack TypeScript application demonstrating modern AI techniques including RAG (Retrieval Augmented Generation), fine-tuning, agents, and LLM observability with automated web scraping capabilities.
 
 ## Prerequisites
@@ -115,7 +120,7 @@ This repository serves as a practical guide for you to learn:
     - Scraped content is automatically vectorized using OpenAI embeddings and stored in Pinecone
 
 7. **Manual Article Upload**
-    - Navigate to `/scrape-content` to manually scrape urls
+    - Use the upload form on the main page to add a URL or raw text
     - Content is automatically vectorized and added to the Pinecone database
 
 ## Project Structure
@@ -176,7 +181,7 @@ Scrape documentation and upload embeddings:
 ```bash
 # Edit app/scripts/scrapeAndVectorizeContent.ts to add your URLs
 # Then run:
-yarn tsx app/scripts/scrapeAndVectorizeContent.ts
+npx ts-node app/scripts/scrapeAndVectorizeContent.ts
 ```
 
 This will scrape URLs, chunk the content, generate embeddings, and upload to Pinecone.
@@ -198,9 +203,9 @@ The old fine-tuning scripts in `app/scripts/` are kept as historical artifacts â
 Search the codebase for `TODO` comments - you'll find them in:
 
 -   `app/api/upload-document/route.ts` - Implement document upload pipeline
--   `app/libs/openai/agents/linkedin-agent.ts` - Complete LinkedIn agent
--   `app/libs/openai/agents/rag-agent.ts` - Build RAG retrieval and generation
--   `app/libs/openai/agents/selector-agent.ts` - Create agent router
+-   `app/agents/linkedin.ts` - Complete the LinkedIn agent with few-shot prompting
+-   `app/agents/rag.ts` - Build RAG retrieval and generation
+-   `app/api/select-agent/route.ts` - Create the agent router
 
 Key concepts you'll implement:
 
@@ -233,7 +238,7 @@ yarn test
 
 ### Hints:
 
--   The `working_version` branch has the complete solution if you get stuck
+-   The `student-working-version` branch has the complete solution if you get stuck
 -   Use `console.log()` liberally to understand data flow
 -   Check Pinecone dashboard to verify vectors are uploaded
 -   Use LangSmith dashboard to debug LLM calls and see cost
