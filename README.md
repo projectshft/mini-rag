@@ -1,5 +1,10 @@
 # AI-Powered Content Generation and RAG
 
+> **Branch: `student-working-version` — the completed reference.** Every TODO
+> below is already implemented here. Students start on `student-todo-exercises`
+> and come back to this branch when stuck. The course platform lives on `lms`.
+> See `CLAUDE.md` for the repo map.
+
 A full-stack TypeScript application demonstrating modern AI techniques including RAG (Retrieval Augmented Generation), fine-tuning, agents, and LLM observability with automated web scraping capabilities.
 
 ## Prerequisites
@@ -61,7 +66,7 @@ Before diving into the code, we highly recommend watching 3Blue1Brown's series o
     -   Training job management
 
 -   **Observability**:
-    -   Integration with Helicone for LLM monitoring
+    -   Integration with LangSmith for LLM tracing
     -   Performance tracking
     -   Usage analytics
 
@@ -71,7 +76,7 @@ Before diving into the code, we highly recommend watching 3Blue1Brown's series o
 -   **Backend**: Next.js API Routes
 -   **AI/ML**: OpenAI API, Pinecone Vector Database
 -   **Web Scraping**: Puppeteer
--   **Monitoring**: Helicone
+-   **Monitoring**: LangSmith
 -   **Package Manager**: Yarn
 
 ## Learning Objectives
@@ -116,7 +121,7 @@ This repository serves as a practical guide for you to learn:
     - Scraped content is automatically vectorized using OpenAI embeddings and stored in Pinecone
 
 7. **Manual Article Upload**
-    - Navigate to `/scrape-content` to manually scrape urls
+    - Use the upload form on the main page to add a URL or raw text
     - Content is automatically vectorized and added to the Pinecone database
 
 ## Project Structure
@@ -130,9 +135,11 @@ mini-rag/
 │   └── page.tsx          # Main application
 ```
 
-## 🚨 Your Mission: Fix This Broken App
+## 🚨 The Student Mission
 
-**This app doesn't work yet.** Your job is to build it from scratch by completing exercises and TODOs. When you're done, you'll have a fully functional AI-powered chat app with:
+This is what `student-todo-exercises` asks students to do. On that branch the
+app does not work yet; they build it by completing the exercises and TODOs
+below. The finished result is what you see on this branch:
 
 1. **RAG Agent** - Chat with your knowledge base (technical docs, articles, etc.)
 2. **LinkedIn Agent** - Fine-tuned on Brian's LinkedIn posts to generate professional content
@@ -177,7 +184,7 @@ Scrape documentation and upload embeddings:
 ```bash
 # Edit app/scripts/scrapeAndVectorizeContent.ts to add your URLs
 # Then run:
-yarn tsx app/scripts/scrapeAndVectorizeContent.ts
+npx ts-node app/scripts/scrapeAndVectorizeContent.ts
 ```
 
 This will scrape URLs, chunk the content, generate embeddings, and upload to Pinecone.
@@ -190,13 +197,13 @@ Fine-tune a model on Brian's LinkedIn posts:
 
 ```bash
 # Generate training data from posts
-yarn tsx app/scripts/generate-training-data.ts
+npx ts-node app/scripts/generate-training-data.ts
 
 # (Optional) Estimate cost before training
-yarn tsx app/scripts/estimate-training-cost.ts
+npx ts-node app/scripts/estimate-training-cost.ts
 
 # Upload to OpenAI and start fine-tuning job
-yarn tsx app/scripts/upload-training-data.ts
+npx ts-node app/scripts/upload-training-data.ts
 ```
 
 Once training completes (~10-20 mins), add the model ID to `.env`:
@@ -212,9 +219,9 @@ OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::YOUR_ID
 Search the codebase for `TODO` comments - you'll find them in:
 
 -   `app/api/upload-document/route.ts` - Implement document upload pipeline
--   `app/libs/openai/agents/linkedin-agent.ts` - Complete LinkedIn agent
--   `app/libs/openai/agents/rag-agent.ts` - Build RAG retrieval and generation
--   `app/libs/openai/agents/selector-agent.ts` - Create agent router
+-   `app/agents/linkedin.ts` - Complete LinkedIn agent
+-   `app/agents/rag.ts` - Build RAG retrieval and generation
+-   `app/api/select-agent/route.ts` - Create the agent router
 
 Key concepts you'll implement:
 
@@ -247,10 +254,10 @@ yarn test
 
 ### Hints:
 
--   The `student-working-version` branch has the complete solution if you get stuck
+-   This branch (`student-working-version`) is the complete solution
 -   Use `console.log()` liberally to understand data flow
 -   Check Pinecone dashboard to verify vectors are uploaded
--   Use Helicone dashboard to debug LLM calls and see cost
+-   Use the LangSmith dashboard to debug LLM calls and see cost
 -   Read the inline comments in TODO sections - they guide you step-by-step
 
 **Good luck! Figure it out. 🚀**
