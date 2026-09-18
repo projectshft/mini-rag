@@ -14,7 +14,7 @@ gone); students get that from the `student-*` branches below.
 | `lms` | **This branch.** Course platform + the curriculum markdown. Where course work happens. |
 | `student-working-version` | Complete RAG app. Reference solution for demos and stuck students. Also holds the MCP server reference (`app/mcp`). |
 | `student-todo-exercises` | Same RAG app with implementations stripped out and TODOs left behind. What students clone. |
-| `main` | Deploy branch named in `docs/LMS-SETUP.md`, but currently **42 commits behind `lms`**. Confirm which branch Vercel builds before trusting it. |
+| `main` | **Stale, do not branch from it.** Last touched July 2026. It holds an old TODO-stub copy of the RAG app and **none** of the LMS: no `curriculum/`, `app/learn/`, `app/admin/`, `lib/lms/`, `prisma/`, or `middleware.ts`. `docs/LMS-SETUP.md` still calls it the deploy branch, which does not match what is on it. See the warning in that doc. |
 
 Everything else on origin (`cohort-*`, `solution*`, `curriculum`, `music-rag`,
 `langgraph`, `working_version`, `claude/*`, `cursor/*`) is historical. Ignore it

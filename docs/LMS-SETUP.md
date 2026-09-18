@@ -1,9 +1,16 @@
 # Course Site Setup & Deploy (`/learn` + `/admin`)
 
-The course site lives in this repo's Next.js app and deploys from **`main`**.
-It renders the day-by-day lessons in `curriculum/day-NN.md` — edit a day
-file, push to `main`, and the site updates on the next Vercel deploy.
-This doc is instructor-facing.
+The course site lives in this repo's Next.js app. It renders the day-by-day
+lessons in `curriculum/day-NN.md`. This doc is instructor-facing.
+
+> ⚠️ **The deploy branch below is out of date.** As of September 2026 the
+> course site lives on **`lms`**, not `main`. `origin/main` was last touched
+> in July 2026 and contains none of it: no `curriculum/`, `app/learn/`,
+> `app/admin/`, `components/lms/`, `lib/lms/`, `prisma/`, or `middleware.ts`.
+> `main` is an ancestor of `lms`, so `lms` merges into it as a fast-forward.
+> Confirm the Vercel production branch before trusting anything below that
+> names `main`. If Vercel still builds `main`, nothing you push to `lms`
+> reaches the site until that merge happens.
 
 ## What you provision (one-time)
 
@@ -81,7 +88,8 @@ yarn dev
   student progress; renaming a file does (avoid renames after launch).
 
 ## ⚠️ Branch discipline
-`main` carries the LMS + curriculum. The **`student-todo-exercises`**
+`lms` carries the LMS + curriculum (`main` does not yet — see the warning at
+the top). The **`student-todo-exercises`**
 branch is what students clone — it must **never** receive any of:
 `curriculum/`, `app/learn/`, `app/admin/`, `components/lms/`, `lib/lms/`,
 `prisma/lms/`, `middleware.ts`, or the Clerk/LMS deps. Syncs to the
