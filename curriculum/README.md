@@ -2,11 +2,14 @@
 
 This folder is the single source of truth for the course site at `/learn`.
 One file per study day (`day-NN.md`), rendered by `lib/lms/curriculum.ts`.
-Edit a day file, push to `main`, and the site updates on the next deploy.
+Edit a day file and push — see `docs/LMS-SETUP.md` for which branch the
+site actually deploys from.
 
 **The "Week index" section below is the canonical order.** The parser reads
 it: week headers are bold lines, each study day is a `- Day N — [title](day-NN.md)`
 link, 🎥 marks assignment-due days, and rest days are plain (link-less) lines.
+Beta lessons (no video yet) carry "(Beta)" in the title — the site shows the
+day file's own `# ` heading, so a marker only appears in the UI if it's there.
 See [AUTHORING.md](./AUTHORING.md) for the day-file format and the interactive
 blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 
@@ -83,6 +86,8 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 
 - [MCP in Production: Auth, Tools & Resources](day-43.md)
 - [Human in the Loop: Gating an Agent's Destructive Actions](human-in-the-loop.md)
+- [LangGraph: When a Straight Line Isn't Enough (Beta)](langgraph-concepts.md)
+- [Rebuilding Your Agent as a Graph (Beta)](langgraph-refactor.md)
 
 ## Assignments
 
