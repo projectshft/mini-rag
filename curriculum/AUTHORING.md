@@ -28,10 +28,17 @@ they're plain lines in README.md's Week index.
 
 Rules:
 
-- The first `# ` heading and the `**Time:**` line are parsed into page
-  chrome (title, badges). Everything after the Time line is the body.
-- `**Time:**` values: `~45 min · Read + Watch`, `~60 min · Hands-on`,
-  `~90 min · Build`, etc. Keep the `·` separator.
+- The first `# ` heading is parsed into page chrome (title). Everything
+  after it is the body.
+- **Never estimate how long work should take.** No `**Time:** ~60 min`
+  badge, no "this assignment takes 2–3 hours". Students work at different
+  speeds, and a number on the page turns a slow day into evidence they're
+  behind. (The parser still reads a legacy `**Time:**` line; don't write
+  new ones.)
+- **Time-boxing is fine, and often useful.** "Don't spend more than 20
+  minutes on this before asking in Slack" tells a student when to stop
+  and get help. That's a ceiling, not an expectation they can fall short
+  of.
 - Keep the Descript video iframes exactly as they are in the source
   lessons: `<iframe src="https://share.descript.com/embed/..." ...></iframe>`.
   They render responsive automatically — don't wrap them.

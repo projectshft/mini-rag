@@ -75,5 +75,6 @@ infrastructure.
 
 - **Import `openaiProvider` from `app/libs/openai/openai.ts`**, never `{ openai }` from `@ai-sdk/openai`. The bare import is hardcoded to api.openai.com, silently bypasses the class LiteLLM proxy, and 401s on a student key.
 - **Never run `prisma db push --force-reset`** against `prisma/lms/schema.prisma`. It holds student progress.
+- **Never estimate how long a lesson or assignment takes.** Time-boxes ("don't spend more than 20 minutes on this before asking") are fine and encouraged. See the rule in `curriculum/AUTHORING.md`.
 - Progress is keyed by day slug, so renaming a `day-NN.md` file orphans it. Editing content is safe.
 - The Helicone comment block in `app/libs/openai/openai.ts` is vestigial. Nothing on this branch sends telemetry anywhere. LangSmith is wired up on `student-working-version` only.

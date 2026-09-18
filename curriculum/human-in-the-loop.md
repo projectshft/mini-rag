@@ -1,7 +1,5 @@
 # Human in the Loop: Gating an Agent's Destructive Actions
 
-**Time:** ~60 min · Build
-
 > **Today:** an agent that can *read* is safe to run on its own. An agent that can *delete, refund, or email* is a liability until a human signs off. You'll learn the human-in-the-loop pattern — the agent proposes, a human approves, then it executes — and wire it into the influencer agent from the SQL-agent lab.
 
 ## Video walkthrough
