@@ -13,7 +13,7 @@ walk through what to build.
 | `student-todo-exercises` | **This branch.** The exercises students clone and complete. |
 | `student-working-version` | Complete RAG app, used for demos and when a student is stuck. See the drift warning below. |
 | `lms` | The course platform: `/learn` and `/admin`, plus the current lessons in `curriculum/day-NN.md`. |
-| `main` | Deploy branch for the course site per `docs/LMS-SETUP.md` on `lms`, but well behind `lms`. Confirm before trusting it. |
+| `main` | **Stale, do not branch from it.** Last touched July 2026. An older TODO-stub copy of this branch, from before the few-shot rewrite, with none of the LMS code that `docs/LMS-SETUP.md` on `lms` claims it carries. |
 
 Everything else on origin (`cohort-*`, `solution*`, `curriculum`, `music-rag`,
 `langgraph`, `working_version`, `claude/*`, `cursor/*`) is historical. Ignore it
