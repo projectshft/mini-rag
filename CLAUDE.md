@@ -67,4 +67,5 @@ LANGSMITH_API_KEY=lsv2_pt_...
 
 - Observability here is **LangSmith**, not Helicone. Helicone was removed. Stray Helicone mentions in comments are vestigial.
 - The Pinecone index must be 512 dimensions with cosine metric, matching the embedding call in `app/libs/pinecone.ts`.
+- **This branch is behind on the LinkedIn agent.** `app/agents/linkedin.ts` here still requires `OPENAI_FINETUNED_MODEL` and imports `{ openai }` from `@ai-sdk/openai`. OpenAI closed fine-tuning access in May 2026, and `student-todo-exercises` moved to few-shot prompting with `app/agents/example-posts.ts`. So this file is no longer a line-for-line answer key, and the bare import bypasses the class LiteLLM proxy (import `openaiProvider` from `app/libs/openai/openai.ts` instead).
 - Changes that students are meant to implement belong on `student-todo-exercises` as TODOs too. The two branches drift easily, so touch both when you change an exercise's shape.

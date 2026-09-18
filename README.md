@@ -193,6 +193,10 @@ This will scrape URLs, chunk the content, generate embeddings, and upload to Pin
 
 **Step 4: Train Your LinkedIn Agent**
 
+> **Out of date.** OpenAI closed fine-tuning access in May 2026, so these
+> scripts no longer produce a model. `student-todo-exercises` teaches few-shot
+> prompting instead. The steps below are kept as a historical artifact.
+
 Fine-tune a model on Brian's LinkedIn posts:
 
 ```bash
