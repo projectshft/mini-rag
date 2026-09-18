@@ -13,7 +13,7 @@ key when a student is stuck. Students do not start here.
 | `student-working-version` | **This branch.** Complete RAG app, all TODOs implemented. Also holds the MCP server reference (`app/mcp/server.ts`) and the LLM-as-judge test. |
 | `student-todo-exercises` | The same app with implementations stripped out and TODOs left behind. What students clone. |
 | `lms` | The course platform: `/learn` and `/admin`, Clerk auth, Neon progress DB, and the curriculum markdown. No RAG chat app there. |
-| `main` | Deploy branch for the course site per `docs/LMS-SETUP.md` on `lms`, but well behind `lms`. Confirm before trusting it. |
+| `main` | **Stale, do not branch from it.** Last touched July 2026. An old TODO-stub copy of this app, with none of the LMS code that `docs/LMS-SETUP.md` on `lms` claims it carries. |
 
 Everything else on origin (`cohort-*`, `solution*`, `curriculum`, `music-rag`,
 `langgraph`, `working_version`, `claude/*`, `cursor/*`) is historical. Ignore it
