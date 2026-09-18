@@ -36,12 +36,21 @@ Older docs referenced a `student-starter` branch. It does not exist.
 - `curriculum/day-NN.md` — lesson content. `curriculum/README.md`'s "## Week index" is the canonical ordering. `curriculum/AUTHORING.md` documents the block formats.
 - `middleware.ts` — the public-route allowlist. Everything not listed there requires sign-in.
 
-**RAG app (what the lessons teach, still built here)**
+**RAG app (stubs, not a running app)**
+
+This branch carries a copy of the RAG app, but the agents are TODO stubs that
+throw. It is not the answer key and not meant to run here. Use
+`student-todo-exercises` for the exercises and `student-working-version` for
+the solutions.
 
 - `app/agents/` — `linkedin.ts`, `rag.ts`, `registry.ts`, `config.ts`.
 - `app/libs/` — `chunking.ts`, `pinecone.ts`, `dataProcessor.ts`, `openai/openai.ts`, `scrapers/`.
 - `app/api/` — `chat`, `select-agent`, `upload-document`, `upload-text`, `linkedin`, `rag-test`.
 - `app/scripts/` — scraping, fine-tuning data prep, and the `exercises/` students run.
+
+Note that `yarn test` on this branch runs the RAG app's jest suite against
+those stubs. The selector and vector-similarity suites fail here by design.
+Only the chunking suite passes.
 
 ## Commands
 
