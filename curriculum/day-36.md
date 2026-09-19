@@ -171,10 +171,9 @@ Record a video explaining your project plan:
 
 ### Submit proposal
 
-- [Proposal Video](https://form.typeform.com/to/NdVcsThQ)
-- [Proposal Notes](https://form.typeform.com/to/A0pGKPqU)
+Post your proposal video and your notes in **#all-parsity-dev-accelerator**.
 
-Post your idea in Slack too — a quick sanity check from mentors or classmates today can save you two days of building the wrong thing.
+Do it today. A quick sanity check from a mentor or a classmate now can save you two days of building the wrong thing.
 
 > **Build something that works. Explain your choices. Show us what you learned.**
 

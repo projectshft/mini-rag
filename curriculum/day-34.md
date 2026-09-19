@@ -471,12 +471,10 @@ whole video.
 
 ### Submit
 
-- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
+Post your video and code in **#all-parsity-dev-accelerator**.
 
-Post it in Slack — sanitizer regexes and guardrail prompts vary a lot, and
-seeing what someone else's defense missed is the fastest way to find your own
-blind spot.
+Sanitizer regexes and guardrail prompts vary a lot, and seeing what someone
+else's defense missed is the fastest way to find your own blind spot.
 
 ## Key takeaways
 

@@ -62,10 +62,9 @@ confident wrong answer is worse than an honest "I don't know."
 
 ### Submit your work
 
-- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
+Post your video and code in **#all-parsity-dev-accelerator**.
 
-And **post your work in Slack** — the before/after preprocessing demo makes a great post, and feedback from the group regularly catches things the rubric doesn't.
+The before/after preprocessing demo makes a great post, and feedback from the group regularly catches things the checklist below doesn't.
 
 ## What "done" looks like
 
@@ -76,7 +75,7 @@ And **post your work in Slack** — the before/after preprocessing demo makes a 
 - [ ] You can demonstrate before/after: one messy query where preprocessing measurably improves what's retrieved
 - [ ] Video is 4–5 minutes, covers all five evaluation questions, and uses examples from *your* system
 - [ ] Reranking runs on an over-fetched candidate pool, and a score threshold returns an honest "I don't know" when nothing clears it
-- [ ] Assignment submitted, work posted in Slack
+- [ ] Video and code posted in #all-parsity-dev-accelerator
 
 ## Common pitfalls
 

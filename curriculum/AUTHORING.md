@@ -42,7 +42,10 @@ Rules:
 - Keep the Descript video iframes exactly as they are in the source
   lessons: `<iframe src="https://share.descript.com/embed/..." ...></iframe>`.
   They render responsive automatically — don't wrap them.
-- Keep Typeform submission links exactly as-is on assignment days.
+- **Assignments are submitted in Slack, not by form.** Assignment days send
+  students to **#all-parsity-dev-accelerator** with their video and code. Don't
+  add submission forms back. (The feedback form and the mock-interview request
+  are not submissions and stay as they are.)
 - Voice: direct, practical, working-engineer-to-working-engineer. No fluff.
 
 ## Adding, moving, or removing a lesson
@@ -264,9 +267,11 @@ try-first + reveal.
 ## Assignment days
 
 Assignment days keep: what to build, the exact files to touch (linked to
-the student branch), the video requirements (3–4 min, Feynman-style), and
-the **Typeform submission links unchanged**. Remind students they can post
-in Slack for feedback.
+the student branch), the video requirements (3–4 min, Feynman-style), and a
+**Submit** section that sends them to **#all-parsity-dev-accelerator** with
+their video and code. Give each one a reason to post that's specific to that
+assignment — what the group will learn from seeing it — rather than repeating
+the same sentence seven times.
 
 **Never number an assignment.** Write "Assignment: RAG Agent", not
 "Assignment 2". Numbers drift the moment a lesson moves, and they contradict
@@ -291,4 +296,4 @@ Every lesson page already has **Next**/**Prev**, and the week index is one
 click away. `yarn check:curriculum` fails the build on any `/learn/` link or
 `Day N` reference in a lesson body.
 
-External links (GitHub, docs, Typeform) are fine and unaffected.
+External links (GitHub, docs, the feedback form) are fine and unaffected.

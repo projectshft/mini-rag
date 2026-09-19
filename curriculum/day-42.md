@@ -58,10 +58,9 @@ Feynman-style, as always: explain it like you're teaching a smart colleague who 
 
 ### Submit final project
 
-- [Final Video Submission](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission](https://form.typeform.com/to/A0pGKPqU) (GitHub repo link)
+Post your final video and your GitHub repo link in **#all-parsity-dev-accelerator**, along with one screenshot or query example and the problem it solves.
 
-Then **post your project in Slack** — repo link, one screenshot or query example, and the problem it solves. Your classmates' capstones are worth studying too: every one is a different answer to "how do I make retrieval work for *this* data?"
+Your classmates' capstones are worth studying too. Every one is a different answer to "how do I make retrieval work for *this* data?"
 
 > **Build something that works. Explain your choices. Show us what you learned.**
 

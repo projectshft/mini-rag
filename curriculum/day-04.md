@@ -359,10 +359,9 @@ Be specific with your explanations — show you understand the geometry, not jus
 
 ### Submit your work
 
-- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
+Post your video and your code in **#all-parsity-dev-accelerator**.
 
-Post your favorite equation (especially the surprising failures) in Slack — they make great discussion.
+Include your favorite equation while you're there, especially the surprising failures. Those make the best discussion in the channel.
 
 ## Key takeaways
 

@@ -308,10 +308,9 @@ No jargon without explanation. If you can't explain your chunk-size choice simpl
 
 ### Submit your work
 
-- [Video Submission](https://form.typeform.com/to/NdVcsThQ)
-- [Code Submission](https://form.typeform.com/to/A0pGKPqU)
+Post your video and code in **#all-parsity-dev-accelerator**.
 
-Post your video and code in **Slack** for feedback — seeing how others chunked the same three document types is half the value.
+Then read a couple of other people's. Seeing how someone else chunked the same three document types is half the value of this one.
 
 ## Key takeaways
 

@@ -108,9 +108,10 @@ lightest day of that week. One per week, plus the capstone bookends.
 | [Capstone proposal](day-36.md) | Week 6 | scope and plan |
 | [Capstone](day-42.md) | End of course | the whole thing |
 
-Two forms, reused for every assignment — one for your video, one for your code —
-linked inline on each assignment day. Tell the form which assignment you're
-submitting. Post your work in Slack too.
+Every assignment is submitted by posting it in the Slack channel
+**#all-parsity-dev-accelerator** — video and code, in the channel. There are no
+submission forms. Say which assignment you're posting. Start Here explains why
+submission is public and what that room is for.
 
 Optional and ungraded: the [SQL agent lab](day-33.md), the
 [LLM-as-judge exercise](day-30.md), and the [Bible chunking lab](bonus-bible-chunking.md).

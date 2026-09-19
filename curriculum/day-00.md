@@ -19,6 +19,20 @@ And there's a second reason, the career one: after this program, you will likely
 
 **Non-negotiable habit:** record the video even when it's rough. Especially when it's rough. Rough videos are where the learning is.
 
+## Where the homework goes
+
+Every assignment gets posted in **#all-parsity-dev-accelerator** — video and code, in the channel, where people can see it. No forms, no upload portal, nothing disappearing into a folder only a grader opens.
+
+That last part is the point, so let's be clear about what that room is and isn't.
+
+**Nobody in there is judging you.** There's no score, no red pen, no ranking. It's a group of people building the same thing you're building, in the same week, tripping over the same rock. That is the safest audience you will ever get for a rough first draft, and it will never be this safe again once you're posting in a work channel.
+
+**Your post teaches the room.** Someone reads how you chunked a messy PDF and it saves them an evening. Somebody else's selector prompt shows you an edge case you'd never have thought to test. The channel is worth more to you as a reader than as a poster, and it only works if people post.
+
+**And it's a rep.** Explaining a decision out loud, in writing, to other engineers, is the thing the job actually asks of you. Code review is this. Design docs are this. The interview is this. You may as well get the reps somewhere nobody's keeping score.
+
+So post it rough. Post it when the third bullet doesn't work yet and say so. That's a more useful post than a polished one, and you'll get better answers.
+
 ## Your mentor: the most important part of this program
 
 You get a human mentor — a working engineer who has built the things you're
@@ -106,7 +120,7 @@ A few things to set straight expectations:
 
 - [ ] Calendar-block your daily time (even 30 minutes)
 - [ ] Book the recurring mentor session — or [reach out](mailto:brian@parsity.io) if you don't have a mentor yet
-- [ ] Join Slack, and post an intro: who you are, what you want out of this
+- [ ] Join #all-parsity-dev-accelerator and post an intro: who you are, what you want out of this
 - [ ] Save your class API key when it arrives by email (you'll use it inside lessons)
 - [ ] Skim the [full 42-day schedule](/learn) so you know the shape of the next six weeks
 - [ ] Start your first lesson (hit **Next** at the bottom of this page)
