@@ -10,26 +10,6 @@ text + interactive.
 
 ### High value — worth recording
 
-- [ ] **Day 32 — MCP** (`curriculum/day-32.md`). No video, and it's the hottest,
-  most-confusing topic in the course. **Highest-leverage video you could add.**
-  Three beats, ~6–8 min total — the value is in showing the *loop*, not the
-  finished server:
-  1. **Build the local server.** `mcp/rag-server.ts` — one tool, `search_docs`,
-     wrapping the retrieval they already have. Say out loud why it's stdio and
-     why `console.log` would corrupt the protocol.
-  2. **Inspect it before any client touches it.** Launch the MCP Inspector,
-     show the tool appearing in the list, call it with a query you know is in
-     the index, show real matches coming back. This is the beat students will
-     rewatch — it's the difference between "MCP is magic config" and "MCP is a
-     server I can poke at." Show a failure too if you can: call it with a bad
-     arg and let them see the error surface in the Inspector rather than
-     silently inside a chat client.
-  3. **Expose it to Claude Code.** Register it, restart, verify it's connected,
-     then ask a question that makes the model call the tool — and show the tool
-     call happening, not just the answer.
-
-  The arc to narrate: *build it → prove it works in isolation → then let a
-  client use it.* Most people skip the middle step and then can't debug.
 - [ ] **Day 36 — Capstone Kickoff** (`curriculum/day-36.md`). No video. This is
   the moment students shift from "follow along" to "build your own." A short
   (2–3 min) "how to pick and scope your project" pep-talk is worth more here
@@ -49,6 +29,7 @@ text + interactive.
 
 ### Already covered (no action)
 
+- Day 32 — MCP → recorded; the walkthrough is embedded in `curriculum/day-32.md`.
 - Human in the Loop → uses the killer_agents walkthrough (`bLyg4DvdgXW`).
 - 5-step AI Advisor challenge → all 5 steps have videos (from the ai-advisor course).
 - Days 1–26 → have walkthroughs.
@@ -57,13 +38,12 @@ text + interactive.
 
 ## Other open items
 
-- [x] **Submission forms** — every assignment points at the same two forms:
-  **Video** `NdVcsThQ`, **Code** `A0pGKPqU`. Both retitled via the API to
-  "Assignment — Video Submission" / "Assignment — Code Submission". No
-  assignment field by choice: submissions arrive with an email and a link, and
-  you identify the assignment from the work itself. The other ten forms are
-  unused — keep them, past cohort responses live there, and check whether any
-  Zapier automation was wired to them before retiring the links.
+- [x] **Assignment submission** — moved off Typeform entirely. Every
+  assignment is now posted in the Slack channel
+  **#all-parsity-dev-accelerator** (video + code, say which assignment).
+  The old Video/Code forms (`NdVcsThQ` / `A0pGKPqU`) and the other ten are
+  unlinked but kept — past cohort responses live there. Before retiring any
+  of those links, check whether a Zapier automation was wired to them.
 
 - [ ] **Test the invite flow end-to-end.** The ticket-drop bug is fixed and
   deployed — send yourself (a second email) a real invite from `/admin`, click

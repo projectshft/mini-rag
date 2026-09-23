@@ -61,8 +61,9 @@ yarn dev
 - Lesson content: the **markdown files** (`lib/lms/curriculum.ts` parses
   them; `curriculum/README.md`'s "## Week index" is the canonical order;
   `AUTHORING.md` documents the format and the interactive blocks).
-- Assignments: Typeform links stay inline in the day files (no in-app
-  submission in this version). Feedback happens in Slack.
+- Assignments: submitted by posting video + code in the Slack channel
+  **#all-parsity-dev-accelerator** (no in-app submission, no forms).
+  Feedback happens in the same channel.
 - Interview prep (`curriculum/interview-NN.md`): gated per student.
   Locked by default; unlock each student with the 🎤 toggle in `/admin`
   near the end of the program. State lives in
