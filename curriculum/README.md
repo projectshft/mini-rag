@@ -114,7 +114,8 @@ submission forms. Say which assignment you're posting. Start Here explains why
 submission is public and what that room is for.
 
 Optional and ungraded: the [SQL agent lab](day-33.md), the
-[LLM-as-judge exercise](day-30.md), and the [Bible chunking lab](bonus-bible-chunking.md).
+[LLM-as-judge exercise](day-30.md), the [Bible chunking lab](bonus-bible-chunking.md), and the
+[retrieval eval lab](bonus-retrieval-evals.md).
 
 ## Bonus lessons
 
@@ -122,6 +123,7 @@ Optional labs — always available, never required. Same file format as day
 files (slug prefix `bonus-`).
 
 - [Optional Lab: Chunk the Bible and Store It in Pinecone](bonus-bible-chunking.md)
+- [Optional Lab: Is Your Search Finding the Right Chunks?](bonus-retrieval-evals.md)
 
 ## Interview prep
 
