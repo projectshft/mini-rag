@@ -1,82 +1,89 @@
-# Optional Lab: Measure Your Retrieval (Hit Rate and MRR)
+# Optional Lab: Is Your Search Finding the Right Chunks?
 
-> **This lab:** stop judging retrieval by eye. You'll write a small set of questions with known answers, score your retriever against it with two standard numbers, and then change one thing (reranking, top-k, chunk size) and prove whether it helped. By the end you'll have a before/after table you can put in a README and defend in an interview.
+> **This lab:** you'll write a short list of questions where you already know the answer, run each one through your search, and count how often the right chunk comes back and how close to the top it lands. Then you'll change one thing, run it again, and see whether it actually helped. You'll finish with a small before-and-after table you can put in a README and talk through in an interview.
 
 ## Why "it feels better" isn't an answer
 
-You've tuned retrieval all course. You added reranking, tried hybrid search, played with chunk size, and each time you ran a few queries, read the results, and decided it looked better.
+You've tuned search all course. You added reranking, tried hybrid search, played with chunk size. Each time, you probably ran a few questions, read what came back, and decided it looked better.
 
-That's how everyone starts, and it doesn't hold up. Three queries you picked yourself can't tell you whether a change helped the other three hundred. Worse, you can't tell your teammates either. "I bumped the chunk size and it feels better" loses every argument to "I bumped it and hit@3 dropped from 0.80 to 0.64."
+Everyone starts there, and it doesn't hold up. A few questions you picked yourself can't tell you whether a change helped the hundreds of questions real users will ask. It also can't convince anyone else. Compare these two sentences from a standup:
 
-The LLM-as-judge tests you wrote score the **answer**. This lab scores the step before it: **did the right chunk come back at all, and how high?** If the answer is wrong, the first question is whether the model got bad context or ignored good context. These numbers tell you which.
+- "I changed the chunk size and the results feel more relevant."
+- "I changed the chunk size, and the right chunk now shows up in the top 3 for 20 of our 25 test questions instead of 16."
+
+The second one ends the discussion. This lab teaches you to say it.
+
+There's also a debugging reason. When your app gives a wrong answer, there are two very different causes: search handed the model the wrong chunks, or it handed over the right chunks and the model didn't use them well. The LLM-as-judge tests you wrote check the final answer, so they can't tell those apart. This lab checks only the search step, so it can.
 
 ```mermaid
 flowchart LR
-    G[Golden set<br/>question + answer phrase] --> R[Your retriever]
-    R --> C[Top-k chunks]
-    C --> S{Does a chunk<br/>contain the answer?<br/>At what rank?}
-    S --> M[hit@k and MRR]
+    G[Test questions<br/>+ what the answer says] --> R[Your search]
+    R --> C[Top results]
+    C --> S{Is the answer<br/>in there?<br/>How high up?}
+    S --> M[Two scores]
     M --> X[Change ONE thing]
     X --> R
 ```
 
-## Two numbers: hit rate and MRR
+## Two scores
 
-For each question you know what the answer looks like. Run the retriever and find the **rank** of the first chunk that contains it: 1 if it's the top result, 3 if it's third, nothing if it never shows up.
+Think of each search like a Google results page. For every test question, you ask: **did the right result show up, and at what position?** Position 1 is the top result, position 3 is the third one down, and if it never shows up, that's a miss.
 
-**Hit rate@k** is the share of questions where the answer showed up anywhere in the top k. It answers "does the model even get a chance?"
+From those positions you get two scores. Both have standard names, and it's worth learning them because you'll see them in job posts and papers.
 
-**MRR** (mean reciprocal rank) averages `1 / rank` over all questions, and a miss counts as 0. Rank 1 scores 1.0, rank 2 scores 0.5, rank 4 scores 0.25. It answers "how high does it show up?", which matters because the model pays the most attention to what's at the top, and because you may only pass the top few chunks to the model anyway.
+**Hit rate** asks: *did the right chunk show up at all?* You pick how far down the list you'll look. "Hit rate at 3", written **hit@3**, is the share of questions where the right chunk was somewhere in the top 3. If 15 of 20 questions found it in the top 3, hit@3 is 0.75. This tells you whether the model even gets a chance at the right information.
 
-Work one by hand before you write code. Five questions, and the rank where each answer first appeared:
+**MRR** asks: *how close to the top did it land?* Each question gets points based on position: 1 point for first place, ½ for second, ⅓ for third, ¼ for fourth, and 0 for a miss. Average those points across all your questions and you have MRR. (It stands for "mean reciprocal rank", which is just a formal way of saying "average of 1 divided by the position".) Position matters because the model pays the most attention to what comes first, and because you often only send the top few chunks to the model anyway.
 
-| Question | First relevant rank | Hit@1 | Hit@3 | 1 / rank |
+Try one by hand before you write any code. Here are five questions and the position where each one's answer first appeared:
+
+| Question | Position of right chunk | In top 1? | In top 3? | Points (1 ÷ position) |
 | --- | --- | --- | --- | --- |
 | How do I memoize a callback? | 1 | ✓ | ✓ | 1.00 |
 | When does useEffect run? | 2 | | ✓ | 0.50 |
 | Why do list items need keys? | 4 | | | 0.25 |
 | What's a controlled input? | 1 | ✓ | ✓ | 1.00 |
 | How do I cancel a fetch on unmount? | not found | | | 0 |
-| **Score** | | **0.40** | **0.60** | **MRR 0.55** |
+| **Score** | | **hit@1 = 0.40** | **hit@3 = 0.60** | **MRR = 0.55** |
 
 ```quiz
 [
   {
-    "q": "Your retriever's hit@10 is 0.92 but its hit@1 is 0.40. What does that tell you?",
+    "q": "The right chunk is in the top 10 for 92% of your questions (hit@10 = 0.92), but it's in first place for only 40% (hit@1 = 0.40). What does that tell you?",
     "options": [
-      "Vector search is missing most answers, so re-chunk before anything else",
-      "The right chunk is usually retrieved but ranked too low, so a reranker is the obvious thing to try",
-      "The golden set is too easy"
+      "Search is missing most answers, so re-chunk before anything else",
+      "Search usually finds the right chunk but puts it too low in the list, so a reranker is the obvious thing to try",
+      "Your test questions are too easy"
     ],
     "answer": 1,
-    "explain": "Hit@10 says the answer is almost always somewhere in the net. Hit@1 says it's rarely on top. That's a ranking problem, which is exactly what a cross-encoder reranker fixes."
+    "explain": "It's almost always somewhere in the top 10, so search is finding it. It's rarely first, so the ordering is the problem. Reordering is exactly what a reranker does."
   },
   {
-    "q": "hit@10 is 0.55. You add a reranker over the top 10. What happens to hit@10?",
+    "q": "The right chunk is in the top 10 for only 55% of questions. You add a reranker that reorders those top 10. What happens to that 55%?",
     "options": [
       "It goes up, because the reranker is smarter than cosine similarity",
-      "It stays at 0.55. A reranker only reorders what it's given, so it can't bring back a chunk that wasn't retrieved",
+      "It stays at 55%. A reranker only reorders the 10 chunks it's given, so it can't bring in a chunk that wasn't there",
       "It goes down, because rerankers drop low-scoring chunks"
     ],
     "answer": 1,
-    "explain": "A reranker can move a chunk from rank 8 to rank 1. It can't find a chunk that wasn't in the 10 it was handed. When hit@k is low at a large k, the fix is upstream: chunking, the data, the embedding, or hybrid search."
+    "explain": "A reranker can move a chunk from 8th to 1st. It can't find a chunk that wasn't in the 10 it was handed. When the right chunk is missing from the list entirely, the fix is earlier in the pipeline: chunking, the data, the embedding, or hybrid search."
   },
   {
-    "q": "Two retrievers both score hit@5 = 0.80. Retriever A has MRR 0.72, B has MRR 0.48. Which do you ship, all else equal?",
+    "q": "Two setups both find the right chunk in the top 5 for 80% of questions. Setup A has MRR 0.72, setup B has MRR 0.48. Which do you ship, all else equal?",
     "options": [
-      "A. Same coverage, but its answers land nearer the top",
-      "B. Lower MRR means more diverse results",
-      "Either one. hit@5 is what matters"
+      "A. It finds the answer just as often, and puts it nearer the top",
+      "B. A lower MRR means more varied results",
+      "Either one. Only the top-5 number matters"
     ],
     "answer": 0,
-    "explain": "Same hit rate means they find the answer equally often. MRR breaks the tie: A puts it near the top, where the model pays the most attention and where it survives if you trim context later."
+    "explain": "Same hit rate means they find the answer equally often. MRR breaks the tie: A puts it closer to first place, where the model pays the most attention and where it survives if you later send fewer chunks."
   }
 ]
 ```
 
-## The golden set is the hard part
+## Writing the test questions is the hard part
 
-The code in this lab is short. The judgment is all in the question set, so spend your effort here.
+The code in this lab is short. The judgment is all in the questions, so spend your effort here. (A list of test questions with known answers is often called a **golden set**, which is why the file below is named `golden-set.json`.)
 
 Write **20–30 questions** against the index you already built. Each one gets one or more **answer phrases**: a short quote, copied from your source content, that a chunk must contain to count as the right one.
 
