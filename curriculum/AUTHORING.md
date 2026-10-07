@@ -46,6 +46,16 @@ Rules:
   students to **#all-parsity-dev-accelerator** with their video and code. Don't
   add submission forms back. (The feedback form and the mock-interview request
   are not submissions and stay as they are.)
+- **Don't chase model names.** Lessons name the models that were current
+  when they and their videos were recorded (`gpt-4o`, `gpt-4o-mini`,
+  `text-embedding-3-small`). Do **not** mass-update them: the text would
+  then contradict what students see on screen in the walkthroughs, which is
+  worse than a dated string. The concepts are model-independent, and that's
+  the point. The standing note lives in the Day 16 "Model selection"
+  section, Day 00 frames it, and Day 16's "Work with AI" turns the upgrade
+  into an agent exercise. If you add a model ID to a lesson, match what that
+  day's video shows. The fine-tuning days pin a dated base model on purpose —
+  leave them alone.
 - Voice: direct, practical, working-engineer-to-working-engineer. No fluff.
 
 ## Adding, moving, or removing a lesson
