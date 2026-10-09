@@ -239,11 +239,11 @@ Then feel it — same prompt, both ends of the dial, real API calls:
 > The model IDs in this course — `gpt-4o`, `gpt-4o-mini`, `text-embedding-3-small` — are the ones that were current when these lessons and their videos were recorded. **The curriculum has not gone stale; model names move faster than concepts do.** Everything you learn here — chunking, embeddings, retrieval, reranking, routing, evals, security — is model-independent. Swap the string and the architecture is unchanged.
 >
 > **What this means for you:**
-> - **GPT-5 models are the better default if your class key has access.** Stronger reasoning, same architecture. Use them.
-> - **Nothing here requires them.** Every exercise, test, and assignment works on the 4-series models, and the videos show those names on screen — so if you're following a walkthrough, matching the video is the path of least friction.
-> - **Pick one and stay consistent.** A half-migrated repo is the one genuinely confusing outcome.
+> - **Use the model names the lessons use.** Not because newer models are worse — they aren't — but because these are cheap, they're what the walkthroughs show on screen, and your class key has a fixed budget. The selector alone runs on *every* message, so the frontier model that looks tempting on day one is the one that empties your key by week three.
+> - **Cost is an architecture decision, not an afterthought.** Picking the smallest model that does the job is the senior move, and it's the habit this course is actually trying to build. "Use the best model" is what juniors say in design reviews.
+> - **If you later want to move to a newer generation, do it deliberately and all at once.** A half-migrated repo is the one genuinely confusing outcome.
 >
-> The table below keeps the 4-series names so the text matches the recordings. The section after it treats the upgrade as an exercise — which is a more useful skill than the rename itself.
+> The section after the table treats that upgrade as an exercise — the judgment in it is a more useful skill than the rename itself.
 
 | Model           | Speed  | Cost      | Best for                                  |
 | --------------- | ------ | --------- | ----------------------------------------- |
@@ -276,7 +276,7 @@ await openaiClient.chat.completions.create({
 
 ### Migrating to a newer model generation
 
-Renaming `gpt-4o` to a GPT-5 model is a one-line change per call site. That is not the interesting part.
+Renaming `gpt-4o` to whatever the current generation is called is a one-line change per call site. That is not the interesting part.
 
 The interesting part is that **"upgrade a codebase's model generation" is a recurring production task** — and it is exactly the kind of mechanical, repo-wide, easy-to-get-subtly-wrong work that coding agents are good at and humans are sloppy at.
 
@@ -528,9 +528,9 @@ Help me build intuition for LLM temperature. Give me 8 real-world tasks one at a
 ```
 
 ```ai-prompt
-title: Migrate this repo from GPT-4 to GPT-5 models
+title: Plan a model-generation migration
 ---
-I want to migrate a RAG codebase from the GPT-4 generation to GPT-5 models, carefully, rather than with a find-and-replace.
+I want to migrate a RAG codebase from the model generation it currently pins to whatever generation is current today, carefully, rather than with a find-and-replace. Start by telling me what the current generation actually is — don't assume, check.
 
 Step 1. Find every place a model name is specified. In this repo that means the selector route, the RAG agent, the LinkedIn agent, the shared OpenAI helper, and the scripts.
 
@@ -538,7 +538,9 @@ Step 2. Before changing anything, give me a table with one row per call site: th
 
 Step 3. This is the part I actually care about. Tell me which call sites should NOT be migrated, and why. There are at least two distinct categories — think about model families that aren't chat models, and about code that exists as a historical artifact rather than as something that runs.
 
-Step 4. What could silently break that a passing test suite would NOT catch? Consider structured-output and output-format behavior, temperature sensitivity, per-request cost at the selector's call volume, and embedding-dimension compatibility with vectors already in the index.
+Step 4. What could silently break that a passing test suite would NOT catch? Consider structured-output and output-format behavior, temperature sensitivity, and embedding-dimension compatibility with vectors already in the index.
 
-Do not write the migration until you have answered all four. Then show me the diff and tell me how you would verify it.
+Step 5. Price it. For each call site, estimate the cost change per 1,000 requests, and tell me which migrations are not worth the money — the selector is a classifier running on every single message, and a more capable model may buy nothing there. I want to end up knowing which of these calls genuinely need a better model and which ones I'd be upgrading out of habit.
+
+Do not write the migration until you have answered all five. Then show me the diff and tell me how you would verify it.
 ```
