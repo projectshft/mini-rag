@@ -2,8 +2,9 @@
 
 This folder is the single source of truth for the course site at `/learn`.
 One file per study day (`day-NN.md`), rendered by `lib/lms/curriculum.ts`.
-Edit a day file and push — see `docs/LMS-SETUP.md` for which branch the
-site actually deploys from.
+Edit a day file and push to `lms` — that branch is what Vercel builds, so
+the change is live without any further step. Run `yarn check:curriculum`
+first; see `docs/LMS-SETUP.md` for the full deploy picture.
 
 **The "Week index" section below is the canonical order.** The parser reads
 it: week headers are bold lines, each study day is a `- Day N — [title](day-NN.md)`

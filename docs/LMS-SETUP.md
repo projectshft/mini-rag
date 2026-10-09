@@ -3,14 +3,12 @@
 The course site lives in this repo's Next.js app. It renders the day-by-day
 lessons in `curriculum/day-NN.md`. This doc is instructor-facing.
 
-> ⚠️ **The deploy branch below is out of date.** As of September 2026 the
-> course site lives on **`lms`**, not `main`. `origin/main` was last touched
-> in July 2026 and contains none of it: no `curriculum/`, `app/learn/`,
-> `app/admin/`, `components/lms/`, `lib/lms/`, `prisma/`, or `middleware.ts`.
-> `main` is an ancestor of `lms`, so `lms` merges into it as a fast-forward.
-> Confirm the Vercel production branch before trusting anything below that
-> names `main`. If Vercel still builds `main`, nothing you push to `lms`
-> reaches the site until that merge happens.
+> **Deploys come off `lms`.** Confirmed October 2026: the Vercel production
+> branch is **`lms`**, so a push to `lms` goes live on its own. There is no
+> promote or merge step, and nothing needs to reach `main` for a change to
+> ship. `main` still exists and now carries the full LMS (it trails `lms` by
+> a commit or two), but it is **not** the deploy branch — don't merge into it
+> expecting that to publish anything.
 
 ## What you provision (one-time)
 
@@ -47,8 +45,9 @@ yarn dev
 - `/learn` → redirects to Clerk sign-in if not authenticated.
 - Sign in with an `LMS_ADMIN_EMAILS` address → `/admin` to invite students.
 
-## Deploy (Vercel, `main`)
-- Connect the repo, production branch = `main`.
+## Deploy (Vercel, `lms`)
+- Connect the repo, production branch = **`lms`**. Pushing to `lms` is the
+  deploy — there is no separate promote step.
 - Set all env vars above (Clerk **production** keys + a configured
   production instance domain).
 - Build runs `postinstall` (generates the LMS Prisma client) then `next build`.
