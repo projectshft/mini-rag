@@ -1,7 +1,7 @@
 import { AgentRequest, AgentResponse } from './types';
 import { pineconeClient } from '@/app/libs/pinecone';
 import { openaiClient } from '@/app/libs/openai/openai';
-import { openai } from '@ai-sdk/openai';
+import { openaiProvider } from '@/app/libs/openai/openai';
 import { streamText } from 'ai';
 
 export async function ragAgent(request: AgentRequest): Promise<AgentResponse> {
@@ -54,7 +54,7 @@ Use the context above to answer the user's question. If the context doesn't cont
 
 	// Step 7: Stream the response
 	return streamText({
-		model: openai('gpt-4o'),
+		model: openaiProvider('gpt-4o'),
 		system: systemPrompt,
 		messages: request.messages,
 	});

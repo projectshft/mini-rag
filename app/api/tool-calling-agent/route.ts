@@ -6,7 +6,7 @@
 
 import { NextRequest } from 'next/server';
 import { streamText, stepCountIs } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { openaiProvider } from '@/app/libs/openai/openai';
 import { z } from 'zod';
 import { pineconeClient } from '@/app/libs/pinecone';
 import { openaiClient } from '@/app/libs/openai/openai';
@@ -34,7 +34,7 @@ export async function POST(request: NextRequest) {
 		);
 
 		const result = await streamText({
-			model: openai('gpt-4o'),
+			model: openaiProvider('gpt-4o'),
 			tools: {
 				search_documentation: {
 					description:

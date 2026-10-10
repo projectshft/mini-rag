@@ -35,7 +35,7 @@ PINECONE_API_KEY=your_pinecone_key_here
 LANGSMITH_TRACING=true
 LANGSMITH_API_KEY=your_langsmith_key_here
 PINECONE_INDEX=your_index_name
-OPENAI_FINETUNED_MODEL=your_finetuned_model_id (optional)
+OPENAI_BASE_URL=class_proxy_url (only if using a class key)
 ```
 
 ### Recommended Learning Resources

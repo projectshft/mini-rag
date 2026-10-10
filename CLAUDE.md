@@ -56,7 +56,7 @@ Create `.env` or `.env.local`:
 
 ```bash
 OPENAI_API_KEY=sk-...
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:...   # after fine-tuning
+OPENAI_BASE_URL=...                                    # set if using a class key
 PINECONE_API_KEY=...
 PINECONE_INDEX=rag-tutorial                            # 512 dims, cosine
 LANGSMITH_TRACING=true
@@ -67,5 +67,5 @@ LANGSMITH_API_KEY=lsv2_pt_...
 
 - Observability here is **LangSmith**, not Helicone. Helicone was removed. Stray Helicone mentions in comments are vestigial.
 - The Pinecone index must be 512 dimensions with cosine metric, matching the embedding call in `app/libs/pinecone.ts`.
-- **This branch is behind on the LinkedIn agent.** `app/agents/linkedin.ts` here still requires `OPENAI_FINETUNED_MODEL` and imports `{ openai }` from `@ai-sdk/openai`. OpenAI closed fine-tuning access in May 2026, and `student-todo-exercises` moved to few-shot prompting with `app/agents/example-posts.ts`. So this file is no longer a line-for-line answer key, and the bare import bypasses the class LiteLLM proxy (import `openaiProvider` from `app/libs/openai/openai.ts` instead).
+- **Import `openaiProvider` from `app/libs/openai/openai.ts`**, never `{ openai }` from `@ai-sdk/openai`. The bare import is hardcoded to api.openai.com, silently bypasses the class LiteLLM proxy, and 401s on a student key.
 - Changes that students are meant to implement belong on `student-todo-exercises` as TODOs too. The two branches drift easily, so touch both when you change an exercise's shape.
