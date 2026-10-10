@@ -16,7 +16,7 @@ Before getting started, you'll need to set up the following services:
 1. **OpenAI API Key** (https://platform.openai.com/api-keys)
 
     - You'll need at least $5 in credits on your OpenAI account
-    - Used for embeddings, chat completions, and fine-tuning
+    - Used for embeddings and chat completions
 
 2. **Pinecone API Key** (https://www.pinecone.io/)
 
@@ -49,7 +49,7 @@ Before diving into the code, we highly recommend watching 3Blue1Brown's series o
 
 -   **Multi-Agent System**: 2 specialized agents for different content types:
 
-    -   LinkedIn Agent: Uses a fine-tuned GPT-4 model for professional content to post on LinkedIn
+    -   LinkedIn Agent: Uses few-shot prompting — real example posts embedded in the prompt — to write in a given voice
     -   RAG Agent: Leverages Pinecone vector database for RAG-based content analysis
 
 -   **Web Scraping**:
@@ -139,7 +139,7 @@ mini-rag/
 **This app doesn't work yet.** Your job is to build it from scratch by completing exercises and TODOs. When you're done, you'll have a fully functional AI-powered chat app with:
 
 1. **RAG Agent** - Chat with your knowledge base (technical docs, articles, etc.)
-2. **LinkedIn Agent** - Fine-tuned on Brian's LinkedIn posts to generate professional content
+2. **LinkedIn Agent** - Writes posts in Brian's voice using few-shot example posts (`app/agents/example-posts.ts`)
 
 ### What You Need To Do:
 
@@ -224,7 +224,7 @@ Visit `http://localhost:3000` and test:
 
 -   Upload new documents (URLs or raw text)
 -   Ask technical questions (should use RAG agent)
--   Request LinkedIn posts (should use fine-tuned agent)
+-   Request LinkedIn posts (should route to the LinkedIn agent)
 
 **Step 7: Run Tests**
 
