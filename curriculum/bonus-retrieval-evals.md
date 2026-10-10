@@ -81,6 +81,44 @@ Try one by hand before you write any code. Here are five questions and the posit
 ]
 ```
 
+### The name people get wrong: recall@k
+
+You will hear **recall@k** used for what this lab calls hit rate. Sometimes that's harmless shorthand. Often it's just wrong, and the difference shows up the moment a question has more than one right chunk.
+
+- **hit@k** asks: did *at least one* right chunk make the top k? Per question, yes or no.
+- **recall@k** asks: of *all* the right chunks for that question, what share made the top k?
+
+Say a question's answer is spread across four chunks and your top 5 brings back two of them. hit@5 is 1 — you found something. recall@5 is 0.5 — you found half of what the model needs to answer properly. Same search, same result list, two very different stories. Recall is the one that catches a half-answer, which is the failure that makes a RAG system sound confident and still leave out the important half.
+
+This lab measures hit rate deliberately. The script records the rank of the *first* chunk matching any answer phrase, so "at least one" is all it can see. To measure real recall@k you'd label **every** chunk holding part of the answer and divide by that count — more labeling work, and worth it when answers genuinely span chunks.
+
+Know which one you mean. Saying "recall@k" in an interview and then describing hit rate is a cheap way to lose a point you had already earned.
+
+```quiz
+[
+  {
+    "q": "A question's answer spans 4 chunks. Your top 5 returns 2 of them. What are hit@5 and recall@5?",
+    "options": [
+      "hit@5 = 1.0, recall@5 = 0.5",
+      "hit@5 = 0.5, recall@5 = 0.5",
+      "hit@5 = 0.5, recall@5 = 1.0"
+    ],
+    "answer": 0,
+    "explain": "Hit rate is yes-or-no per question: at least one right chunk came back, so it's 1.0. Recall is a fraction of what existed: 2 of the 4 right chunks came back, so it's 0.5. The hit rate looks perfect while half the answer is missing."
+  },
+  {
+    "q": "Your hit@5 is 0.95 and users still complain answers are incomplete. Which metric would most likely expose the problem?",
+    "options": [
+      "recall@5, because answers that span several chunks can be half-retrieved while hit rate still scores them a win",
+      "MRR, because the chunks are ranked too low",
+      "hit@1, because only the first chunk matters"
+    ],
+    "answer": 0,
+    "explain": "Hit rate stops counting once one right chunk appears, so a question needing four chunks scores the same as one needing one. Recall measures how much of the answer you actually retrieved, which is exactly the gap users are feeling."
+  }
+]
+```
+
 ## Writing the test questions is the hard part
 
 The code in this lab is short. The judgment is all in the questions, so spend your effort here. (A list of test questions with known answers is often called a **golden set**, which is why the file below is named `golden-set.json`.)
@@ -350,6 +388,7 @@ This lab isn't graded. But a before/after table like the one above is one of the
 ## Key takeaways
 
 - **Hit rate@k** asks whether the right chunk came back at all. **MRR** asks how high it ranked. Low hit rate is a retrieval problem. Good hit rate with low MRR is a ranking problem.
+- **recall@k is not hit@k**, even though people use the words interchangeably. Hit rate stops counting at the first right chunk; recall measures how much of the answer you got back. When answers span several chunks, hit rate can read 1.0 while half the answer is missing.
 - Label the **answer text**, not chunk IDs. Chunk IDs change every time you re-chunk, which breaks the comparison you most want to make.
 - A reranker can reorder what was retrieved but can't recover what wasn't. When the same questions miss before and after reranking, the fix is upstream.
 - Change one thing per run and report before and after numbers with the test size. That's what makes a retrieval claim believable.
