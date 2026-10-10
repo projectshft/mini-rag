@@ -23,7 +23,7 @@ Older docs referenced a `student-starter` branch. It does not exist.
 
 ## Layout
 
-- `app/agents/` — the agents themselves. `linkedin.ts` (fine-tuned model), `rag.ts` (retrieval plus reranking), `registry.ts`, `config.ts`, `types.ts`.
+- `app/agents/` — the agents themselves. `linkedin.ts` (few-shot, examples from `example-posts.ts`), `rag.ts` (retrieval plus reranking), `registry.ts`, `config.ts`, `types.ts`.
 - `app/api/` — `chat`, `select-agent` (router, structured outputs), `upload-document`, `upload-text`, `linkedin`, `rag-test`, `tool-calling-agent`.
 - `app/libs/` — `chunking.ts`, `pinecone.ts`, `dataProcessor.ts`, `openai/openai.ts`, `scrapers/`.
 - `app/mcp/server.ts` — MCP server reference implementation.

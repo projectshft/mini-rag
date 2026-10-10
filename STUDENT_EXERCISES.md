@@ -82,19 +82,27 @@ Create a video (5-7 min) or written report:
 
 ---
 
-## Module 5: Fine-Tuning
+## Module 5: Fine-Tuning (historical — nothing to run)
 
-### Exercise: Run Fine-Tuning Job
-**File:** `app/scripts/upload-training-data.ts` (already implemented)
+OpenAI closed fine-tuning access in May 2026, so there is no job to submit and
+no model to train. `yarn train` is wired to refuse. The scripts stay as
+artifacts, and the judgment they teach still matters.
+
+### Exercise: Read the pipeline, then argue the tradeoff
+**File:** `app/scripts/upload-training-data.ts` (artifact — do not run)
 
 **Steps:**
-1. Review training data: `app/scripts/data/linkedin_training.jsonl`
-2. Run: `yarn train`
-3. Monitor job at: https://platform.openai.com/finetune
-4. Add model ID to `.env.local`:
-   ```bash
-   OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:org:name:abc123
-   ```
+1. Read the training data: `app/scripts/data/linkedin_training.jsonl`. Notice
+   the shape — a `messages` array per example, the same shape you send to a
+   chat endpoint. Training data was just conversations.
+2. Read `upload-training-data.ts` and write down the four steps it performed:
+   upload the file, open a job, poll it, get a model id back.
+3. Compare it against `app/agents/example-posts.ts`, which replaced it. Same
+   goal — make the model write in a specific voice — one with training, one
+   with examples in the prompt.
+4. Answer in a few sentences: what did fine-tuning buy that few-shot doesn't,
+   and when would you still reach for it? (Hint: think about per-request token
+   cost at high volume, and about domains a handful of examples can't convey.)
 
 ---
 
@@ -125,9 +133,10 @@ Create a video (5-7 min) or written report:
 **File:** `app/agents/linkedin.ts`
 
 **TODO:** Complete the LinkedIn agent
-1. Get fine-tuned model ID from environment
-2. Build system prompt with context
-3. Stream response using Vercel AI SDK
+1. Build an examples block from `EXAMPLE_POSTS` (`app/agents/example-posts.ts`)
+2. Build a system prompt that includes the examples and says to copy their
+   style, NOT their content
+3. Stream the response using the Vercel AI SDK, with `openaiProvider`
 
 ---
 
@@ -212,9 +221,9 @@ yarn exercise:word-math     # Word arithmetic exercise
 yarn test:chunking          # Test chunking implementation
 yarn test:selector          # Test agent selector
 
-# Fine-Tuning
-yarn train                  # Upload training data & start fine-tuning
-yarn estimate-costs         # Estimate training costs
+# Fine-Tuning (closed — kept for reference)
+yarn train                  # refuses: OpenAI closed fine-tuning in May 2026
+yarn estimate-costs         # what a training run would have cost
 
 # Other
 yarn scrape-content         # Scrape and vectorize content
@@ -252,8 +261,8 @@ OPENAI_API_KEY=sk-...
 PINECONE_API_KEY=...
 PINECONE_INDEX=rag-tutorial
 
-# After fine-tuning
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:...
+# Only if you were given a class API key (points both SDKs at the class proxy)
+OPENAI_BASE_URL=
 
 # LangSmith (Observability)
 LANGSMITH_TRACING=true

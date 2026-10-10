@@ -16,7 +16,7 @@ Before getting started, you'll need to set up the following services:
 1. **OpenAI API Key** (https://platform.openai.com/api-keys)
 
     - You'll need at least $5 in credits on your OpenAI account
-    - Used for embeddings, chat completions, and fine-tuning
+    - Used for embeddings and chat completions
 
 2. **Pinecone API Key** (https://www.pinecone.io/)
 
@@ -50,7 +50,7 @@ Before diving into the code, we highly recommend watching 3Blue1Brown's series o
 
 -   **Multi-Agent System**: 2 specialized agents for different content types:
 
-    -   LinkedIn Agent: Uses a fine-tuned GPT-4 model for professional content to post on LinkedIn
+    -   LinkedIn Agent: Uses few-shot prompting — real example posts embedded in the prompt — to write in a given voice
     -   RAG Agent: Leverages Pinecone vector database for RAG-based content analysis
 
 -   **Web Scraping**:
@@ -142,7 +142,7 @@ app does not work yet; they build it by completing the exercises and TODOs
 below. The finished result is what you see on this branch:
 
 1. **RAG Agent** - Chat with your knowledge base (technical docs, articles, etc.)
-2. **LinkedIn Agent** - Fine-tuned on Brian's LinkedIn posts to generate professional content
+2. **LinkedIn Agent** - Writes posts in Brian's voice using few-shot example posts (`app/agents/example-posts.ts`)
 
 ### What You Need To Do:
 
@@ -193,30 +193,33 @@ This will scrape URLs, chunk the content, generate embeddings, and upload to Pin
 
 **Step 4: Train Your LinkedIn Agent**
 
-> **Out of date.** OpenAI closed fine-tuning access in May 2026, so these
-> scripts no longer produce a model. `student-todo-exercises` teaches few-shot
-> prompting instead. The steps below are kept as a historical artifact.
+> **Don't run this — it can't work.** OpenAI closed fine-tuning access in May
+> 2026, and the model this course used to ship with is dead. The LinkedIn agent
+> now uses **few-shot prompting** instead: real example posts in the prompt do
+> the job the training data used to do. See `app/agents/linkedin.ts` and
+> `app/agents/example-posts.ts`. `yarn train` is wired to refuse for this
+> reason.
 
-Fine-tune a model on Brian's LinkedIn posts:
-
-```bash
-# Generate training data from posts
-npx ts-node app/scripts/generate-training-data.ts
-
-# (Optional) Estimate cost before training
-npx ts-node app/scripts/estimate-training-cost.ts
-
-# Upload to OpenAI and start fine-tuning job
-npx ts-node app/scripts/upload-training-data.ts
-```
-
-Once training completes (~10-20 mins), add the model ID to `.env`:
+The pipeline below is kept as a **historical artifact**, because the workflow is
+worth understanding — fine-tuning is still offered by other providers
+(Anthropic, Cohere, open-source via Hugging Face or Axolotl), and knowing when
+fine-tuning beats RAG or prompting is a real architecture question:
 
 ```bash
-OPENAI_FINETUNED_MODEL=ft:gpt-4o-mini-2024-07-18:personal::YOUR_ID
+# 1. Build a JSONL training set from the source posts
+app/scripts/generate-training-data.ts
+
+# 2. Estimate what the training run would cost
+app/scripts/estimate-training-cost.ts
+
+# 3. Upload the file and open a fine-tuning job
+app/scripts/upload-training-data.ts
 ```
 
--   Learn: [OpenAI Fine-Tuning Guide](https://platform.openai.com/docs/guides/fine-tuning), [When to Fine-Tune vs RAG](https://platform.openai.com/docs/guides/fine-tuning/when-to-use-fine-tuning)
+That last step returned a model id, which the app then read from
+`OPENAI_FINETUNED_MODEL`. Nothing reads that variable any more.
+
+-   Learn: [When to Fine-Tune vs RAG](https://platform.openai.com/docs/guides/fine-tuning/when-to-use-fine-tuning) — still the useful half of this topic
 
 **Step 5: Fix All The TODOs**
 
@@ -244,7 +247,7 @@ Visit `http://localhost:3000` and test:
 
 -   Upload new documents (URLs or raw text)
 -   Ask technical questions (should use RAG agent)
--   Request LinkedIn posts (should use fine-tuned agent)
+-   Request LinkedIn posts (should route to the LinkedIn agent)
 
 **Step 7: Run Tests**
 

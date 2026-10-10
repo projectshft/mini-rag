@@ -1,5 +1,28 @@
 /**
- * Fine-Tuning Training Data Upload Script
+ * ⚠️  DEPRECATED - Fine-Tuning Training Data Upload Script
+ *
+ * ============================================================================
+ * DEPRECATION NOTICE (May 7, 2026)
+ * ============================================================================
+ *
+ * OpenAI has limited access to fine-tuning and will eventually deprecate it
+ * fully. This script is now a HISTORICAL ARTIFACT showing how fine-tuning
+ * used to be performed.
+ *
+ * DO NOT RUN THIS SCRIPT - it will fail due to API restrictions. `yarn train`
+ * is wired to refuse for this reason.
+ *
+ * Instead, the LinkedIn agent now uses few-shot prompting:
+ *   see app/agents/linkedin.ts and app/agents/example-posts.ts
+ *
+ * WHY KEEP THIS FILE?
+ * - Educational reference for understanding the fine-tuning workflow
+ * - Fine-tuning is still available elsewhere (Hugging Face, Anthropic, Cohere)
+ * - The concepts remain valuable even if OpenAI no longer supports it
+ *
+ * ============================================================================
+ * ORIGINAL DOCUMENTATION (Historical Reference)
+ * ============================================================================
  *
  * This script uploads training data to OpenAI and creates a fine-tuning job to create
  * a custom model based on gpt-4o-mini-2024-07-18.
