@@ -12,8 +12,8 @@ walk through what to build.
 | --- | --- |
 | `student-todo-exercises` | **This branch.** The exercises students clone and complete. |
 | `student-working-version` | Complete RAG app, used for demos and when a student is stuck. See the drift warning below. |
-| `lms` | The course platform: `/learn` and `/admin`, plus the current lessons in `curriculum/day-NN.md`. |
-| `main` | **Stale, do not branch from it.** Last touched July 2026. An older TODO-stub copy of this branch, from before the few-shot rewrite, with none of the LMS code that `docs/LMS-SETUP.md` on `lms` claims it carries. |
+| `lms` | The course platform: `/learn` and `/admin`, plus the current lessons in `curriculum/day-NN.md`. **Also the branch Vercel deploys** — a push there is live immediately, with no promote or merge step. |
+| `main` | **Don't work from it — but it is no longer the stale July-2026 stub older notes describe.** It has since been fast-forwarded from `lms` and now carries the full course platform. It is not what Vercel deploys and not what students clone, so ignore it and use the branches above. |
 
 Everything else on origin (`cohort-*`, `solution*`, `curriculum`, `music-rag`,
 `langgraph`, `working_version`, `claude/*`, `cursor/*`) is historical. Ignore it
