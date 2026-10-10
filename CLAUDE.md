@@ -12,8 +12,8 @@ key when a student is stuck. Students do not start here.
 | --- | --- |
 | `student-working-version` | **This branch.** Complete RAG app, all TODOs implemented. Also holds the MCP server reference (`app/mcp/server.ts`) and the LLM-as-judge test. |
 | `student-todo-exercises` | The same app with implementations stripped out and TODOs left behind. What students clone. |
-| `lms` | The course platform: `/learn` and `/admin`, Clerk auth, Neon progress DB, and the curriculum markdown. No RAG chat app there. |
-| `main` | **Stale, do not branch from it.** Last touched July 2026. An old TODO-stub copy of this app, with none of the LMS code that `docs/LMS-SETUP.md` on `lms` claims it carries. |
+| `lms` | The course platform: `/learn` and `/admin`, Clerk auth, Neon progress DB, and the curriculum markdown. No RAG chat app there. **Also the branch Vercel deploys** — a push there is live immediately, with no promote or merge step. |
+| `main` | **Don't work from it — but it is no longer the stale July-2026 stub older notes describe.** It has since been fast-forwarded from `lms` and now carries the full course platform. It is not what Vercel deploys and not what students clone, so ignore it and use the branches above. |
 
 Everything else on origin (`cohort-*`, `solution*`, `curriculum`, `music-rag`,
 `langgraph`, `working_version`, `claude/*`, `cursor/*`) is historical. Ignore it
