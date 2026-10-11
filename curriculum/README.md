@@ -104,7 +104,7 @@ lightest day of that week. One per week, plus the capstone bookends.
 | [Word Math](day-04.md) | Week 1 | embeddings, vector arithmetic |
 | [Document Upload](day-13.md) | Week 2 | chunking, ingestion, sanitization |
 | [Agent Router](day-20.md) | Week 3 | selector, structured outputs, few-shot |
-| [RAG Agent](day-27.md) | Week 4 | retrieval, preprocessing, reranking, threshold |
+| [RAG Agent](day-27.md) | Week 4 | retrieval, preprocessing, reranking, threshold, retrieval evals (golden set, hit@k, MRR) |
 | [Security](day-34.md) | Week 5 | prompt injection, document poisoning, layered defense |
 | [Capstone proposal](day-36.md) | Week 6 | scope and plan |
 | [Capstone](day-42.md) | End of course | the whole thing |
@@ -115,8 +115,12 @@ submission forms. Say which assignment you're posting. Start Here explains why
 submission is public and what that room is for.
 
 Optional and ungraded: the [SQL agent lab](day-33.md), the
-[LLM-as-judge exercise](day-30.md), the [Bible chunking lab](bonus-bible-chunking.md), and the
-[retrieval eval lab](bonus-retrieval-evals.md).
+[LLM-as-judge exercise](day-30.md), and the [Bible chunking lab](bonus-bible-chunking.md).
+
+The [retrieval eval lab](bonus-retrieval-evals.md) is still optional *reading*,
+but the work it teaches is now required: the RAG Agent assignment asks for a
+golden set and two scored runs. The lab is the detailed how-to for that
+deliverable.
 
 ## Bonus lessons
 
@@ -162,7 +166,7 @@ Last audited: October 2026.
 | Optional labs (ungraded, always available) | **4** |
 | Side projects | **2** — the capstone, and the 5-step build challenge |
 | Interview-prep assignments | **3** written + **3** video, plus **8** "your turn" scenarios |
-| Runnable exercise scripts (`yarn exercise:*`) | **5** |
+| Runnable exercise commands (`yarn exercise:*`) | **4** — vectors, vectors:test, word-math, injection |
 
 ### The seven graded assignments
 
@@ -191,8 +195,12 @@ Core files: `libs/chunking.ts`, `scripts/exercises/vector-similarity.ts`,
 ### Optional labs
 
 Listed under "## Bonus lessons" and in the Assignments section's closing note:
-the SQL agent lab, the LLM-as-judge exercise, the Bible chunking lab, and the
-retrieval eval lab. Never required, always open.
+the SQL agent lab, the LLM-as-judge exercise, and the Bible chunking lab. Never
+required, always open.
+
+The retrieval eval lab sits in the same bonus list but is a special case: the
+lab itself is optional reading, while the work it teaches is a required part of
+the RAG Agent assignment. Counted above as a lab, not as a separate assignment.
 
 ### Side projects
 
@@ -204,10 +212,17 @@ retrieval eval lab. Never required, always open.
 
 ### Coverage note
 
-Every week's material is graded except **evaluation and retrieval quality**.
-LLM-as-judge and the retrieval eval lab are both optional, so a student can
-finish the program having never been assessed on measuring whether retrieval
-works. It is also the topic senior interviews probe hardest. If you add an
-eighth assignment, that is the gap to fill.
+**Retrieval evaluation is graded**, as part of the RAG Agent assignment: a
+golden set, plus hit@k and MRR scored before and after reranking. It was the
+one gap worth closing — a student used to be able to finish the program without
+ever measuring whether retrieval worked, which is also the topic senior
+interviews probe hardest. It rides on the existing assignment rather than an
+eighth one, so the one-assignment-per-week rule still holds and no day numbers
+moved.
 
-Hybrid search (sparse + dense) is taught and demoed but likewise never graded.
+Still taught but never graded, in rough priority order if you ever want more:
+
+- **Answer evals** (LLM-as-judge) — retrieval evals cover whether the right
+  chunks came back, not whether the answer built from them was any good.
+- **Hybrid search** (sparse + dense) — taught with a demo script, never
+  assessed.

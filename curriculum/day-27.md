@@ -31,7 +31,7 @@ Reranking and score thresholding are part of this assignment too — everything 
 Record yourself explaining **how you evaluate retrieval quality**, Feynman-style — as if to a sharp colleague who's never built RAG. Address these five questions:
 
 1. **Chunk sizing** — how do you know if your chunks are too big or too small? What symptoms would you see?
-2. **Retrieval accuracy** — how do you know if you're retrieving the right content? What would "wrong" look like?
+2. **Retrieval accuracy** — how do you know if you're retrieving the right content? Answer this one **with your measured numbers**, not an impression (see the eval below). What would "wrong" look like?
 3. **Similarity thresholds** — how do you decide what score is "good enough"? What happens if the bar is too high or too low?
 4. **The two-stage pattern** — why aren't cosine similarity's top hits always the
    best answers, and what does the reranker see that the embedding comparison
@@ -39,6 +39,8 @@ Record yourself explaining **how you evaluate retrieval quality**, Feynman-style
 5. **Metrics** — what would you track in production to monitor retrieval quality? (Yesterday's LangSmith setup should give you ideas.)
 
 Give **specific examples from your implementation** — real queries you ran, real scores you saw, real chunks that came back. Concrete beats abstract every time.
+
+For the retrieval-accuracy question, **"it felt better" is not an answer.** Show your before and after numbers and say what you changed between them. That one habit is the difference between someone who built a RAG demo and someone a team would trust to run one.
 
 ### Code
 
@@ -56,15 +58,50 @@ That's Phases 1 through 4 of the TODO block in the file. The threshold is the
 one that separates a demo from something you'd put in front of a user: a
 confident wrong answer is worse than an honest "I don't know."
 
+4. **Measure it** — build a small golden set and score your retrieval before
+   and after reranking, so the improvement you just shipped is a number rather
+   than a feeling
+
+### Measure it, don't vibe it
+
+You added preprocessing and a reranker this week on the belief they help. Prove
+it. The optional retrieval eval lab in the bonus lessons walks through this in
+detail and is worth opening, but the short version:
+
+- **Write a golden set** of at least 15 questions against content you actually
+  uploaded. Save it as `app/scripts/data/golden-set.json`. Each entry is a
+  question plus one or more **answer phrases** — a short quote, copied from your
+  source, that a chunk must contain to count as correct.
+- **Label the answer text, not chunk IDs.** Chunk ids change the moment you
+  re-chunk, which breaks the one comparison you most want to run later.
+- **Write the runner** at `app/scripts/exercises/retrieval-eval.ts`. For each
+  question it records the position of the first chunk containing an answer
+  phrase, then prints **hit@1, hit@3, hit@5 and MRR** plus the questions that
+  missed entirely.
+- **Run it twice** against the same golden set: once with plain vector top-k,
+  once with your over-fetch plus reranker. Those two rows are your result.
+
+Hit rate tells you whether the right chunk came back at all. MRR tells you how
+high it landed. Low hit rate is a retrieval problem and a reranker cannot save
+you — it only reorders what was already fetched. Good hit rate with low MRR is a
+ranking problem, which is exactly what reranking fixes. Knowing which one you
+have is the whole point of measuring.
+
+Expect your numbers to be unimpressive the first time. That is the normal
+result, and the questions that miss in *both* runs are the most useful output of
+the whole exercise — they tell you what to fix next week.
+
 **Files:**
 
 - [`app/agents/rag.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/agents/rag.ts)
+- `app/scripts/data/golden-set.json` — you create this
+- `app/scripts/exercises/retrieval-eval.ts` — you create this
 
 ### Submit your work
 
 Post your video and code in **#all-parsity-dev-accelerator**.
 
-The before/after preprocessing demo makes a great post, and feedback from the group regularly catches things the checklist below doesn't.
+Post your two eval rows with it. Everyone's golden set is different, so seeing someone else's hit@3 jump where yours didn't is the fastest way to find out your chunking is the problem and not your reranker. Feedback from the group regularly catches things the checklist below doesn't.
 
 ## What "done" looks like
 
@@ -75,6 +112,10 @@ The before/after preprocessing demo makes a great post, and feedback from the gr
 - [ ] You can demonstrate before/after: one messy query where preprocessing measurably improves what's retrieved
 - [ ] Video is 4–5 minutes, covers all five evaluation questions, and uses examples from *your* system
 - [ ] Reranking runs on an over-fetched candidate pool, and a score threshold returns an honest "I don't know" when nothing clears it
+- [ ] A golden set of 15+ questions exists, labeling answer phrases rather than chunk ids
+- [ ] The eval runs and prints hit@1, hit@3, hit@5 and MRR, and names the questions that missed
+- [ ] You have two scored runs — plain vector top-k, and over-fetch plus rerank — against the same golden set
+- [ ] You can say which of the two problems you have, a retrieval problem or a ranking problem, and point at the number that says so
 - [ ] Video and code posted in #all-parsity-dev-accelerator
 
 ## Common pitfalls
@@ -185,7 +226,8 @@ Then in `ragAgent`: `const query = preprocessQuery(request.query);` and embed `q
 
 - Retrieval quality is decided **before** the LLM ever runs — the query vector and the chunk vectors do all the work
 - Query preprocessing is high-leverage: cheap string cleanup measurably moves the query vector toward the right chunks
-- Evaluate retrieval with evidence, not vibes: logged scores, before/after comparisons, and LangSmith traces
+- Evaluate retrieval with evidence, not vibes: a golden set, hit@k and MRR scored before and after a change, and LangSmith traces
+- **Hit rate and MRR diagnose different problems.** Low hit rate means the right chunk never came back, and a reranker can't help — it only reorders what was fetched. Good hit rate with low MRR is a ranking problem, which is what reranking is for
 - Every threshold is a trade-off — too high rejects good context ("I don't know" to answerable questions), too low invites hallucination
 - If you can't explain your evaluation approach out loud in 4 minutes with real examples, you've found the gap to study — that's the Feynman Technique doing its job
 
