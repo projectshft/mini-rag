@@ -144,3 +144,70 @@ day files, but no "Day N —" title prefix.
 Students work in this repo's **`student-todo-exercises`** branch — starter
 code with TODOs. Day files link into it directly. This `curriculum/` folder
 must never be synced to that branch.
+
+## Practice inventory
+
+What a student actually produces. This is the living count — **update it when
+you add, remove, or retire work**, and keep the numbers honest, because this
+is the section you read when asking "is there enough here?"
+
+Last audited: October 2026.
+
+### Totals
+
+| Category | Count |
+| --- | --- |
+| Graded assignments (submitted in Slack) | **7** — 5 weekly + 2 capstone milestones |
+| Code files with TODOs to complete | **11** files, **84** TODO markers |
+| Optional labs (ungraded, always available) | **4** |
+| Side projects | **2** — the capstone, and the 5-step build challenge |
+| Interview-prep assignments | **3** written + **3** video, plus **8** "your turn" scenarios |
+| Runnable exercise scripts (`yarn exercise:*`) | **5** |
+
+### The seven graded assignments
+
+One per week, due on that week's lightest day, plus the capstone bookends. The
+table under "## Assignments" above is the canonical list — it carries the due
+day and what each one covers. All seven are posted in
+**#all-parsity-dev-accelerator**; there are no submission forms.
+
+### Build exercises (`student-todo-exercises`)
+
+The daily hands-on work. Students complete TODOs in place; day files link
+straight to each file.
+
+| Track | Files | TODOs |
+| --- | --- | --- |
+| Core path | 9 | 36 |
+| Optional (LLM-as-judge) | 1 | 10 |
+| Beta (LangGraph, Week 7) | 1 | 38 |
+
+Core files: `libs/chunking.ts`, `scripts/exercises/vector-similarity.ts`,
+`scripts/exercises/vector-word-arithmetic.ts`, `api/upload-document/route.ts`
+(9), `api/select-agent/route.ts`, `agents/rag.ts` (4), `agents/linkedin.ts`,
+`api/tool-calling-agent/route.ts` (16),
+`scripts/exercises/prompt-injection-test.ts`.
+
+### Optional labs
+
+Listed under "## Bonus lessons" and in the Assignments section's closing note:
+the SQL agent lab, the LLM-as-judge exercise, the Bible chunking lab, and the
+retrieval eval lab. Never required, always open.
+
+### Side projects
+
+- **The capstone** — seven days of build time, proposal through demo, with its
+  own two graded milestones.
+- **The 5-step build challenge** (`challenge/step-1.md` … `step-5.md`) —
+  public-but-unlisted, reached by an unguessable URL token, each step with a
+  video. Lives outside the day sequence.
+
+### Coverage note
+
+Every week's material is graded except **evaluation and retrieval quality**.
+LLM-as-judge and the retrieval eval lab are both optional, so a student can
+finish the program having never been assessed on measuring whether retrieval
+works. It is also the topic senior interviews probe hardest. If you add an
+eighth assignment, that is the gap to fill.
+
+Hybrid search (sparse + dense) is taught and demoed but likewise never graded.
