@@ -25,6 +25,48 @@ flowchart LR
     X --> R
 ```
 
+## First, know what's in your data
+
+A number means nothing until you know the corpus it came from. hit@3 of 0.60 is
+either good or terrible depending on what you indexed, and only you can say
+which:
+
+- **If your documents genuinely answer those questions** and the right chunk
+  still misses 40% of the time, retrieval is broken. Fix it.
+- **If a third of your questions ask about things your documents never cover,**
+  then 0.60 might be close to the ceiling. Nothing you do to the retriever will
+  find an answer that isn't in the index.
+
+Those two situations produce the identical score and need opposite responses. So
+before you write a single test question, go find out what you actually have.
+
+### Mini assignment: inventory your index
+
+Time-box this to 20 minutes. You are not writing the golden set yet — you are
+building a map so the golden set is honest.
+
+1. **Pick 10 broad queries** covering the topics you *think* your documents
+   cover. One or two words each: "hooks", "deployment", "error handling",
+   "authentication".
+2. **Run each one** through the search you already built and skim the top 5.
+3. **Write down, for each query:** does real content come back, or filler?
+   Which topics are covered in depth, which get one passing mention, and which
+   return nothing useful at all?
+4. **Sort your topics into three buckets** — *covered well*, *covered thinly*,
+   *not covered*.
+
+That list is the most useful artifact in this lab. Draw your test questions from
+the first two buckets, where a right answer exists to find. Keep the third
+bucket written down: those are the questions your system *should* refuse rather
+than answer, and they belong in your answer evals, not here.
+
+> **One rule while you do this.** Use these queries to learn which **topics**
+> are covered — not to copy question wording out of the results. The moment you
+> phrase a test question using the exact words of a chunk you just read, you've
+> handed vector search the answer and your score becomes fiction. Note the
+> topic, close the results, then write the question later in a user's words. The
+> rules under "Writing the test questions" below say more about why.
+
 ## Two scores
 
 Think of each search like a Google results page. For every test question, you ask: **did the right result show up, and at what position?** Position 1 is the top result, position 3 is the third one down, and if it never shows up, that's a miss.
@@ -33,7 +75,28 @@ From those positions you get two scores. Both have standard names, and it's wort
 
 **Hit rate** asks: *did the right chunk show up at all?* You pick how far down the list you'll look. "Hit rate at 3", written **hit@3**, is the share of questions where the right chunk was somewhere in the top 3. If 15 of 20 questions found it in the top 3, hit@3 is 0.75. This tells you whether the model even gets a chance at the right information.
 
-**MRR** asks: *how close to the top did it land?* Each question gets points based on position: 1 point for first place, ½ for second, ⅓ for third, ¼ for fourth, and 0 for a miss. Average those points across all your questions and you have MRR. (It stands for "mean reciprocal rank", which is just a formal way of saying "average of 1 divided by the position".) Position matters because the model pays the most attention to what comes first, and because you often only send the top few chunks to the model anyway.
+**MRR** asks: *how close to the top did it land?* Each question scores 1 divided
+by the position of the right chunk, and you average that across all your
+questions. (It stands for "mean reciprocal rank", which is a formal way of
+saying "average of 1 over the position".)
+
+The shape of that scoring is the whole idea — look at how fast it falls off:
+
+| Right chunk at | Scores | |
+| --- | --- | --- |
+| position 1 | **1.00** | `██████████` |
+| position 2 | 0.50 | `█████` |
+| position 3 | 0.33 | `███` |
+| position 4 | 0.25 | `██` |
+| position 5 | 0.20 | `██` |
+| never found | 0.00 | |
+
+Dropping from first to second costs you half your score. Dropping from fifth to
+sixth barely registers. That's deliberate: the model pays the most attention to
+what comes first, and if you later cut from five chunks to three to save tokens,
+only the stuff near the top survives. MRR rewards exactly the thing you care
+about.
+
 
 Try one by hand before you write any code. Here are five questions and the position where each one's answer first appeared:
 
@@ -115,6 +178,66 @@ Know which one you mean. Saying "recall@k" in an interview and then describing h
     ],
     "answer": 0,
     "explain": "Hit rate stops counting once one right chunk appears, so a question needing four chunks scores the same as one needing one. Recall measures how much of the answer you actually retrieved, which is exactly the gap users are feeling."
+  }
+]
+```
+
+### The interview vocabulary: precision, recall, F1
+
+Three more names, worth twenty minutes because they come up in every search
+interview and they all describe the same result list from different angles. Use
+the running example: a question whose answer lives in **4 chunks**, and your
+top 5 brings back **2 of them**.
+
+| Metric | The question it asks | Here |
+| --- | --- | --- |
+| **Precision@5** | Of the 5 chunks I returned, how many were useful? | 2 / 5 = **0.40** |
+| **Recall@5** | Of the 4 useful chunks that exist, how many did I get? | 2 / 4 = **0.50** |
+| **F1** | One number balancing the two | **0.44** |
+
+F1 is the harmonic mean — `2 × (P × R) / (P + R)` — and the only thing you need
+to remember about harmonic means is that **they punish lopsidedness.** Score 1.0
+precision and 0.1 recall and a plain average would flatter you with 0.55; F1
+gives you 0.18. You cannot win it by being great at one and awful at the other.
+
+Why you'd care about each:
+
+- **Precision** is a cost and a dilution problem. Every junk chunk you send is
+  tokens you pay for and context the model has to read past. Low precision is
+  how you get an answer that wanders.
+- **Recall** is a completeness problem. Miss half the relevant chunks and the
+  model confidently answers half the question.
+- **F1** is for when you need a single number to compare two configurations and
+  you care about both failures equally.
+
+**Be honest about which of these you'll actually run.** For this lab, hit@k and
+MRR are the useful pair, because your golden set labels one answer phrase per
+question — "at least one right chunk came back" is the question it can answer.
+Precision, recall and F1 need every relevant chunk labeled, which is real extra
+work. Learn the vocabulary now so you can hold the conversation; add the
+labeling later if answers in your system genuinely span many chunks.
+
+```quiz
+[
+  {
+    "q": "A retriever returns 5 chunks. 1 is relevant, and 1 is the only relevant chunk that exists in the index. What are precision@5 and recall@5?",
+    "options": [
+      "precision@5 = 0.20, recall@5 = 1.00",
+      "precision@5 = 1.00, recall@5 = 0.20",
+      "precision@5 = 0.20, recall@5 = 0.20"
+    ],
+    "answer": 0,
+    "explain": "Precision divides by what you returned: 1 of 5 chunks was useful, so 0.20. Recall divides by what existed: there was only 1 relevant chunk and you found it, so 1.00. Perfect recall with poor precision — you got everything, wrapped in four chunks of noise."
+  },
+  {
+    "q": "Why does F1 punish a configuration with precision 1.0 and recall 0.1 harder than a plain average would?",
+    "options": [
+      "It is a harmonic mean, which pulls toward the smaller of the two numbers, so being excellent at one metric cannot hide being terrible at the other",
+      "It weights recall twice as heavily as precision by definition",
+      "It subtracts the gap between the two scores from the result"
+    ],
+    "answer": 0,
+    "explain": "A plain average gives 0.55, which makes a near-useless retriever look middling. F1 gives 0.18. The harmonic mean is chosen precisely because a single number should not let one strong metric paper over one broken one."
   }
 ]
 ```
@@ -387,8 +510,10 @@ This lab isn't graded. But a before/after table like the one above is one of the
 
 ## Key takeaways
 
+- **A score is meaningless until you know the corpus.** The same hit@3 of 0.60 means "retrieval is broken" if your documents cover the questions, and "close to the ceiling" if a third of them ask about things you never indexed. Inventory your data first.
 - **Hit rate@k** asks whether the right chunk came back at all. **MRR** asks how high it ranked. Low hit rate is a retrieval problem. Good hit rate with low MRR is a ranking problem.
 - **recall@k is not hit@k**, even though people use the words interchangeably. Hit rate stops counting at the first right chunk; recall measures how much of the answer you got back. When answers span several chunks, hit rate can read 1.0 while half the answer is missing.
+- **Precision, recall and F1** describe one result list from three angles: how much of what you returned was useful, how much of what existed you found, and a single balanced number. F1 is a harmonic mean, so it refuses to let a great score on one hide a broken score on the other.
 - Label the **answer text**, not chunk IDs. Chunk IDs change every time you re-chunk, which breaks the comparison you most want to make.
 - A reranker can reorder what was retrieved but can't recover what wasn't. When the same questions miss before and after reranking, the fix is upstream.
 - Change one thing per run and report before and after numbers with the test size. That's what makes a retrieval claim believable.
