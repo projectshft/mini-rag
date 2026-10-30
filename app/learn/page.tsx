@@ -3,7 +3,9 @@ import {
 	getBonusLessons,
 	getDays,
 	getInterviewLessons,
+	getTracks,
 	getWeeks,
+	trackSlug,
 } from '@/lib/lms/curriculum';
 import {
 	ensureStudent,
@@ -11,10 +13,16 @@ import {
 	isInterviewUnlocked,
 } from '@/lib/lms/progress';
 
-export default async function LearnPage() {
+export default async function LearnPage({
+	searchParams,
+}: {
+	searchParams: Promise<{ track?: string }>;
+}) {
 	const userId = await ensureStudent();
-	const [weeks, days, interviewLessons, bonusLessons, completed, interviewUnlocked] =
+	const [{ track: requestedTrack }, tracks, allWeeks, allDays, interviewLessons, bonusLessons, completed, interviewUnlocked] =
 		await Promise.all([
+			searchParams,
+			getTracks(),
 			getWeeks(),
 			getDays(),
 			getInterviewLessons(),
@@ -22,6 +30,11 @@ export default async function LearnPage() {
 			userId ? getCompletedSlugs(userId) : Promise.resolve(new Set<string>()),
 			userId ? isInterviewUnlocked(userId) : Promise.resolve(false),
 		]);
+
+	const track = tracks.find((t) => trackSlug(t) === requestedTrack) ?? tracks[0] ?? '';
+	const isMainTrack = track === (tracks[0] ?? '');
+	const weeks = allWeeks.filter((w) => w.track === track);
+	const days = allDays.filter((d) => d.track === track);
 
 	const total = days.length;
 	const done = days.filter((d) => completed.has(d.slug)).length;
@@ -33,9 +46,27 @@ export default async function LearnPage() {
 	return (
 		<div>
 			<h1 className='text-2xl font-bold tracking-tight text-zinc-900'>Your course</h1>
-			<p className='mt-1 text-sm text-zinc-500'>
-				42 days · 1–2 hours a day · 6 days on, 1 day off
-			</p>
+			{tracks.length > 1 && (
+				<nav className='mt-4 inline-flex rounded-xl border border-zinc-200 bg-white p-1 shadow-sm' aria-label='Tracks'>
+					{tracks.map((t) => (
+						<Link
+							key={t}
+							href={`/learn?track=${trackSlug(t)}`}
+							aria-current={t === track ? 'page' : undefined}
+							className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+								t === track ? 'bg-blue-600 text-white' : 'text-zinc-600 hover:bg-zinc-100'
+							}`}
+						>
+							{t}
+						</Link>
+					))}
+				</nav>
+			)}
+			{isMainTrack && (
+				<p className='mt-3 text-sm text-zinc-500'>
+					42 days · 1–2 hours a day · 6 days on, 1 day off
+				</p>
+			)}
 
 			<div className='mt-5 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm'>
 				<div className='flex items-center justify-between text-sm'>
@@ -55,7 +86,7 @@ export default async function LearnPage() {
 						href={`/learn/${nextUp.slug}`}
 						className='mt-4 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700'
 					>
-						{done === 0 ? 'Start Day 1' : `Continue with Day ${nextUp.day}`} →
+						{done === 0 ? (isMainTrack ? 'Start Day 1' : 'Start here') : `Continue with Day ${nextUp.day}`} →
 					</Link>
 				)}
 			</div>
@@ -138,7 +169,7 @@ export default async function LearnPage() {
 					);
 				})}
 
-				{bonusLessons.length > 0 && (
+				{isMainTrack && bonusLessons.length > 0 && (
 					<section>
 						<div className='flex items-baseline justify-between'>
 							<h2 className='text-lg font-bold tracking-tight text-zinc-900'>
@@ -189,7 +220,7 @@ export default async function LearnPage() {
 					</section>
 				)}
 
-				{interviewLessons.length > 0 && (
+				{isMainTrack && interviewLessons.length > 0 && (
 					<section>
 						<div className='flex items-baseline justify-between'>
 							<h2 className='text-lg font-bold tracking-tight text-zinc-900'>

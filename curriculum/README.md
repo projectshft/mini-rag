@@ -20,7 +20,11 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
      To add/move/remove a lesson: edit this list only (a bullet WITH a link is
      a lesson page; a bullet WITHOUT a link is a no-page day like a rest day).
      Filenames are stable ids tied to student progress — never rename them; new
-     lessons can use any unused slug. Week day-ranges are computed too. -->
+     lessons can use any unused slug. Week day-ranges are computed too.
+     A "**Track: Name**" line starts a track; every week after it belongs to
+     that track until the next one. Students switch tracks on /learn. -->
+
+**Track: RAG & AI Agents**
 
 **Week 1 — Foundations**
 
@@ -89,6 +93,18 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - [Human in the Loop: Gating an Agent's Destructive Actions](human-in-the-loop.md)
 - [LangGraph: When a Straight Line Isn't Enough (Beta)](langgraph-concepts.md)
 - [Rebuilding Your Agent as a Graph (Beta)](langgraph-refactor.md)
+
+**Track: Intro to Agentic Engineering**
+
+**Week 8 — Building With Agents**
+
+- [Start Here: Building With Agents](agentic-start-here.md)
+- [Trust the Code, Not the Claims](agentic-trust-the-code.md)
+- [Is Your Test Suite Lying? Mutation Testing and Fresh Eyes](agentic-mutation-testing.md)
+- [The Rule of Three (and Why I Stopped Writing Comments)](agentic-rule-of-three.md)
+- [Multiple Agents, Worktrees and Chasing Trends](agentic-multiple-agents.md)
+- [Your Challenge: Build a Software Factory](agentic-software-factory.md)
+- Rest day
 
 ## Assignments
 

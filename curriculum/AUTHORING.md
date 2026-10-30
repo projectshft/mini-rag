@@ -70,6 +70,9 @@ hand-written. So restructuring is just editing that list:
 - **Move a lesson:** move its bullet. **Remove one:** delete its bullet (the
   file and any student progress under that slug are untouched).
 - **Rest / no-page day:** a bullet with **no link**, e.g. `- Rest day`.
+- **Tracks:** a bold `**Track: Name**` line starts a track. Every week after
+  it belongs to that track until the next `**Track:**` line, and students pick
+  a track on `/learn`. Prev/next stays inside the track.
 - **Never rename an existing file** — the slug is the id student progress is
   keyed on. Reorder freely; just don't rename.
 
