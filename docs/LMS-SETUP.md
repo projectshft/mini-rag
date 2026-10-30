@@ -3,8 +3,12 @@
 The course site lives in this repo's Next.js app. It renders the day-by-day
 lessons in `curriculum/day-NN.md`. This doc is instructor-facing.
 
-> **Deploys come off `lms`.** Confirmed October 2026: the Vercel production
-> branch is **`lms`**, so a push to `lms` goes live on its own. There is no
+> **Deploys come off `lms`.** The Vercel project is
+> `brianjenneys-projects/mini-rag`, Git-connected to `projectshft/mini-rag`
+> with production branch **`lms`**, so a push to `lms` goes live on its own.
+> Until 2026-10-30 the project had no Git connection at all, so nothing
+> pushed between late September and then reached production. If a push
+> doesn't show up, check the commit has a Vercel status on GitHub. There is no
 > promote or merge step, and nothing needs to reach `main` for a change to
 > ship. `main` still exists and now carries the full LMS (it trails `lms` by
 > a commit or two), but it is **not** the deploy branch — don't merge into it
