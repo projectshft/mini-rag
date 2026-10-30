@@ -16,6 +16,8 @@ const isPublicRoute = createRouteMatcher([
 	'/ai-interview-quiz',
 	'/api/quiz-lead',
 	'/challenge(.*)',
+	'/claim',
+	'/agentic-engineering(.*)',
 	'/curriculum', // employer-facing curriculum PDF (rewritten in next.config)
 ]);
 

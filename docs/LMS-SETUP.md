@@ -36,6 +36,13 @@ NEXT_PUBLIC_APP_URL=https://your-domain    # used for invite redirects
 ```
 Keep the existing OpenAI/Pinecone vars too (the chat app shares the deploy).
 
+For self-serve purchases (see "Track access & self-serve purchase" below):
+```
+STRIPE_SECRET_KEY=rk_live_...                      # restricted key: Checkout Sessions → Read, nothing else
+AGENTIC_PAYMENT_LINK_ID=plink_1UW4riFr3Atv9Fpa1T71ZGEW  # only this Payment Link can claim
+AGENTIC_CREDIT_USD=5                               # optional, default 5
+```
+
 ## Run locally
 ```
 yarn install           # postinstall generates the LMS Prisma client
@@ -78,6 +85,29 @@ yarn dev
   key on the proxy immediately). Live spend shows in the table. Keys
   only work through the proxy, so a leaked key without the base URL is
   useless, and the budget cap bounds the blast radius either way.
+
+## Track access & self-serve purchase
+- **Entitlements** live in Clerk `publicMetadata.tracks` (track slugs, e.g.
+  `["intro-to-agentic-engineering"]`). No `tracks` key = full access to every
+  track (all existing students). With `tracks`, `/learn` only lists those
+  tracks, other tracks' days 404, and bonus/interview lessons are hidden.
+  Edit it on the user in the Clerk dashboard to grant or remove a track.
+- **Purchase**: the Stripe Payment Link
+  (https://buy.stripe.com/eVq9ATgrv0Mkbd75Lx4wM0y) redirects to
+  `/claim?session_id={CHECKOUT_SESSION_ID}` (public route). `/claim` looks up
+  the session with `STRIPE_SECRET_KEY`, requires `payment_status = paid` and
+  `payment_link = AGENTIC_PAYMENT_LINK_ID`, then sends a Clerk invite to the
+  checkout email with `tracks: ["intro-to-agentic-engineering"]`,
+  `creditUsd`, `source: "agentic-47"`. Reloading is safe: a pending invite
+  shows "check your inbox", an existing account shows "sign in". An existing
+  track-restricted user gets the track appended; full-access users are never
+  touched. No webhook — if a buyer closes the tab before the redirect, invite
+  them from `/admin` and set their `tracks` in Clerk by hand.
+- **Credit key**: on a restricted buyer's first `/learn` visit (LiteLLM
+  configured, no key yet) a key with budget `creditUsd` is minted and shown
+  on `/learn` with the proxy URL. Clerk `privateMetadata.creditKeyMintedAt`
+  records it, so revoking the key in `/admin` does not trigger a re-mint.
+  Full-access students never see a key on `/learn`.
 
 ## Editing the curriculum
 - One file per study day: `curriculum/day-NN.md` (see `curriculum/AUTHORING.md`

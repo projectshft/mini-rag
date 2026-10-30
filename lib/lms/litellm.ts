@@ -46,13 +46,14 @@ async function proxy(path: string, init: RequestInit): Promise<Response> {
 
 /** Mint a budget-capped key for one student. Returns the raw key + expiry. */
 export async function mintKey(
-	email: string
+	email: string,
+	budget: number = KEY_BUDGET_USD
 ): Promise<{ key: string; expiresAt: Date; budget: number }> {
 	const res = await proxy('/key/generate', {
 		method: 'POST',
 		body: JSON.stringify({
 			key_alias: `lms-${email}-${Date.now()}`,
-			max_budget: KEY_BUDGET_USD,
+			max_budget: budget,
 			duration: `${KEY_DURATION_DAYS}d`,
 			metadata: { student: email, source: 'mini-rag-lms' },
 			// no "models" key = any model the proxy serves (wildcard route)
@@ -63,7 +64,7 @@ export async function mintKey(
 	const expiresAt = data.expires
 		? new Date(data.expires)
 		: new Date(Date.now() + KEY_DURATION_DAYS * 24 * 60 * 60 * 1000);
-	return { key: data.key, expiresAt, budget: KEY_BUDGET_USD };
+	return { key: data.key, expiresAt, budget };
 }
 
 /** Raise (or lower) the $ ceiling on an existing key. Spend is preserved. */
