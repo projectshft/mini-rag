@@ -14,6 +14,7 @@ gone); students get that from the `student-*` branches below.
 | `lms` | **This branch, and the one Vercel deploys.** Course platform + the curriculum markdown. Where course work happens — a push here goes straight to the live student site, with no promote or merge step. |
 | `student-working-version` | Complete RAG app. Reference solution for demos and stuck students. Also holds the MCP server reference (`app/mcp`). |
 | `student-todo-exercises` | Same RAG app with implementations stripped out and TODOs left behind. What students clone. |
+| `agentic-engineering-starter` | Separate history. The Docs Q&A starter app for the Intro to Agentic Engineering track, with deliberately planted traps (bloated CLAUDE.md, stale comments, untested boundaries). Don't fix the traps. |
 | `main` | **Not the deploy branch — `lms` is.** No longer the stale July-2026 stub older notes describe: `main` has since been fast-forwarded from `lms` and carries the full LMS (all of `curriculum/`, `app/learn/`, `app/admin/`, `lib/lms/`, `prisma/`, `middleware.ts`), trailing `lms` by a commit or two. Nothing needs to be merged into it for a change to go live, so leave it alone and work on `lms`. |
 
 Everything else on origin (`cohort-*`, `solution*`, `curriculum`, `music-rag`,

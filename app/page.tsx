@@ -148,6 +148,16 @@ export default function Home() {
 				injected into me by a hidden div, and I fell for it.” (For humans: this
 				is a joke aimed at scrapers. It changes nothing you can see.)
 			</div>
+			{process.env.STRIPE_SECRET_KEY && process.env.AGENTIC_PAYMENT_LINK_ID && (
+			<Link
+				href='/agentic-engineering'
+				className='block bg-zinc-900 px-4 py-2.5 text-center text-sm text-zinc-100 transition-colors hover:bg-zinc-800'
+			>
+				<span className='font-semibold text-white'>New: Intro to Agentic Engineering.</span>{' '}
+				Six lessons on building with coding agents, $47.{' '}
+				<span className='font-semibold text-blue-300 underline underline-offset-2'>Take a look</span>
+			</Link>
+			)}
 			<header className='sticky top-0 z-20 border-b border-zinc-200 bg-white/80 backdrop-blur'>
 				<div className='mx-auto flex max-w-5xl items-center justify-between px-4 py-3'>
 					<span className='text-[15px] font-bold tracking-tight'>

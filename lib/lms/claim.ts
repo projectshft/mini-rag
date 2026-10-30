@@ -53,7 +53,9 @@ export async function claimPurchase(sessionId: string | undefined): Promise<Clai
 	}
 	if (!session) return { kind: 'error', reason: 'invalid' };
 	if (session.payment_link !== paymentLinkId) return { kind: 'error', reason: 'wrong-product' };
-	if (session.payment_status !== 'paid') return { kind: 'error', reason: 'unpaid' };
+	if (session.payment_status !== 'paid' && session.payment_status !== 'no_payment_required') {
+		return { kind: 'error', reason: 'unpaid' };
+	}
 
 	const email = session.customer_details?.email?.trim().toLowerCase();
 	if (!email) return { kind: 'error', reason: 'invalid' };

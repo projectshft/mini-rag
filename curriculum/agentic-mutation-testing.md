@@ -1,6 +1,6 @@
 # Is Your Test Suite Lying? Mutation Testing and Fresh Eyes
 
-> **Today:** a passing test suite can still be a weak one. You'll break your own chunking code on purpose with mutation testing to find out what your tests actually catch, then learn the review rule I never break: the agent that wrote the code never reviews it.
+> **Today:** a passing test suite can still be a weak one. You'll break the starter app's chunking code on purpose with mutation testing to find out what your tests actually catch, then learn the review rule I never break: the agent that wrote the code never reviews it.
 
 ## How do you know your tests are any good?
 
@@ -31,12 +31,12 @@ Mark it killed if a test fails, survived if all pass
 Report the score and every survivor
 ```
 
-## Lab: mutate your chunking code
+## Lab: mutate the chunking code
 
-Your repo already has a chunking test suite: [`chunking.test.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/libs/chunking.test.ts) testing [`chunking.ts`](https://github.com/projectshft/mini-rag/blob/student-todo-exercises/app/libs/chunking.ts).
+The starter app already has a test suite: [`lib/chunking.test.ts`](https://github.com/projectshft/mini-rag/blob/agentic-engineering-starter/lib/chunking.test.ts) testing [`lib/chunking.ts`](https://github.com/projectshft/mini-rag/blob/agentic-engineering-starter/lib/chunking.ts), plus tests for the retriever in `lib/retrieve.ts`. They pass. Whether they're any good is today's question.
 
-1. Run `yarn test:chunking` yourself. Confirm it passes.
-2. Ask your agent to set up StrykerJS with the Jest runner, scoped to `app/libs/chunking.ts` only.
+1. Run `npm test` yourself. Confirm it passes.
+2. Ask your agent to set up StrykerJS with the Jest runner, scoped to `lib/chunking.ts` and `lib/retrieve.ts`.
 3. Run it. Write down the score.
 4. Ask the agent to list the surviving mutants and explain, for three of them, what real bug would slip through.
 5. Read those three yourself. Do you agree it matters? Off-by-one in overlap math matters a lot for retrieval quality. A mutated log message doesn't.
@@ -88,7 +88,7 @@ Context also leaks between tasks. Spend an hour debugging retrieval, then build 
 title: Run mutation testing on my chunking code
 ---
 Set up StrykerJS with the Jest runner in this repo, scoped only to
-app/libs/chunking.ts and its test file app/libs/chunking.test.ts. Run it and show me
+lib/chunking.ts and lib/retrieve.ts and their tests in lib/. Run it and show me
 the full report. Then list every surviving mutant with: the exact change, the real-world
 bug it represents for RAG retrieval, and whether you think it's worth a test. Don't
 write any new tests until I pick which survivors matter.

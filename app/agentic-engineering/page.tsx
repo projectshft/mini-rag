@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
+import { BuyButton } from '@/components/lms/BuyButton';
+import { MetaPixel } from '@/components/lms/MetaPixel';
 
 const BUY_URL = 'https://buy.stripe.com/eVq9ATgrv0Mkbd75Lx4wM0y';
+const ON_SALE = Boolean(process.env.STRIPE_SECRET_KEY && process.env.AGENTIC_PAYMENT_LINK_ID);
 
 export const metadata: Metadata = {
 	title: 'Intro to Agentic Engineering | Parsity',
@@ -62,6 +65,7 @@ const FAQ = [
 export default function AgenticEngineeringPage() {
 	return (
 		<main className='lms min-h-screen bg-white text-zinc-900'>
+			<MetaPixel />
 			<section className='mx-auto max-w-3xl px-4 pb-14 pt-16 sm:pt-24'>
 				<p className='text-xs font-semibold uppercase tracking-wider text-blue-600'>
 					Self-paced course from Parsity
@@ -75,12 +79,16 @@ export default function AgenticEngineeringPage() {
 					factory that turns a chat message into a reviewed pull request.
 				</p>
 				<div className='mt-8 flex flex-wrap items-center gap-4'>
-					<a
+					{ON_SALE ? (
+					<BuyButton
 						href={BUY_URL}
 						className='rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-blue-700'
 					>
 						Get the course for $47
-					</a>
+					</BuyButton>
+					) : (
+						<span className='inline-block rounded-xl bg-zinc-100 px-6 py-3 text-base font-semibold text-zinc-500'>Enrollment opens soon</span>
+					)}
 					<span className='text-sm text-zinc-500'>
 						Includes a starter repo and $5 in API credits
 					</span>
@@ -148,12 +156,16 @@ export default function AgenticEngineeringPage() {
 					<p className='mx-auto mt-3 max-w-xl text-zinc-600'>
 						$47, lifetime access to the lessons, the starter repo and $5 in API credits.
 					</p>
-					<a
+					{ON_SALE ? (
+					<BuyButton
 						href={BUY_URL}
 						className='mt-6 inline-block rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-blue-700'
 					>
 						Get the course for $47
-					</a>
+					</BuyButton>
+					) : (
+						<span className='inline-block rounded-xl bg-zinc-100 px-6 py-3 text-base font-semibold text-zinc-500'>Enrollment opens soon</span>
+					)}
 					<p className='mt-6 text-xs text-zinc-400'>
 						Questions? Email assistant@parsity.io
 					</p>

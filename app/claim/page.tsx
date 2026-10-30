@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { MetaPixel } from '@/components/lms/MetaPixel';
 import { claimPurchase, type ClaimResult } from '@/lib/lms/claim';
 
 export const dynamic = 'force-dynamic';
@@ -46,6 +47,9 @@ export default async function ClaimPage({
 
 	return (
 		<div className='lms min-h-screen bg-zinc-50/50'>
+			{result.kind === 'invited' && typeof session_id === 'string' && (
+				<MetaPixel event={{ name: 'Purchase', value: 47, currency: 'USD', eventId: session_id }} />
+			)}
 			<header className='sticky top-0 z-20 border-b border-zinc-200 bg-white/90 backdrop-blur'>
 				<div className='mx-auto flex max-w-3xl items-center justify-between gap-3 px-4 py-3'>
 					<span className='shrink-0 text-[15px] font-bold tracking-tight text-zinc-900'>

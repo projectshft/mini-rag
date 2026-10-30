@@ -1,6 +1,6 @@
 # Start Here: Building With Agents
 
-> **Today:** you stop typing most of the code. You'll pick a coding agent, point it at the RAG app you've been building, and have it ship a real feature. Then you'll check its work like a skeptical senior engineer, because that's the job now.
+> **Today:** you stop typing most of the code. You'll pick a coding agent, point it at a small starter app, and have it ship a real feature. Then you'll check its work like a skeptical senior engineer, because that's the job now.
 
 ## Why there are (almost) no videos in this track
 
@@ -53,31 +53,47 @@ Use whichever one you'll actually use. There's not as much difference between th
 
 Once it's set up, stop writing the code yourself. Keep your brain switched on: you describe what you want, the agent writes it, and you read it, run it and question it. Fixing a typo by hand is fine. Writing a whole function by hand? Ask yourself why.
 
-## First reps on your RAG app
+## The starter app
 
-Open your copy of the [student repo](https://github.com/projectshft/mini-rag/tree/student-todo-exercises) (the one you've been working in) and start your agent there.
+Every lab in this track runs against a small Next.js app called Docs Q&A: a few markdown docs, a chunker, a simple retriever, and one route that asks a model to answer questions about the docs.
 
-1. Ask it to explain how the project is structured. You built most of this, so check its answer. Where is it wrong, or suspiciously vague?
+```bash
+git clone -b agentic-engineering-starter https://github.com/projectshft/mini-rag.git agentic-starter
+cd agentic-starter
+npm install
+cp .env.example .env.local
+```
+
+Put the API key and base URL from your course page into `.env.local`, then `npm run dev`. [Browse the code on GitHub](https://github.com/projectshft/mini-rag/tree/agentic-engineering-starter).
+
+If you're in the full RAG program, you can run every lab against your own RAG app instead. You know that codebase even better.
+
+## First reps
+
+Start your agent in the starter folder.
+
+1. Ask it to explain how the project is structured. Then open the files it names and check. Where is it wrong, or suspiciously vague?
 2. Ask it to add a real feature. Something like:
 
 ```
-Add a "sources" section under each RAG answer in the chat UI that lists the
-document titles the answer was built from. Add tests for the API change.
+/api/ask already rejects empty questions. Also reject whitespace-only questions and
+anything over 500 characters with a 400 and a clear error message, and show that
+message in the UI. Add tests for the validation.
 ```
 
 3. Before you believe it's done:
-   - **Run it.** Ask the question yourself in the chat. Then ask something with no good match in your index.
+   - **Run it.** Send a question that's just spaces, a normal one, and a 600-character one.
    - **Read the diff.** Every file. Did it touch anything you didn't ask for?
-   - **Run the tests yourself.** Do they cover the case with zero sources, or only the happy path?
+   - **Run the tests yourself** with `npm test`. Do they cover exactly 500 characters, or just the obvious cases?
    - **Ask it to explain one part you don't get.** Then read the code and see if the explanation holds up.
 
-Don't spend more than 20 minutes fighting a broken setup. Ask in Slack.
+If setup fights you for more than 20 minutes, paste the exact error into your agent and ask it what's wrong. That's the job now too.
 
 ## Key takeaways
 
 - The model is better at syntax than you. You're better at knowing what should exist and why.
 - "Done" from an agent is a claim. The test output, the diff and the running app are the evidence.
-- Your RAG app is the perfect place to practice because you know what correct looks like.
+- A small app you can read end to end is the perfect place to practice judging an agent's work.
 - Pick a tool, stick with it for a few days, and stop typing the code.
 
 ## Work with AI
@@ -85,10 +101,10 @@ Don't spend more than 20 minutes fighting a broken setup. Ask in Slack.
 ```ai-prompt
 title: Interrogate the feature your agent just built
 ---
-I just had a coding agent add a "sources" list under each RAG answer in my Next.js
-RAG app. Act as a skeptical senior engineer reviewing this change. Ask me 5 pointed
-questions, one at a time, about how I verified it: empty results, duplicate sources,
-what happens when retrieval returns chunks from the same document, whether the tests
-cover failure paths, and whether anything outside the feature changed. Wait for my
+I just had a coding agent add input validation to the /api/ask route in a small
+Next.js docs Q&A app. Act as a skeptical senior engineer reviewing this change. Ask me
+5 pointed questions, one at a time, about how I verified it: boundary lengths,
+whitespace-only questions, what the UI shows on a 400, whether the tests cover failure
+paths, and whether anything outside the feature changed. Wait for my
 answer each time and tell me what I should go check.
 ```

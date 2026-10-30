@@ -13,16 +13,16 @@ So how do you stop correcting the same mistake every day? You write it down. But
 **A project instructions file.** Most tools read a markdown file at the root of the project at the start of every session. Claude Code reads `CLAUDE.md` ([docs](https://code.claude.com/docs/en/memory)). Lots of other tools read `AGENTS.md` ([agents.md](https://agents.md)). Short, always-true facts go here:
 
 ```markdown
-- Use yarn, not npm.
-- Import openaiProvider from app/libs/openai/openai.ts. Never import openai from @ai-sdk/openai directly.
-- Run yarn test:chunking after touching app/libs/chunking.ts.
+- Use npm. There is no yarn.lock.
+- All model calls go through lib/llm.ts. Never create a new OpenAI client elsewhere.
+- Run npm test after touching anything in lib/.
 ```
 
 **A skill.** A folder with a `SKILL.md` that teaches the agent one specific procedure, plus any scripts it needs. The agent only loads it when the task calls for it. Anthropic created the format and released it as an open standard at [agentskills.io](https://agentskills.io). See [Claude Code's skills docs](https://code.claude.com/docs/en/skills).
 
-Rough guide: a fact about this project goes in the instructions file. A repeatable procedure ("how we add a new agent to the registry") is a skill.
+Rough guide: a fact about this project goes in the instructions file. A repeatable procedure ("how we add a new API route with validation and tests") is a skill.
 
-Your starter repo already has a `CLAUDE.md`. Open it. Count the lines. Ask yourself which ones an agent actually needs on every single task.
+Your starter repo already has a `CLAUDE.md`. Open it. Count the lines. Ask yourself which ones an agent actually needs on every single task, and which ones are just wrong. (Some of them are wrong on purpose.)
 
 ## Keep it short
 
@@ -55,7 +55,7 @@ So in codebases that are mostly built and maintained with agents, I avoid commen
 - **Put intent in tests.** A test named `splits on paragraph boundaries before hitting max size` is a comment that fails when it stops being true.
 - **Put the genuinely weird stuff in the instructions file.** One line about the odd provider import beats a comment block nobody updates.
 
-Your starter repo is literally built out of TODO comments, which is great for learning. Once the code works, those comments are exactly what will mislead the next agent. Delete them.
+The starter repo has a few stale comments in `lib/`, planted on purpose. Find them before your agent trips over them.
 
 ```quiz
 [
@@ -66,7 +66,7 @@ Your starter repo is literally built out of TODO comments, which is great for le
     "explain": "LLMs weight the text heavily. A stale comment is a confident lie the agent will build on."
   },
   {
-    "q": "You've corrected the agent about using yarn instead of npm once. What should you do?",
+    "q": "You've corrected the agent about using npm instead of yarn once. What should you do?",
     "options": ["Nothing yet. Write it down if it happens a third time", "Write a skill for package management", "Add a paragraph about package managers to every file", "Switch to npm"],
     "answer": 0,
     "explain": "Rule of three. Writing rules for problems you don't have yet is how instruction files rot."
@@ -91,7 +91,7 @@ Your starter repo is literally built out of TODO comments, which is great for le
 
 ## Lab: write your first skill
 
-Look back over this track. What have you told your agent three or more times about this repo? How to run the tests, how agents get added to the registry, how you want API routes structured.
+Look back over this track. What have you told your agent three or more times about this repo? How to run the tests, how you want API routes validated, how you want commits written.
 
 1. Write the `SKILL.md` yourself first. Keep it short enough that a classmate can read it in a minute.
 2. Ask your agent to improve it. Reject anything that makes it longer without making it clearer.
