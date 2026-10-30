@@ -107,7 +107,7 @@ export default function AgenticEngineeringPage() {
 							href={BUY_URL}
 							className='rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-blue-700'
 						>
-							Get the course for $47
+							Start building for $47
 						</BuyButton>
 					) : (
 						<span className='inline-block rounded-xl bg-zinc-100 px-6 py-3 text-base font-semibold text-zinc-500'>
@@ -215,7 +215,7 @@ export default function AgenticEngineeringPage() {
 							href={BUY_URL}
 							className='mt-6 inline-block rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-blue-700'
 						>
-							Get the course for $47
+							Start building for $47
 						</BuyButton>
 					) : (
 						<span className='inline-block rounded-xl bg-zinc-100 px-6 py-3 text-base font-semibold text-zinc-500'>
