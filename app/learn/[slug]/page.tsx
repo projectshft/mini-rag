@@ -6,6 +6,7 @@ import {
 	getDays,
 	getInterviewLesson,
 	getInterviewLessons,
+	trackSlug,
 } from '@/lib/lms/curriculum';
 import {
 	ensureStudent,
@@ -157,15 +158,17 @@ export default async function LessonPage({
 	const completed = userId ? await getCompletedSlugs(userId) : new Set<string>();
 	const isDone = completed.has(slug);
 
-	// Prev/next by global curriculum order (rest days have no pages).
-	const idx = days.findIndex((d) => d.slug === slug);
-	const prev = idx > 0 ? days[idx - 1] : null;
-	const next = idx >= 0 && idx < days.length - 1 ? days[idx + 1] : null;
+	// Prev/next by curriculum order within the day's track (rest days have no pages).
+	const trackDays = days.filter((d) => d.track === day.track);
+	const idx = trackDays.findIndex((d) => d.slug === slug);
+	const prev = idx > 0 ? trackDays[idx - 1] : null;
+	const next = idx >= 0 && idx < trackDays.length - 1 ? trackDays[idx + 1] : null;
+	const backHref = day.track ? `/learn?track=${trackSlug(day.track)}` : '/learn';
 	const title = day.title.replace(/^Day \d+\s*[—–-]\s*/, '');
 
 	return (
 		<article>
-			<Link href='/learn' className='text-sm font-medium text-zinc-400 hover:text-zinc-600'>
+			<Link href={backHref} className='text-sm font-medium text-zinc-400 hover:text-zinc-600'>
 				← All days
 			</Link>
 

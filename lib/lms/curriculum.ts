@@ -23,6 +23,7 @@ export type Day = {
 	week: number; // 1..6
 	order: number; // global position among study days, for prev/next nav
 	isDeliverable: boolean; // 🎥 assignment due / submission day
+	track: string;
 };
 
 // A rest day — shown in the index for the full-schedule feel, but has no
@@ -54,6 +55,7 @@ export type BonusLesson = InterviewLesson;
 export type Week = {
 	week: number; // 1..6
 	name: string; // e.g. "Week 1 — Foundations (Days 1–7)"
+	track: string;
 	entries: WeekEntry[];
 };
 
@@ -61,6 +63,7 @@ const CURRICULUM_DIR = path.join(process.cwd(), 'curriculum');
 
 // A group header inside the week index: "**Week 3 — Agent Architecture**".
 const GROUP_RE = /^\*\*Week\s+(\d+)\s*[—–-]\s*(.+?)\*\*\s*$/;
+const TRACK_RE = /^\*\*Track:\s*(.+?)\*\*\s*$/;
 // A lesson line: "- [Fine-Tuning Overview](day-12.md) 🎥". A leading "Day N —"
 // is tolerated but IGNORED — the display number comes from position, so
 // lessons can be added or reordered without renumbering files.
@@ -73,7 +76,7 @@ const TIME_RE = /^\*\*Time:\*\*\s*(.+?)\s*$/m;
 type IndexEntry =
 	| { kind: 'day'; day: number; slug: string; linkText: string; isDeliverable: boolean }
 	| { kind: 'rest'; day: number; label: string };
-type IndexGroup = { week: number; name: string; entries: IndexEntry[] };
+type IndexGroup = { week: number; name: string; track: string; entries: IndexEntry[] };
 
 /** Parse the "## Week index" section of README.md into ordered groups. */
 const parseIndex = cache(async (): Promise<IndexGroup[]> => {
@@ -99,14 +102,22 @@ const parseIndex = cache(async (): Promise<IndexGroup[]> => {
 	// renamed. (day-00 sits at position 0, rest days occupy a slot, so this
 	// reproduces the original hand-numbering exactly.)
 	let pos = 0;
+	let track = '';
 
 	for (const rawLine of section.split('\n')) {
 		const line = rawLine.trim();
+		const t = TRACK_RE.exec(line);
+		if (t) {
+			track = t[1].trim();
+			current = null;
+			continue;
+		}
 		const g = GROUP_RE.exec(line);
 		if (g) {
 			current = {
 				week: parseInt(g[1], 10),
 				name: `Week ${g[1]} — ${g[2].trim()}`,
+				track,
 				entries: [],
 			};
 			groups.push(current);
@@ -145,7 +156,8 @@ function parseDayFile(
 	raw: string,
 	entry: Extract<IndexEntry, { kind: 'day' }>,
 	week: number,
-	order: number
+	order: number,
+	track: string
 ): Day {
 	const title = TITLE_RE.exec(raw)?.[1]?.trim() || entry.linkText;
 	const timeMatch = TIME_RE.exec(raw);
@@ -171,6 +183,7 @@ function parseDayFile(
 		week,
 		order,
 		isDeliverable: entry.isDeliverable,
+		track,
 	};
 }
 
@@ -189,7 +202,7 @@ export const getDays = cache(async (): Promise<Day[]> => {
 			} catch {
 				continue; // linked file missing — skip rather than crash
 			}
-			bySlug.set(entry.slug, parseDayFile(raw, entry, group.week, order++));
+			bySlug.set(entry.slug, parseDayFile(raw, entry, group.week, order++, group.track));
 		}
 	}
 
@@ -300,6 +313,7 @@ export const getWeeks = cache(async (): Promise<Week[]> => {
 		return {
 			week: group.week,
 			name: group.name + range,
+			track: group.track,
 			entries: group.entries
 				.map((e): WeekEntry | null => {
 					if (e.kind === 'rest') {
@@ -312,3 +326,12 @@ export const getWeeks = cache(async (): Promise<Week[]> => {
 		};
 	});
 });
+
+export const getTracks = cache(async (): Promise<string[]> => {
+	const groups = await parseIndex();
+	return [...new Set(groups.map((g) => g.track))];
+});
+
+export function trackSlug(track: string): string {
+	return track.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+}
