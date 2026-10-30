@@ -43,12 +43,16 @@ import { createOpenAI } from '@ai-sdk/openai';
 // NOT — its default provider is hardcoded to api.openai.com. Importing
 // `{ openai }` from '@ai-sdk/openai' anywhere in the app silently bypasses
 // the proxy and 401s on a class key. Import `openaiProvider` instead.
+// The lms deploy builds the stubbed RAG routes without an OpenAI key, and the
+// SDK throws at construction when the key is empty.
+const apiKey = process.env.OPENAI_API_KEY || 'missing-openai-api-key';
+
 export const openaiClient = new OpenAI({
-	apiKey: process.env.OPENAI_API_KEY as string,
+	apiKey,
 	baseURL: process.env.OPENAI_BASE_URL,
 });
 
 export const openaiProvider = createOpenAI({
-	apiKey: process.env.OPENAI_API_KEY as string,
+	apiKey,
 	baseURL: process.env.OPENAI_BASE_URL,
 });
