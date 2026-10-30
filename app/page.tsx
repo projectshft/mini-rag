@@ -198,7 +198,7 @@ export default function Home() {
 				<section className='grid items-center gap-10 py-16 md:grid-cols-2 md:py-24'>
 					<div>
 						<h1 className='text-4xl font-bold leading-tight tracking-tight md:text-5xl'>
-							Build real RAG systems and AI agents.
+							Build RAG systems and AI agents.
 						</h1>
 						<p className='mt-5 text-lg text-zinc-600'>
 							A six-week, hands-on program. Turn text into vectors
