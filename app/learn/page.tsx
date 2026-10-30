@@ -12,6 +12,10 @@ import {
 	getCompletedSlugs,
 	isInterviewUnlocked,
 } from '@/lib/lms/progress';
+import { ensureCreditKey, getAccess, isTrackAllowed } from '@/lib/lms/access';
+import { litellmProxyUrl } from '@/lib/lms/litellm';
+import { lmsPrisma } from '@/lib/lms/prisma';
+import { CreditKeyCard } from '@/components/lms/CreditKeyCard';
 
 export default async function LearnPage({
 	searchParams,
@@ -19,7 +23,19 @@ export default async function LearnPage({
 	searchParams: Promise<{ track?: string }>;
 }) {
 	const userId = await ensureStudent();
-	const [{ track: requestedTrack }, tracks, allWeeks, allDays, interviewLessons, bonusLessons, completed, interviewUnlocked] =
+	const access = await getAccess();
+	const restricted = access.tracks !== null;
+	if (restricted && userId) {
+		await ensureCreditKey().catch((e) => console.error('credit key mint failed', e));
+	}
+	const creditStudent =
+		restricted && userId
+			? await lmsPrisma.student.findUnique({
+					where: { id: userId },
+					select: { apiKey: true, apiKeyBudget: true },
+				})
+			: null;
+	const [{ track: requestedTrack }, allTracks, allWeeks, allDays, interviewLessons, bonusLessons, completed, interviewUnlocked] =
 		await Promise.all([
 			searchParams,
 			getTracks(),
@@ -31,8 +47,22 @@ export default async function LearnPage({
 			userId ? isInterviewUnlocked(userId) : Promise.resolve(false),
 		]);
 
+	const tracks = allTracks.filter((t) => isTrackAllowed(t, access.tracks));
 	const track = tracks.find((t) => trackSlug(t) === requestedTrack) ?? tracks[0] ?? '';
-	const isMainTrack = track === (tracks[0] ?? '');
+	const isMainTrack = track === (allTracks[0] ?? '');
+	const showExtras = isMainTrack && !restricted;
+
+	if (!track) {
+		return (
+			<div>
+				<h1 className='text-2xl font-bold tracking-tight text-zinc-900'>Your course</h1>
+				<p className='mt-5 rounded-2xl border border-dashed border-zinc-300 bg-zinc-50/60 px-5 py-6 text-center text-sm text-zinc-500'>
+					No course tracks are unlocked on your account yet. Reply to your invite email and we&rsquo;ll sort it out.
+				</p>
+			</div>
+		);
+	}
+
 	const weeks = allWeeks.filter((w) => w.track === track);
 	const days = allDays.filter((d) => d.track === track);
 
@@ -46,6 +76,9 @@ export default async function LearnPage({
 	return (
 		<div>
 			<h1 className='text-2xl font-bold tracking-tight text-zinc-900'>Your course</h1>
+			{restricted && tracks.length === 1 && (
+				<p className='mt-1 text-sm font-medium text-blue-600'>{track}</p>
+			)}
 			{tracks.length > 1 && (
 				<nav className='mt-4 inline-flex rounded-xl border border-zinc-200 bg-white p-1 shadow-sm' aria-label='Tracks'>
 					{tracks.map((t) => (
@@ -66,6 +99,14 @@ export default async function LearnPage({
 				<p className='mt-3 text-sm text-zinc-500'>
 					42 days · 1–2 hours a day · 6 days on, 1 day off
 				</p>
+			)}
+
+			{creditStudent?.apiKey && (
+				<CreditKeyCard
+					apiKey={creditStudent.apiKey}
+					budget={creditStudent.apiKeyBudget ?? access.creditUsd ?? 0}
+					baseUrl={litellmProxyUrl()}
+				/>
 			)}
 
 			<div className='mt-5 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm'>
@@ -169,7 +210,7 @@ export default async function LearnPage({
 					);
 				})}
 
-				{isMainTrack && bonusLessons.length > 0 && (
+				{showExtras && bonusLessons.length > 0 && (
 					<section>
 						<div className='flex items-baseline justify-between'>
 							<h2 className='text-lg font-bold tracking-tight text-zinc-900'>
@@ -220,7 +261,7 @@ export default async function LearnPage({
 					</section>
 				)}
 
-				{isMainTrack && interviewLessons.length > 0 && (
+				{showExtras && interviewLessons.length > 0 && (
 					<section>
 						<div className='flex items-baseline justify-between'>
 							<h2 className='text-lg font-bold tracking-tight text-zinc-900'>

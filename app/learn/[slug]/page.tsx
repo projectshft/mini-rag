@@ -13,6 +13,7 @@ import {
 	getCompletedSlugs,
 	isInterviewUnlocked,
 } from '@/lib/lms/progress';
+import { getAccess, isTrackAllowed } from '@/lib/lms/access';
 import { LessonMarkdown } from '@/components/lms/LessonMarkdown';
 import { MarkDoneCheckbox } from '@/components/lms/MarkDoneCheckbox';
 
@@ -22,6 +23,10 @@ export default async function LessonPage({
 	params: Promise<{ slug: string }>;
 }) {
 	const { slug } = await params;
+	const { tracks: allowedTracks } = await getAccess();
+	const restricted = allowedTracks !== null;
+
+	if (restricted && (slug.startsWith('bonus-') || slug.startsWith('interview-'))) notFound();
 
 	// ── Optional labs (bonus-*): ungated ──
 	if (slug.startsWith('bonus-')) {
@@ -152,7 +157,7 @@ export default async function LessonPage({
 
 	// ── Regular curriculum day ──
 	const [day, days] = await Promise.all([getDay(slug), getDays()]);
-	if (!day) notFound();
+	if (!day || !isTrackAllowed(day.track, allowedTracks)) notFound();
 
 	const userId = await ensureStudent();
 	const completed = userId ? await getCompletedSlugs(userId) : new Set<string>();

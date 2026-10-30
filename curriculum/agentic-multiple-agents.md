@@ -6,9 +6,9 @@
 
 Sometimes five agents is great. Often it's five times the mess.
 
-- **The work is independent.** Three unrelated bugs. A new agent in the registry and a separate fix to the upload route. If two agents would edit the same files, they'll step on each other.
+- **The work is independent.** Three unrelated bugs. A new API route and a separate fix to the UI. If two agents would edit the same files, they'll step on each other.
 - **You want a second opinion.** One builds, a different one reviews. The most useful multi-agent setup there is, and it only needs two.
-- **You're comparing approaches.** Two agents try two chunking strategies. Keep the better one (and measure it, you know how now).
+- **You're comparing approaches.** Two agents try two retrieval scoring approaches. Keep the better one (and measure it).
 - **Boring work runs in the background.** Upgrading a dependency or writing tests for an old module while you do something else.
 
 ## When it doesn't
@@ -24,8 +24,8 @@ Your review capacity is the real limit, not how many terminals you can open.
 If several agents work in the same repo at once, give each its own copy. [Git worktrees](https://git-scm.com/docs/git-worktree) check out several branches of one repo into separate folders, so each agent gets its own folder, branch and running dev server. No more two agents fighting over the same file.
 
 ```bash
-git worktree add ../mini-rag-sources -b feature/sources
-git worktree add ../mini-rag-reranker -b feature/reranker
+git worktree add ../starter-validation -b feature/validation
+git worktree add ../starter-scoring -b feature/scoring
 ```
 
 Start a separate agent session in each folder. Merge through pull requests like you would with any teammate. Many tools will set this up for you now.
@@ -35,7 +35,7 @@ Start a separate agent session in each folder. Merge through pull requests like 
   "title": "One agent or several?",
   "note": "Tap a situation, then tap the approach.",
   "pairs": [
-    { "left": "Fix a bug in the selector and restyle the landing page", "right": "Two agents in two worktrees" },
+    { "left": "Fix a bug in the retriever and restyle the page", "right": "Two agents in two worktrees" },
     { "left": "Add an API field, then build the UI that uses it", "right": "One agent, in order" },
     { "left": "Not sure if hybrid search is worth it", "right": "Two agents, two approaches, measure both" },
     { "left": "Review the PR another agent just opened", "right": "A fresh session that didn't write it" }
@@ -75,13 +75,13 @@ Before you take anyone's blanket advice (or worse, parrot it), look at the conte
 
 ## Retro: form your own opinions
 
-Stop and write a page, for yourself or to share in Slack. There are no right answers. The point is to notice what you actually think instead of repeating what you read on LinkedIn (including from me).
+Stop and write a page, for yourself or to share. There are no right answers. The point is to notice what you actually think instead of repeating what you read on LinkedIn (including from me).
 
 1. What did you like about working this way? Be specific.
 2. Where did it waste your time, confidently lie to you, or make you feel out of control?
 3. Name a mistake you caught because you understood the code.
 4. What did you stop checking that you probably shouldn't have?
-5. Where in your RAG app would more than one agent actually help?
+5. Where in your own projects would more than one agent actually help?
 6. What can you imagine building now that you wouldn't have attempted a month ago?
 
 ## Key takeaways
@@ -94,9 +94,9 @@ Stop and write a page, for yourself or to share in Slack. There are no right ans
 ## Work with AI
 
 ```ai-prompt
-title: Plan a parallel sprint on my RAG app
+title: Plan a parallel sprint on my app
 ---
-Here's my backlog for my Next.js RAG app: [paste 4-6 tasks]. For each pair of tasks,
+Here's my backlog for my Next.js app: [paste 4-6 tasks]. For each pair of tasks,
 tell me whether they can safely run in parallel in separate git worktrees, based on
 which files and modules they'd likely touch. Then propose a plan: which tasks run in
 parallel, which must run in order, and which one should get a separate review session.

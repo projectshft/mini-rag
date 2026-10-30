@@ -37,7 +37,7 @@ There's a cost to getting this wrong. CodeRabbit's analysis of real pull request
 ## What you own
 
 - **Does it do what I actually want?** You know the product. It only knows your prompt.
-- **Is it safe?** You just spent a week on prompt injection and document poisoning. The agent didn't.
+- **Is it safe?** Prompt injection, leaked keys, missing validation. The agent won't bring these up unless you do.
 - **Where does it run?** Deployment, env vars, cost.
 - **Which patterns?** The ones you learned here, or the new thing you want to try. This is a great time to experiment.
 
@@ -52,7 +52,7 @@ No human writes 200 tests for a small feature. For an agent it's a few minutes a
 
 ## Lab: end-to-end tests for your chat
 
-1. Write down the three things a user does most in your app. Probably: ask a question that hits RAG, ask one that hits the LinkedIn agent, upload a document.
+1. Write down the three things a user does most in the starter app. Probably: ask a question the docs answer, ask one they don't, and check the sources listed under the answer.
 2. Ask your agent to set up Playwright and write E2E tests for those three flows. Have it run them and paste the real output.
 3. Ask for [screenshots](https://playwright.dev/docs/screenshots) of the chat at desktop and phone width. Look at every one.
 4. Break something on purpose (rename the chat input's label, or make the API route return a 500). Run the tests again. Do they fail?
@@ -89,10 +89,10 @@ LLM responses aren't deterministic, so tests that assert the exact answer text w
 ```ai-prompt
 title: Make the agent prove the chat works
 ---
-In my Next.js RAG app, set up Playwright and write end-to-end tests for: asking a
-question that should route to the RAG agent, asking one that should route to the
-LinkedIn agent, and uploading a document. Don't assert exact model wording; assert
-that an answer renders, the right agent handled it, and no error state shows. Run
+In this Next.js docs Q&A app, set up Playwright and write end-to-end tests for: asking
+a question the sample docs answer, asking one they don't, and checking that sources
+render under the answer. Don't assert exact model wording; assert that an answer
+renders, sources appear when they should, and no error state shows. Run
 the tests and paste the full output. Then take screenshots of the chat at 1280px and
 390px wide and show them to me. Finally, list every case you did NOT test.
 ```
