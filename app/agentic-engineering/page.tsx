@@ -50,7 +50,7 @@ const FAQ = [
 	},
 	{
 		q: 'Do I need to know how to code?',
-		a: 'Yes. This is for developers who can already read and write JavaScript or TypeScript. The whole point is judging what the agent produces.',
+		a: "Yes, but the language doesn't matter. Everything here is language agnostic. The starter repo happens to be TypeScript, and if you can read code in any language you'll be fine. The whole point is judging what the agent produces.",
 	},
 	{
 		q: 'What is not included?',
