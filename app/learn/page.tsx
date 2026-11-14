@@ -5,6 +5,7 @@ import {
 	getInterviewLessons,
 	getTracks,
 	getWeeks,
+	getTrackBlurb,
 	trackSlug,
 } from '@/lib/lms/curriculum';
 import {
@@ -72,6 +73,8 @@ export default async function LearnPage({
 
 	// The first not-yet-completed day, for the "continue" nudge.
 	const nextUp = days.find((d) => !completed.has(d.slug));
+	const unitWord = days[0]?.unit === 'Lesson' ? 'lessons' : 'days';
+	const blurb = await getTrackBlurb(track);
 
 	return (
 		<div>
@@ -100,6 +103,9 @@ export default async function LearnPage({
 					42 days · 1–2 hours a day · 6 days on, 1 day off
 				</p>
 			)}
+			{!isMainTrack && blurb && (
+				<p className='mt-3 max-w-2xl text-sm leading-6 text-zinc-600'>{blurb}</p>
+			)}
 
 			{creditStudent?.apiKey && (
 				<CreditKeyCard
@@ -112,7 +118,7 @@ export default async function LearnPage({
 			<div className='mt-5 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm'>
 				<div className='flex items-center justify-between text-sm'>
 					<span className='font-medium text-zinc-700'>
-						{done} / {total} days complete
+						{done} / {total} {unitWord} complete
 					</span>
 					<span className='font-semibold text-zinc-900'>{pct}%</span>
 				</div>
@@ -127,7 +133,7 @@ export default async function LearnPage({
 						href={`/learn/${nextUp.slug}`}
 						className='mt-4 inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700'
 					>
-						{done === 0 ? (isMainTrack ? 'Start Day 1' : 'Start here') : `Continue with Day ${nextUp.day}`} →
+						{done === 0 ? (isMainTrack ? 'Start Day 1' : 'Start here') : `Continue with ${nextUp.unit} ${nextUp.day}`} →
 					</Link>
 				)}
 			</div>

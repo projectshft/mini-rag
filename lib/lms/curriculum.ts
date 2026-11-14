@@ -24,7 +24,14 @@ export type Day = {
 	order: number; // global position among study days, for prev/next nav
 	isDeliverable: boolean; // 🎥 assignment due / submission day
 	track: string;
+	unit: Unit; // what a numbered entry is called in this track: "Day" or "Lesson"
+	groupUnit: GroupUnit; // what its group is called: "Week" or "Part"
 };
+
+// Scheduled tracks are written as "**Week N — …**" and count Days. Self-paced
+// tracks are written as "**Part N — …**" and count Lessons.
+export type GroupUnit = 'Week' | 'Part';
+export type Unit = 'Day' | 'Lesson';
 
 // A rest day — shown in the index for the full-schedule feel, but has no
 // page and no progress row.
@@ -56,13 +63,17 @@ export type Week = {
 	week: number; // 1..6
 	name: string; // e.g. "Week 1 — Foundations (Days 1–7)"
 	track: string;
+	unit: Unit;
 	entries: WeekEntry[];
 };
 
 const CURRICULUM_DIR = path.join(process.cwd(), 'curriculum');
 
 // A group header inside the week index: "**Week 3 — Agent Architecture**".
-const GROUP_RE = /^\*\*Week\s+(\d+)\s*[—–-]\s*(.+?)\*\*\s*$/;
+const GROUP_RE = /^\*\*(Week|Part)\s+(\d+)\s*[—–-]\s*(.+?)\*\*\s*$/;
+// An optional one-paragraph description on the line(s) right after a track
+// header: "> Work real tickets in a messy codebase…". Shown on /learn.
+const TRACK_BLURB_RE = /^>\s?(.*)$/;
 const TRACK_RE = /^\*\*Track:\s*(.+?)\*\*\s*$/;
 // A lesson line: "- [Fine-Tuning Overview](day-12.md) 🎥". A leading "Day N —"
 // is tolerated but IGNORED — the display number comes from position, so
@@ -76,33 +87,44 @@ const TIME_RE = /^\*\*Time:\*\*\s*(.+?)\s*$/m;
 type IndexEntry =
 	| { kind: 'day'; day: number; slug: string; linkText: string; isDeliverable: boolean }
 	| { kind: 'rest'; day: number; label: string };
-type IndexGroup = { week: number; name: string; track: string; entries: IndexEntry[] };
+type IndexGroup = {
+	week: number;
+	name: string;
+	track: string;
+	groupUnit: GroupUnit;
+	entries: IndexEntry[];
+};
+type ParsedIndex = { groups: IndexGroup[]; blurbs: Map<string, string> };
 
 /** Parse the "## Week index" section of README.md into ordered groups. */
-const parseIndex = cache(async (): Promise<IndexGroup[]> => {
+const parseFullIndex = cache(async (): Promise<ParsedIndex> => {
 	let readme = '';
 	try {
 		readme = await fs.readFile(path.join(CURRICULUM_DIR, 'README.md'), 'utf-8');
 	} catch {
-		return [];
+		return { groups: [], blurbs: new Map() };
 	}
 
 	// Scope to the "## Week index" section (up to the next "## " heading).
 	const start = readme.search(/^##\s+Week index\s*$/m);
-	if (start === -1) return [];
+	if (start === -1) return { groups: [], blurbs: new Map() };
 	const rest = readme.slice(start + 1);
 	const end = rest.search(/^##\s+/m);
 	const section = end === -1 ? rest : rest.slice(0, end);
 
 	const groups: IndexGroup[] = [];
 	let current: IndexGroup | null = null;
-	// Global position counter across ALL entries (lessons + rest days). This is
-	// the displayed "Day N" — derived from order, so inserting or moving a
-	// lesson renumbers everything after it automatically, and no file is ever
-	// renamed. (day-00 sits at position 0, rest days occupy a slot, so this
-	// reproduces the original hand-numbering exactly.)
+	// Position counter across a track's entries (lessons + rest days). This is
+	// the displayed "Day N" / "Lesson N" — derived from order, so inserting or
+	// moving a lesson renumbers everything after it automatically, and no file
+	// is ever renamed. The first track starts at 0 (day-00 sits at position 0,
+	// rest days occupy a slot, so this reproduces the original hand-numbering
+	// exactly). Every later track restarts at 1, so a track is numbered on its
+	// own and never continues from the one above it.
 	let pos = 0;
 	let track = '';
+	let seenTrack = false;
+	const blurbs = new Map<string, string>();
 
 	for (const rawLine of section.split('\n')) {
 		const line = rawLine.trim();
@@ -110,14 +132,22 @@ const parseIndex = cache(async (): Promise<IndexGroup[]> => {
 		if (t) {
 			track = t[1].trim();
 			current = null;
+			if (seenTrack) pos = 1;
+			seenTrack = true;
+			continue;
+		}
+		const blurb = TRACK_BLURB_RE.exec(line);
+		if (blurb && track && !current) {
+			blurbs.set(track, [blurbs.get(track), blurb[1].trim()].filter(Boolean).join(' '));
 			continue;
 		}
 		const g = GROUP_RE.exec(line);
 		if (g) {
 			current = {
-				week: parseInt(g[1], 10),
-				name: `Week ${g[1]} — ${g[2].trim()}`,
+				week: parseInt(g[2], 10),
+				name: `${g[1]} ${g[2]} — ${g[3].trim()}`,
 				track,
+				groupUnit: g[1] as GroupUnit,
 				entries: [],
 			};
 			groups.push(current);
@@ -149,7 +179,16 @@ const parseIndex = cache(async (): Promise<IndexGroup[]> => {
 		// anything else (prose, legend, HTML comments) is skipped
 	}
 
-	return groups;
+	return { groups, blurbs };
+});
+
+const parseIndex = cache(async (): Promise<IndexGroup[]> => (await parseFullIndex()).groups);
+
+const unitFor = (groupUnit: GroupUnit): Unit => (groupUnit === 'Part' ? 'Lesson' : 'Day');
+
+/** The optional description under a "**Track: Name**" line, or ''. */
+export const getTrackBlurb = cache(async (track: string): Promise<string> => {
+	return (await parseFullIndex()).blurbs.get(track) ?? '';
 });
 
 function parseDayFile(
@@ -157,7 +196,8 @@ function parseDayFile(
 	entry: Extract<IndexEntry, { kind: 'day' }>,
 	week: number,
 	order: number,
-	track: string
+	track: string,
+	groupUnit: GroupUnit
 ): Day {
 	const title = TITLE_RE.exec(raw)?.[1]?.trim() || entry.linkText;
 	const timeMatch = TIME_RE.exec(raw);
@@ -184,6 +224,8 @@ function parseDayFile(
 		order,
 		isDeliverable: entry.isDeliverable,
 		track,
+		unit: unitFor(groupUnit),
+		groupUnit,
 	};
 }
 
@@ -202,7 +244,7 @@ export const getDays = cache(async (): Promise<Day[]> => {
 			} catch {
 				continue; // linked file missing — skip rather than crash
 			}
-			bySlug.set(entry.slug, parseDayFile(raw, entry, group.week, order++, group.track));
+			bySlug.set(entry.slug, parseDayFile(raw, entry, group.week, order++, group.track, group.groupUnit));
 		}
 	}
 
@@ -309,11 +351,13 @@ export const getWeeks = cache(async (): Promise<Week[]> => {
 		const nums = group.entries.map((e) => e.day);
 		const lo = Math.min(...nums);
 		const hi = Math.max(...nums);
-		const range = !nums.length ? '' : lo === hi ? ` (Day ${lo})` : ` (Days ${lo}–${hi})`;
+		const unit = unitFor(group.groupUnit);
+		const range = !nums.length ? '' : lo === hi ? ` (${unit} ${lo})` : ` (${unit}s ${lo}–${hi})`;
 		return {
 			week: group.week,
 			name: group.name + range,
 			track: group.track,
+			unit,
 			entries: group.entries
 				.map((e): WeekEntry | null => {
 					if (e.kind === 'rest') {

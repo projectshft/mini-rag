@@ -183,9 +183,9 @@ export default async function LessonPage({
 						className='rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-semibold text-blue-700'
 						title={slug === 'day-42' ? 'The answer to RAG, agents, and everything.' : undefined}
 					>
-						Day {day.day}
+						{day.unit} {day.day}
 					</span>
-					<span className='text-xs text-zinc-400'>Week {day.week}</span>
+					<span className='text-xs text-zinc-400'>{day.groupUnit} {day.week}</span>
 					{slug === 'day-42' && (
 						<span className='text-xs italic text-zinc-300'>
 							don&rsquo;t panic — you brought a towel this far
@@ -220,7 +220,7 @@ export default async function LessonPage({
 						href={`/learn/${prev.slug}`}
 						className='max-w-[45%] truncate font-medium text-blue-600 hover:text-blue-800'
 					>
-						← Day {prev.day}
+						← {prev.unit} {prev.day}
 					</Link>
 				) : (
 					<span />
@@ -230,7 +230,7 @@ export default async function LessonPage({
 						href={`/learn/${next.slug}`}
 						className='max-w-[45%] truncate text-right font-medium text-blue-600 hover:text-blue-800'
 					>
-						Day {next.day} →
+						{next.unit} {next.day} →
 					</Link>
 				) : (
 					<span />
