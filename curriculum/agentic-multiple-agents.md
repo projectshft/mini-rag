@@ -1,6 +1,6 @@
 # Multiple Agents, Worktrees and Chasing Trends
 
-> **Today:** once one agent feels comfortable, the obvious next thought is "what if I ran five?" You'll learn when that helps, how worktrees keep agents out of each other's way, and how I think about the buzzword of the week. Then you'll write down what you actually think about all of this.
+> **In this lesson:** once one agent feels comfortable, the obvious next thought is "what if I ran five?" You'll learn when that helps, how worktrees keep agents out of each other's way, and how I think about the buzzword of the week. You'll run two of Driftwood's remaining tickets at the same time, then write down what you actually think about all of this.
 
 ## When more than one agent makes sense
 
@@ -8,7 +8,7 @@ Sometimes five agents is great. Often it's five times the mess.
 
 - **The work is independent.** Three unrelated bugs. A new API route and a separate fix to the UI. If two agents would edit the same files, they'll step on each other.
 - **You want a second opinion.** One builds, a different one reviews. The most useful multi-agent setup there is, and it only needs two.
-- **You're comparing approaches.** Two agents try two retrieval scoring approaches. Keep the better one (and measure it).
+- **You're comparing approaches.** Two agents try two ways of testing the same script, one with mocks and one with a real database. Keep the better one (and say why).
 - **Boring work runs in the background.** Upgrading a dependency or writing tests for an old module while you do something else.
 
 ## When it doesn't
@@ -24,8 +24,8 @@ Your review capacity is the real limit, not how many terminals you can open.
 If several agents work in the same repo at once, give each its own copy. [Git worktrees](https://git-scm.com/docs/git-worktree) check out several branches of one repo into separate folders, so each agent gets its own folder, branch and running dev server. No more two agents fighting over the same file.
 
 ```bash
-git worktree add ../starter-validation -b feature/validation
-git worktree add ../starter-scoring -b feature/scoring
+git worktree add ../driftwood-pricing-numbers -b chore/pricing-numbers
+git worktree add ../driftwood-reconcile-ci -b chore/reconcile-ci
 ```
 
 Start a separate agent session in each folder. Merge through pull requests like you would with any teammate. Many tools will set this up for you now.
@@ -35,9 +35,9 @@ Start a separate agent session in each folder. Merge through pull requests like 
   "title": "One agent or several?",
   "note": "Tap a situation, then tap the approach.",
   "pairs": [
-    { "left": "Fix a bug in the retriever and restyle the page", "right": "Two agents in two worktrees" },
-    { "left": "Add an API field, then build the UI that uses it", "right": "One agent, in order" },
-    { "left": "Not sure if hybrid search is worth it", "right": "Two agents, two approaches, measure both" },
+    { "left": "Pull pricing numbers for Sarah and move a script into CI", "right": "Two agents in two worktrees" },
+    { "left": "Add an API field, then build the portal page that uses it", "right": "One agent, in order" },
+    { "left": "Not sure whether to mock the database or use a real one", "right": "Two agents, two approaches, compare both" },
     { "left": "Review the PR another agent just opened", "right": "A fresh session that didn't write it" }
   ]
 }
@@ -45,7 +45,7 @@ Start a separate agent session in each folder. Merge through pull requests like 
 
 ## Chasing trends (on purpose)
 
-Agentic coding gets a new buzzword about every three weeks. While I was writing this track, people went all in on:
+Agentic coding gets a new buzzword about every three weeks. While I was writing this course, people went all in on:
 
 - **Ralph loops.** Running an agent in a loop against a plan file until the work is done ([Geoffrey Huntley's write-up](https://ghuntley.com/ralph/)).
 - **Skill maxing.** A skill for everything.
@@ -73,6 +73,21 @@ Before you take anyone's blanket advice (or worse, parrot it), look at the conte
 ]
 ```
 
+## Lab: two tickets at once
+
+Two tickets are left in Driftwood's backlog, and they don't touch the same files:
+
+- [`data-exploration-tier-pricing.md`](https://github.com/projectshft/driftwood-ops/blob/main/docs/exercises/data-exploration-tier-pricing.md). Sarah needs numbers for a pricing call. Queries and a short written summary. No code has to change.
+- [`deploy-reconciliation-to-ci.md`](https://github.com/projectshft/driftwood-ops/blob/main/docs/exercises/deploy-reconciliation-to-ci.md). Tom wants the nightly script off his cron box and into GitHub Actions.
+
+1. Read both tickets. The second one says it depends on another ticket. Have you done that one? If you skipped it, this isn't parallel work yet. That's the first thing to check before you split anything.
+2. Create two worktrees and start a separate agent session in each.
+3. Give each agent its ticket. While they work, you'll feel the real cost: two things asking for your attention. Notice which one you start skimming.
+4. For Sarah's ticket, the summary is the deliverable. Check one number yourself with your own query. She asked to be told if anything in the data looks off. You already know of at least one thing.
+5. For Tom's ticket, the script always exits 0 today, so a scheduled job could never go red. Make sure the agent changed that, and that it proved the job fails when there's drift. Add a row with negative available stock and see.
+6. Bring both back through pull requests on your fork, each reviewed by a fresh session.
+7. Would three agents have helped here? What would the third have done?
+
 ## Retro: form your own opinions
 
 Stop and write a page, for yourself or to share. There are no right answers. The point is to notice what you actually think instead of repeating what you read on LinkedIn (including from me).
@@ -81,7 +96,7 @@ Stop and write a page, for yourself or to share. There are no right answers. The
 2. Where did it waste your time, confidently lie to you, or make you feel out of control?
 3. Name a mistake you caught because you understood the code.
 4. What did you stop checking that you probably shouldn't have?
-5. Where in your own projects would more than one agent actually help?
+5. Where in your own work would more than one agent actually help?
 6. What can you imagine building now that you wouldn't have attempted a month ago?
 
 ## Key takeaways
@@ -96,7 +111,7 @@ Stop and write a page, for yourself or to share. There are no right answers. The
 ```ai-prompt
 title: Plan a parallel sprint on my app
 ---
-Here's my backlog for my Next.js app: [paste 4-6 tasks]. For each pair of tasks,
+Here's my backlog for this repo: [paste 4-6 tasks, or point at docs/exercises]. For each pair of tasks,
 tell me whether they can safely run in parallel in separate git worktrees, based on
 which files and modules they'd likely touch. Then propose a plan: which tasks run in
 parallel, which must run in order, and which one should get a separate review session.

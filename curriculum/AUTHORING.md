@@ -73,6 +73,15 @@ hand-written. So restructuring is just editing that list:
 - **Tracks:** a bold `**Track: Name**` line starts a track. Every week after
   it belongs to that track until the next `**Track:**` line, and students pick
   a track on `/learn`. Prev/next stays inside the track.
+- **Each track is numbered on its own.** The first track starts at Day 0 (the
+  RAG "Start Here"); every later track starts at 1. A track never continues
+  the numbering of the one above it.
+- **Self-paced tracks use Parts and Lessons.** Write the group header as
+  `**Part 2 — Trust and Verify**` instead of `**Week 2 — ...**` and the site
+  shows "Part 2" and "Lesson 4" where a scheduled track shows "Week" and "Day".
+  No rest days in a self-paced track.
+- **Track description:** a `> ...` line directly under the `**Track:**` line
+  is shown at the top of that track on `/learn`.
 - **Never rename an existing file** — the slug is the id student progress is
   keyed on. Reorder freely; just don't rename.
 

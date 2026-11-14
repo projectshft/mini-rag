@@ -22,7 +22,10 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
      Filenames are stable ids tied to student progress — never rename them; new
      lessons can use any unused slug. Week day-ranges are computed too.
      A "**Track: Name**" line starts a track; every week after it belongs to
-     that track until the next one. Students switch tracks on /learn. -->
+     that track until the next one. Students switch tracks on /learn. Each
+     track is numbered on its own. A "> ..." line right under a track header
+     is its description on /learn. A self-paced track uses "**Part N — ...**"
+     headers instead of "**Week N — ...**" and its entries show as Lessons. -->
 
 **Track: RAG & AI Agents**
 
@@ -96,15 +99,29 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 
 **Track: Intro to Agentic Engineering**
 
-**Week 8 — Building With Agents**
+> A standalone, self-paced course. You join a made-up logistics company, Driftwood, and work its backlog with a coding agent: get an unfamiliar system running, fix an outage bug and prove it, run an investigation, ship a feature across two apps, then build a pipeline where agents do it for you.
 
-- [Start Here: Building With Agents](agentic-start-here.md)
+**Part 1 — Get Oriented**
+
+- [Start Here: What This Course Is](agentic-start-here.md)
+- [Meet Driftwood: The Codebase You're Inheriting](agentic-meet-driftwood.md)
+- [Your First Day: Get It Running When the Docs Disagree](agentic-first-day.md)
+
+**Part 2 — Trust and Verify**
+
 - [Trust the Code, Not the Claims](agentic-trust-the-code.md)
+- [The Investigation: Off by a Cent](agentic-investigation.md)
 - [Is Your Test Suite Lying? Mutation Testing and Fresh Eyes](agentic-mutation-testing.md)
+
+**Part 3 — Build**
+
+- [Ship a Feature Across Two Apps](agentic-feature.md)
 - [The Rule of Three (and Why I Stopped Writing Comments)](agentic-rule-of-three.md)
 - [Multiple Agents, Worktrees and Chasing Trends](agentic-multiple-agents.md)
-- [Your Challenge: Build a Software Factory](agentic-software-factory.md)
-- Rest day
+
+**Part 4 — Capstone**
+
+- [Capstone: Build a Software Factory](agentic-software-factory.md)
 
 ## Assignments
 

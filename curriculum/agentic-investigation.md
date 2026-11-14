@@ -37,7 +37,7 @@ They're also dangerous here, for two reasons:
   "note": "Tap a statement, then tap what it is.",
   "pairs": [
     { "left": "This is probably a floating point issue", "right": "A hypothesis. Nothing has tested it yet" },
-    { "left": "6 of 35 plus-tier orders differ, each by exactly 1 cent", "right": "Evidence. A count you can rerun" },
+    { "left": "A query shows which orders differ, and each is off by exactly 1 cent", "right": "Evidence. A result you can rerun" },
     { "left": "The comment says discounts are applied per line", "right": "A claim in text. Check what the code does" },
     { "left": "My recalculation matches the stored total for every order", "right": "Evidence that the theory explains the data" }
   ]
@@ -107,3 +107,4 @@ customer's own calculation. For each, say what evidence in the database would co
 it and what would rule it out. Then run the queries, show me the SQL and the results,
 and tell me which hypothesis survives, split by billing tier. Give a confidence level
 and say what it rests on. List anything odd in the data that is unrelated to this.
+```
