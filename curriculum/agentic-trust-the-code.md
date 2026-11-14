@@ -1,6 +1,6 @@
 # Trust the Code, Not the Claims
 
-> **Today:** the most important habit in this track. You'll learn to trust the agent's code and distrust its claims about that code, then make it prove its work with screenshots and end-to-end tests against your own chat interface.
+> **In this lesson:** the most important habit in the course, on a real outage bug. Searching for a customer with an apostrophe in their name takes the whole Driftwood API down. You'll reproduce it, have your agent fix it, and then refuse to believe it's fixed until you've seen proof.
 
 ## Two camps, both right
 
@@ -22,13 +22,13 @@ There's a cost to getting this wrong. CodeRabbit's analysis of real pull request
 ```scenario
 {
   "who": "Your manager",
-  "setting": "Standup. You mention the agent wrote the new upload endpoint yesterday.",
+  "setting": "Standup. You mention the agent fixed the customer search crash yesterday.",
   "ask": "Great, so it's tested and ready to ship?",
   "note": "Pick what you'd actually say.",
   "options": [
-    { "text": "The agent wrote tests and they pass on my machine. I also ran the upload with an empty file and a 50MB PDF myself. I want a second session to review the diff before we merge.", "verdict": "best", "feedback": "Specific evidence, plus a plan for independent review. Nobody has to take anyone's word for anything." },
-    { "text": "Yep, the agent said all the tests pass.", "verdict": "weak", "feedback": "You're repeating a claim you didn't verify. The first bug report will be about the case it didn't think of." },
-    { "text": "I haven't really looked yet, I'll check the code line by line this afternoon.", "verdict": "ok", "feedback": "Honest, but reading every line is the slow way to get confidence. Running it, testing the weird cases and getting a fresh review is faster and catches more." }
+    { "text": "I reproduced the crash first, and the same request now returns results. There's a test that failed before the fix and passes after. I also tried quotes, percent signs and underscores myself. I want a second session to review the diff before we merge.", "verdict": "best", "feedback": "Specific evidence, plus a plan for independent review. Nobody has to take anyone's word for anything." },
+    { "text": "Yep, the agent said all the tests pass.", "verdict": "weak", "feedback": "You're repeating a claim you didn't verify. This repo had one passing test before the fix. It didn't cover search at all." },
+    { "text": "I haven't really looked yet, I'll check the code line by line this afternoon.", "verdict": "ok", "feedback": "Honest, but reading every line is the slow way to get confidence. Reproducing the bug, testing the weird inputs and getting a fresh review is faster and catches more." }
   ],
   "debrief": "Your job is turning the agent's claims into evidence someone else can see."
 }
@@ -37,42 +37,71 @@ There's a cost to getting this wrong. CodeRabbit's analysis of real pull request
 ## What you own
 
 - **Does it do what I actually want?** You know the product. It only knows your prompt.
-- **Is it safe?** Prompt injection, leaked keys, missing validation. The agent won't bring these up unless you do.
-- **Where does it run?** Deployment, env vars, cost.
-- **Which patterns?** The ones you learned here, or the new thing you want to try. This is a great time to experiment.
+- **Is it safe?** Injection, leaked keys, missing validation. The agent won't bring these up unless you do.
+- **How far does the problem go?** One bad query is a symptom. Is the same pattern sitting in other routes?
+- **What's in scope?** The ticket says small and contained. Agents love to fix the whole neighborhood.
 
 ## Make it prove it
 
-No human writes 200 tests for a small feature. For an agent it's a few minutes and some tokens. Use that. We're not writing tests as ceremony. We write them so we can move faster and refactor without freaking out.
+No human writes 40 tests for a one-line fix. For an agent it's a few minutes and some tokens. Use that. We're not writing tests as ceremony. We write them so we can move faster and refactor without freaking out.
 
-- **Run it.** Have it start the app and use the feature.
-- **Screenshots.** Most agents can drive a browser. Ask for screenshots at desktop and phone width.
-- **End-to-end tests.** A program opens a real browser, types into your chat, and checks what shows up. [Playwright](https://playwright.dev/docs/intro) is the common choice.
-- **More tests than feels sane.** Empty input, huge input, the emoji in the question. Then ask which cases it skipped.
+The order matters:
 
-## Lab: end-to-end tests for your chat
+```order
+title: Fixing a bug so you can prove it's fixed
+---
+Reproduce the bug yourself and watch it fail
+Have the agent write a test that fails for the same reason
+Have the agent make the fix
+Run the test and the original reproduction yourself
+Try the inputs nobody mentioned
+Get a review from a session that didn't write the fix
+```
 
-1. Write down the three things a user does most in the starter app. Probably: ask a question the docs answer, ask one they don't, and check the sources listed under the answer.
-2. Ask your agent to set up Playwright and write E2E tests for those three flows. Have it run them and paste the real output.
-3. Ask for [screenshots](https://playwright.dev/docs/screenshots) of the chat at desktop and phone width. Look at every one.
-4. Break something on purpose (rename the chat input's label, or make the API route return a 500). Run the tests again. Do they fail?
-5. Undo your change.
+A test written after the fix proves the code does what the code does. A test that failed first proves the bug existed and is now gone.
 
-LLM responses aren't deterministic, so tests that assert the exact answer text will flake. Ask the agent how it plans to handle that, and check its answer.
+## Lab: the apostrophe bug
+
+Open [`docs/exercises/bug-customer-search-apostrophe.md`](https://github.com/projectshft/driftwood-ops/blob/main/docs/exercises/bug-customer-search-apostrophe.md). Dana reported "search just spins." Tom looked closer and it's worse than that.
+
+1. **Reproduce it first, by hand.** With the API running:
+
+```bash
+cd apps/api
+TOKEN=$(npm run -s token)
+curl -H "Authorization: Bearer $TOKEN" "localhost:4000/customers/search?q=bright"
+curl -H "Authorization: Bearer $TOKEN" "localhost:4000/customers/search?q=O'Brien"
+curl localhost:4000/health
+```
+
+Look at the terminal where the API was running. What happened to the process, and to every other user of it?
+
+2. Before any fix, ask your agent to explain the cause and to write a test that reproduces it. There's no test setup for routes in this repo, so it will have to build one. Read what it proposes before you let it.
+3. Run that test yourself. It should fail. If it passes, the test isn't testing the bug.
+4. Now ask for the fix. Then read the diff. Every file. Did it touch anything the ticket didn't ask for?
+5. Run the test again, and rerun your three `curl` commands. Then try the inputs in the ticket's definition of done: quotes, `%`, `_`. Does a search for `%` return every customer? Should it? That's your call, not the agent's.
+6. The crash had two causes: the bad query, and the fact that one bad query could kill the process. Which did your agent fix? Does the ticket ask for both?
+7. The ticket asks for a line about whether other routes have the same pattern. Ask your agent, then check its answer with a search of your own.
 
 ```quiz
 [
   {
-    "q": "Your Playwright test checks that the RAG answer equals an exact sentence. It passes, then fails, then passes. What's the better assertion?",
-    "options": ["Assert on structure: an answer rendered, sources listed, no error state", "Retry the test until it passes", "Set temperature to 2 so it's consistently random", "Delete the test"],
+    "q": "The agent writes a test after making the fix, and it passes. What do you know?",
+    "options": ["Only that the test passes now. You never saw it fail, so you don't know it detects the bug", "The bug is fixed", "The test is thorough", "Nothing is fixed"],
     "answer": 0,
-    "explain": "Model output varies. Assert on what must be true about the UI and the response shape. Retrying until green just hides real failures."
+    "explain": "A test proves something only if it can fail. Watch it fail on the broken code first, or revert the fix and run it again."
   },
   {
-    "q": "You broke the chat route on purpose and your E2E tests still pass. What does that tell you?",
-    "options": ["The tests aren't checking what you think they're checking", "The tests are robust", "Playwright is caching the old build", "Nothing, broken routes don't matter in E2E tests"],
+    "q": "The ticket says the fix should be small and contained. The agent's diff also rewrites three other routes it thinks are risky. What do you do?",
+    "options": ["Keep the fix for this ticket, and list the other routes as a follow-up like the ticket asks", "Merge it all, more fixes are better", "Reject the whole change", "Ask the agent to add even more"],
     "answer": 0,
-    "explain": "Tests that can't fail aren't tests. Next lesson you'll do this systematically with mutation testing."
+    "explain": "Scope is yours. A small reviewed fix ships today. A sprawling one sits in review, and the ticket already says how to handle the rest."
+  },
+  {
+    "q": "Why did one bad search take down the API for everyone?",
+    "options": ["The database error was never caught, and an unhandled rejection ends the Node process", "Postgres shut itself down", "The rate engine crashed", "The portal overloaded the API"],
+    "answer": 0,
+    "explain": "The injection-shaped query caused the error. The missing error handling turned one failed request into an outage. Those are two different problems."
   }
 ]
 ```
@@ -80,19 +109,20 @@ LLM responses aren't deterministic, so tests that assert the exact answer text w
 ## Key takeaways
 
 - Trust the agent's code. Treat its claims about the code as hypotheses.
-- Your job is turning claims into evidence: test output, screenshots, a running app.
-- E2E tests on an LLM app should assert structure and behavior, not exact wording.
-- If you break the app and the tests still pass, the tests are the bug.
+- Reproduce first. A test that never failed proves nothing.
+- Read the diff for scope. The agent will happily fix things nobody asked about.
+- Your job is turning claims into evidence: a failing test that now passes, real output, the inputs nobody mentioned.
 
 ## Work with AI
 
 ```ai-prompt
-title: Make the agent prove the chat works
+title: Fix the search crash, proof first
 ---
-In this Next.js docs Q&A app, set up Playwright and write end-to-end tests for: asking
-a question the sample docs answer, asking one they don't, and checking that sources
-render under the answer. Don't assert exact model wording; assert that an answer
-renders, sources appear when they should, and no error state shows. Run
-the tests and paste the full output. Then take screenshots of the chat at 1280px and
-390px wide and show them to me. Finally, list every case you did NOT test.
+Read docs/exercises/bug-customer-search-apostrophe.md. Do not change any application
+code yet. First explain the root cause, citing file and line, and say separately why
+the request fails and why the whole process dies. Then set up the minimum needed to
+test Express routes in apps/api and write a test that reproduces the failure. Run it
+and paste the real output showing it fail. Stop there and wait for me. When I say go,
+make the smallest fix that satisfies the ticket's definition of done, rerun the test,
+paste the output, and list every input you did NOT test.
 ```
