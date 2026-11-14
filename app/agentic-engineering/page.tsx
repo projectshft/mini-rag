@@ -31,22 +31,26 @@ const HABITS = [
 ];
 
 const LESSONS = [
-	'Start Here: Building With Agents',
+	'Start Here: What This Course Is',
+	"Meet Driftwood: The Codebase You're Inheriting",
+	'Your First Day: Get It Running When the Docs Disagree',
 	'Trust the Code, Not the Claims',
+	'The Investigation: Off by a Cent',
 	'Is Your Test Suite Lying? Mutation Testing and Fresh Eyes',
+	'Ship a Feature Across Two Apps',
 	'The Rule of Three (and Why I Stopped Writing Comments)',
 	'Multiple Agents, Worktrees and Chasing Trends',
-	'Your Challenge: Build a Software Factory',
+	'Capstone: Build a Software Factory',
 ];
 
 const INCLUDED = [
 	{
-		title: 'Six lessons and a project',
-		body: 'Every lesson runs against a starter repo you clone on day one, and it ends with you building your own software factory.',
+		title: 'Ten lessons, seven tickets and a capstone',
+		body: 'You work the backlog of a made-up logistics company in a real, messy codebase, and finish by building your own software factory.',
 	},
 	{
 		title: '$5 in API credits',
-		body: 'A key for the starter app and your factory, so there is nothing else to sign up for.',
+		body: 'A key for the capstone, where your factory calls a model to sort incoming requests.',
 	},
 	{
 		title: 'Monthly office hours',
@@ -65,11 +69,11 @@ const FAQ = [
 	},
 	{
 		q: 'What are the $5 in credits for?',
-		a: 'API calls from the starter app and your software factory, through our proxy. They do not pay for Claude Code, Codex or Cursor.',
+		a: 'API calls from your software factory in the capstone, through our proxy. They do not pay for Claude Code, Codex or Cursor.',
 	},
 	{
 		q: 'Do I need to know how to code?',
-		a: "Yes, but the language doesn't matter. Everything here is language agnostic. The starter repo happens to be TypeScript, and if you can read code in any language you'll be fine. The whole point is judging what the agent produces.",
+		a: "Yes, but the language doesn't matter. Everything here is language agnostic. The practice codebase has TypeScript, Rust, Python and SQL in it, the way real companies do, and you don't need to know all of them. If you can read code in any language you'll be fine. The whole point is judging what the agent produces.",
 	},
 	{
 		q: 'How do office hours work?',
@@ -115,7 +119,7 @@ export default function AgenticEngineeringPage() {
 						</span>
 					)}
 					<span className='text-sm text-zinc-500'>
-						Includes the starter repo, $5 in API credits and monthly office hours
+						Includes the practice codebase, $5 in API credits and monthly office hours
 					</span>
 				</div>
 			</section>
@@ -158,7 +162,7 @@ export default function AgenticEngineeringPage() {
 
 			<section className='border-t border-zinc-100 bg-zinc-50/60'>
 				<div className='mx-auto max-w-3xl px-4 py-14'>
-					<h2 className='text-2xl font-bold tracking-tight'>Six lessons, one project</h2>
+					<h2 className='text-2xl font-bold tracking-tight'>Ten lessons, one codebase</h2>
 					<ol className='mt-6 divide-y divide-zinc-100 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm'>
 						{LESSONS.map((l, i) => (
 							<li key={l} className='flex items-center gap-3 px-4 py-3'>
@@ -170,8 +174,10 @@ export default function AgenticEngineeringPage() {
 						))}
 					</ol>
 					<p className='mt-4 text-sm text-zinc-500'>
-						Every lesson runs against a small starter app you clone on day one, with quizzes,
-						workplace scenarios and copy-ready prompts for your agent.
+						You join Driftwood Logistics, a made-up company with a real mess: an API, a customer
+						portal, a pricing service a contractor left behind, and docs that disagree with each
+						other. Each lesson is one ticket from its backlog, with quizzes, workplace scenarios and
+						copy-ready prompts for your agent. Self-paced.
 					</p>
 				</div>
 			</section>
@@ -207,8 +213,8 @@ export default function AgenticEngineeringPage() {
 				<div className='mx-auto max-w-3xl px-4 py-16 text-center'>
 					<h2 className='text-2xl font-bold tracking-tight'>Stop typing the code</h2>
 					<p className='mx-auto mt-3 max-w-xl text-zinc-600'>
-						$47 for the lessons, the starter repo, $5 in API credits, monthly office hours and a
-						guest speaker session.
+						$47 for the lessons, the practice codebase, $5 in API credits, monthly office hours and
+						a guest speaker session.
 					</p>
 					{ON_SALE ? (
 						<BuyButton

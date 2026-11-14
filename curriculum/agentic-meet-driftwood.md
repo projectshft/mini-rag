@@ -128,7 +128,7 @@ Step 3 is a trap, and you should walk into it on purpose. The repo has a file th
 - An agent's first summary of a codebase is a draft. Check the parts you're about to rely on.
 - "Show me the file and line" is the cheapest verification there is.
 - Agents read instruction files and comments before they read code, and they believe them.
-- Write your own short map of the system. You steer better when the picture is in your head, not just in the chat.
+- Write your own short map of the system. You steer better when the picture is also in your head.
 
 ## Work with AI
 
