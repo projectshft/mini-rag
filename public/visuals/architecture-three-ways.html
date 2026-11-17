@@ -80,7 +80,7 @@ const SC={
  "A traffic spike":{Monolith:["You scale the whole app","You add copies of the entire app, even though only checkout is busy. Simple, a bit wasteful, and the single database becomes the limit.","info"],
    Services:["You scale one service","Only the orders service gets more copies. Efficient, but you needed autoscaling, monitoring and a queue set up before this day came.","good"],
    Serverless:["It scales itself","The platform starts more copies of the function for you. The first request to each new copy is slow (a cold start), and your database can run out of connections.","good"]},
- "One feature has a bug":{Monolith:["The whole app can go down","A crash in the email code takes checkout down with it, because it is one process. This is the Driftwood search bug.","bad"],
+ "One feature has a bug":{Monolith:["The whole app can go down","A crash in the email code takes checkout down with it, because it is one process.","bad"],
    Services:["The blast radius is one service","Shipping is down, and orders still work if you built them to cope without it. If you did not, you now have a slow failure spread across three services.","good"],
    Serverless:["One function fails","Other functions keep running. The failure is isolated by default, which is the strongest point of this shape.","good"]},
  "You ship a small change":{Monolith:["One deploy, everything ships","Easy to reason about and easy to test end to end. With a big team, everyone waits in the same deploy line.","good"],
