@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sessions vs tokens · Parsity</title>
+<style>
+  :root{--ink:#1b2330;--muted:#5b6675;--line:#e3e7ec;--bg:#fff;--panel:#f6f8fa;
+        --accent:#2563eb;--accent-bg:#eef4ff;--good:#15803d;--good-bg:#e7f6ec;--warn:#b91c1c;--warn-bg:#fbe9e9;
+        --amber:#b45309;--amber-bg:#fef3e2;--code-bg:#f4f6f8;}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);margin:0;padding:1.6rem;line-height:1.5}
+  h1{font-size:1.5rem;margin:0 0 .3rem}
+  h2{font-size:1.02rem;margin:0 0 .5rem}
+  .lead{color:var(--muted);font-size:1.02rem;max-width:62rem;margin:0 0 1rem}
+  .controls{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;margin:0 0 1rem;padding:.8rem 1rem;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  .controls .lbl{font-size:.85rem;color:var(--muted);margin-right:.2rem}
+  .pills{display:flex;gap:.4rem;flex-wrap:wrap}
+  button{font:inherit;font-size:.9rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:.4rem .8rem;border-radius:999px}
+  button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  button:disabled{opacity:.4;cursor:default}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .wrap{display:flex;gap:1.2rem;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:1 1 320px;min-width:280px}
+  .card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:.9rem 1rem;margin-bottom:.8rem}
+  .panel{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:.9rem 1rem;margin-bottom:.8rem}
+  .flow{display:flex;gap:.4rem;flex-wrap:wrap;align-items:stretch;margin:0 0 1rem}
+  .node{flex:1 1 96px;min-width:92px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:.5rem .55rem;font-size:.84rem;text-align:center;transition:all .15s}
+  .node b{display:block;font-size:.82rem;overflow-wrap:anywhere}
+  .node small{color:var(--muted)}
+  .node.active{border-color:var(--accent);background:var(--accent-bg);box-shadow:0 0 0 2px rgba(37,99,235,.15)}
+  .node.done{border-color:#b7dfc4;background:var(--good-bg)}
+  .node.fail{border-color:#f0c4c4;background:var(--warn-bg)}
+  .node.skip{opacity:.4}
+  .arrow{align-self:center;color:var(--muted);font-size:.9rem}
+  .tag{display:inline-block;padding:.05em .5em;border-radius:999px;font-size:.78rem;font-weight:600}
+  .tag.good{color:var(--good);background:var(--good-bg)} .tag.bad{color:var(--warn);background:var(--warn-bg)}
+  .tag.info{color:var(--accent);background:var(--accent-bg)} .tag.amber{color:var(--amber);background:var(--amber-bg)}
+  .verdict{padding:.7rem .9rem;border-radius:10px;font-size:.95rem;margin:.6rem 0 0}
+  .verdict.good{background:var(--good-bg);color:var(--good)} .verdict.bad{background:var(--warn-bg);color:var(--warn)}
+  .verdict.info{background:var(--accent-bg);color:#1e40af}
+  code,pre{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.86rem}
+  code{background:var(--code-bg);padding:.1em .35em;border-radius:4px}
+  pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;margin:.4rem 0;overflow:auto;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+  table{border-collapse:collapse;width:100%;font-size:.88rem}
+  th,td{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.02em}
+  td.null{color:var(--warn);font-style:italic;background:var(--warn-bg)}
+  tr.hit td{background:var(--accent-bg)}
+  .muted{color:var(--muted)} .small{font-size:.86rem}
+  .steps{list-style:none;margin:0;padding:0;counter-reset:s}
+  .steps li{counter-increment:s;padding:.35rem .5rem .35rem 2rem;position:relative;border-radius:8px;font-size:.9rem;cursor:pointer;color:var(--muted)}
+  .steps li::before{content:counter(s);position:absolute;left:.4rem;top:.35rem;width:1.25rem;height:1.25rem;border-radius:50%;border:1px solid var(--line);font-size:.72rem;display:flex;align-items:center;justify-content:center;background:#fff}
+  .steps li.active{background:var(--accent-bg);color:var(--ink);font-weight:600}
+  .steps li.active::before{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .nav{display:flex;gap:.5rem;align-items:center;margin:.6rem 0 0}
+  label.chk{display:flex;align-items:flex-start;gap:.5rem;font-size:.9rem;padding:.3rem 0;cursor:pointer}
+  label.chk input{margin-top:.25rem;accent-color:var(--accent)}
+  .bar{height:8px;border-radius:999px;background:#e9edf2;overflow:hidden;margin:.4rem 0}
+  .bar>i{display:block;height:100%;background:var(--accent);transition:width .2s}
+</style>
+</head>
+<body>
+<h1>Staying logged in: sessions vs tokens</h1>
+<p class="lead">HTTP forgets you between requests. After you log in, something has to prove who you are on every request that follows. There are two common ways. The difference is <b>where the proof lives</b>, and it only really shows at the last step.</p>
+<div class="controls"><span class="lbl">Method:</span><div class="pills" id="pick"></div>
+  <span class="small muted" id="where" style="margin-left:auto"></span></div>
+<div class="flow" id="flow"></div>
+<div class="wrap">
+  <div class="col" style="flex:0 1 250px"><ol class="steps" id="steps"></ol>
+    <div class="nav"><button id="prev">Back</button><button id="next" class="on">Next</button></div></div>
+  <div class="col"><div class="card"><h2 id="t"></h2><p id="d" style="margin:.2rem 0 .6rem"></p><pre id="wire"></pre><div id="v"></div></div></div>
+</div>
+<script>
+const NODES=["Browser","Server","Session store"];
+const D={
+ "Session cookie":{where:"The proof lives on the server.",steps:[
+  ["Log in",[0,1],"You send your email and password once. The server checks the password against the stored hash.","POST /login\n{\"email\": \"hello@brightgear.example\", \"password\": \"...\"}",""],
+  ["Server remembers you",[1,2],"The server creates a session record and saves it. The record holds who you are. The ID is a long random string that means nothing by itself.","sessions table\nid: 9f3ac1...   user_id: 2   expires: in 7 days",""],
+  ["Browser gets a cookie",[1,0],"Only the random ID goes to the browser, in a cookie that JavaScript cannot read.","Set-Cookie: sid=9f3ac1...; HttpOnly; Secure; SameSite=Lax",""],
+  ["Every later request",[0,1,2],"The browser attaches the cookie automatically. The server looks the ID up in the session store to find out who you are.","GET /orders\nCookie: sid=9f3ac1...\n\nserver: look up 9f3ac1... -> user 2","Cost: one lookup on every request, and every server needs access to the same session store."],
+  ["Log out, or get kicked out",[1,2],"The server deletes the session record. The cookie in the browser now points at nothing, and the very next request is refused.","DELETE FROM sessions WHERE id = '9f3ac1...'\n\nnext request -> 401","good:Revoking access is instant. This is the big advantage of sessions."]]},
+ "Token (JWT)":{where:"The proof lives in the browser.",steps:[
+  ["Log in",[0,1],"Same start. You send your email and password once, and the server checks the password.","POST /login\n{\"email\": \"hello@brightgear.example\", \"password\": \"...\"}",""],
+  ["Server signs a token",[1],"The server writes who you are into a small JSON document and signs it with a secret key. It does not save anything.","{ \"sub\": 2, \"role\": \"customer\", \"exp\": 15 minutes from now }\n+ signature made with the server's secret","Anyone can read a token's contents. The signature stops them from changing it. Never put secrets inside one."],
+  ["Browser keeps the token",[1,0],"The whole token goes to the client, which stores it and is responsible for sending it back.","{ \"token\": \"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOjJ9.Qx7...\" }",""],
+  ["Every later request",[0,1],"The client sends the token in a header. The server checks the signature and the expiry with math. It does not look anything up.","GET /orders\nAuthorization: Bearer eyJhbGciOi...\n\nserver: signature valid, not expired -> user 2","good:No lookup, no shared store. Any server with the key can check it, which is why services and mobile apps like tokens."],
+  ["Log out, or get kicked out",[0],"The client throws the token away. But the server saved nothing, so a stolen copy of that token keeps working until it expires.","client: delete token\n\nstolen copy of the token -> still 200 until exp","bad:You cannot easily revoke a token. Teams fix this with short expiry times plus a refresh token, or a denylist, which brings back the lookup."]]}};
+let m="Session cookie",i=0;const $=id=>document.getElementById(id);
+function draw(){const x=D[m],s=x.steps[i];
+  $("pick").innerHTML=Object.keys(D).map(k=>`<button class="${k===m?"on":""}" data-k="${k}">${k}</button>`).join("");
+  $("where").textContent=x.where;
+  $("flow").innerHTML=NODES.map((n,k)=>`<div class="node ${s[1].includes(k)?"active":(k===2&&m!=="Session cookie"?"skip":"")}"><b>${n}</b><small>${k===2&&m!=="Session cookie"?"not used":""}</small></div>`+(k<2?'<div class="arrow">&harr;</div>':"")).join("");
+  $("steps").innerHTML=x.steps.map((y,k)=>`<li class="${k===i?"active":""}" data-k="${k}">${y[0]}</li>`).join("");
+  $("t").textContent=(i+1)+". "+s[0];$("d").textContent=s[2];$("wire").textContent=s[3];
+  const n=s[4];const kind=n.startsWith("good:")?"good":n.startsWith("bad:")?"bad":"info";
+  $("v").innerHTML=n?`<div class="verdict ${kind}">${n.replace(/^(good|bad):/,"")}</div>`:"";
+  $("prev").disabled=i===0;$("next").disabled=i===x.steps.length-1;}
+$("pick").onclick=e=>{const b=e.target.closest("button");if(b){m=b.dataset.k;draw();}};
+$("steps").onclick=e=>{const li=e.target.closest("li");if(li){i=+li.dataset.k;draw();}};
+$("prev").onclick=()=>{i--;draw();};$("next").onclick=()=>{i++;draw();};draw();
+</script>
+</body>
+</html>

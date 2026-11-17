@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>What happens when you hit an endpoint · Parsity</title>
+<style>
+  :root{--ink:#1b2330;--muted:#5b6675;--line:#e3e7ec;--bg:#fff;--panel:#f6f8fa;
+        --accent:#2563eb;--accent-bg:#eef4ff;--good:#15803d;--good-bg:#e7f6ec;--warn:#b91c1c;--warn-bg:#fbe9e9;
+        --amber:#b45309;--amber-bg:#fef3e2;--code-bg:#f4f6f8;}
+  *{box-sizing:border-box}
+  body{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:var(--ink);margin:0;padding:1.6rem;line-height:1.5}
+  h1{font-size:1.5rem;margin:0 0 .3rem}
+  h2{font-size:1.02rem;margin:0 0 .5rem}
+  .lead{color:var(--muted);font-size:1.02rem;max-width:62rem;margin:0 0 1rem}
+  .controls{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;margin:0 0 1rem;padding:.8rem 1rem;border:1px solid var(--line);border-radius:12px;background:var(--panel)}
+  .controls .lbl{font-size:.85rem;color:var(--muted);margin-right:.2rem}
+  .pills{display:flex;gap:.4rem;flex-wrap:wrap}
+  button{font:inherit;font-size:.9rem;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);padding:.4rem .8rem;border-radius:999px}
+  button.on{background:var(--accent);color:#fff;border-color:var(--accent)}
+  button:disabled{opacity:.4;cursor:default}
+  button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .wrap{display:flex;gap:1.2rem;flex-wrap:wrap;align-items:flex-start}
+  .col{flex:1 1 320px;min-width:280px}
+  .card{border:1px solid var(--line);border-radius:12px;background:#fff;padding:.9rem 1rem;margin-bottom:.8rem}
+  .panel{border:1px solid var(--line);border-radius:12px;background:var(--panel);padding:.9rem 1rem;margin-bottom:.8rem}
+  .flow{display:flex;gap:.4rem;flex-wrap:wrap;align-items:stretch;margin:0 0 1rem}
+  .node{flex:1 1 96px;min-width:92px;border:1px solid var(--line);border-radius:10px;background:#fff;padding:.5rem .55rem;font-size:.84rem;text-align:center;transition:all .15s}
+  .node b{display:block;font-size:.82rem;overflow-wrap:anywhere}
+  .node small{color:var(--muted)}
+  .node.active{border-color:var(--accent);background:var(--accent-bg);box-shadow:0 0 0 2px rgba(37,99,235,.15)}
+  .node.done{border-color:#b7dfc4;background:var(--good-bg)}
+  .node.fail{border-color:#f0c4c4;background:var(--warn-bg)}
+  .node.skip{opacity:.4}
+  .arrow{align-self:center;color:var(--muted);font-size:.9rem}
+  .tag{display:inline-block;padding:.05em .5em;border-radius:999px;font-size:.78rem;font-weight:600}
+  .tag.good{color:var(--good);background:var(--good-bg)} .tag.bad{color:var(--warn);background:var(--warn-bg)}
+  .tag.info{color:var(--accent);background:var(--accent-bg)} .tag.amber{color:var(--amber);background:var(--amber-bg)}
+  .verdict{padding:.7rem .9rem;border-radius:10px;font-size:.95rem;margin:.6rem 0 0}
+  .verdict.good{background:var(--good-bg);color:var(--good)} .verdict.bad{background:var(--warn-bg);color:var(--warn)}
+  .verdict.info{background:var(--accent-bg);color:#1e40af}
+  code,pre{font-family:ui-monospace,"SF Mono",Menlo,monospace;font-size:.86rem}
+  code{background:var(--code-bg);padding:.1em .35em;border-radius:4px}
+  pre{background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:.7rem .9rem;margin:.4rem 0;overflow:auto;line-height:1.45;white-space:pre-wrap;overflow-wrap:anywhere}
+  table{border-collapse:collapse;width:100%;font-size:.88rem}
+  th,td{border-bottom:1px solid var(--line);padding:.35rem .5rem;text-align:left}
+  th{color:var(--muted);font-weight:600;font-size:.8rem;text-transform:uppercase;letter-spacing:.02em}
+  td.null{color:var(--warn);font-style:italic;background:var(--warn-bg)}
+  tr.hit td{background:var(--accent-bg)}
+  .muted{color:var(--muted)} .small{font-size:.86rem}
+  .steps{list-style:none;margin:0;padding:0;counter-reset:s}
+  .steps li{counter-increment:s;padding:.35rem .5rem .35rem 2rem;position:relative;border-radius:8px;font-size:.9rem;cursor:pointer;color:var(--muted)}
+  .steps li::before{content:counter(s);position:absolute;left:.4rem;top:.35rem;width:1.25rem;height:1.25rem;border-radius:50%;border:1px solid var(--line);font-size:.72rem;display:flex;align-items:center;justify-content:center;background:#fff}
+  .steps li.active{background:var(--accent-bg);color:var(--ink);font-weight:600}
+  .steps li.active::before{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .nav{display:flex;gap:.5rem;align-items:center;margin:.6rem 0 0}
+  label.chk{display:flex;align-items:flex-start;gap:.5rem;font-size:.9rem;padding:.3rem 0;cursor:pointer}
+  label.chk input{margin-top:.25rem;accent-color:var(--accent)}
+  .bar{height:8px;border-radius:999px;background:#e9edf2;overflow:hidden;margin:.4rem 0}
+  .bar>i{display:block;height:100%;background:var(--accent);transition:width .2s}
+</style>
+</head>
+<body>
+<h1>What happens when you hit an endpoint</h1>
+<p class="lead">You type a URL and press Enter. Before any of your code runs, five things have to go right. Step through them, then flip on <b>Break it here</b> to see what each failure looks like from your chair.</p>
+<div class="controls">
+  <span class="lbl">Request:</span><code>GET https://api.driftwood.example/orders/7</code>
+  <label class="chk" style="margin-left:auto"><input type="checkbox" id="brk"> Break it here</label>
+</div>
+<div class="flow" id="flow"></div>
+<div class="wrap">
+  <div class="col" style="flex:0 1 250px"><ol class="steps" id="steps"></ol>
+    <div class="nav"><button id="prev">Back</button><button id="next" class="on">Next</button></div></div>
+  <div class="col">
+    <div class="card"><h2 id="t"></h2><p id="d" style="margin:.2rem 0 .6rem"></p>
+      <div class="small muted">On the wire</div><pre id="wire"></pre>
+      <div id="out"></div></div>
+  </div>
+</div>
+<script>
+const NODES=["Your browser","DNS resolver","Server (TCP)","Server (TLS)","Your API code","Your browser"];
+const S=[
+ {t:"1. Find the address (DNS)",n:[0,1],d:"The browser only has a name. It asks a DNS resolver which IP address the name points to. The answer is cached, so this usually only happens once.",w:"Q: api.driftwood.example  A?\nA: 203.0.113.42  (TTL 300s)",
+  f:"ERR_NAME_NOT_RESOLVED. The name is wrong, the DNS record is missing, or you are offline. Your server never hears about it, so its logs are empty.",ok:"You now have an IP address: 203.0.113.42."},
+ {t:"2. Open a connection (TCP)",n:[0,2],d:"The browser opens a connection to that IP on port 443. TCP makes sure bytes arrive in order and get resent if they are lost.",w:"SYN      ->\n         <- SYN-ACK\nACK      ->",
+  f:"Connection refused, or it hangs until a timeout. Nothing is listening on that port, a firewall is in the way, or the server is down.",ok:"A reliable two-way pipe is open."},
+ {t:"3. Encrypt it (TLS)",n:[0,3],d:"The server proves who it is with a certificate, and both sides agree on keys. From here on nobody in between can read or change the traffic.",w:"ClientHello          ->\n                     <- ServerHello, certificate\nkeys agreed. everything below is encrypted",
+  f:"A certificate warning page. The certificate expired, or it was issued for a different name. The fix is in your hosting config, not your code.",ok:"The pipe is now private. That is the S in HTTPS."},
+ {t:"4. Send the request (HTTP)",n:[0,4],d:"Now the browser sends plain text over that encrypted pipe: a method, a path, and headers. This is the first moment your code is involved.",w:"GET /orders/7 HTTP/1.1\nHost: api.driftwood.example\nAuthorization: Bearer eyJhbGciOi...\nAccept: application/json",
+  f:"The request arrives, and your server answers with a 4xx. 401 means no valid login. 404 means no such path or record. 400 means the request itself was malformed.",ok:"Your server received a request it can read."},
+ {t:"5. Run your code",n:[4],d:"Your API checks who is asking, loads order 7 from the database and builds a response. This is the part you write, and usually the slowest part.",w:"auth ok  ->  SELECT * FROM orders WHERE id = 7  ->  build JSON",
+  f:"A 500. Your code threw an error. This is the only failure on this page that shows up in your own server logs with a stack trace.",ok:"Your code produced a result."},
+ {t:"6. Send the response back",n:[4,5],d:"A status code, headers and a body go back down the same connection. The browser reads the status first, then decides what to do with the body.",w:"HTTP/1.1 200 OK\nContent-Type: application/json\n\n{\"id\":7,\"status\":\"shipped\",\"total_cents\":21419}",
+  f:"The response arrives but the browser blocks your JavaScript from reading it: a CORS error. The server answered fine. It just did not say this website is allowed to read the answer.",ok:"200 OK. The page can render the order."}
+];
+let i=0;const $=id=>document.getElementById(id);
+function draw(){const s=S[i],b=$("brk").checked;
+  $("flow").innerHTML=NODES.map((n,k)=>`<div class="node ${s.n.includes(k)?(b?"fail":"active"):""}"><b>${n}</b></div>`+(k<NODES.length-1?'<div class="arrow">&rarr;</div>':"")).join("");
+  $("steps").innerHTML=S.map((x,k)=>`<li class="${k===i?"active":""}" data-k="${k}">${x.t.replace(/^\d+\. /,"")}</li>`).join("");
+  $("t").textContent=s.t;$("d").textContent=s.d;$("wire").textContent=s.w;
+  $("out").innerHTML=b?`<div class="verdict bad"><b>If it breaks here:</b> ${s.f}</div>`:`<div class="verdict good">${s.ok}</div>`;
+  $("prev").disabled=i===0;$("next").disabled=i===S.length-1;}
+$("steps").onclick=e=>{const li=e.target.closest("li");if(li){i=+li.dataset.k;draw();}};
+$("prev").onclick=()=>{i--;draw();};$("next").onclick=()=>{i++;draw();};$("brk").onchange=draw;draw();
+</script>
+</body>
+</html>
