@@ -1,6 +1,6 @@
 # Ship a Feature Across Two Apps
 
-> **In this lesson:** your first real build. Customers want to see an estimated delivery date in the portal. The data exists for a moment inside the API and is then thrown away. You'll write a short spec, break it into tickets, and direct your agent through a change that touches the database, the API and the front end, one piece at a time.
+> **In this lesson:** your first real build. Customers want to see an estimated delivery date in the portal. The data exists for a moment inside the API and is then thrown away. You'll plan the feature on one page before any code exists, break it into tickets, and direct your agent through a change that touches the database, the API and the front end, one piece at a time.
 
 ## Why features go wrong with agents
 
@@ -10,9 +10,9 @@ Hand that paragraph straight to an agent and you get a feature. It'll run. It'll
 
 You drive the architecture. On a feature, that means making those decisions before the agent starts typing.
 
-## Spec, tickets, one at a time
+## Plan it, split it, build one piece at a time
 
-**1. Write a one-page spec.** Yourself, in plain words. Not the agent.
+**1. Write a one-page plan.** Yourself, in plain words. Not the agent.
 
 - What the user sees, and when. Including when they see nothing.
 - Where the data comes from and where it's stored.
@@ -31,7 +31,7 @@ Then ask your agent to poke holes in it. Use plan mode or tell it not to write c
 ```order
 title: A feature that crosses services, in a safe order
 ---
-Write the spec and decide the open questions
+Write the plan and decide the open questions
 Add the database column with a migration
 Capture and store the value in the API
 Expose it on the route the portal calls
@@ -50,19 +50,19 @@ Open [`docs/exercises/feature-order-eta.md`](https://github.com/projectshft/drif
 1. Ask your agent to trace how shipping gets quoted and how an order gets marked as shipped. Where does `etaDays` appear, and where does it disappear? Have it draw the flow, then check it against `orderService.ts`, the orders and shipments routes, and the rate engine.
 2. While it's there, ask it what the comment above the ship route says about the order of operations, and what `SUP-54` in `docs/linear-export` is about. You're about to add to that flow. Don't make it worse.
 
-**Write the spec.** One page. The ticket leaves you real decisions:
+**Write the plan.** One page. The ticket leaves you real decisions:
 
 3. Quote time or ship time: when do you save the estimate?
 4. Is the delivery date counted from when the order shipped, or from when the quote was taken? Pick one and write down why.
 5. What does a customer see for an order that hasn't shipped? For one that shipped before your change, with no estimate stored? Most of the orders in your database are in that second group.
-6. Calendar days or business days? What does the rate engine's number mean? Check the code. If you can't tell, say so in the spec.
+6. Calendar days or business days? What does the rate engine's number mean? Check the code. If you can't tell, say so in the plan.
 7. Your local rate engine has no carrier to call, so it returns no quotes and no estimate. How will you develop and test this anyway? Decide before the agent decides for you by hardcoding something.
 
-Ask your agent to review the spec and list what's still ambiguous. Fix the spec, not the code.
+Ask your agent to review the plan and list what's still ambiguous. Fix the plan, not the code.
 
 **Build it.** One ticket at a time, a commit for each.
 
-8. Have the agent turn your spec into four or five tickets with acceptance criteria. Reorder them if you disagree.
+8. Have the agent turn your plan into four or five tickets with acceptance criteria. Reorder them if you disagree.
 9. For each ticket: let it build, run it yourself, read the diff, then commit. The portal and the API are separate apps with separate types. When the API response changes, what tells the portal?
 10. Don't let it "fix" the things it finds along the way. `orderService.ts` has a comment that says the file does too much. It does. That's a different ticket.
 
@@ -99,7 +99,7 @@ Ask your agent to review the spec and list what's still ambiguous. Fix the spec,
 
 ## Key takeaways
 
-- On a feature, the decisions are the work. Make them in a spec before the agent starts.
+- On a feature, the decisions are the work. Make them in a written plan before the agent starts.
 - Break it into tickets that each run and review on their own, then do one at a time.
 - A change that crosses services needs a test that crosses services.
 - Watch for shortcuts taken to make something pass locally. They ship.
@@ -107,12 +107,12 @@ Ask your agent to review the spec and list what's still ambiguous. Fix the spec,
 ## Work with AI
 
 ```ai-prompt
-title: Poke holes in my spec before any code
+title: Poke holes in my plan before any code
 ---
-Here is my one-page spec for showing an estimated delivery date on the customer
-portal's order page: [paste your spec]. The ticket is in
+Here is my one-page plan for showing an estimated delivery date on the customer
+portal's order page: [paste your plan]. The ticket is in
 docs/exercises/feature-order-eta.md. Do not write code. Read the quote flow, the ship
-flow and the portal's order page, then act as a staff engineer reviewing the spec.
+flow and the portal's order page, then act as a staff engineer reviewing the plan.
 List every decision I left ambiguous, every case I didn't cover (orders not shipped,
 orders shipped before this change, no quote available, time zones), and anything in
 the current code that makes my plan harder than I think. Then propose four or five

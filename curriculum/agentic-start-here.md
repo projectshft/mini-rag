@@ -20,7 +20,7 @@ By the end you'll have done all of this yourself, on Driftwood:
 - Fix a production bug and prove the fix, instead of taking the agent's word for it.
 - Run an investigation where nobody knows if there's a bug at all, and write up what you found.
 - Find out whether a test suite is any good by breaking the code on purpose.
-- Ship a feature that crosses a database, an API and a front end, from a spec you wrote.
+- Ship a feature that crosses a database, an API and a front end, from a plan you wrote first.
 - Clean up the instructions an agent reads, and write your first skill.
 - Run more than one agent at a time without making a mess.
 - Build a software factory: agents that turn a chat message into a reviewed pull request.
