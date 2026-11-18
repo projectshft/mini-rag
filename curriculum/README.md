@@ -123,6 +123,17 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 
 - [Capstone: Build a Software Factory](agentic-software-factory.md)
 
+**Track: Software Engineering**
+
+> The core program. Learn how computers, networks and data really work, build eight hard projects with a coding agent, write small problems by hand every week, and explain what you built. No coding experience needed.
+
+**Part 1 — Foundations**
+
+- [Start Here: How This Program Works](swe-start-here.md)
+- [Setup: Your Editor, the Terminal and Your First Program](swe-setup-terminal.md)
+- [Setup: Git and GitHub](swe-setup-git.md)
+- [Setup: Reading and Running a Test](swe-setup-tests.md)
+
 ## Assignments
 
 Assignments are **not numbered** — a number in the lesson text goes stale the
