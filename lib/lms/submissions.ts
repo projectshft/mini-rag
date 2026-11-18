@@ -40,8 +40,8 @@ const STALE_AFTER_MS = 15 * 60 * 1000;
 export function parseRepoUrl(input: string): string | null {
 	const trimmed = input
 		.trim()
-		.replace(/\.git$/, '')
 		.replace(/\/+$/, '')
+		.replace(/\.git$/, '')
 		.replace(/^http:\/\//, 'https://')
 		.replace(/^https:\/\/www\./, 'https://');
 	const m = REPO_RE.exec(trimmed);

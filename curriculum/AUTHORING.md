@@ -257,6 +257,18 @@ error message when unset.
 
 Standard ```` ```mermaid ```` fences render as diagrams.
 
+### 10. Submit — hand in a GitHub repo for automatic checking
+
+```` ```submit ````
+```
+assignment: first-test
+```
+Shows a "Hand it in" box. `assignment` is the id of a folder under
+`assignments/` in the private grader repo, which holds that assignment's
+hidden tests. One submit block per lesson. The lesson must tell the student
+exactly which files the repo needs at its top level, because the grader looks
+for them by name. See "Graded submissions" in `docs/LMS-SETUP.md`.
+
 ## Hints & reveals (toggle-able code)
 
 Use `<details>` blocks for anything the student should *try before seeing*:

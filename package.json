@@ -5,6 +5,7 @@
 	"scripts": {
 		"dev": "next dev --turbopack",
 		"build": "next build",
+		"vercel-build": "prisma db push --schema prisma/lms/schema.prisma --skip-generate && next build",
 		"start": "next start",
 		"lint": "next lint",
 		"test": "jest",

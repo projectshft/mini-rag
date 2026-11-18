@@ -113,6 +113,31 @@ yarn dev
   records it, so revoking the key in `/admin` does not trigger a re-mint.
   Full-access students never see a key on `/learn`.
 
+## Graded submissions
+- **What it is**: a lesson with a ` ```submit ` block shows a "Hand it in" box.
+  The student pastes a public GitHub repo link. The attempt is saved in the
+  `submissions` table and a grading run starts. Student code never runs on
+  this server.
+- **The grader** is a GitHub Actions workflow (`grade.yml`) in a separate
+  **private** repo that holds the hidden tests. It clones the student's repo,
+  runs their own tests, then the hidden ones in a container with no network,
+  and posts a signed report to `/api/grade-callback` (public route, HMAC
+  checked). A pass also marks the lesson done.
+- **Env vars** (Vercel): `GRADER_REPO`, `GRADER_GITHUB_TOKEN` (fine-grained,
+  Actions read+write on the grader repo only), `GRADER_CALLBACK_SECRET` (same
+  value as the Actions secret of that name in the grader repo). Without all
+  three, submissions are saved as "received" and not graded.
+- **Students only ever see** pass or fail, their own test counts, and the
+  *names* of the hidden categories that failed. Never the test code.
+- **Database**: Vercel runs `vercel-build`, which applies additive schema
+  changes with `prisma db push` before `next build`. It never passes
+  `--accept-data-loss`, so a change that would drop data fails the deploy
+  instead of running.
+- **Grant-only tracks**: `GRANT_ONLY_TRACKS` in `lib/lms/access.ts` lists
+  tracks that only show for students whose Clerk `publicMetadata.tracks`
+  includes them (admins see everything). The Software Engineering track is
+  one, so existing students never see it.
+
 ## Editing the curriculum
 - One file per study day: `curriculum/day-NN.md` (see `curriculum/AUTHORING.md`
   for the format and the `quiz` / `visual` / `ai-prompt` / `reveal` blocks).
