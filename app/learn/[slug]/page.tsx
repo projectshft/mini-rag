@@ -23,7 +23,7 @@ export default async function LessonPage({
 	params: Promise<{ slug: string }>;
 }) {
 	const { slug } = await params;
-	const { tracks: allowedTracks } = await getAccess();
+	const { tracks: allowedTracks, isAdmin: viewerIsAdmin } = await getAccess();
 	const restricted = allowedTracks !== null;
 
 	if (restricted && (slug.startsWith('bonus-') || slug.startsWith('interview-'))) notFound();
@@ -157,7 +157,7 @@ export default async function LessonPage({
 
 	// ── Regular curriculum day ──
 	const [day, days] = await Promise.all([getDay(slug), getDays()]);
-	if (!day || !isTrackAllowed(day.track, allowedTracks)) notFound();
+	if (!day || !isTrackAllowed(day.track, allowedTracks, viewerIsAdmin)) notFound();
 
 	const userId = await ensureStudent();
 	const completed = userId ? await getCompletedSlugs(userId) : new Set<string>();

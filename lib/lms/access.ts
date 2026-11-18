@@ -6,9 +6,15 @@ import { litellmConfigured, mintKey, revokeKey } from './litellm';
 
 export const AGENTIC_TRACK = 'intro-to-agentic-engineering';
 
+// Tracks that are only visible to students who were explicitly given them.
+// A student with no `tracks` key sees every track EXCEPT these, so existing
+// RAG students never see a track they didn't enroll in. Admins see everything.
+export const GRANT_ONLY_TRACKS = ['software-engineering'];
+
 export type Access = {
 	userId: string | null;
 	tracks: string[] | null;
+	isAdmin: boolean;
 	creditUsd: number | null;
 	creditKeyMinted: boolean;
 };
@@ -21,11 +27,12 @@ export function readTracks(metadata: Record<string, unknown> | undefined): strin
 
 export const getAccess = cache(async (): Promise<Access> => {
 	const user = await currentUser();
-	if (!user) return { userId: null, tracks: null, creditUsd: null, creditKeyMinted: false };
+	if (!user) return { userId: null, tracks: null, isAdmin: false, creditUsd: null, creditKeyMinted: false };
 	const credit = Number(user.publicMetadata?.creditUsd);
 	return {
 		userId: user.id,
 		tracks: readTracks(user.publicMetadata),
+		isAdmin: isAdminEmail(user.primaryEmailAddress?.emailAddress),
 		creditUsd: Number.isFinite(credit) && credit > 0 ? credit : null,
 		creditKeyMinted: Boolean(user.privateMetadata?.creditKeyMintedAt),
 	};
@@ -35,8 +42,21 @@ export async function getAllowedTracks(): Promise<string[] | null> {
 	return (await getAccess()).tracks;
 }
 
-export function isTrackAllowed(track: string, allowed: string[] | null): boolean {
-	return allowed === null || allowed.includes(trackSlug(track));
+function isAdminEmail(email: string | undefined): boolean {
+	if (!email) return false;
+	return (process.env.LMS_ADMIN_EMAILS ?? '')
+		.toLowerCase()
+		.split(',')
+		.map((e) => e.trim())
+		.filter(Boolean)
+		.includes(email.toLowerCase());
+}
+
+export function isTrackAllowed(track: string, allowed: string[] | null, isAdmin = false): boolean {
+	if (isAdmin) return true;
+	const slug = trackSlug(track);
+	if (allowed === null) return !GRANT_ONLY_TRACKS.includes(slug);
+	return allowed.includes(slug);
 }
 
 export async function ensureCreditKey(): Promise<void> {

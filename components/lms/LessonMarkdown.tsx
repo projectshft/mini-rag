@@ -11,6 +11,7 @@ import { VisualEmbed } from './VisualEmbed';
 import { AiPrompt } from './AiPrompt';
 import { OrderSteps } from './OrderSteps';
 import { Scenario } from './Scenario';
+import { SubmitWork } from './SubmitWork';
 import { MatchPairs } from './MatchPairs';
 import { FillBlanks } from './FillBlanks';
 import { TryIt } from './TryIt';
@@ -26,11 +27,12 @@ import { TryIt } from './TryIt';
 //   ```ai-prompt → copyable prompt to paste into Claude/ChatGPT (see AiPrompt.tsx)
 //   ```order     → tap-the-steps-in-order exercise (see OrderSteps.tsx)
 //   ```scenario  → workplace what-do-you-say exercise (JSON; see Scenario.tsx)
+//   ```submit    → hand in a GitHub repo for automatic checking (see SubmitWork.tsx)
 //   ```match     → tap-to-match pairs exercise (JSON; see MatchPairs.tsx)
 //   ```blanks    → fill-in-the-blank code exercise (JSON; see FillBlanks.tsx)
 //   ```try-it    → live API playground using the student's class key (JSON; see TryIt.tsx)
 
-const ISLAND_RE = /language-(mermaid|quiz|visual|ai-prompt|order|scenario|match|blanks|try-it)\b/;
+const ISLAND_RE = /language-(mermaid|quiz|visual|ai-prompt|order|scenario|match|blanks|try-it|submit)\b/;
 
 const components: Components = {
 	// External links open in a new tab (keep the lesson open behind them);
@@ -87,6 +89,9 @@ const components: Components = {
 		}
 		if (className?.includes('language-try-it')) {
 			return <TryIt source={source} />;
+		}
+		if (className?.includes('language-submit')) {
+			return <SubmitWork />;
 		}
 		return <code className={className}>{children}</code>;
 	},

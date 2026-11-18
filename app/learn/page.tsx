@@ -48,7 +48,7 @@ export default async function LearnPage({
 			userId ? isInterviewUnlocked(userId) : Promise.resolve(false),
 		]);
 
-	const tracks = allTracks.filter((t) => isTrackAllowed(t, access.tracks));
+	const tracks = allTracks.filter((t) => isTrackAllowed(t, access.tracks, access.isAdmin));
 	const track = tracks.find((t) => trackSlug(t) === requestedTrack) ?? tracks[0] ?? '';
 	const isMainTrack = track === (allTracks[0] ?? '');
 	const showExtras = isMainTrack && !restricted;

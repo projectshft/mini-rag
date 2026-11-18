@@ -39,6 +39,7 @@ model Student {
   apiKeyMintedAt  DateTime?
   apiKeyExpiresAt DateTime?
   progress    LessonProgress[]
+  submissions Submission[]
 
   @@map("students")
 }
@@ -77,4 +78,31 @@ model QuizLead {
   @@index([email])
   @@index([createdAt])
   @@map("quiz_leads")
+}
+
+// One row per attempt at a graded assignment. The student hands in a public
+// GitHub repo URL from a lesson's ```submit block; the grader (a GitHub
+// Actions workflow in a private repo, see docs/LMS-SETUP.md) runs the visible
+// and hidden tests and reports back to /api/grade-callback, which fills in
+// status + result. Attempts are never overwritten, so the history shows how a
+// student got to a pass.
+model Submission {
+  id         String    @id @default(uuid())
+  studentId  String
+  lessonSlug String
+  assignment String // id of the assignment in the grader repo, e.g. "first-test"
+  repoUrl    String
+  // queued   -> sent to the grader, waiting for a result
+  // received -> saved, but the grader isn't configured on this deploy
+  // passed | failed -> graded
+  // error    -> the grader couldn't run it (bad repo, timeout, dispatch failed)
+  status     String    @default("queued")
+  result     Json? // the grader's report; shape in lib/lms/submissions.ts
+  createdAt  DateTime  @default(now())
+  gradedAt   DateTime?
+
+  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, lessonSlug])
+  @@map("submissions")
 }

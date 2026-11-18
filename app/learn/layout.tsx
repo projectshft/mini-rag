@@ -26,7 +26,7 @@ export default async function LearnLayout({
 	const restricted = access.tracks !== null;
 	const firstInterview = interviewLessons[0];
 	const restrictedTitle = restricted
-		? tracks.find((t) => isTrackAllowed(t, access.tracks))
+		? tracks.find((t) => isTrackAllowed(t, access.tracks, access.isAdmin))
 		: undefined;
 
 	return (

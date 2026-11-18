@@ -106,9 +106,13 @@ This is your setup week checkpoint.
 
 1. Add a third test of your own to `greet.test.js`. Pick something the first two don't cover. What should happen with a name that's just spaces? You decide, and the test is how you write your decision down.
 2. Make it pass.
-3. Create a repository on GitHub called `first-test`, push your work, and submit the link.
+3. Create a repository on GitHub called `first-test`, push your work, and paste the link below.
 
-It passes when all three tests pass on our side too.
+```submit
+assignment: first-test
+```
+
+We run your three tests, and a few of our own that you can't see. If one of ours fails, you'll be told what kind of case it was, not the test itself. Fix it, push, and submit again as often as you need.
 
 There's no video this week. They start next week.
 

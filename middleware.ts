@@ -17,6 +17,7 @@ const isPublicRoute = createRouteMatcher([
 	'/api/quiz-lead',
 	'/challenge(.*)',
 	'/claim',
+	'/api/grade-callback', // grader reports; authenticated by HMAC signature, not a session
 	'/agentic-engineering(.*)',
 	'/curriculum', // employer-facing curriculum PDF (rewritten in next.config)
 ]);
