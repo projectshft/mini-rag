@@ -1,6 +1,6 @@
 # Start Here: How This Program Works
 
-> **In this lesson:** what you're going to learn, how every week runs, what "passing" means, and why you'll write some code by hand even though an agent will write most of it. No setup yet. That starts in the next lesson.
+> **In this lesson:** what you're going to learn, how the work runs, what "passing" means, and why you'll write some code by hand even though an agent will write most of it. No setup yet. That starts in the next lesson.
 
 ## What this program is
 
@@ -30,17 +30,20 @@ Eight projects. Each one is hard because it's open-ended, and because it has to 
 7. A notification system that keeps working when the other side goes down
 8. A capstone that's yours: real data, an agent, and one technology we never taught you
 
-## How a week works
+## How the work runs
 
-Every week has the same three slots.
+You go at your own pace. Some people finish in as little as 12 weeks. Others take most of a year. We support you for up to 12 months.
+
+Each stretch of the program has the same two slots.
 
 | Slot | What you do | How it's checked |
 | --- | --- | --- |
-| Build | That week's piece of your current project | Tests, and an AI review of your code |
+| Build | The next piece of your current project | Tests, and an AI review of your code |
 | By hand | A problem or two written by you, with no agent | Tests |
-| Explain | A short video where you explain the week's idea and draw it | An AI review of what you said and drew |
 
-You also meet your mentor every week. Your mentor is a working engineer. They don't grade you. They listen to you explain what you built, tell you where your understanding is thin, and help you get unstuck.
+Now and then a lesson also asks you to **explain**: record a short video where you talk through an idea and draw it. Those only show up where saying it out loud really helps. The first one comes early.
+
+You have 12 sessions with a mentor. Your mentor is a working engineer. They don't grade you. They listen to you explain what you built, tell you where your understanding is thin, and help you get unstuck.
 
 There are weekly office hours and a guest speaker every month.
 
@@ -49,9 +52,9 @@ There are weekly office hours and a guest speaker every month.
 - A project passes when its tests pass. That includes a second set of tests you can't see. When one of those fails, you're told what kind of case failed, not the test itself.
 - You can fix and resubmit as many times as you need.
 - The next project unlocks when the current one passes. Lessons and by-hand problems stay open, so being stuck on a project never stops you learning.
-- There are no deadlines. Miss a week and you pick up where you stopped.
+- There are no deadlines inside the program. Miss a week and you pick up where you stopped.
 
-Every week also has one **stretch**: a harder extra that's clearly marked. It's there if you want to reach. Skipping it never holds you back.
+Each part also has one **stretch**: a harder extra that's clearly marked. It's there if you want to reach. Skipping it never holds you back.
 
 ## Why write code by hand at all?
 
@@ -63,15 +66,15 @@ Two reasons.
 
 **Interviews still ask for it.** Many companies will hand you a problem and watch you solve it with no AI. That may be out of date. It's also the door you have to walk through.
 
-So the by-hand work is small and steady: a problem or two a week, getting harder slowly.
+So the by-hand work is small and steady: a problem or two at a time, getting harder slowly. For the interview problems, use any language you like.
 
-## Why you record a video every week
+## Why you'll sometimes explain on video
 
 If you can't explain something simply, you don't understand it yet. Explaining out loud is the fastest way to find the hole.
 
 It will feel awkward the first few times. Record it anyway, especially when it's rough. Rough videos are where the learning is.
 
-There's a career reason too. In interviews, and at work, you'll be asked to explain what you built and why. You're practicing that from the first month.
+There's a career reason too. In interviews, and at work, you'll be asked to explain what you built and why. You're practicing that from the start.
 
 ```quiz
 [
@@ -99,9 +102,9 @@ There's a career reason too. In interviews, and at work, you'll be asked to expl
 ## Key takeaways
 
 - You're here to understand how software works and to direct an agent that builds it. Syntax is not the goal.
-- Three slots a week: build, by hand, explain. Plus a mentor who has done the job.
+- Two slots: build and by hand. Sometimes a video where you explain. Plus 12 sessions with a mentor who has done the job.
 - Passing means the tests pass, including ones you can't see. Resubmit as often as you need.
-- By-hand work and the weekly video are how you prove, to yourself first, that you understand what got built.
+- By-hand work and the explanation videos are how you prove, to yourself first, that you understand what got built.
 
 ## Work with AI
 
@@ -110,7 +113,7 @@ title: Tell me what I'm getting into
 ---
 I am starting a part-time program to become a software engineer. I have no
 coding experience. I'll learn how computers, networks and databases work, build eight
-projects with an AI coding agent, write small problems by hand each week and record a
+projects with an AI coding agent, write small problems by hand and sometimes record a
 short video explaining what I learned. Ask me five questions, one at a time, about my
 schedule, what I do for work now, why I'm doing this and what worries me most. Then
 give me a short, honest list of the three habits that will matter most for someone in

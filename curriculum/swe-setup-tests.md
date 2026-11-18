@@ -114,8 +114,6 @@ assignment: first-test
 
 We run your three tests, and a few of our own that you can't see. If one of ours fails, you'll be told what kind of case it was, not the test itself. Fix it, push, and submit again as often as you need.
 
-There's no video this week. They start next week.
-
 ```quiz
 [
   {
