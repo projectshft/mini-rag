@@ -23,7 +23,7 @@ A useful pattern: **what you do now, what you build, and one thing that makes yo
 
 | Weak | Why it's weak | Stronger |
 | --- | --- | --- |
-| Aspiring developer seeking opportunities | Tells them what you want, not what you do | Software engineer building APIs in Node and Postgres. Former product manager |
+| Aspiring developer seeking opportunities | Tells them what you want and nothing about what you do | Software engineer building APIs in Node and Postgres. Former product manager |
 | Passionate coder and lifelong learner | Every profile says this | Software engineer. I build back ends with coding agents and test them like an attacker would |
 | Full stack, React, Node, Python, Java, AWS, Docker, Kubernetes | A list of words, half of which you'd struggle to defend | Software engineer working in TypeScript, React and Postgres. Ten years in logistics before that |
 
@@ -34,7 +34,7 @@ You build software, so "software engineer" describes what you do. What you shoul
   "title": "What's wrong with each line?",
   "note": "Tap the headline, then its problem.",
   "pairs": [
-    { "left": "Aspiring software engineer | Open to work", "right": "Says what you want, not what you can do" },
+    { "left": "Aspiring software engineer | Open to work", "right": "Says what you want and nothing about what you can do" },
     { "left": "Senior engineer at Parsity", "right": "Claims a job you didn't have" },
     { "left": "Coding ninja and tech enthusiast", "right": "Words that tell the reader nothing" },
     { "left": "JavaScript, Python, Go, Rust, C++, Kotlin, Swift", "right": "A list you couldn't defend in an interview" }

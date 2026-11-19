@@ -150,7 +150,7 @@ test("staff can't move an order to another customer", async (t) => {
 });
 ```
 
-Notice that it checks the stored data, not just the status code. An app can answer 200 and still have done the damage, or answer 403 after doing it.
+Notice that it checks the stored data as well as the status code. An app can answer 200 and still have done the damage, or answer 403 after doing it.
 
 Write at least six of your own, one for each attack in your plan. Run them against the starter first: they should fail. A test that passes against the starter isn't testing your fix.
 

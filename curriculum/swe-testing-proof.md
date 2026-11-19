@@ -115,7 +115,7 @@ Some mutants can never be killed, because the change doesn't change behavior. Th
   "options": [
     { "text": "Coverage would have said 100% for the code that just broke, because the tests ran it without checking the result. Could we run mutation testing on the payment and auth code instead, and fix the tests that let mutants survive?", "verdict": "best", "feedback": "You agreed with the goal, explained exactly why the proposed rule wouldn't have caught this bug, and offered a check that would have. Narrowing it to the code that matters keeps it affordable." },
     { "text": "Agreed. 100% coverage means everything's tested.", "verdict": "weak", "feedback": "It means every line ran. A team chasing the number will write tests that run lines and check nothing, and the next bug gets through the same way." },
-    { "text": "Agreed, but let's also require reviewers to read the tests, not just the code.", "verdict": "ok", "feedback": "Reading tests critically is a great habit. The coverage rule still adds cost without adding much protection." },
+    { "text": "Agreed, but let's also require reviewers to read the tests as carefully as the code.", "verdict": "ok", "feedback": "Reading tests critically is a great habit. The coverage rule still adds cost without adding much protection." },
     { "text": "Coverage rules just slow everyone down. Let's not.", "verdict": "weak", "feedback": "You might be right about the rule, but saying no without an alternative leaves the real problem, weak tests, untouched." }
   ],
   "debrief": "Coverage says what ran. Mutation testing says what was checked. When a bug slipped through tested code, the second question is the one that matters."

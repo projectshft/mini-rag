@@ -55,7 +55,7 @@ Three habits make the difference:
 >
 > The hardest part was that my first version passed all my own tests and still failed four attack categories. The worst was that a staff member could move an order to another company by adding a `customerId` to an update. The route copied the whole request body onto the order. I'd reviewed that diff and missed it.
 >
-> So I changed how I review. Every route now copies only the fields it allows, and I wrote an attack test per route that checks the stored data, not only the status code.
+> So I changed how I review. Every route now copies only the fields it allows, and I wrote an attack test per route that checks the stored data as well as the status code.
 >
 > The decision I'd defend is keeping roles and customers in my own database even with the login provider. It means a users table I have to maintain. In exchange, a role change takes effect on the next request, and my permission tests don't need the provider at all.
 >

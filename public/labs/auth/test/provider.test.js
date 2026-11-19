@@ -1,11 +1,12 @@
-// Milestone 3. Turn these on by deleting `MILESTONE_3` from each test, then
-// add your own. The provider here is a fake: the real one is checked by your
-// mentor, live.
+// Milestone 3. Switched off until you get there. To turn these on, change
+// the MILESTONE_3 line below to:  const MILESTONE_3 = {};
+// Then add your own. The provider here is a fake: your mentor checks the real
+// one, live.
 const test = require("node:test");
 const assert = require("node:assert");
 const { startApp, fakeProvider } = require("../support/harness.js");
 
-const MILESTONE_3 = { skip: "turn this on in milestone 3" };
+const MILESTONE_3 = { skip: "switched off until milestone 3" };
 
 const provider = fakeProvider({
   "token-for-sam": { id: "prov_sam", email: "sam@brightgear.example", emailVerified: true },

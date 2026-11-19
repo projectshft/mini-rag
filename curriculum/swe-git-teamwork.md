@@ -173,7 +173,7 @@ Label every comment so the author knows what has to change before merging:
 
 A few more habits that keep reviews useful:
 
-- Comment on the code, not the person. "This function" rather than "you".
+- Comment on the code. Write "this function" where you might have written "you".
 - If you're not sure something is a bug, ask. "What happens here when quantity is negative?" is a fine comment.
 - Say what's good, briefly and specifically. It tells the author what to keep doing.
 - Finish with a verdict: approve, comment, or request changes.
@@ -195,7 +195,7 @@ A few more habits that keep reviews useful:
 
 Everything above applies, plus a few habits agents have that people have less often:
 
-- **Confident descriptions.** "All tests pass" can be true because a test was deleted or skipped. Check the test file's diff, not just the result.
+- **Confident descriptions.** "All tests pass" can be true because a test was deleted or skipped. Check the test file's diff as well as the result.
 - **Tidying up.** Agents like to "clean up" code near their change. Sometimes that cleanup removes a check someone added on purpose.
 - **Tests that mirror the code.** A test that asserts the function returns something, or returns whatever it currently returns, passes forever and proves nothing.
 - **Leftovers.** Debugging output, unused helpers, comments that describe an older version.
@@ -300,7 +300,7 @@ Bring your resolved merge too: your mentor may ask you to show `git log --graph`
 
 ## Key takeaways
 
-- A conflict means both branches changed the same lines. Git is asking, not failing.
+- A conflict means both branches changed the same lines. Git is asking you to decide.
 - Resolving means writing the code both changes meant. Read the lines around the markers too.
 - `git merge --abort` is always there. Run the tests before you commit a merge.
 - Review in order: what was asked, does it do that, do the tests prove it, what else changed, can the next person read it. Then run it.

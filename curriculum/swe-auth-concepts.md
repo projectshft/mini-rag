@@ -34,7 +34,7 @@ crypto.createHash("sha256").update("hunter2").digest("hex");
 // "f52fbd32b2b3b86ff88ef6c490628285f482af15ddcb29541f94bcf526a3f6c7"
 ```
 
-That's a start, and it's not enough, for two reasons.
+That's a start. It has two problems.
 
 **Fast hashes are fast for attackers too.** SHA-256 was designed to be quick. An attacker with a leaked database and a graphics card can try billions of guesses per second against it, and most people's passwords are among the first few billion guesses.
 

@@ -1,10 +1,11 @@
-// Milestone 2. Turn these on by deleting `MILESTONE_2` from each test, then
-// add your own: every attack in README.md's milestone 2 list deserves one.
+// Milestone 2. Switched off until you get there. To turn these on, change
+// the MILESTONE_2 line below to:  const MILESTONE_2 = {};
+// Then add your own: every attack in README.md's milestone 2 list deserves one.
 const test = require("node:test");
 const assert = require("node:assert");
 const { startApp } = require("../support/harness.js");
 
-const MILESTONE_2 = { skip: "turn this on in milestone 2" };
+const MILESTONE_2 = { skip: "switched off until milestone 2" };
 
 async function getToken(s, email) {
   const res = await s.request("POST", "/token", { body: { email, password: "correct horse 1" } });

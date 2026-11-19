@@ -106,7 +106,7 @@ Add a "Provider" section to `PLAN.md`: the provider you chose, the five answers 
 
 ## Build it
 
-1. Turn on the milestone 3 tests: delete `MILESTONE_3` from each test in `test/provider.test.js`. They fail.
+1. Turn on the milestone 3 tests: in `test/provider.test.js`, change the `MILESTONE_3` line near the top to `const MILESTONE_3 = {};`. They fail.
 2. In `app.js`, when `provider` is passed: read the bearer token, call `provider.verify`, and map the result to a user in `store.users` by the rules above. Switch off `/login` and `/token`. Every route's customer and role checks stay as they are.
 3. Write at least six attack tests of your own using `fakeProvider` from `support/harness.js`, so you have 24 or more. A fake person whose value is `"down"` makes `verify` throw.
 4. In `provider.js`, build the real adapter from your provider's docs. If you install its package, commit `package.json` and `package-lock.json`, and never `node_modules`. The grader installs from your lockfile.
@@ -168,7 +168,7 @@ At your next mentor session, tell this project's story without notes: what you b
     "q": "Why does the adapter live in its own file that app.js never requires?",
     "options": ["So tests can pass a fake, and switching providers only changes one file", "Because Node can't load two files that use crypto", "To make the app run faster", "Because providers forbid importing their library"],
     "answer": 0,
-    "explain": "The app depends on a small shape, verify(token), not on a vendor's library. Tests use a fake with that shape and no network, and a new provider is one new adapter."
+    "explain": "The app depends only on a small shape, verify(token). Tests use a fake with that shape and no network, and a new provider is one new adapter."
   },
   {
     "q": "During a provider outage, verify throws for every token. What should your API answer?",
