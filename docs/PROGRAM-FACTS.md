@@ -113,6 +113,6 @@ Towers of Hanoi stays, inside project 1.
 
 Live so far: the setup lessons and six "basics by hand" lessons (values,
 decisions and loops, functions, arrays and objects, speed and Big O, code that
-waits). The rest is in progress, so the phase and project names above are
+waits), and project 1, the by-hand toolkit, in three milestones. The rest is in progress, so the phase and project names above are
 settled but lesson-level detail is not.
 Check `curriculum/README.md` for what exists today.

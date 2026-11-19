@@ -139,6 +139,9 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - [Basics by Hand: Arrays and Objects](swe-basics-collections.md)
 - [Basics by Hand: How Fast Is It?](swe-basics-speed.md)
 - [Basics by Hand: Code That Waits](swe-basics-waiting.md)
+- [Project: By-Hand Toolkit. Your Own Array Methods](swe-toolkit-arrays.md)
+- [Project: By-Hand Toolkit. A Stack, a Queue and a Hash Map](swe-toolkit-structures.md)
+- [Project: By-Hand Toolkit. Your Own Test Runner](swe-toolkit-runner.md)
 
 ## Assignments
 
