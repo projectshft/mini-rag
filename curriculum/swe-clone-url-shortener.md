@@ -212,7 +212,7 @@ Some things to think about as you go. They're questions, and the answers are you
     { "text": "Let me load test it first. I'll send it two million fake clicks and tell you what breaks.", "verdict": "ok", "feedback": "Measuring is good, and you should do it. On its own it delays the answer. Pair it with your best guess about the bottleneck, so the test checks a hypothesis." },
     { "text": "We should rewrite it as microservices so each part can scale on its own.", "verdict": "weak", "feedback": "A rewrite before a launch adds risk and doesn't name what breaks. Splitting the system is a big answer to a question nobody has measured yet." }
   ],
-  "debrief": "In design questions, find the one thing that breaks first and fix that. Here it's almost always the write per click, not the lookup."
+  "debrief": "In design questions, find the one thing that breaks first and fix that. Here it's almost always the write on every click. The lookup is cheap."
 }
 ```
 

@@ -1,5 +1,5 @@
 // The API client: the only code in this folder that talks to the server.
-// Read "The API client contract" in ../README.md before you change this file.
+// Read "The API client contract" in taskboard/README.md before you change this file.
 
 export function createApi(baseUrl, fetchFn = (...args) => fetch(...args)) {
   return {

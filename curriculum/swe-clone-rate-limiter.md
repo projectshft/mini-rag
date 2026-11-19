@@ -165,7 +165,7 @@ Use the method from the lesson on how to think about a system. Some questions to
   "options": [
     { "text": "That only works if the load balancer spreads each customer's requests evenly, and it won't. A customer who lands on one server a lot gets cut off at 5 while the other 19 servers sit idle. It's a decent fallback for when the shared store is down, though.", "verdict": "best", "feedback": "This finds the hidden assumption, even spreading, and shows how it fails. Then it keeps the useful part of the idea as a fallback. That's how to disagree with a teammate." },
     { "text": "Sure, that's simple and it adds up.", "verdict": "weak", "feedback": "The arithmetic is right and the outcome isn't. Customers will be blocked at a fraction of their limit, and support will hear about it." },
-    { "text": "No, we need Redis.", "verdict": "ok", "feedback": "Probably where you end up, but with no reason given it's a preference, not an argument. Say what goes wrong with the split first." },
+    { "text": "No, we need Redis.", "verdict": "ok", "feedback": "Probably where you end up, but with no reason given it sounds like a preference. Say what goes wrong with the split first." },
     { "text": "It's fine if we make requests from each customer always go to the same server.", "verdict": "ok", "feedback": "This is a real technique, called sticky routing. It also means one server going down resets those customers' limits, and one huge customer can overload one server. Worth mentioning, with its costs." }
   ],
   "debrief": "Splitting a limit evenly assumes traffic is even. It almost never is."

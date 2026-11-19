@@ -1,5 +1,5 @@
 // The API client: the only code in this app that talks to the server.
-// Read "The API client contract" in ../README.md before you change this file.
+// Read "The API client contract" in taskboard/README.md before you change this file.
 import type { Board, ColumnId, Task } from "./board";
 
 export type TaskChanges = Partial<Pick<Task, "title" | "column" | "position">>;

@@ -1,6 +1,6 @@
 # Project: Reliable Webhooks. Retries and Duplicate Deliveries
 
-> **In this lesson:** deliveries that fail get tried again, with waits that grow and a random part so a crowd of retries doesn't hit a server all at once. Deliveries that keep failing are kept, not lost. Then the hard part: a retry can deliver the same event twice, so you'll give every delivery an idempotency key and build the receiving side that makes sure each one's work happens once. This is the second of three parts.
+> **In this lesson:** deliveries that fail get tried again, with waits that grow and a random part so a crowd of retries doesn't hit a server all at once. Deliveries that keep failing are set aside with a reason, so nothing is lost. Then the hard part: a retry can deliver the same event twice, so you'll give every delivery an idempotency key and build the receiving side that makes sure each one's work happens once. This is the second of three parts.
 
 ## Words you need first
 
