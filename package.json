@@ -12,6 +12,7 @@
 		"test:chunking": "jest chunking",
 		"test:selector": "jest selector",
 		"check:curriculum": "node scripts/check-curriculum.mjs",
+		"build:labs": "for d in public/labs/*/; do n=$(basename $d); tar -czf public/labs/$n.tar.gz -C public/labs $n; done",
 		"estimate-costs": "npx ts-node app/scripts/estimate-training-cost.ts",
 		"train": "npx ts-node app/scripts/upload-training-data.ts",
 		"scrape-content": "curl http://localhost:3000/api/scrape-content",

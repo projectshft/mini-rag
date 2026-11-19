@@ -20,6 +20,7 @@ const isPublicRoute = createRouteMatcher([
 	'/api/grade-callback', // grader reports; authenticated by HMAC signature, not a session
 	'/agentic-engineering(.*)',
 	'/curriculum', // employer-facing curriculum PDF (rewritten in next.config)
+	'/labs(.*)', // exercise starter files students download with curl (public/labs)
 ]);
 
 // Known AI training/scraper user-agents. Real browsers never match these, so

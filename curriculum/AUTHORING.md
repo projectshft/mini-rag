@@ -269,6 +269,15 @@ hidden tests. One submit block per lesson. The lesson must tell the student
 exactly which files the repo needs at its top level, because the grader looks
 for them by name. See "Graded submissions" in `docs/LMS-SETUP.md`.
 
+**Exercise files students download.** By-hand labs live in `public/labs/<name>/`
+(unfinished functions plus the tests the student can see). After changing them,
+run `yarn build:labs` to rebuild `public/labs/<name>.tar.gz`, which is what the
+lesson's `curl ... | tar xz` line fetches. `/labs` is a public route. A lab is
+one folder in the student's single `parsity-labs` repository, and the grader
+assignment with the same name sets `"dir": "<name>"` so only that folder is
+graded. Keep the visible tests here and the hidden ones in the grader repo, and
+change both together.
+
 ## Hints & reveals (toggle-able code)
 
 Use `<details>` blocks for anything the student should *try before seeing*:

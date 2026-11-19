@@ -17,7 +17,7 @@ Last updated 2026-11-19.
 | --- | --- |
 | Name | Parsity core program (the Software Engineering track on the LMS) |
 | Where it runs | ai.parsity.io |
-| Price | To confirm with Brian: the live pages say $4,900, an earlier note said $4,990. Also to confirm: whether the price is shown on public pages at all |
+| Price | $4,900. Whether it is shown on public pages is still to confirm with Brian (the live pages show it) |
 | Financing | $0 down with Climb Credit |
 | Length | As little as 12 weeks, or as long as a year. Support for up to 12 months. Never say "6 months" |
 | Start date | Any time. No cohorts |
@@ -111,6 +111,8 @@ Towers of Hanoi stays, inside project 1.
 
 ## Still being written
 
-The setup lessons are live. The rest of the curriculum is in progress, so the
-phase and project names above are settled but lesson-level detail is not.
+Live so far: the setup lessons and six "basics by hand" lessons (values,
+decisions and loops, functions, arrays and objects, speed and Big O, code that
+waits). The rest is in progress, so the phase and project names above are
+settled but lesson-level detail is not.
 Check `curriculum/README.md` for what exists today.

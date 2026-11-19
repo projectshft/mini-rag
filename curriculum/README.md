@@ -133,6 +133,12 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - [Setup: Your Editor, the Terminal and Your First Program](swe-setup-terminal.md)
 - [Setup: Git and GitHub](swe-setup-git.md)
 - [Setup: Reading and Running a Test](swe-setup-tests.md)
+- [Basics by Hand: Values and Variables](swe-basics-values.md)
+- [Basics by Hand: Decisions and Loops](swe-basics-decisions.md)
+- [Basics by Hand: Functions and Scope](swe-basics-functions.md)
+- [Basics by Hand: Arrays and Objects](swe-basics-collections.md)
+- [Basics by Hand: How Fast Is It?](swe-basics-speed.md)
+- [Basics by Hand: Code That Waits](swe-basics-waiting.md)
 
 ## Assignments
 
