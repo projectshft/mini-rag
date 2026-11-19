@@ -43,7 +43,7 @@ Every assignment is handed in as code and checked automatically, against tests t
 
 ## Results
 
-Parsity has trained [CONFIRM: number] career changers since [CONFIRM: year], from teaching, music, retail, the military and many other fields [CONFIRM: fields]. A few of their stories:
+Parsity has trained [CONFIRM: number] career changers since [CONFIRM: year], from teaching, music and many other fields [CONFIRM: other fields worth naming]. A few of their stories:
 
 - **Tom**, a former teacher, now a software engineer
 - **Nils**, a former music professor who changed careers at 44, now a software engineer
