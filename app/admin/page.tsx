@@ -1,6 +1,9 @@
 import { clerkClient } from '@clerk/nextjs/server';
 import { lmsPrisma } from '@/lib/lms/prisma';
-import { getDays } from '@/lib/lms/curriculum';
+import { getDays, getTracks } from '@/lib/lms/curriculum';
+import { readTracks } from '@/lib/lms/access';
+import { TrackPicker, accessLabel } from '@/components/lms/TrackPicker';
+import { ActionForm } from '@/components/lms/ActionForm';
 import {
 	litellmConfigured,
 	litellmProxyUrl,
@@ -14,6 +17,8 @@ import { RemoveStudentButton } from '@/components/lms/RemoveStudentButton';
 import {
 	inviteStudent,
 	revokeInvitation,
+	resendInvitationWithTracks,
+	setStudentTracks,
 	setInterviewAccess,
 	mintStudentKey,
 	bumpStudentKeyBudget,
@@ -44,14 +49,25 @@ function keyEmailHref(email: string, key: string): string {
 export default async function AdminPage() {
 	const client = await clerkClient();
 
-	const [students, days, inviteList] = await Promise.all([
+	const [students, days, inviteList, allTracks] = await Promise.all([
 		lmsPrisma.student.findMany({
 			include: { progress: { select: { lessonSlug: true } } },
 			orderBy: { invitedAt: 'asc' },
 		}),
 		getDays(),
 		client.invitations.getInvitationList({ status: 'pending' }),
+		getTracks(),
 	]);
+
+	// Track access lives on each Clerk user's publicMetadata (lib/lms/access.ts).
+	const tracksByStudent = new Map<string, string[] | null>();
+	if (students.length > 0) {
+		const { data: users } = await client.users.getUserList({
+			userId: students.map((s) => s.id),
+			limit: 500,
+		});
+		for (const u of users) tracksByStudent.set(u.id, readTracks(u.publicMetadata));
+	}
 
 	// Live spend per key (proxy lookups tolerate failure → null → "—").
 	const keysConfigured = litellmConfigured();
@@ -81,9 +97,12 @@ export default async function AdminPage() {
 			</div>
 
 			{/* Invite */}
-			<form
+			<ActionForm
 				action={inviteStudent}
+				label='Send invite'
+				pendingLabel='Sending…'
 				className='flex flex-wrap items-center gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm'
+				buttonClassName='cursor-pointer rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700'
 			>
 				<input
 					type='email'
@@ -92,13 +111,18 @@ export default async function AdminPage() {
 					placeholder='student@example.com'
 					className='min-w-64 flex-1 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-blue-500'
 				/>
-				<button
-					type='submit'
-					className='cursor-pointer rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700'
-				>
-					Send invite
-				</button>
-			</form>
+				<div className='order-last flex basis-full flex-wrap items-center gap-x-3 gap-y-1.5'>
+					<span className='text-xs font-semibold uppercase tracking-wide text-zinc-400'>
+						Courses
+					</span>
+					<TrackPicker tracks={allTracks} />
+				</div>
+				<p className='order-last basis-full text-xs text-zinc-400'>
+					Leave everything unticked for full program access. Tick only Intro to Agentic
+					Engineering for a $47 student: they see that track alone and get the same starter
+					credit as a checkout buyer.
+				</p>
+			</ActionForm>
 
 			{/* Pending invitations */}
 			{pending.length > 0 && (
@@ -109,10 +133,36 @@ export default async function AdminPage() {
 					<ul className='mt-3 divide-y divide-zinc-100 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm'>
 						{pending.map((inv) => (
 							<li
-								key={inv.id}
+								// Keyed by email, not id: "Save & resend" replaces the invitation
+								// (new id), and the row must survive so its result message shows.
+								key={inv.emailAddress}
 								className='flex items-center justify-between px-4 py-2.5 text-sm'
 							>
-								<span className='text-zinc-700'>{inv.emailAddress}</span>
+								<span className='min-w-0 flex-1 truncate text-zinc-700'>
+									{inv.emailAddress}
+									<span className='ml-2 text-xs text-zinc-400'>
+										{accessLabel(readTracks(inv.publicMetadata ?? undefined), allTracks)}
+									</span>
+								</span>
+								<ActionForm
+									action={resendInvitationWithTracks}
+									label='Save & resend'
+									pendingLabel='Resending…'
+									className='mx-4 flex max-w-md flex-wrap items-center justify-end gap-2'
+									buttonClassName='cursor-pointer rounded-lg border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600 hover:border-blue-400 hover:text-blue-700'
+									buttonTitle='Clerk invites cannot be edited, so this cancels the invite and emails a new one'
+								>
+									<input type='hidden' name='invitationId' value={inv.id} />
+									<input type='hidden' name='email' value={inv.emailAddress} />
+									<TrackPicker
+										// Remount on saved-state change so the boxes show what was saved
+										// (React resets the form after the action finishes).
+										key={JSON.stringify(readTracks(inv.publicMetadata ?? undefined))}
+										tracks={allTracks}
+										selected={readTracks(inv.publicMetadata ?? undefined)}
+										compact
+									/>
+								</ActionForm>
 								<form action={revokeInvitation}>
 									<input type='hidden' name='invitationId' value={inv.id} />
 									<button className='cursor-pointer text-xs font-medium text-zinc-400 hover:text-red-500'>
@@ -292,6 +342,12 @@ export default async function AdminPage() {
 									>
 										🎤 Interview
 									</th>
+									<th
+										className='whitespace-nowrap px-3 py-2 text-left font-semibold text-zinc-400'
+										title='Which tracks this student sees on /learn. None ticked = full program.'
+									>
+										Courses
+									</th>
 									<th className='px-3 py-2 text-right font-semibold text-zinc-400'>
 										Access
 									</th>
@@ -350,6 +406,25 @@ export default async function AdminPage() {
 														{s.interviewUnlockedAt ? 'Unlocked' : 'Locked'}
 													</button>
 												</form>
+											</td>
+											<td className='whitespace-nowrap px-3 py-2'>
+												<ActionForm
+													action={setStudentTracks}
+													label='Save'
+													className='flex max-w-md flex-wrap items-center gap-2'
+													buttonClassName='cursor-pointer rounded-lg border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600 hover:border-blue-400 hover:text-blue-700'
+												>
+													<input type='hidden' name='userId' value={s.id} />
+													<TrackPicker
+														key={JSON.stringify(tracksByStudent.get(s.id) ?? null)}
+														tracks={allTracks}
+														selected={tracksByStudent.get(s.id) ?? null}
+														compact
+													/>
+												</ActionForm>
+												<span className='mt-0.5 block text-[11px] text-zinc-400'>
+													{accessLabel(tracksByStudent.get(s.id) ?? null, allTracks)}
+												</span>
 											</td>
 											<td className='whitespace-nowrap px-3 py-2 text-right'>
 												<RemoveStudentButton userId={s.id} email={s.email || s.id} />

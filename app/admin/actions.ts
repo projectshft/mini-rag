@@ -5,29 +5,144 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/lms/admin';
 import { lmsPrisma } from '@/lib/lms/prisma';
 import { mintKey, revokeKey, updateKeyBudget } from '@/lib/lms/litellm';
+import { getTracks, trackSlug } from '@/lib/lms/curriculum';
+import { trackGrantMetadata } from '@/lib/lms/access';
 
-/** Invite a student by email — Clerk sends the magic-link/code email. */
-export async function inviteStudent(formData: FormData) {
-	await requireAdmin();
-	const email = String(formData.get('email') ?? '').trim();
-	if (!email) return;
+/**
+ * The track slugs ticked on an admin form, keeping only real tracks. None
+ * ticked = the program default (every track except the grant-only ones).
+ */
+async function tracksFromForm(formData: FormData): Promise<string[]> {
+	const valid = new Set((await getTracks()).map(trackSlug));
+	const picked = formData.getAll('tracks').map(String);
+	return [...new Set(picked)].filter((t) => valid.has(t));
+}
 
-	// The invite link must land on /sign-up: sign-ups are Restricted, so the
-	// account only gets created when the <SignUp> component consumes the
-	// __clerk_ticket that Clerk appends to this URL. Pointing at a protected
-	// route (like /learn) bounces the invitee to /sign-in, drops the ticket,
-	// and strands them — no account exists yet, so sign-in always errors.
-	// If NEXT_PUBLIC_APP_URL is unset, omit redirectUrl entirely so Clerk
-	// falls back to its Account Portal flow instead of a broken relative URL.
+function sendInvitation(
+	client: Awaited<ReturnType<typeof clerkClient>>,
+	email: string,
+	tracks: string[]
+) {
 	const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-	const client = await clerkClient();
-	await client.invitations.createInvitation({
+	const grant = trackGrantMetadata(tracks);
+	return client.invitations.createInvitation({
 		emailAddress: email,
 		...(appUrl ? { redirectUrl: `${appUrl}/sign-up` } : {}),
+		...(grant.tracks
+			? {
+					publicMetadata: {
+						tracks: grant.tracks,
+						...(grant.creditUsd ? { creditUsd: grant.creditUsd } : {}),
+						source: 'admin',
+					},
+				}
+			: {}),
 		notify: true,
 		ignoreExisting: true,
 	});
+}
+
+export type ActionResult = { ok: boolean; message: string } | null;
+
+function describe(tracks: string[], names: Map<string, string>): string {
+	if (tracks.length === 0) return 'full program';
+	return tracks.map((t) => names.get(t) ?? t).join(', ');
+}
+
+async function trackNames(): Promise<Map<string, string>> {
+	return new Map((await getTracks()).map((t) => [trackSlug(t), t]));
+}
+
+/** Clerk errors carry a readable message in errors[0]; fall back to the JS message. */
+function errorMessage(e: unknown): string {
+	const first = (e as { errors?: { longMessage?: string; message?: string }[] })?.errors?.[0];
+	return first?.longMessage || first?.message || (e as Error)?.message || 'Unknown error';
+}
+
+/**
+ * Invite a student by email — Clerk sends the magic-link/code email. The
+ * ticked tracks ride along on the invitation's publicMetadata and land on the
+ * user when they sign up; none ticked = full program access.
+ *
+ * The invite link must land on /sign-up: sign-ups are Restricted, so the
+ * account only gets created when the <SignUp> component consumes the
+ * __clerk_ticket that Clerk appends to this URL. Pointing at a protected
+ * route (like /learn) bounces the invitee to /sign-in, drops the ticket,
+ * and strands them — no account exists yet, so sign-in always errors.
+ * If NEXT_PUBLIC_APP_URL is unset, omit redirectUrl entirely so Clerk
+ * falls back to its Account Portal flow instead of a broken relative URL.
+ */
+export async function inviteStudent(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+	await requireAdmin();
+	const email = String(formData.get('email') ?? '').trim();
+	if (!email) return { ok: false, message: 'Enter an email address.' };
+
+	const tracks = await tracksFromForm(formData);
+	try {
+		const client = await clerkClient();
+		await sendInvitation(client, email, tracks);
+	} catch (e) {
+		return { ok: false, message: `Invite failed: ${errorMessage(e)}` };
+	}
 	revalidatePath('/admin');
+	return { ok: true, message: `Invite emailed to ${email} (${describe(tracks, await trackNames())}).` };
+}
+
+/** Change which tracks a joined student can see. Takes effect on their next page load. */
+export async function setStudentTracks(_prev: ActionResult, formData: FormData): Promise<ActionResult> {
+	await requireAdmin();
+	const userId = String(formData.get('userId') ?? '');
+	if (!userId) return { ok: false, message: 'Missing student.' };
+
+	const tracks = await tracksFromForm(formData);
+	try {
+		const client = await clerkClient();
+		// Merged into existing publicMetadata; the nulls in a "full program"
+		// grant delete the tracks/creditUsd keys.
+		await client.users.updateUserMetadata(userId, {
+			publicMetadata: trackGrantMetadata(tracks),
+		});
+	} catch (e) {
+		return { ok: false, message: `Save failed: ${errorMessage(e)}` };
+	}
+	revalidatePath('/admin');
+	revalidatePath('/learn');
+	return { ok: true, message: `Saved: ${describe(tracks, await trackNames())}.` };
+}
+
+/**
+ * Change a pending invite's tracks. Clerk can't edit an invitation, so this
+ * revokes it and sends a fresh one — the invitee gets a new email and the
+ * old link stops working.
+ */
+export async function resendInvitationWithTracks(
+	_prev: ActionResult,
+	formData: FormData
+): Promise<ActionResult> {
+	await requireAdmin();
+	const invitationId = String(formData.get('invitationId') ?? '');
+	const email = String(formData.get('email') ?? '').trim();
+	if (!invitationId || !email) return { ok: false, message: 'Missing invite.' };
+
+	const tracks = await tracksFromForm(formData);
+	const client = await clerkClient();
+	try {
+		await client.invitations.revokeInvitation(invitationId);
+	} catch (e) {
+		return { ok: false, message: `Couldn't cancel the old invite: ${errorMessage(e)}` };
+	}
+	try {
+		await sendInvitation(client, email, tracks);
+	} catch (e) {
+		// The old invite is already gone, so say so plainly: re-invite from the form.
+		revalidatePath('/admin');
+		return {
+			ok: false,
+			message: `Old invite cancelled but the new one failed (${errorMessage(e)}). Re-invite ${email} from the form above.`,
+		};
+	}
+	revalidatePath('/admin');
+	return { ok: true, message: `New invite emailed (${describe(tracks, await trackNames())}).` };
 }
 
 /**

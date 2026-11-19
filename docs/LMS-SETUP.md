@@ -95,7 +95,11 @@ yarn dev
   `["intro-to-agentic-engineering"]`). No `tracks` key = full access to every
   track (all existing students). With `tracks`, `/learn` only lists those
   tracks, other tracks' days 404, and bonus/interview lessons are hidden.
-  Edit it on the user in the Clerk dashboard to grant or remove a track.
+  Set it from `/admin`: tick courses on the invite form (none ticked = full
+  program; Intro to Agentic Engineering alone = a $47 student, with the same
+  `creditUsd` as a checkout buyer), change a joined student's courses in the
+  Progress table, or fix a pending invite with "Save & resend" (Clerk can't
+  edit an invitation, so it's revoked and re-sent).
 - **Purchase**: the Stripe Payment Link
   (https://buy.stripe.com/eVq9ATgrv0Mkbd75Lx4wM0y) redirects to
   `/claim?session_id={CHECKOUT_SESSION_ID}` (public route). `/claim` looks up
@@ -106,7 +110,7 @@ yarn dev
   shows "check your inbox", an existing account shows "sign in". An existing
   track-restricted user gets the track appended; full-access users are never
   touched. No webhook — if a buyer closes the tab before the redirect, invite
-  them from `/admin` and set their `tracks` in Clerk by hand.
+  them from `/admin` with only Intro to Agentic Engineering ticked.
 - **Credit key**: on a restricted buyer's first `/learn` visit (LiteLLM
   configured, no key yet) a key with budget `creditUsd` is minted and shown
   on `/learn` with the proxy URL. Clerk `privateMetadata.creditKeyMintedAt`

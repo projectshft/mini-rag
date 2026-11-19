@@ -1,5 +1,5 @@
 import { clerkClient } from '@clerk/nextjs/server';
-import { AGENTIC_TRACK, readTracks } from './access';
+import { AGENTIC_TRACK, agenticCreditUsd, readTracks } from './access';
 
 export type ClaimResult =
 	| { kind: 'invited'; email: string }
@@ -84,13 +84,12 @@ export async function claimPurchase(sessionId: string | undefined): Promise<Clai
 		}
 
 		const appUrl = process.env.NEXT_PUBLIC_APP_URL;
-		const creditUsd = Number(process.env.AGENTIC_CREDIT_USD || 5);
 		await client.invitations.createInvitation({
 			emailAddress: email,
 			...(appUrl ? { redirectUrl: `${appUrl}/sign-up` } : {}),
 			publicMetadata: {
 				tracks: [AGENTIC_TRACK],
-				creditUsd: Number.isFinite(creditUsd) ? creditUsd : 5,
+				creditUsd: agenticCreditUsd(),
 				source: 'agentic-47',
 			},
 			notify: true,
