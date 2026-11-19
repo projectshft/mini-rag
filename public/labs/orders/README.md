@@ -32,9 +32,14 @@ curl -s -X POST localhost:3000/products -H 'content-type: application/json' \
 - `src/app.js` exports `createApp(options)`. It returns a Node `http.Server` that
   is **not** listening yet. Tests call `server.listen(0)` themselves.
   - Milestone 1: `createApp()` keeps everything in memory.
-  - Milestone 2 and 3: `createApp({ db })`, where `db` is a Postgres connection
-    with `db.query(sql, params)`, `db.exec(sql)` and `db.transaction(fn)`. Tests
-    pass a fresh in-memory PGlite each time.
+  - Milestone 2 and 3: `createApp({ db })`, where `db` is a Postgres connection.
+    Use only these three methods, because tests may hand you a wrapper around
+    PGlite rather than PGlite itself:
+    - `await db.query(sql, params)` runs one statement and returns `{ rows }`.
+    - `await db.exec(sql)` runs one or more statements with no parameters.
+    - `await db.transaction(async (tx) => { ... })` runs your function inside a
+      transaction. Use `tx.query` inside it, never `db.query`. Throwing rolls it
+      back.
   - Milestone 4: `createApp({ dataFile })`, where `dataFile` is the path of a JSON
     file. `createApp({ db })` must keep working.
 - `src/migrate.js` exports `async migrate(db)` (from milestone 2). It applies every
@@ -194,10 +199,42 @@ PGlite.
 Hidden tests fire many requests at once. Your API must never sell stock it doesn't
 have, never restock twice, and never create two orders for one retried request.
 
-PGlite has a single connection and runs one transaction at a time, so a transaction
-alone can hide a bug that a real server with many connections would show. We also
-check that stock is taken with a conditional update or a locked row, the way it must
-be on a real server.
+PGlite runs inside your process, so it answers without the short wait a real
+database across a network has. Without that wait, one request finishes before the
+next one starts and a race never shows up. The hidden tests add the wait back. Do the
+same in your own tests by wrapping the database before you hand it to `createApp`:
+
+```js
+const tick = () => new Promise((resolve) => setImmediate(resolve));
+
+function overNetwork(q) {
+  return {
+    async query(sql, params) {
+      await tick();
+      const result = await q.query(sql, params);
+      await tick();
+      return result;
+    },
+    async exec(sql) {
+      await tick();
+      const result = await q.exec(sql);
+      await tick();
+      return result;
+    },
+    transaction(fn) {
+      return q.transaction((tx) => fn(overNetwork(tx)));
+    },
+  };
+}
+
+const server = createApp({ db: overNetwork(db) });
+```
+
+PGlite also has a single connection and runs one transaction at a time, so wrapping
+a read-then-write in a transaction hides a bug that a real server with many
+connections would show. So we also check how stock is taken: with a conditional
+update (`UPDATE ... WHERE ... stock >= ...`), a locked row (`SELECT ... FOR UPDATE`)
+or a serializable transaction.
 
 ## Milestone 4: documents
 

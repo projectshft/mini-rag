@@ -1,4 +1,5 @@
-/* Enough styling to look like a board. Change anything you like. */
+/* Enough styling to look like a board. Change anything you like.
+   It expects the three columns inside one element with class="columns". */
 * { box-sizing: border-box; }
 body { font-family: system-ui, sans-serif; margin: 0; padding: 16px; background: #f4f4f5; color: #18181b; }
 h1 { font-size: 1.4rem; margin: 0 0 16px; }
