@@ -1,0 +1,14 @@
+{
+  "name": "parsity-deploy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A small notes API, made ready to deploy twice.",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --env-file-if-exists=.env server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "name": "taskboard-dom",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "devDependencies": {
+    "jsdom": "29.1.1"
+  }
+}

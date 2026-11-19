@@ -1,0 +1,9 @@
+{
+  "name": "auth",
+  "private": true,
+  "description": "Project 5: Auth three ways. An orders API for several customers, and the login you add to it.",
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "node --test"
+  }
+}

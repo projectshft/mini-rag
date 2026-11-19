@@ -1,0 +1,11 @@
+{
+  "name": "orders",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.3.15"
+  }
+}
