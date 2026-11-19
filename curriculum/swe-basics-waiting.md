@@ -133,6 +133,8 @@ async function load() {
 }
 ```
 
+Sometimes you want to fail on purpose. `throw new Error("out of tries")` stops the function and makes its promise rejected with that error. Inside a `catch`, `throw err` passes the same error on to whoever called you. In an `async` function, a thrown error and a rejected promise are the same thing.
+
 **The most common async bug is a missing `await`.** Without it you get the promise, not the value:
 
 ```js
@@ -183,7 +185,7 @@ Open `basics-two/waiting.js` in your labs repository and fill in:
 node --test waiting.test.js
 ```
 
-`retry` is the stretch here. It's also real: you'll write the same idea again when you build something that calls a server that's sometimes down.
+`retry` is the hardest of the three. It's also real: you'll write the same idea again when you build something that calls a server that's sometimes down.
 
 If you're stuck for more than 20 minutes, write out in plain words what should happen on each try before you write code. Then ask an agent to explain the idea you're missing, not write it.
 

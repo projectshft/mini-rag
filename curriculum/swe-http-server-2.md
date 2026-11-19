@@ -256,9 +256,9 @@ When this passes, your second project is done.
 
 Record a short screen video, under five minutes, explaining this in your own words:
 
-> I type `http://localhost:3000/style.css` into my browser. What happens, step by step, from the moment I press Enter until the page turns blue?
+> I type `http://localhost:3000/` into my browser. What happens, step by step, from the moment I press Enter until the heading turns blue?
 
-Start before your code runs: DNS for `localhost`, the port, the TCP connection. Then walk through your own server: where the chunks arrive, where the head is parsed, how the file is found and checked, and what goes back. Draw it as you go. Bring it to your next mentor session.
+Start before your code runs: the name `localhost`, the port, the TCP connection. Then walk through your own server: where the chunks arrive, where the head is parsed, how `index.html` is found and checked, and what goes back. Then the second request, the one the browser makes for `/style.css` when it reads the page, which is what turns the heading blue. Draw it as you go. Bring it to your next mentor session.
 
 ## Tell the story
 

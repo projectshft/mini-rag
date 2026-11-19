@@ -87,8 +87,8 @@ renumber:       b=0, c=1, a=2
   "note": "This is the core of moveTask, for a move within one column.",
   "code": "const others = tasksIn(board, column).___1___((t) => t.id !== id);\nconst at = Math.max(0, Math.min(position, others.___2___));\nconst moved = [...others.slice(0, at), task, ...others.slice(at)];\nconst renumbered = moved.map((t, i) => ___3___);",
   "blanks": [
-    { "options": ["filter", "find", "splice"], "answer": "filter", "explain": "filter makes a new array without the task. splice would cut it out of an array that might be shared with the old board." },
-    { "options": ["length", "length - 1", "length + 1"], "answer": "length", "explain": "After taking the task out, inserting at others.length puts it at the very end, which is where a position past the end belongs." },
+    { "options": ["find", "splice", "filter"], "answer": "filter", "explain": "filter makes a new array without the task. splice would cut it out of an array that might be shared with the old board." },
+    { "options": ["length - 1", "length", "length + 1"], "answer": "length", "explain": "After taking the task out, inserting at others.length puts it at the very end, which is where a position past the end belongs." },
     { "options": ["({ ...t, position: i })", "(t.position = i, t)", "t"], "answer": "({ ...t, position: i })", "explain": "Setting t.position directly changes the task object the old board still holds. Copy it with the new position." }
   ]
 }

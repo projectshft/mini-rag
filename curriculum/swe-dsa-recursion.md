@@ -84,8 +84,8 @@ The third question is the hard one, and there's a trick to it. **Trust the call.
   "code": "function countItems(items) {\n  if (items.length === ___1___) return ___2___;\n  return ___3___ + countItems(items.slice(1));\n}",
   "blanks": [
     { "options": ["0", "1", "-1"], "answer": "0", "explain": "The smallest array is the empty one. Starting at 1 would never stop for an empty array." },
-    { "options": ["0", "1", "items"], "answer": "0", "explain": "An empty array has no items, so its count is 0." },
-    { "options": ["1", "items[0]", "items.length"], "answer": "1", "explain": "Trust the call to count the rest. The first item adds one more to that count." }
+    { "options": ["1", "0", "items"], "answer": "0", "explain": "An empty array has no items, so its count is 0." },
+    { "options": ["items[0]", "items.length", "1"], "answer": "1", "explain": "Trust the call to count the rest. The first item adds one more to that count." }
   ]
 }
 ```

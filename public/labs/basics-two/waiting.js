@@ -12,6 +12,8 @@ function after(ms, value) {
 // inOrder takes an array of tasks. Each task is a function that gives back a promise.
 // Run them ONE AT A TIME: start the second only after the first has finished.
 // Give back a promise for an array of their results, in the same order.
+// If a task fails, inOrder fails with that task's error, and the tasks after it
+// never start.
 function inOrder(tasks) {
   // your code here
 }

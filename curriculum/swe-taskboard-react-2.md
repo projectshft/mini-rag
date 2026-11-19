@@ -12,10 +12,10 @@
 
 ## Watch your board struggle
 
-Stop the API and start it again like this:
+Stop the API with Ctrl+C and start it again like this, from `taskboard/react`:
 
 ```bash
-node server.js --slow 1500 --flaky 0.3
+node ../api/server.js --slow 1500 --flaky 0.3
 ```
 
 Every answer now takes a second and a half, and about 3 changes in 10 fail with a 503. Reload your board and use it for a minute. Look for:
@@ -65,7 +65,7 @@ Here's the bug that most first attempts have. To undo a failed change, the obvio
 const before = board;
 setBoard(moveTask(board, id, to, at));
 try {
-  await api.updateTask(id, { column: to });
+  await api.updateTask(id, { column: to, position: at });
 } catch (err) {
   setBoard(before);      // puts back the whole board as it was
 }

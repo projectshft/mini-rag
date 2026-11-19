@@ -20,7 +20,7 @@ A request has four parts, in this order:
 POST /notes HTTP/1.1                     the request line
 Host: localhost:4000                     headers, one per line
 Content-Type: application/json
-Content-Length: 18
+Content-Length: 19
                                          a blank line: the headers are over
 {"text":"buy milk"}                      the body, if there is one
 ```
@@ -30,10 +30,12 @@ A response has the same shape:
 ```
 HTTP/1.1 201 Created                     the status line
 Content-Type: application/json           headers
-Content-Length: 27
+Content-Length: 26
                                          a blank line
 {"id":1,"text":"buy milk"}               the body
 ```
+
+Count the body of the request yourself: `{"text":"buy milk"}` is 19 characters, all plain English, so 19 bytes.
 
 Every line ends with two invisible characters, `\r\n`: a carriage return and a line feed, together called **CRLF**. The blank line is just `\r\n` on its own. It's how the reader knows the headers have ended.
 
@@ -145,7 +147,7 @@ Get this wrong and one of two things happens. Too small, and the reader stops ea
 
 ## Write a response by hand
 
-Go back to `parsity/net-play` from the last lesson. Change `listen.js` so it answers:
+Go back to `~/parsity/net-play` from the last lesson. Change `listen.js` so it answers:
 
 ```js
 const net = require("node:net");
@@ -155,7 +157,7 @@ const server = net.createServer((socket) => {
     console.log(JSON.stringify(chunk.toString()));
     socket.end(
       "HTTP/1.1 200 OK\r\n" +
-      "Content-Type: text/plain\r\n" +
+      "Content-Type: text/plain; charset=utf-8\r\n" +
       "Content-Length: 5\r\n" +
       "\r\n" +
       "hello"
@@ -166,7 +168,7 @@ const server = net.createServer((socket) => {
 server.listen(4000, () => console.log("Listening on port 4000"));
 ```
 
-`socket.end(text)` sends the text and then closes the connection.
+`socket.end(text)` sends the text and then closes the connection. The `charset=utf-8` tells the browser how to turn the bytes back into letters, which matters as soon as you send one that isn't plain English.
 
 Run it and visit `http://localhost:4000` in your browser. It shows `hello`. You just wrote a web server's whole job in five lines.
 
@@ -183,8 +185,8 @@ Now break it, one change at a time, restarting each time with Ctrl+C and `node l
   "note": "The body is the 11 characters Hello, café plus nothing else.",
   "code": "HTTP/1.1 ___1___\\r\\nContent-Type: text/plain; charset=utf-8\\r\\nContent-Length: ___2___\\r\\n___3___Hello, café",
   "blanks": [
-    { "options": ["200 OK", "OK 200", "200"], "answer": "200 OK", "explain": "The status line is the version, the code, then the reason phrase, separated by spaces." },
-    { "options": ["12", "11", "10"], "answer": "12", "explain": "Eleven characters, but é takes two bytes. Content-Length counts bytes." },
+    { "options": ["OK 200", "200 OK", "200"], "answer": "200 OK", "explain": "The status line is the version, the code, then the reason phrase, separated by spaces." },
+    { "options": ["11", "10", "12"], "answer": "12", "explain": "Eleven characters, but é takes two bytes. Content-Length counts bytes." },
     { "options": ["\\r\\n", "\\n\\n", "nothing"], "answer": "\\r\\n", "explain": "The headers end with an empty line. The previous header already ended in \\r\\n, so one more \\r\\n makes the blank line." }
   ]
 }

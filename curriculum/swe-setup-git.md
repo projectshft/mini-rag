@@ -36,7 +36,10 @@ Check whether Git is already installed:
 git --version
 ```
 
-If you see a version number, you're set. If not, install it from [git-scm.com](https://git-scm.com/downloads).
+If you see a version number, you're set. If not:
+
+- Mac: the command itself may offer to install the "command line developer tools". Say yes, wait for it to finish, and run `git --version` again.
+- Windows, in your Ubuntu window: `sudo apt-get install -y git`.
 
 Tell Git who you are. This name goes on every snapshot you save:
 
@@ -46,6 +49,21 @@ git config --global user.email "you@example.com"
 ```
 
 Then make a free account at [github.com](https://github.com/) with the same email.
+
+### Let your computer sign in to GitHub
+
+GitHub doesn't accept your password from the terminal. The simplest way to sign in is GitHub's own command-line tool, `gh`, which sets up the sign-in for Git once and for all.
+
+- Mac: download the macOS installer from [cli.github.com](https://cli.github.com/) and run it.
+- Windows, in your Ubuntu window: `sudo apt-get install -y gh`.
+
+Then:
+
+```bash
+gh auth login
+```
+
+It asks a few questions. Choose **GitHub.com**, then **HTTPS**, then **Yes** to signing in Git with your GitHub credentials, then **Login with a web browser**. It shows a one-time code and opens GitHub in your browser. If no browser opens, copy the address it prints into your browser yourself. Paste the code, approve, and you're done.
 
 ## Four commands
 
@@ -58,10 +76,10 @@ Then make a free account at [github.com](https://github.com/) with the same emai
 
 ## Your first commit
 
-Go back to the folder from the last lesson:
+Go back to the folder from the last lesson. A new terminal starts in your home folder, so:
 
 ```bash
-cd parsity/hello
+cd ~/parsity/hello
 git init
 git status
 ```
@@ -115,7 +133,7 @@ git branch -M main
 git push -u origin main
 ```
 
-The first time, GitHub asks you to sign in. Follow the prompt in your browser.
+If Git asks for a username and password here, the `gh auth login` step above didn't finish. Run it again, then push again.
 
 Refresh the page on GitHub. Your file is there, and so are both of your commits.
 
@@ -141,6 +159,12 @@ From now on, the loop is: change something, `git add .`, `git commit -m "..."`, 
     "options": ["A commit is saved on your computer. It reaches GitHub when you push", "GitHub is down", "Commits take a day to appear", "You need to make a new repository"],
     "answer": 0,
     "explain": "Committing and pushing are two steps. Commit saves the snapshot locally, push sends it to the remote."
+  },
+  {
+    "q": "You changed two files and ran git commit -m \"Fix the greeting\". Git says \"no changes added to commit\". What did you skip?",
+    "options": ["git add, which marks the changes to go into the snapshot", "git push", "git init", "Saving the files"],
+    "answer": 0,
+    "explain": "A commit only saves what you've marked with git add. Run git status: your changes show as not staged until you add them."
   },
   {
     "q": "Why make a commit right before you let an agent change your code?",

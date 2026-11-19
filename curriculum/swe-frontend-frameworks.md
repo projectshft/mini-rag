@@ -136,8 +136,8 @@ setBoard({ ...board, tasks: [...board.tasks, newTask] });
   "note": "Each blank is a choice an agent gets wrong regularly.",
   "code": "function rename(id, title) {\n  setBoard((board) => ({\n    ...board,\n    tasks: board.tasks.___1___((t) => (t.id === id ? ___2___ : t)),\n  }));\n}",
   "blanks": [
-    { "options": ["map", "forEach", "find"], "answer": "map", "explain": "map gives back a new array with one item per task. forEach gives back nothing, and find gives back one task." },
-    { "options": ["{ ...t, title }", "Object.assign(t, { title })", "(t.title = title, t)"], "answer": "{ ...t, title }", "explain": "The other two change the old task object in place, which is the same mistake as push on the array." }
+    { "options": ["forEach", "map", "find"], "answer": "map", "explain": "map gives back a new array with one item per task. forEach gives back nothing, and find gives back one task." },
+    { "options": ["Object.assign(t, { title })", "(t.title = title, t)", "{ ...t, title }"], "answer": "{ ...t, title }", "explain": "The other two change the old task object in place, which is the same mistake as push on the array." }
   ]
 }
 ```
@@ -245,7 +245,7 @@ How to read it:
 | `import type { Task } from "./board"` | Import only the label, not any code |
 | `.ts` and `.tsx` | TypeScript files. `.tsx` may contain JSX |
 
-The payoff: when you or an agent call `moveTask(board, "a", "dooing", 0)`, the editor underlines `"dooing"` before you ever run it. `npm run typecheck` runs the same check across the whole project.
+The payoff: when you or an agent call `moveTask(board, "a", "dooing", 0)`, the editor underlines `"dooing"` before you ever run it. In the task board project, `npm run typecheck` runs the same check across every file.
 
 ## Where rendering happens
 
@@ -307,7 +307,7 @@ You'll use both in the project, and the difference is mostly about that table.
 
 **React with Vite.** React only renders components. **Vite** is the tool around it: a development server that reloads the page as you save, and a build command that bundles everything into a few plain files. The result renders in the browser. You choose and add everything else yourself, such as how to load data and how to handle more than one page.
 
-**Next.js.** A framework built on React that makes the other choices for you. Each folder in `app/` is a page. Components run on the server by default and can fetch data before any HTML is sent. Components that need state or clicks are marked with `"use client"` at the top of their file and run in the browser too. It needs a running server, or a host that runs one for you.
+**Next.js.** A framework built on React that makes the other choices for you. Each folder in `app/` that holds a `page.tsx` file is a page, at the address named after the folder. Components run on the server by default and can fetch data before any HTML is sent. Components that need state or clicks are marked with `"use client"` at the top of their file and run in the browser too. It needs a running server, or a host that runs one for you.
 
 ```jsx
 // app/page.tsx: runs on the server. It can await data.

@@ -19,11 +19,22 @@ You don't need to memorize many. You need to recognize them.
 
 ## Install three things
 
-1. **A code editor.** [Visual Studio Code](https://code.visualstudio.com/) is free and the most common. Install it and open it.
-2. **Node.** Download the LTS version from [nodejs.org](https://nodejs.org/) and run the installer.
-3. **A terminal.** You already have one.
+1. **A terminal.** You already have one.
    - Mac: open the app called Terminal.
-   - Windows: install [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install), then open the Ubuntu app it adds. This gives you the same commands everyone else uses.
+   - Windows: install [Windows Subsystem for Linux](https://learn.microsoft.com/en-us/windows/wsl/install), then open the Ubuntu app it adds. This gives you the same commands everyone else uses. From now on, every command in this program is typed in that Ubuntu window, never in PowerShell.
+2. **A code editor.** [Visual Studio Code](https://code.visualstudio.com/) is free and the most common. Install it and open it.
+   - Mac: in VS Code, press Cmd+Shift+P, type `shell command`, and choose **Install 'code' command in PATH**. That lets you open folders from the terminal.
+   - Windows: install VS Code on Windows as normal. The first time you type `code .` in Ubuntu, it sets itself up to work with WSL. If VS Code offers the WSL extension, accept it.
+3. **Node.**
+   - Mac: download the LTS version from [nodejs.org](https://nodejs.org/) and run the installer.
+   - Windows: the installer from the website puts Node in Windows, where your Ubuntu window can't see it. Install it inside Ubuntu instead, by typing these two lines there:
+
+```bash
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+```
+
+`sudo` runs a command as the computer's administrator, so it asks for the password you chose when you set up Ubuntu. Nothing shows while you type it. That's normal.
 
 Check that Node is installed. Type this in your terminal and press Enter:
 
@@ -31,9 +42,9 @@ Check that Node is installed. Type this in your terminal and press Enter:
 node --version
 ```
 
-You should see a version number like `v22.11.0`. Any number 20 or higher is fine.
+You should see a version number like `v22.11.0`. Any number 22 or higher is fine.
 
-If you get "command not found", close the terminal, open a new one and try again. If it still fails after 20 minutes, stop and bring it to your setup session. Getting stuck on installs is normal and is not a sign of anything.
+If you get "command not found", close the terminal, open a new one and try again. If it still fails after 20 minutes, stop and bring it to office hours or your first mentor session. Getting stuck on installs is normal and is not a sign of anything.
 
 ## Six commands
 
@@ -63,6 +74,8 @@ code .
 ```
 
 Your editor opens on an empty folder. Make a new file called `hello.js` and type this in. Type it, don't paste it.
+
+Typing it yourself is the rule for a while. Until the lessons on working with an agent, no agent writes code for you. You can ask an AI to explain an error or a word. The code is yours.
 
 ```js
 const name = "your name here";
@@ -100,6 +113,12 @@ console.log sends text back to your terminal
     "explain": "Node looks for the file in the folder the terminal is in. Run pwd and ls to check where you are and what's there."
   },
   {
+    "q": "You open a new terminal, type `cd hello`, and get \"No such file or directory\". You know the folder exists. What do you check first?",
+    "options": ["Run pwd and ls to see where the terminal is and what's in that folder", "Reinstall Node", "Make the folder again with mkdir", "Restart the computer"],
+    "answer": 0,
+    "explain": "A new terminal starts in your home folder, and hello is inside parsity. cd parsity first, or cd parsity/hello. pwd and ls tell you where you are before you guess."
+  },
+  {
     "q": "Why does it matter that you can read terminal commands, when an agent will run most of them?",
     "options": ["So you know what the agent is doing on your computer before you let it", "Because agents can't use the terminal", "To type faster", "It doesn't matter"],
     "answer": 0,
@@ -113,7 +132,8 @@ console.log sends text back to your terminal
 - The terminal is always in one folder. `pwd` and `ls` answer most "why isn't this working" questions.
 - `node file.js` runs a JavaScript file.
 - An error message names the file and the line. Read it before you do anything else.
-- You only need to recognize commands, and that takes a week of using them.
+- You only need to recognize commands. Using them every day is how you get there.
+- Until the agent lessons, you write every line of code yourself.
 
 ## Work with AI
 

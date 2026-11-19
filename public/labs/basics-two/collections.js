@@ -25,7 +25,8 @@ function addItem(cart, item) {
 // countWords("the cat and the hat") gives
 //   { the: 2, cat: 1, and: 1, hat: 1 }
 // Capital letters don't matter: "The" and "the" are the same word.
-// Words are separated by spaces. Empty text gives {}.
+// Words are separated by spaces. Extra spaces don't make extra words:
+// countWords("  big   dog ") gives { big: 1, dog: 1 }. Empty text gives {}.
 function countWords(text) {
   // your code here
 }

@@ -43,19 +43,19 @@ Claude Code is what we recommend and what the examples use. Codex CLI and Cursor
 | Codex CLI | Your terminal | ChatGPT Plus, about $20 a month |
 | Cursor | Its own editor, a version of VS Code | Cursor's paid plan, about $20 a month |
 
-To install Claude Code, you need Node, which you already have:
+To install Claude Code on a Mac, or in your Ubuntu window on Windows:
 
 ```bash
-npm install -g @anthropic-ai/claude-code
+curl -fsSL https://claude.ai/install.sh | bash
 claude --version
 ```
 
-`npm install -g` installs a program for your whole computer, as opposed to inside one project. If the command fails, follow the official setup page from Anthropic, which may list a newer way. If you're stuck for more than 30 minutes, stop and bring it to office hours.
+The first line downloads Anthropic's installer and runs it. Piping a download straight into `bash` runs whatever the site sends, so only do it with addresses you trust, like this one from the official docs. If it fails, follow the setup page in Anthropic's Claude Code documentation, which lists other ways, such as `npm install -g @anthropic-ai/claude-code`. If you're stuck for more than 30 minutes, stop and bring it to office hours.
 
 Start it from inside your labs repository:
 
 ```bash
-cd parsity-labs
+cd ~/parsity/parsity-labs
 claude
 ```
 
@@ -111,10 +111,11 @@ basics-one/, basics-two/, toolkit/ and problems/ are mine to write. You may
 explain ideas and point at lines. Don't write or edit code in these folders,
 even if I ask in passing. Remind me of this rule instead.
 
-## Project folders
+## Everywhere else
 
-From http-server/ on, you may write code once I've written a plan in that
-folder's PLAN.md.
+In any other folder, you may write code once I've written a plan for the
+change, in that folder's PLAN.md or in my request. Work on a branch, one small
+piece at a time, and stop after each piece so I can read the diff.
 
 ## How to work
 
@@ -227,10 +228,10 @@ The $10 of API credit included in the program is for calling a model from your o
     "explain": "The agent doesn't remember past sessions. Rules that must last go in the instructions file it reads every time, and even then you check."
   },
   {
-    "q": "The agent asks to run npm install express in your http-server folder. What should you do?",
-    "options": ["Say no and ask why it wants it, because this project rules out Express and you didn't ask for a package", "Allow it, packages are normal", "Allow it, then delete the package later", "Allow it and turn on accept-every-edit so it stops asking"],
+    "q": "You asked the agent to fix one failing test. It asks to run npm install express. What should you do?",
+    "options": ["Say no and ask why it wants it, because you didn't ask for a package and your CLAUDE.md says to ask first", "Allow it, packages are normal", "Allow it, then delete the package later", "Allow it and turn on accept-every-edit so it stops asking"],
     "answer": 0,
-    "explain": "Installing a package is a decision. Here it also breaks the project's rules. The prompt is your chance to catch that before it happens."
+    "explain": "Installing a package is a decision, and it has nothing to do with the test you asked about. The prompt is your chance to catch that before it happens."
   },
   {
     "q": "You are deep into one long session and the agent keeps forgetting a rule you gave at the start. What's the best move?",

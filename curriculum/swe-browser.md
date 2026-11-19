@@ -184,8 +184,8 @@ list.addEventListener("click", (event) => {
   "note": "One listener on the board handles every delete button, including ones added later.",
   "code": "board.___1___(\"click\", (event) => {\n  const button = event.target.___2___(\"button[data-action='delete']\");\n  if (!button) return;\n  const card = button.closest(\"[data-task-id]\");\n  deleteTask(card.___3___.taskId);\n});",
   "blanks": [
-    { "options": ["addEventListener", "onClick", "listen"], "answer": "addEventListener", "explain": "addEventListener is how plain DOM code attaches a listener. onClick is how React spells it." },
-    { "options": ["closest", "querySelector", "parentNode"], "answer": "closest", "explain": "The click might land on an icon inside the button. closest walks up until it finds the button. querySelector looks down, not up." },
+    { "options": ["onClick", "listen", "addEventListener"], "answer": "addEventListener", "explain": "addEventListener is how plain DOM code attaches a listener. onClick is how React spells it." },
+    { "options": ["querySelector", "closest", "parentNode"], "answer": "closest", "explain": "The click might land on an icon inside the button. closest walks up until it finds the button. querySelector looks down, not up." },
     { "options": ["dataset", "attributes", "value"], "answer": "dataset", "explain": "data-task-id is read through dataset, with the name turned into taskId." }
   ]
 }
@@ -256,7 +256,7 @@ const settings = JSON.parse(localStorage.getItem("settings") || "{}");
 
 Three rules:
 
-- **Anything in `localStorage` can be read by any script on the page.** That includes a script injected through XSS. Never keep passwords or login tokens there. You'll see where they go in the lessons on login.
+- **Anything in `localStorage` can be read by any script on the page.** That includes a script injected through XSS. Never keep passwords or login tokens there. You'll see where they go in the auth lessons.
 - **It's per browser.** Your laptop and your phone each have their own. Data people expect to see everywhere belongs on a server.
 - **It's for small conveniences.** A collapsed column, a theme, a half-typed draft.
 
@@ -330,7 +330,7 @@ Then write `counter.js` so that:
 
 1. Clicking "Click me" adds one to the count on the page.
 2. The count survives a reload, using `localStorage`.
-3. Each click adds a line to the list saying what time it happened.
+3. Each click adds a line to the list saying what time it happened. `new Date().toLocaleTimeString()` gives you the time as text.
 4. "Reset" sets the count to 0, empties the list, and clears what you saved.
 
 Serve the folder and open it:
@@ -340,7 +340,7 @@ cd browser-practice
 npx http-server -p 8080 -c-1
 ```
 
-`npx` downloads a small package and runs it once. The static file server you built in the web server project works too. Open http://localhost:8080/ and try it.
+`npx` downloads a small package and runs it once. The first time, it asks whether to install `http-server`: answer yes. `-c-1` turns off caching, so a reload always gets your latest file. The static file server you built in the web server project works too. Open http://localhost:8080/ and try it.
 
 Then use DevTools on your own page:
 

@@ -131,9 +131,11 @@ That table is a debugging tool. When something "doesn't work", the first questio
 You're going to listen on a port and read what your browser sends. This is by hand and short. Make a folder outside your labs repository:
 
 ```bash
-mkdir -p parsity/net-play
-cd parsity/net-play
+mkdir -p ~/parsity/net-play
+cd ~/parsity/net-play
 ```
+
+`mkdir -p` makes the folder, and any folders on the way to it, and doesn't complain if it's already there. The `~` means your home folder, so this works from wherever your terminal happens to be.
 
 Create `listen.js` and type this in:
 

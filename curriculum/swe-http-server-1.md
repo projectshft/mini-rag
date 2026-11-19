@@ -121,8 +121,8 @@ Every other line is a header. Here's a trap agents fall into regularly: `Host: l
   "note": "line is a string like \"Host: localhost:3000\".",
   "code": "const colon = line.___1___(\":\");\nconst name = line.slice(0, colon).___2___();\nconst value = line.slice(colon + 1).___3___();",
   "blanks": [
-    { "options": ["indexOf", "lastIndexOf", "split"], "answer": "indexOf", "explain": "indexOf finds the first colon. lastIndexOf would split Host: localhost:3000 at the colon before 3000, and split cuts at every colon." },
-    { "options": ["toLowerCase", "toUpperCase", "trim"], "answer": "toLowerCase", "explain": "Header names ignore capital letters, so store them lowercased. Then headers.host works whether the client sent Host or HOST." },
+    { "options": ["lastIndexOf", "split", "indexOf"], "answer": "indexOf", "explain": "indexOf finds the first colon. lastIndexOf would split Host: localhost:3000 at the colon before 3000, and split cuts at every colon." },
+    { "options": ["toUpperCase", "toLowerCase", "trim"], "answer": "toLowerCase", "explain": "Header names ignore capital letters, so store them lowercased. Then headers.host works whether the client sent Host or HOST." },
     { "options": ["trim", "toLowerCase", "toString"], "answer": "trim", "explain": "Values can have spaces around them. Values do care about capital letters, so trim them and leave the letters alone." }
   ]
 }
@@ -132,7 +132,7 @@ The query string, `q=cats&page=2`, becomes `{ q: "cats", page: "2" }`. Character
 
 ## Writing the response
 
-You wrote one by hand in the last lesson:
+You wrote one by hand in the lesson on HTTP:
 
 ```
 HTTP/1.1 200 OK\r\n

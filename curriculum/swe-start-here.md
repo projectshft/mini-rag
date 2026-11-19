@@ -2,6 +2,13 @@
 
 > **In this lesson:** what you're going to learn, how the work runs, what "passing" means, and why you'll write some code by hand even though an agent will write most of it. No setup yet. That starts in the next lesson.
 
+## Words you need first
+
+- **Coding agent.** An AI tool that reads your files, writes code and runs commands on your computer when you ask it to. Claude Code is the one we recommend.
+- **Project.** A larger piece of software you build over a few lessons, in parts called milestones.
+- **Hidden tests.** Tests we run on your work that you can't see. They check the cases people tend to forget.
+- **Mentor.** A working software engineer you meet one on one.
+
 ## What this program is
 
 Most places that teach programming spend months on syntax. Where the brackets go. Which method does what.
@@ -34,16 +41,16 @@ Eight projects. Each one is hard because it's open-ended, and because it has to 
 
 You go at your own pace. Some people finish in as little as 12 weeks. Others take most of a year. We support you for up to 12 months.
 
-Each stretch of the program has the same two slots.
+Most of the time you have two kinds of work going at once.
 
-| Slot | What you do | How it's checked |
+| Kind | What you do | How it's checked |
 | --- | --- | --- |
-| Build | The next piece of your current project | Tests, and an AI review of your code |
-| By hand | A problem or two written by you, with no agent | Tests |
+| Build | The next piece of your current project | Your own tests, then our hidden tests. Your mentor reads your decision memos |
+| By hand | A problem or two written by you, with no agent | Your own tests, then our hidden tests |
 
 Now and then a lesson also asks you to **explain**: record a short video where you talk through an idea and draw it. Those only show up where saying it out loud really helps. The first one comes early.
 
-You have 12 sessions with a mentor. Your mentor is a working engineer. They don't grade you. They listen to you explain what you built, tell you where your understanding is thin, and help you get unstuck.
+You have up to 12 one-on-one sessions with a mentor. Your mentor is a working engineer. They don't grade you. They listen to you explain what you built, tell you where your understanding is thin, and help you get unstuck.
 
 There are weekly office hours and a guest speaker every month.
 
@@ -51,10 +58,10 @@ There are weekly office hours and a guest speaker every month.
 
 - A project passes when its tests pass. That includes a second set of tests you can't see. When one of those fails, you're told what kind of case failed, not the test itself.
 - You can fix and resubmit as many times as you need.
-- The next project unlocks when the current one passes. Lessons and by-hand problems stay open, so being stuck on a project never stops you learning.
+- Do the projects in order, because each one builds on the last. Lessons and by-hand problems stay open, so being stuck on a project never stops you learning.
 - There are no deadlines inside the program. Miss a week and you pick up where you stopped.
 
-Each part also has one **stretch**: a harder extra that's clearly marked. It's there if you want to reach. Skipping it never holds you back.
+Some lessons end with a **stretch**: a harder extra that's clearly marked and never graded. It's there if you want to reach. Skipping it never holds you back.
 
 ## Why write code by hand at all?
 
@@ -67,6 +74,12 @@ Two reasons.
 **Interviews still ask for it.** Many companies will hand you a problem and watch you solve it with no AI. That may be out of date. It's also the door you have to walk through.
 
 So the by-hand work is small and steady: a problem or two at a time, getting harder slowly. For the interview problems, use any language you like.
+
+## When the agent arrives
+
+For the whole first part of the program, the setup lessons, the basics and your first project, no agent writes any code for you. You can ask an AI to explain an idea or an error message. You write every line.
+
+The agent arrives in the second part, in two lessons on setting one up and working with it. Any coding agent is allowed. We recommend Claude Code, and the examples use it. From then on the agent writes most of your project code, and two rules never change: you plan the change before it writes anything, and you read every line it changes before you keep it.
 
 ## Why you'll sometimes explain on video
 
@@ -94,7 +107,7 @@ There's a career reason too. In interviews, and at work, you'll be asked to expl
     "q": "What is your mentor for?",
     "options": ["Hearing you explain your work, finding where your understanding is thin, and getting you unstuck", "Grading every assignment", "Writing code for you", "Checking your attendance"],
     "answer": 0,
-    "explain": "Tests and an AI review check your work. Your mentor is the person who listens, pushes on what you said, and has done the job."
+    "explain": "Tests check your work. Your mentor is the person who listens, pushes on what you said, and has done the job."
   }
 ]
 ```
@@ -102,7 +115,8 @@ There's a career reason too. In interviews, and at work, you'll be asked to expl
 ## Key takeaways
 
 - You're here to understand how software works and to direct an agent that builds it. Syntax is not the goal.
-- Two slots: build and by hand. Sometimes a video where you explain. Plus 12 sessions with a mentor who has done the job.
+- Two kinds of work: build and by hand. Sometimes a video where you explain. Plus up to 12 sessions with a mentor who has done the job.
+- No agent writes code until the agent lessons. After that, you plan first and review every line it writes.
 - Passing means the tests pass, including ones you can't see. Resubmit as often as you need.
 - By-hand work and the explanation videos are how you prove, to yourself first, that you understand what got built.
 
@@ -111,7 +125,7 @@ There's a career reason too. In interviews, and at work, you'll be asked to expl
 ```ai-prompt
 title: Tell me what I'm getting into
 ---
-I am starting a part-time program to become a software engineer. I have no
+I am starting a self-paced program to become a software engineer. I have no
 coding experience. I'll learn how computers, networks and databases work, build eight
 projects with an AI coding agent, write small problems by hand and sometimes record a
 short video explaining what I learned. Ask me five questions, one at a time, about my

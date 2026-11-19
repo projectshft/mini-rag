@@ -117,6 +117,8 @@ function hash(key, bucketCount) {
 
 The remainder keeps the answer inside the array, however long the key is.
 
+In the picture below, the bucket numbers are made up to show the idea. Work out the real ones by hand with the function above and you'll get different buckets.
+
 ```mermaid
 flowchart LR
   K1["key: ada"] --> H["hash function"]
@@ -136,7 +138,7 @@ The usual fix: each bucket is a small array of pairs. To find a key, go to its b
 
 Two things follow from this, and both matter for your design:
 
-- **A weak hash function piles keys up.** The one above gives `"listen"` and `"silent"` the same number, because they have the same letters. A better one makes position count, for example by multiplying the running total by 31 before adding each character.
+- **A weak hash function piles keys up.** The one above gives `"listen"` and `"silent"` the same number, because they have the same letters. A better one makes position count, for example by multiplying the running total by 31 before adding each character. Take the remainder at every step, not only at the end, so the number stays small and exact on long keys.
 - **Too few buckets makes it slow again.** With 8 buckets and 80,000 keys, each bucket holds about 10,000 pairs and you're back to searching. Real hash maps grow: when they get crowded, they make a bigger array of buckets and move everything across.
 
 How many buckets you start with, and what your hash function does, are your decisions. You'll explain them in your memo.

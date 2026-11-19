@@ -129,6 +129,19 @@ function addBonus(scores) {
 }
 ```
 
+```blanks
+{
+  "title": "Predict the output",
+  "note": "Work out each one before you pick. Two names for one array, or two arrays?",
+  "code": "const a = [1, 2];\nconst b = a;\nconst c = [...a];\nb.push(3);\nconsole.log(a.length);   // ___1___\nconsole.log(c.length);   // ___2___\n\nconst book = { title: \"Dune\" };\nconst field = \"title\";\nconsole.log(book[field]); // ___3___",
+  "blanks": [
+    { "options": ["2", "3", "an error"], "answer": "3", "explain": "b is a second name for the same array as a. Pushing through b changes the one array both names point at." },
+    { "options": ["3", "0", "2"], "answer": "2", "explain": "c was made with [...a] before the push, so it's a separate array with its own two items." },
+    { "options": ["\"Dune\"", "\"title\"", "undefined"], "answer": "\"Dune\"", "explain": "Square brackets use the value inside field, which is \"title\", so this reads book.title." }
+  ]
+}
+```
+
 ```quiz
 [
   {
@@ -142,6 +155,12 @@ function addBonus(scores) {
     "options": ["The caller's own list is now sorted too, and they may rely on the original order", "Sorting is slow", "Functions can't change arrays", "It isn't, sorting is always safe"],
     "answer": 0,
     "explain": "The function got the caller's actual array. Changing it changes it for everyone who holds it. Copy first when the caller shouldn't be affected."
+  },
+  {
+    "q": "To find the biggest number, you start with let best = 0 and loop. What do you get for [-4, -9, -2]?",
+    "options": ["0, a number that isn't even in the array", "-2", "-9", "undefined"],
+    "answer": 0,
+    "explain": "No negative number is bigger than 0, so best never changes. Start with the first item of the array instead."
   }
 ]
 ```
@@ -156,7 +175,7 @@ git add .
 git commit -m "Add the second set of exercises"
 ```
 
-Same rule as before: you write these. No agent.
+Same rule as before: you write these. No agent. Commit and push after each function you finish.
 
 ## Your exercises
 
@@ -165,7 +184,7 @@ Open `basics-two/collections.js` and fill in:
 - `largest`: the biggest number in an array. Think about what your starting value should be. What if every number is negative?
 - `totalPrice`: the cost of a cart.
 - `addItem`: a new cart with one more item, leaving the original alone.
-- `countWords`: a tally of the words in some text. `"a b".split(" ")` gives `["a", "b"]`.
+- `countWords`: a tally of the words in some text. `"a b".split(" ")` gives `["a", "b"]`. Watch out: `"a  b".split(" ")`, with two spaces, gives `["a", "", "b"]`. An empty string isn't a word.
 
 From inside `basics-two`:
 

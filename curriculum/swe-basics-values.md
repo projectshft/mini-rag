@@ -75,6 +75,10 @@ const word = "parsity";
 word.length            // 7
 word[0]                // "p"   (counting starts at 0)
 word.toUpperCase()     // "PARSITY"
+"ADA".toLowerCase()    // "ada"
+
+String(42)             // "42", a number turned into text
+Number("42")           // 42, text turned into a number
 
 Math.round(4.6)        // 5
 Math.round(22.9885 * 100) / 100   // 22.99
@@ -88,8 +92,8 @@ That last line is how you round money to cents: multiply by 100, round, divide b
   "note": "Work each one out in your head before you pick.",
   "code": "const a = \"7\";\nconst b = 7;\nconsole.log(a + b);   // ___1___\nconsole.log(b + b);   // ___2___\nconsole.log(a[0]);    // ___3___",
   "blanks": [
-    { "options": ["\"77\"", "14", "an error"], "answer": "\"77\"", "explain": "a is a string, so + glues. The number 7 gets turned into text and stuck on the end." },
-    { "options": ["14", "\"77\"", "7"], "answer": "14", "explain": "Both are numbers, so + adds." },
+    { "options": ["14", "\"77\"", "an error"], "answer": "\"77\"", "explain": "a is a string, so + glues. The number 7 gets turned into text and stuck on the end." },
+    { "options": ["\"77\"", "7", "14"], "answer": "14", "explain": "Both are numbers, so + adds." },
     { "options": ["\"7\"", "7", "undefined"], "answer": "\"7\"", "explain": "Position 0 of the string \"7\" is the character \"7\". It's still text." }
   ]
 }
@@ -99,9 +103,10 @@ That last line is how you round money to cents: multiply by 100, round, divide b
 
 All your by-hand work goes in one repository. You'll add a folder to it for each set of exercises.
 
-In your terminal, from your `parsity` folder:
+In your terminal:
 
 ```bash
+cd ~/parsity
 mkdir parsity-labs
 cd parsity-labs
 git init
@@ -126,7 +131,15 @@ git add .
 git commit -m "Add the first set of exercises"
 ```
 
-Create the repository on GitHub the same way you did before, and push.
+Create a repository called `parsity-labs` on GitHub the same way you did before, then connect it and push, with your own username:
+
+```bash
+git remote add origin https://github.com/your-username/parsity-labs.git
+git branch -M main
+git push -u origin main
+```
+
+Everything you hand in from now on goes in this one repository, one folder per lab or project. Keep it public, because the grader has to be able to read it.
 
 ## Your exercises
 

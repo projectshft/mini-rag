@@ -66,8 +66,8 @@ function bestRun(sales, size) {
   "code": "total = total ___1___ sales[right] ___2___ sales[___3___];",
   "blanks": [
     { "options": ["+", "-", "*"], "answer": "+", "explain": "The item at right is coming into the window, so it's added." },
-    { "options": ["-", "+", "/"], "answer": "-", "explain": "One item falls off the left as the window moves, so its value comes out of the total." },
-    { "options": ["right - size", "right - 1", "0"], "answer": "right - size", "explain": "The window is size long and now ends at right, so the item that just fell off sits size places back." }
+    { "options": ["+", "/", "-"], "answer": "-", "explain": "One item falls off the left as the window moves, so its value comes out of the total." },
+    { "options": ["right - 1", "right - size", "0"], "answer": "right - size", "explain": "The window is size long and now ends at right, so the item that just fell off sits size places back." }
   ]
 }
 ```

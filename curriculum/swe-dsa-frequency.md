@@ -86,8 +86,8 @@ Six letters, six passes. Each pass does a lookup and an update in the object, an
   "note": "Each blank is a choice beginners get wrong.",
   "code": "function tally(items) {\n  const counts = ___1___;\n  for (const item of items) {\n    counts[item] = (counts[item] ___2___ 0) + 1;\n  }\n  return ___3___;\n}",
   "blanks": [
-    { "options": ["{}", "[]", "0"], "answer": "{}", "explain": "The tally maps each item to a count, so it needs keys. That's an object." },
-    { "options": ["||", "&&", "+"], "answer": "||", "explain": "counts[item] is undefined the first time. undefined || 0 gives 0. With && you'd get undefined, and undefined + 1 is NaN." },
+    { "options": ["[]", "{}", "0"], "answer": "{}", "explain": "The tally maps each item to a count, so it needs keys. That's an object." },
+    { "options": ["&&", "+", "||"], "answer": "||", "explain": "counts[item] is undefined the first time. undefined || 0 gives 0. With && you'd get undefined, and undefined + 1 is NaN." },
     { "options": ["counts", "items", "item"], "answer": "counts", "explain": "The tally is what you built. Returning the input gives the caller back what they already had." }
   ]
 }

@@ -102,14 +102,17 @@ function runIt(fn, value) {
 runIt(shout, "hi");   // "HI!"
 ```
 
-Notice `shout` has no brackets when it's passed in. `shout` is the function itself. `shout("hi")` runs it and gives you the result.
+Notice `shout` has no parentheses, the round brackets, when it's passed in. `shout` is the function itself. `shout("hi")` runs it and gives you the result.
 
 There's a shorter way to write a small function, called an arrow function. These two do the same thing:
 
 ```js
 function double(n) { return n * 2; }
-const double = (n) => n * 2;
+
+const doubleArrow = (n) => n * 2;
 ```
+
+The arrow form has no word `function` and, when the body is one expression, no `return`: the value after `=>` is what it gives back.
 
 You'll see both everywhere. Agents love the arrow form.
 
@@ -138,9 +141,9 @@ Each call to `makeGreeter` makes a fresh `greeting` that only its own inner func
   "note": "Think about return, and about what each name refers to.",
   "code": "function add(a, b) {\n  a + b;\n}\nconst x = add(2, 3);        // x is ___1___\n\nconst twice = (n) => n * 2;\nconst y = twice;            // y is ___2___\nconst z = twice(4);         // z is ___3___",
   "blanks": [
-    { "options": ["undefined", "5", "an error"], "answer": "undefined", "explain": "There's no return, so the sum is worked out and thrown away. A function with no return gives undefined." },
-    { "options": ["the function itself", "8", "undefined"], "answer": "the function itself", "explain": "No brackets, so nothing ran. y is now another name for the same function." },
-    { "options": ["8", "the function itself", "4"], "answer": "8", "explain": "The brackets call the function with 4, and it returns 8." }
+    { "options": ["5", "an error", "undefined"], "answer": "undefined", "explain": "There's no return, so the sum is worked out and thrown away. A function with no return gives undefined." },
+    { "options": ["8", "the function itself", "undefined"], "answer": "the function itself", "explain": "No parentheses, so nothing ran. y is now another name for the same function." },
+    { "options": ["8", "the function itself", "4"], "answer": "8", "explain": "The parentheses call the function with 4, and it returns 8." }
   ]
 }
 ```
@@ -161,7 +164,7 @@ node --test functions.test.js
 
 ## Hand it in
 
-When all three files are done, run every test in the folder at once:
+When all three files are done, run every test in the folder at once, from inside `basics-one`:
 
 ```bash
 node --test

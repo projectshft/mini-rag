@@ -18,10 +18,10 @@ Tests matter more in this program than they did for developers ten years ago, fo
 
 ## Set it up
 
-Make a new folder next to `hello`:
+Make a new folder next to `hello`, inside `parsity`:
 
 ```bash
-cd ..
+cd ~/parsity
 mkdir first-test
 cd first-test
 git init
@@ -83,7 +83,7 @@ That gap is the whole story. When nobody gives a name, the function glues the wo
 
 ## Make it pass
 
-Change `greet.js` so that it uses "stranger" when there's no name. There are a few ways to do it. Try it yourself for 15 minutes before you look anything up. If you're stuck after that, ask an agent to explain what `undefined` means and how to check for it, but write the fix yourself.
+Change `greet.js` so that it uses "stranger" when there's no name. There are a few ways to do it. Try it yourself for 15 minutes before you look anything up. If you're stuck after that, ask an AI chat to explain what `undefined` means and how to check for it, but write the fix yourself. No agent writes code for you until the agent lessons.
 
 Run `node --test` again. When both pass, commit:
 
@@ -94,6 +94,16 @@ git commit -m "Greet a stranger when no name is given"
 
 Notice the order of what just happened. The test existed first and failed. You changed the code. The test passed. You'll repeat that loop on every project.
 
+```order
+title: The loop you'll repeat on every project
+---
+Write a test that says what should happen
+Run it and watch it fail
+Change the code
+Run it again and watch it pass
+Commit, with a note that says what changed
+```
+
 ## Now break it on purpose
 
 Change `"Hello, "` to `"Hi, "` in `greet.js` and run the tests. Both fail. Good. A test that can't fail isn't checking anything.
@@ -102,11 +112,13 @@ Put it back and confirm both pass.
 
 ## Hand it in
 
-This is your setup week checkpoint.
+This is your setup checkpoint.
 
 1. Add a third test of your own to `greet.test.js`. Pick something the first two don't cover. What should happen with a name that's just spaces? You decide, and the test is how you write your decision down.
 2. Make it pass.
-3. Create a repository on GitHub called `first-test`, push your work, and paste the link below.
+3. Commit. Create a repository on GitHub called `first-test` and push, the same way you pushed `hello`. Paste the link below.
+
+`greet.js` and `greet.test.js` have to sit at the top of the repository, not inside another folder. That's where the grader looks for them.
 
 ```submit
 assignment: first-test

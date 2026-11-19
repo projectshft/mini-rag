@@ -1,6 +1,6 @@
 # Project: By-Hand Toolkit. Your Own Test Runner
 
-> **In this lesson:** you'll build a small version of the tool that has been checking your work since the first week. Then you'll write your first decision memo, where you explain the choices you made in this project. This is the last of three parts, and the last code you'll write with no agent at all.
+> **In this lesson:** you'll build a small version of the tool that has been checking your work since your first test. Then you'll write your first decision memo, where you explain the choices you made in this project. This is the last of three parts, and the last project you build with no agent at all. Interview problems stay by hand for the whole program.
 
 ## Words you need first
 
@@ -165,7 +165,7 @@ That shape, what, hardest part, decision and cost, is how you'll answer "tell me
 
 ## Stretch
 
-Make your runner handle tests that return a promise. A test like `async () => { expectEqual(await after(10, 5), 5); }` should be waited for before it's marked passed, which means `run` has to become async too. Test it.
+Make your runner handle tests that return a promise. A test like `async () => { expectEqual(await after(10, 5), 5); }`, using your `after` from the basics, should be waited for before it's marked passed or failed. Add this as a second method, `runAsync()`, which gives back a promise of the same report. Keep `run()` exactly as it is: our tests call it and expect the report straight away, not a promise. Test `runAsync` with a test that fails only after it has waited.
 
 ```quiz
 [
