@@ -162,6 +162,8 @@ Hosts change their screens often, so these steps say what to look for. When a la
 5. Find **environment variables** and add `ADMIN_TOKEN` with a new random value. Use a different value from your local one.
 6. Deploy. You'll get an address ending in `.vercel.app`.
 
+If you forgot `ADMIN_TOKEN`, every request fails with an error. That's your fail-fast check doing its job. Open the logs, find the error that names `ADMIN_TOKEN`, add the setting, and deploy again. Settings are read when the app starts, so a change to them only takes effect on a new deploy.
+
 How this works: Vercel turns each file in `api/` into a serverless function. `vercel.json` sends every path to `api/index.js`, which exports the same handler as `server.js` uses. Files in `public/` are served as they are. That's why the folder exists: with no `public/` folder, some hosts serve every file in the project, your source code included.
 
 ## Check it

@@ -27,4 +27,7 @@ for (let i = 1; i <= 5; i++) d.publish({ id: "evt_" + i, type: "order.paid", dat
 
 Promise.resolve(d.onIdle()).then(() => {
   log(`delivered ${(d.delivered() || []).length}, dead ${(d.deadLetters() || []).length}`);
+  // Timeout timers for sends that already answered are still counting down.
+  // Nothing is left to do, so stop instead of waiting for them.
+  process.exit(0);
 });
