@@ -1,0 +1,4 @@
+This file has spaces in its name.
+
+A browser asks for it as /docs/about%20this%20server.txt, so your server has to
+decode %20 back into a space before it looks for the file.
