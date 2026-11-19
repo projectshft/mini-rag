@@ -22,6 +22,18 @@ import { useState } from 'react';
 // with explanations. Ephemeral — resets on reload.
 
 type Blank = { options: string[]; answer: string; explain?: string };
+
+// Authors tend to list the right answer first. Order the pills by a hash of
+// their text so the answer's position gives nothing away. The order is the
+// same on the server and in the browser, so the page hydrates cleanly.
+function scrambled(options: string[], salt: number): string[] {
+	const score = (text: string) => {
+		let h = 2166136261 ^ salt;
+		for (let i = 0; i < text.length; i++) h = Math.imul(h ^ text.charCodeAt(i), 16777619);
+		return h >>> 0;
+	};
+	return [...options].sort((x, y) => score(x) - score(y));
+}
 type BlanksData = { title?: string; note?: string; code: string; blanks: Blank[] };
 
 export function FillBlanks({ source }: { source: string }) {
@@ -96,7 +108,7 @@ export function FillBlanks({ source }: { source: string }) {
 							<span className='w-8 shrink-0 text-xs font-semibold text-zinc-400'>
 								?{idx + 1}
 							</span>
-							{blank.options.map((opt) => {
+							{scrambled(blank.options, idx).map((opt) => {
 								const isPick = picks[idx] === opt;
 								let cls = 'border-zinc-200 bg-white text-zinc-700 hover:border-blue-400';
 								if (checked && opt === blank.answer) {

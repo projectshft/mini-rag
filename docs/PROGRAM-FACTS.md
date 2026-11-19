@@ -27,7 +27,7 @@ Last updated 2026-11-19.
 | Student costs | About $20 a month for a coding agent. Claude is recommended and any tool is allowed. $10 of API credit is included |
 | Languages | JavaScript and TypeScript for the projects. Interview problems in any language the student wants |
 | How work is checked | Students submit a GitHub repo. Their own tests run, then hidden tests. A failed hidden test reports the kind of case, never the test |
-| Explanation videos | Not required every week. One near the start, then only where explaining out loud really helps |
+| Explanation videos | Not weekly. A handful, only where explaining out loud really helps: the event loop, how a request reaches a server, a race condition, sessions versus tokens, a system design, and the capstone demo |
 | Experience needed | None |
 
 ## Who it is for
@@ -87,7 +87,7 @@ Do not mention any of these:
 - jQuery
 - A career coach
 
-Towers of Hanoi stays, inside project 1.
+Towers of Hanoi stays, as one of the recursion interview problems.
 
 ## Wording rules
 
@@ -109,10 +109,14 @@ Towers of Hanoi stays, inside project 1.
 | Syllabus email | Kajabi | Not checked |
 | ai.parsity.io/agentic-engineering | This repo, `app/agentic-engineering/page.tsx` | Matches. Does not mention the cap of 10 a month |
 
-## Still being written
+## What's built
 
-Live so far: the setup lessons and six "basics by hand" lessons (values,
-decisions and loops, functions, arrays and objects, speed and Big O, code that
-waits), and project 1, the by-hand toolkit, in three milestones. The rest is in progress, so the phase and project names above are
-settled but lesson-level detail is not.
-Check `curriculum/README.md` for what exists today.
+All five parts are written and on ai.parsity.io, in the Software Engineering
+track: 79 lessons, eight projects plus three small clones (a URL shortener, a
+rate limiter and a cache), and 22 interview problems. 42 assignments are
+checked automatically against hidden tests. Design docs, memos, videos, live
+deploys and the capstone are checked by the mentor.
+
+Not built yet: an AI review of code and memos, and locking the next project
+until the current one passes. Lessons say "do the projects in order" for now.
+`curriculum/README.md` has the full lesson list.
