@@ -143,6 +143,84 @@ blocks (`quiz`, `visual`, `ai-prompt`, `<details>` reveals).
 - [Project: By-Hand Toolkit. A Stack, a Queue and a Hash Map](swe-toolkit-structures.md)
 - [Project: By-Hand Toolkit. Your Own Test Runner](swe-toolkit-runner.md)
 
+**Part 2 — The Web**
+
+- [Working with an Agent: Setting One Up](swe-agent-setup.md)
+- [Working with an Agent: Plan, Branch, Review](swe-agent-workflow.md)
+- [The Web: What Happens When You Type a URL](swe-net-journey.md)
+- [The Web: HTTP Requests and Responses](swe-net-http.md)
+- [Interview Problems: Frequency Counters](swe-dsa-frequency.md)
+- [Project: HTTP from Scratch. A Server on a Raw Connection](swe-http-server-1.md)
+- [Project: HTTP from Scratch. Routes, Files and Saying No](swe-http-server-2.md)
+- [Interview Problems: Two Pointers](swe-dsa-two-pointers.md)
+- [The Browser: The DOM, Events and Storage](swe-browser.md)
+- [The Browser: Components, State and Where Rendering Happens](swe-frontend-frameworks.md)
+- [Interview Problems: Sliding Window](swe-dsa-sliding-window.md)
+- [Project: Task Board. The Plain DOM Version](swe-taskboard-dom.md)
+- [Project: Task Board. React and Components](swe-taskboard-react-1.md)
+- [Project: Task Board. Slow Servers, Failures and Instant Changes](swe-taskboard-react-2.md)
+- [Interview Problems: Stacks](swe-dsa-stack.md)
+- [Project: Task Board. Next.js and Where Rendering Belongs](swe-taskboard-next.md)
+- [Interview Problems: Recursion](swe-dsa-recursion.md)
+
+**Part 3 — Data and Trust**
+
+- [Designing an API](swe-api-design.md)
+- [Project: Orders Under Load. The API](swe-orders-api.md)
+- [Databases: Tables, Keys and SQL](swe-sql.md)
+- [Project: Orders Under Load. Postgres](swe-orders-postgres.md)
+- [Interview Problems: Binary Search](swe-dsa-binary-search.md)
+- [Databases: Transactions and Race Conditions](swe-transactions.md)
+- [Project: Orders Under Load. At the Same Moment](swe-orders-concurrency.md)
+- [Databases: Documents and Caches](swe-documents.md)
+- [Project: Orders Under Load. Documents and the Memo](swe-orders-documents.md)
+- [Interview Problems: Linked Lists](swe-dsa-linked-lists.md)
+- [Teamwork: Merge Conflicts and Code Review](swe-git-teamwork.md)
+- [Auth: Who You Are and What You May Do](swe-auth-concepts.md)
+- [Project: Auth Three Ways. Sessions, Customers and Roles](swe-auth-sessions.md)
+- [Project: Auth Three Ways. Signed Tokens](swe-auth-tokens.md)
+- [Project: Auth Three Ways. A Login Provider](swe-auth-provider.md)
+- [Interview Problems: Trees](swe-dsa-trees.md)
+- [Testing: What a Test Proves](swe-testing-proof.md)
+- [Career: Your LinkedIn Profile](swe-career-linkedin.md)
+- [Career: Telling Project Stories](swe-career-stories.md)
+- [Interview Problems: Intervals](swe-dsa-intervals.md)
+
+**Part 4 — Shipping and Scale**
+
+- [Shipping: From Your Laptop to Everyone Else](swe-shipping.md)
+- [Git: Checks on Every Pull Request](swe-git-automation.md)
+- [Project: Deploy It Twice. Serverless First](swe-deploy-serverless.md)
+- [Project: Deploy It Twice. A Container, a Rollback and a Memo](swe-deploy-container.md)
+- [Interview Problems: Backtracking](swe-dsa-backtracking.md)
+- [Architecture: One App, Services or Functions](swe-architecture.md)
+- [System Design: A Method for Any System](swe-system-design.md)
+- [Clone: A URL Shortener](swe-clone-url-shortener.md)
+- [Clone: A Rate Limiter](swe-clone-rate-limiter.md)
+- [Clone: A Small Redis-Style Cache](swe-clone-cache.md)
+- [Interview Problems: Greedy Choices](swe-dsa-greedy.md)
+- [Project: Reliable Webhooks. A Job Queue With Workers](swe-webhooks-queue.md)
+- [Project: Reliable Webhooks. Retries and Duplicate Deliveries](swe-webhooks-retries.md)
+- [Project: Reliable Webhooks. Outages, Bursts and the Memo](swe-webhooks-outages.md)
+- [Interview Problems: Graphs](swe-dsa-graphs.md)
+- [System Design: Practice Without a Build](swe-design-practice.md)
+- [Capstone: Choosing It and Writing the Proposal](swe-capstone-proposal.md)
+- [Career: Your First Mock Interview](swe-career-first-mock.md)
+
+**Part 5 — Capstone**
+
+- [Model Basics: Calling a Model from Your Code](swe-model-basics.md)
+- [Interview Problems: Dynamic Programming](swe-dsa-dynamic-programming.md)
+- [Capstone: The Design Doc](swe-capstone-design.md)
+- [Capstone: Building in Milestones](swe-capstone-build.md)
+- [Capstone: Ship It](swe-capstone-ship.md)
+- [Capstone: The Demo](swe-capstone-demo.md)
+- [Career: A Resume That Sounds Like an Engineer](swe-career-resume.md)
+- [Career: The Job Search](swe-career-job-search.md)
+- [Career: Every Kind of Interview Round](swe-career-interview-rounds.md)
+- [Career: The System Design Interview](swe-career-system-design-interview.md)
+- [What's Next](swe-whats-next.md)
+
 ## Assignments
 
 Assignments are **not numbered** — a number in the lesson text goes stale the
