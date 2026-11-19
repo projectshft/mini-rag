@@ -6,7 +6,7 @@
 
 Parsity is a small, independent coding school that trains adults with no technical background for jobs as software engineers. Aaron Hayslip founded it in [CONFIRM: year]. Brian Jenney, a senior software engineer and engineering manager who changed careers into tech himself at around 30, became the owner in November 2023. Aaron stayed on to advise the handover.
 
-Parsity is regulated by the Indiana Department of Workforce Development, Office for Career and Technical Schools. It is privately owned, with no outside investors, and it does not use income share agreements.
+Parsity is regulated by the Indiana Department of Workforce Development, Office for Career and Technical Schools. It is privately owned, with no outside investors.
 
 Every instructor and mentor is a working software engineer, not a recent graduate of the program.
 
@@ -43,21 +43,17 @@ Every assignment is handed in as code and checked automatically, against tests t
 
 ## Results
 
-Graduates have come from teaching, music and other careers. Examples:
+Parsity has trained [CONFIRM: number] career changers since [CONFIRM: year], from teaching, music, retail, the military and many other fields [CONFIRM: fields]. A few of their stories:
 
 - **Tom**, a former teacher, now a software engineer
 - **Nils**, a former music professor who changed careers at 44, now a software engineer
 - **Mike**, who had two job offers within two months of graduating, both about $10,000 above what he expected
 
-[CONFIRM: total graduates to date, share employed in the field within 6 or 12 months, and median starting salary]
-
-## Cost and access
-
-Tuition is $4,900, with $0 down through Climb Credit financing. We keep the program small, about 20 to 40 students a year [CONFIRM], so every student gets real attention from working engineers.
+[CONFIRM: share of graduates employed in the field within 6 or 12 months, median starting salary, and a list of employers who have hired graduates]
 
 ## What a grant would fund
 
-[CONFIRM: amount requested and what it pays for. For example: full or partial scholarships for a set number of career changers from a target group, at $4,900 each, plus the cost of mentor sessions.]
+[CONFIRM: amount requested and what it pays for, for example scholarships for a set number of career changers from a target group, plus mentor time.]
 
 ## Contact
 
