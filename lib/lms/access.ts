@@ -11,6 +11,29 @@ export const AGENTIC_TRACK = 'intro-to-agentic-engineering';
 // RAG students never see a track they didn't enroll in. Admins see everything.
 export const GRANT_ONLY_TRACKS = ['software-engineering'];
 
+/** Starter credit ($) for an agentic-only student, matching the $47 checkout. */
+export function agenticCreditUsd(): number {
+	const n = Number(process.env.AGENTIC_CREDIT_USD || 5);
+	return Number.isFinite(n) && n > 0 ? n : 5;
+}
+
+/**
+ * The Clerk publicMetadata that grants a set of tracks. An empty list means
+ * the program default (no `tracks` key), so the `null`s here delete those keys
+ * when merged by updateUserMetadata. A student restricted to a set that
+ * includes the agentic track gets the same starter credit as a $47 buyer.
+ */
+export function trackGrantMetadata(tracks: string[]): {
+	tracks: string[] | null;
+	creditUsd: number | null;
+} {
+	if (tracks.length === 0) return { tracks: null, creditUsd: null };
+	return {
+		tracks,
+		creditUsd: tracks.includes(AGENTIC_TRACK) ? agenticCreditUsd() : null,
+	};
+}
+
 export type Access = {
 	userId: string | null;
 	tracks: string[] | null;

@@ -1,6 +1,8 @@
 import { clerkClient } from '@clerk/nextjs/server';
 import { lmsPrisma } from '@/lib/lms/prisma';
-import { getDays } from '@/lib/lms/curriculum';
+import { getDays, getTracks } from '@/lib/lms/curriculum';
+import { readTracks } from '@/lib/lms/access';
+import { TrackPicker, accessLabel } from '@/components/lms/TrackPicker';
 import {
 	litellmConfigured,
 	litellmProxyUrl,
@@ -14,6 +16,8 @@ import { RemoveStudentButton } from '@/components/lms/RemoveStudentButton';
 import {
 	inviteStudent,
 	revokeInvitation,
+	resendInvitationWithTracks,
+	setStudentTracks,
 	setInterviewAccess,
 	mintStudentKey,
 	bumpStudentKeyBudget,
@@ -44,14 +48,25 @@ function keyEmailHref(email: string, key: string): string {
 export default async function AdminPage() {
 	const client = await clerkClient();
 
-	const [students, days, inviteList] = await Promise.all([
+	const [students, days, inviteList, allTracks] = await Promise.all([
 		lmsPrisma.student.findMany({
 			include: { progress: { select: { lessonSlug: true } } },
 			orderBy: { invitedAt: 'asc' },
 		}),
 		getDays(),
 		client.invitations.getInvitationList({ status: 'pending' }),
+		getTracks(),
 	]);
+
+	// Track access lives on each Clerk user's publicMetadata (lib/lms/access.ts).
+	const tracksByStudent = new Map<string, string[] | null>();
+	if (students.length > 0) {
+		const { data: users } = await client.users.getUserList({
+			userId: students.map((s) => s.id),
+			limit: 500,
+		});
+		for (const u of users) tracksByStudent.set(u.id, readTracks(u.publicMetadata));
+	}
 
 	// Live spend per key (proxy lookups tolerate failure → null → "—").
 	const keysConfigured = litellmConfigured();
@@ -83,8 +98,9 @@ export default async function AdminPage() {
 			{/* Invite */}
 			<form
 				action={inviteStudent}
-				className='flex flex-wrap items-center gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm'
+				className='space-y-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm'
 			>
+				<div className='flex flex-wrap items-center gap-2'>
 				<input
 					type='email'
 					name='email'
@@ -98,6 +114,18 @@ export default async function AdminPage() {
 				>
 					Send invite
 				</button>
+				</div>
+				<div className='flex flex-wrap items-center gap-x-3 gap-y-1.5'>
+					<span className='text-xs font-semibold uppercase tracking-wide text-zinc-400'>
+						Courses
+					</span>
+					<TrackPicker tracks={allTracks} />
+				</div>
+				<p className='text-xs text-zinc-400'>
+					Leave everything unticked for full program access. Tick only Intro to Agentic
+					Engineering for a $47 student: they see that track alone and get the same starter
+					credit as a checkout buyer.
+				</p>
 			</form>
 
 			{/* Pending invitations */}
@@ -112,7 +140,30 @@ export default async function AdminPage() {
 								key={inv.id}
 								className='flex items-center justify-between px-4 py-2.5 text-sm'
 							>
-								<span className='text-zinc-700'>{inv.emailAddress}</span>
+								<span className='min-w-0 flex-1 truncate text-zinc-700'>
+									{inv.emailAddress}
+									<span className='ml-2 text-xs text-zinc-400'>
+										{accessLabel(readTracks(inv.publicMetadata ?? undefined), allTracks)}
+									</span>
+								</span>
+								<form
+									action={resendInvitationWithTracks}
+									className='mx-4 flex items-center gap-2'
+								>
+									<input type='hidden' name='invitationId' value={inv.id} />
+									<input type='hidden' name='email' value={inv.emailAddress} />
+									<TrackPicker
+										tracks={allTracks}
+										selected={readTracks(inv.publicMetadata ?? undefined)}
+										compact
+									/>
+									<button
+										className='cursor-pointer rounded-lg border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600 hover:border-blue-400 hover:text-blue-700'
+										title='Clerk invites cannot be edited, so this cancels the invite and emails a new one'
+									>
+										Save &amp; resend
+									</button>
+								</form>
 								<form action={revokeInvitation}>
 									<input type='hidden' name='invitationId' value={inv.id} />
 									<button className='cursor-pointer text-xs font-medium text-zinc-400 hover:text-red-500'>
@@ -292,6 +343,12 @@ export default async function AdminPage() {
 									>
 										🎤 Interview
 									</th>
+									<th
+										className='whitespace-nowrap px-3 py-2 text-left font-semibold text-zinc-400'
+										title='Which tracks this student sees on /learn. None ticked = full program.'
+									>
+										Courses
+									</th>
 									<th className='px-3 py-2 text-right font-semibold text-zinc-400'>
 										Access
 									</th>
@@ -350,6 +407,22 @@ export default async function AdminPage() {
 														{s.interviewUnlockedAt ? 'Unlocked' : 'Locked'}
 													</button>
 												</form>
+											</td>
+											<td className='whitespace-nowrap px-3 py-2'>
+												<form action={setStudentTracks} className='flex items-center gap-2'>
+													<input type='hidden' name='userId' value={s.id} />
+													<TrackPicker
+														tracks={allTracks}
+														selected={tracksByStudent.get(s.id) ?? null}
+														compact
+													/>
+													<button className='cursor-pointer rounded-lg border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600 hover:border-blue-400 hover:text-blue-700'>
+														Save
+													</button>
+												</form>
+												<span className='mt-0.5 block text-[11px] text-zinc-400'>
+													{accessLabel(tracksByStudent.get(s.id) ?? null, allTracks)}
+												</span>
 											</td>
 											<td className='whitespace-nowrap px-3 py-2 text-right'>
 												<RemoveStudentButton userId={s.id} email={s.email || s.id} />

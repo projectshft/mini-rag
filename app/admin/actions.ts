@@ -5,28 +5,97 @@ import { revalidatePath } from 'next/cache';
 import { requireAdmin } from '@/lib/lms/admin';
 import { lmsPrisma } from '@/lib/lms/prisma';
 import { mintKey, revokeKey, updateKeyBudget } from '@/lib/lms/litellm';
+import { getTracks, trackSlug } from '@/lib/lms/curriculum';
+import { trackGrantMetadata } from '@/lib/lms/access';
 
-/** Invite a student by email — Clerk sends the magic-link/code email. */
+/**
+ * The track slugs ticked on an admin form, keeping only real tracks. None
+ * ticked = the program default (every track except the grant-only ones).
+ */
+async function tracksFromForm(formData: FormData): Promise<string[]> {
+	const valid = new Set((await getTracks()).map(trackSlug));
+	const picked = formData.getAll('tracks').map(String);
+	return [...new Set(picked)].filter((t) => valid.has(t));
+}
+
+function sendInvitation(
+	client: Awaited<ReturnType<typeof clerkClient>>,
+	email: string,
+	tracks: string[]
+) {
+	const appUrl = process.env.NEXT_PUBLIC_APP_URL;
+	const grant = trackGrantMetadata(tracks);
+	return client.invitations.createInvitation({
+		emailAddress: email,
+		...(appUrl ? { redirectUrl: `${appUrl}/sign-up` } : {}),
+		...(grant.tracks
+			? {
+					publicMetadata: {
+						tracks: grant.tracks,
+						...(grant.creditUsd ? { creditUsd: grant.creditUsd } : {}),
+						source: 'admin',
+					},
+				}
+			: {}),
+		notify: true,
+		ignoreExisting: true,
+	});
+}
+
+/**
+ * Invite a student by email — Clerk sends the magic-link/code email. The
+ * ticked tracks ride along on the invitation's publicMetadata and land on the
+ * user when they sign up; none ticked = full program access.
+ *
+ * The invite link must land on /sign-up: sign-ups are Restricted, so the
+ * account only gets created when the <SignUp> component consumes the
+ * __clerk_ticket that Clerk appends to this URL. Pointing at a protected
+ * route (like /learn) bounces the invitee to /sign-in, drops the ticket,
+ * and strands them — no account exists yet, so sign-in always errors.
+ * If NEXT_PUBLIC_APP_URL is unset, omit redirectUrl entirely so Clerk
+ * falls back to its Account Portal flow instead of a broken relative URL.
+ */
 export async function inviteStudent(formData: FormData) {
 	await requireAdmin();
 	const email = String(formData.get('email') ?? '').trim();
 	if (!email) return;
 
-	// The invite link must land on /sign-up: sign-ups are Restricted, so the
-	// account only gets created when the <SignUp> component consumes the
-	// __clerk_ticket that Clerk appends to this URL. Pointing at a protected
-	// route (like /learn) bounces the invitee to /sign-in, drops the ticket,
-	// and strands them — no account exists yet, so sign-in always errors.
-	// If NEXT_PUBLIC_APP_URL is unset, omit redirectUrl entirely so Clerk
-	// falls back to its Account Portal flow instead of a broken relative URL.
-	const appUrl = process.env.NEXT_PUBLIC_APP_URL;
 	const client = await clerkClient();
-	await client.invitations.createInvitation({
-		emailAddress: email,
-		...(appUrl ? { redirectUrl: `${appUrl}/sign-up` } : {}),
-		notify: true,
-		ignoreExisting: true,
+	await sendInvitation(client, email, await tracksFromForm(formData));
+	revalidatePath('/admin');
+}
+
+/** Change which tracks a joined student can see. Takes effect on their next page load. */
+export async function setStudentTracks(formData: FormData) {
+	await requireAdmin();
+	const userId = String(formData.get('userId') ?? '');
+	if (!userId) return;
+
+	const client = await clerkClient();
+	// Merged into existing publicMetadata; the nulls in a "full program"
+	// grant delete the tracks/creditUsd keys.
+	await client.users.updateUserMetadata(userId, {
+		publicMetadata: trackGrantMetadata(await tracksFromForm(formData)),
 	});
+	revalidatePath('/admin');
+	revalidatePath('/learn');
+}
+
+/**
+ * Change a pending invite's tracks. Clerk can't edit an invitation, so this
+ * revokes it and sends a fresh one — the invitee gets a new email and the
+ * old link stops working.
+ */
+export async function resendInvitationWithTracks(formData: FormData) {
+	await requireAdmin();
+	const invitationId = String(formData.get('invitationId') ?? '');
+	const email = String(formData.get('email') ?? '').trim();
+	if (!invitationId || !email) return;
+
+	const tracks = await tracksFromForm(formData);
+	const client = await clerkClient();
+	await client.invitations.revokeInvitation(invitationId);
+	await sendInvitation(client, email, tracks);
 	revalidatePath('/admin');
 }
 
