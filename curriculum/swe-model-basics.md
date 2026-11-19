@@ -58,7 +58,7 @@ If you can't find the email, ask your mentor. Don't share the key with anyone, a
 
 ### Where the key lives
 
-A key is a **secret**: anything that lets someone act as you. Secrets never go in code and never get committed. You learned that in the shipping lessons, and it matters more here, because a leaked key spends your money.
+A key is a **secret**: anything that lets someone act as you. Secrets never go in code and never get committed. You learned that in the shipping lesson and the deploy project, and it matters more here, because a leaked key spends your money.
 
 The pattern is a `.env` file, a plain text file of `NAME=value` lines that stays on your machine and is listed in `.gitignore`. Node can load it for you:
 

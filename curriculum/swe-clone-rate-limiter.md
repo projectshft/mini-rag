@@ -18,7 +18,7 @@ Every public API has a rate limiter in front of it. It protects three things:
 - **Fairness.** One heavy customer shouldn't make the service slow for everyone else.
 - **Money.** If each request calls a paid model or sends an email, an unlimited caller is an unlimited bill.
 
-You've been on the other side of this. The class key you use for model calls has a limit, and the webhooks project later in this part has to respect other people's limits. Building one shows you what the other side is counting.
+You'll be on the other side of this soon. The webhooks project later in this part has to respect other people's limits, and the class key you'll use to call a model has one too. Building a limiter shows you what the other side is counting.
 
 ## The obvious way, and its flaw
 

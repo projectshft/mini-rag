@@ -16,7 +16,7 @@ Getting a first software engineering job is hard right now. There are fewer entr
 That's the truth, and you deserve to hear it plainly. Here's the rest of the truth:
 
 - **People are getting hired.** Companies still need engineers who can build, test and ship, and who can work with agents without being fooled by them. That's what you've practiced.
-- **Most applicants look the same.** A pile of tutorials and a to-do app. You have eight projects that passed hidden tests, a deployed capstone with an agent in it, and decision memos you can defend. That's different.
+- **Most applicants look the same.** A pile of tutorials and a to-do app. You have seven projects that passed hidden tests, a deployed capstone with an agent in it, and decision memos you can defend. That's different.
 - **Your past career helps.** A company building software for clinics, warehouses, schools or sales teams wants someone who understands that world.
 - **It's a numbers game played with skill.** Most applications get no reply. That's not a verdict on you. You improve your odds by aiming better, getting referred, and getting better at each stage.
 

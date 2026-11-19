@@ -124,7 +124,7 @@ Some mutants can never be killed, because the change doesn't change behavior. Th
 
 ## Your exercise
 
-Download the lab into your `parsity-labs` repository:
+Download the lab from the top of your `parsity-labs` repository:
 
 ```bash
 curl -sL https://ai.parsity.io/labs/mutation.tar.gz | tar xz

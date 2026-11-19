@@ -100,7 +100,7 @@ The plan is where you make the decisions. The agent does the typing.
 
 Give your agent the README and your plan, and build in small steps. Commit after each one, and read every diff before you commit it.
 
-1. Password hashing with `crypto.scrypt` and a salt, inside `createUser`.
+1. Password hashing with `crypto.scrypt` and a salt, inside `createUser`. Use Node's built-in `crypto` module for hashing and for `timingSafeEqual`. The attack suite watches for those calls, so a package such as `bcrypt` fails it, even though it's a fine choice at work. Tell your agent this up front, because agents reach for `bcrypt` by habit.
 2. `POST /login`, `POST /logout` and `GET /me`, with the session cookie.
 3. The "who is this?" check in front of every route except `/health` and `/login`.
 4. Roles, then customers, route by route.

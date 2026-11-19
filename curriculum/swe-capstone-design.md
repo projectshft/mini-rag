@@ -11,7 +11,7 @@
 
 ## Why write it down first
 
-You've designed systems out loud and on paper in the design lessons. Those were practice. This one you'll live in for weeks.
+You've designed systems out loud and on paper in the design lessons. Those were practice. This one you'll build, and you'll live with it for the rest of the capstone.
 
 A design doc saves you from three expensive mistakes:
 
@@ -23,13 +23,13 @@ It also does something specific when you work with a coding agent. The agent is 
 
 ## Start from your proposal
 
-Your mentor approved your proposal. It already names what you're building and who it's for, and the requirements every capstone meets: data from a real source or one you scraped, an agent inside the product that calls a model and uses tools, and one technology this program never taught you.
+Your mentor approved your proposal. It already names what you're building and who it's for, and how it meets the four requirements every capstone meets: a real data source you found, at least one agent doing real work with checks, one technology this program never taught you that your mentor approved, and a project that's deployed, tested and defended.
 
 The design doc takes that and answers "how, exactly?" Put it in your capstone repository as `DESIGN.md`, at the top level.
 
 ## The doc, section by section
 
-Use the design method from the system design lessons. The sections below follow it. Keep the whole thing short enough to read in one sitting. A doc nobody reads helps nobody, including you in three weeks.
+Use the design method from the system design lessons. The sections below follow it. Keep the whole thing short enough to read in one sitting. A doc nobody reads helps nobody, including you, later in the build.
 
 ### 1. The problem and the person
 
@@ -71,7 +71,7 @@ Say where the data comes from. If it's scraped or pulled from someone else's API
 
 ### 5. API
 
-The routes your front end or other clients will call: method, path, what goes in, what comes out, and who's allowed. Use what you learned in the API design lessons: real status codes, validation, and what happens on a repeat request.
+The routes your front end or other clients will call: method, path, what goes in, what comes out, and who's allowed. Use what you learned in the lesson on designing an API: real status codes, validation, and what happens on a repeat request.
 
 ### 6. The agent
 

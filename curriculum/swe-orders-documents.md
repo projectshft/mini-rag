@@ -153,9 +153,9 @@ Put a cache in front of `GET /products/:id`: keep each product in memory after t
   },
   {
     "q": "Your file store uses an in-process lock. A teammate wants to run two copies of the server on the same file. What do you tell them?",
-    "options": ["Each copy has its own lock, so they can overwrite each other's writes. That needs a version check, or a real database", "It's fine, the lock is in the file", "It's fine, Node runs one thing at a time", "Only reads will be affected"],
+    "options": ["Each copy has its own lock, so they can overwrite each other's writes. Sharing data between servers needs a real database that does the check for you", "It's fine, the lock is in the file", "It's fine, Node runs one thing at a time", "Only reads will be affected"],
     "answer": 0,
-    "explain": "A lock held in one process's memory means nothing to another process. A version check works across processes because the check is on the data itself."
+    "explain": "A lock held in one process's memory means nothing to another process. Even a version check in your own code has a gap between reading the version and renaming the file, so two processes can both pass it. A database, or a document store with conditional writes, does the check and the write as one step for every server."
   }
 ]
 ```

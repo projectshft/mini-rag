@@ -181,7 +181,7 @@ The second point applies to conditional updates on several rows too. Sort the it
 | | Conditional update | `SELECT ... FOR UPDATE` | Serializable |
 | --- | --- | --- | --- |
 | How it stops the race | Check and write in one statement | Others wait while you decide | The database cancels one of two clashing transactions |
-| Lock held for | One statement | The whole transaction | No locks, checks at commit |
+| Lock held | From the update until commit | From the read until commit, including your decision in between | None that make others wait. A clash cancels one transaction |
 | Fits when | The rule fits in a `WHERE` | The rule needs code or other tables | Many different rules, and you can retry |
 | Watch out for | Rules that don't fit in a `WHERE` | Slow work while locked, deadlocks | Writing retry code for every transaction |
 

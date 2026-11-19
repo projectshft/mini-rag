@@ -24,7 +24,7 @@ That sounds simple, and the first version is. The project is about what happens 
 
 All four parts live in one folder, `orders`, in your `parsity-labs` repository. Each part builds on the last. Do them in order.
 
-From this project on, your agent writes most of the code. Your job is the part that makes it work: planning, reading every diff, testing the cases the agent forgot, and being able to explain every line. The hidden tests are written to catch the mistakes agents make when nobody plans.
+As in your last two projects, your agent writes most of the code. Your job is the part that makes it work: planning, reading every diff, testing the cases the agent forgot, and being able to explain every line. The hidden tests are written to catch the mistakes agents make when nobody plans.
 
 ## Get the starter
 

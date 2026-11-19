@@ -1,6 +1,6 @@
 # Git: Checks on Every Pull Request
 
-> **In this lesson:** how to make GitHub run your tests on every change, read what it tells you, and refuse to merge anything that fails. Then the other half of working safely: undoing a bad change that already reached `main`, without rewriting history your teammates depend on. You'll hand in a pull request your checks blocked, and a revert.
+> **In this lesson:** how to make GitHub run your tests on every change, read what it tells you, and refuse to merge anything that fails. Then the other half of working safely: undoing a bad change that already reached `main`, without rewriting history your teammates depend on. The deploy project comes next, and in it a host deploys every change to `main` automatically, so this guard goes in first. You'll hand in a pull request your checks blocked, and a revert.
 
 ## Words you need first
 
@@ -17,7 +17,7 @@ You run your tests before you push. Usually. Your teammates do too. Usually. An 
 
 ## A workflow, line by line
 
-You added this file to the top of your `parsity-labs` repository in the deploy project:
+Make a branch. Then create a file called `.github/workflows/test.yml` at the **top** of your `parsity-labs` repository, not inside a project folder. The first folder name starts with a dot, so type it exactly. Put this in it:
 
 ```yaml
 name: Tests
@@ -28,18 +28,20 @@ on:
   pull_request:
 
 jobs:
-  deploy-app:
+  labs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: deploy
+        working-directory: toolkit/arrays
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - run: node --test
 ```
+
+It tells GitHub: on every push to `main` and every pull request, start a fresh machine, get the code, install Node 22, and run the tests in `toolkit/arrays`. Commit it, push the branch, and find the run under your repository's **Actions** tab.
 
 It's written in **YAML**, a format for settings. Three rules cover most of it:
 
@@ -54,15 +56,15 @@ Now each part:
 | `name: Tests` | The name shown in the Actions tab |
 | `on:` | What starts it: a push to `main`, or any pull request being opened or updated |
 | `jobs:` | The work to do. Each job runs on its own fresh machine, and jobs run side by side |
-| `deploy-app:` | The job's id. This is the name you'll pick when you make the check required |
+| `labs:` | The job's id. It's part of the name you'll pick when you make the check required |
 | `runs-on: ubuntu-latest` | The kind of machine. GitHub lends you one, starting from nothing |
-| `working-directory: deploy` | Run every command inside `deploy` |
+| `working-directory: toolkit/arrays` | Run every command inside `toolkit/arrays` |
 | `steps:` | What the job does, in order. If one fails, the job stops and fails |
 | `uses: actions/checkout@v4` | A ready-made step that copies your repository onto the machine. Without it the machine is empty |
 | `uses: actions/setup-node@v4` | A ready-made step that installs the Node version you ask for |
 | `run: node --test` | A command, exactly as you'd type it. A nonzero exit code fails the step |
 
-`uses` runs a step someone else wrote and published. `run` runs your own command. The `@v4` pins a version of that step, for the same reason you pinned your Docker base image.
+`uses` runs a step someone else wrote and published. `run` runs your own command. The `@v5` pins the major version of that step, so a big change to it can't reach your workflow until you choose to move up.
 
 The machine GitHub lends you is called a **runner**. It's a different thing from the test runner you built by hand: this one is a whole computer that runs your workflow and is thrown away afterwards.
 
@@ -70,7 +72,7 @@ The machine GitHub lends you is called a **runner**. It's a different thing from
 {
   "title": "Run the tests on every pull request",
   "note": "Each blank changes what the workflow does.",
-  "code": "on:\n  ___1___:\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/___2___@v4\n      - uses: actions/setup-node@v4\n        with:\n          node-version: 22\n      - ___3___: node --test",
+  "code": "on:\n  ___1___:\n\njobs:\n  test:\n    runs-on: ubuntu-latest\n    steps:\n      - uses: actions/___2___@v5\n      - uses: actions/setup-node@v5\n        with:\n          node-version: 22\n      - ___3___: node --test",
   "blanks": [
     { "options": ["pull_request", "release", "schedule"], "answer": "pull_request", "explain": "pull_request runs the workflow whenever a pull request is opened or gets new commits. release and schedule run it at other moments." },
     { "options": ["checkout", "setup-node", "cache"], "answer": "checkout", "explain": "The machine starts empty. checkout copies your code onto it. Without it, node --test finds nothing." },
@@ -81,7 +83,7 @@ The machine GitHub lends you is called a **runner**. It's a different thing from
 
 ## Check the whole repository
 
-Right now only `deploy` is checked. Every project folder in `parsity-labs` has tests, so check them all. A **matrix** runs the same job once for each value in a list, side by side:
+Right now only `toolkit/arrays` is checked. Every project folder in `parsity-labs` has tests, so check them all. A **matrix** runs the same job once for each value in a list, side by side:
 
 ```yaml
 jobs:
@@ -90,13 +92,13 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        folder: [toolkit/arrays, toolkit/structures, toolkit/runner, deploy]
+        folder: [toolkit/arrays, toolkit/structures, toolkit/runner, http-server, orders, auth, problems/frequency]
     defaults:
       run:
         working-directory: ${{ matrix.folder }}
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - run: if [ -f package-lock.json ]; then npm ci; fi
@@ -107,9 +109,11 @@ jobs:
 - `fail-fast: false` keeps the others running when one fails, so you see every failure at once.
 - The `npm ci` line installs packages only in folders that have a lockfile.
 
-Put every project folder you have in the list. Make sure every one passes on your laptop first. If one of them never passed, this is the moment to find out.
+Put every project folder you've finished in the list, and run `node --test` in each one on your laptop first. If one of them never passed, this is the moment to find out.
 
-Keep the `pull_request` trigger, `setup-node` and the `deploy` folder in the file, because the deploy project's checks look for them.
+One folder needs care. `problems` holds every interview pattern, including the ones you haven't reached yet, and their tests fail on purpose until you solve them. So list each pattern folder you've finished on its own, such as `problems/frequency` and `problems/two-pointers`, and never the whole `problems` folder. Add each new one when it passes.
+
+You'll come back to this file in the deploy project, to add `deploy` to the list. Its hidden tests look for this workflow, so keep the `pull_request` trigger and `setup-node` in it.
 
 ## Reading a red check
 
@@ -131,8 +135,8 @@ Two failures that only happen on the runner, and what they mean:
 
 A red check is only advice until you make it a rule. In your `parsity-labs` repository on GitHub, open **Settings** and look for **Rules** and then **Rulesets**. On some screens it's **Branches** and a branch protection rule. Make a rule for the `main` branch that:
 
-- **Requires a pull request before merging.** Nothing lands on `main` by a direct push.
-- **Requires status checks to pass.** Search for your job's name and add it. If it doesn't appear, the workflow has to have run at least once on a pull request first.
+- **Requires a pull request before merging.** Nothing lands on `main` by a direct push. Leave the number of required approvals at 0. GitHub doesn't let you approve your own pull request, and on your own repository nobody else will.
+- **Requires status checks to pass.** Search for your job's name and add it. With a matrix, GitHub shows one check per folder, named like `labs (orders)`. Add each one, and add new ones when you add folders to the list. If none appear, the workflow has to have run at least once on a pull request first.
 - **Blocks force pushes.** More on why below.
 
 GitHub may offer you, as the owner, a way to bypass the rules. Don't add yourself. A rule you can skip when you're in a hurry protects nothing when it matters. GitHub's [documentation on rulesets](https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-rulesets/about-rulesets) explains each option. Rules on a free account work on public repositories, which `parsity-labs` is.
@@ -144,6 +148,8 @@ Now prove it works:
 3. Fix it on the branch, push, watch it go green, and merge.
 
 Keep that pull request. It's part of what you hand in.
+
+From now on, every change reaches `main` through a pull request, including your own. When a later lesson says "commit and push", it means: commit on a branch, push the branch, open a pull request, and merge it once the checks are green.
 
 ## Undoing a change that already reached main
 
@@ -170,7 +176,7 @@ Then open a pull request, let the checks run, and merge it like any other change
 
 ### Revert and rollback work together
 
-In the deploy project you rolled back on the host. That's the fast fix: the host serves an older build within moments. The revert is the lasting fix: `main` no longer holds the bad change, so the next deploy is good. In a real outage you do both, in that order.
+In the deploy project, coming next, a host deploys your app every time `main` changes, and you'll **roll back** a bad release on purpose: tell the host to serve the last build that worked. That's the fast fix, because nothing has to be rebuilt. The revert is the lasting fix: `main` no longer holds the bad change, so the next deploy is good. In a real outage you do both, in that order.
 
 ```order
 title: A bad change is live. Fix it properly
@@ -209,7 +215,7 @@ This one is checked by your mentor, because it lives in GitHub's settings and hi
 2. A revert. Merge a small, harmless change to `main`, then revert it through a pull request. Bring the link to the revert pull request.
 3. Your ruleset. A screenshot of the rule for `main` is fine.
 
-Your workflow file itself is also checked automatically when you hand in the container part of the deploy project.
+Your workflow file itself is also checked automatically later, when you hand in the container part of the deploy project with `deploy` in its list.
 
 ```quiz
 [

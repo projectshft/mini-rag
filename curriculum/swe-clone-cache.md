@@ -14,7 +14,7 @@
 
 A database keeps data safely on disk and answers rich questions. That makes each answer slow, compared with memory: a few milliseconds, against well under a millisecond.
 
-When the same question is asked thousands of times a second, like "what's on the product page for the bestselling item?", you don't want to ask the database each time. You ask once, keep the answer in memory, and hand out copies. **Redis** is a server that does exactly this. It holds keys and values in memory, lets entries expire, and evicts old ones when memory fills. Your clone does the same, in one process.
+When the same question is asked thousands of times a second, like "what's on the product page for the bestselling item?", you don't want to ask the database each time. You ask once, keep the answer in memory, and hand out copies. **Redis** is a server that does exactly this. It holds keys and values in memory, lets entries expire, and can be set to evict old ones when memory fills. Your clone does the same, in one process.
 
 The idea is trading memory for time, which you met in the lesson on speed. Here it's an entire layer of the system.
 
@@ -22,7 +22,7 @@ The idea is trading memory for time, which you met in the lesson on speed. Here 
 
 `set(key, value, ttlMs)` stores an entry that expires `ttlMs` from now. Set at 1000 with a TTL of 500, it's there at 1499 and gone at 1500.
 
-Real caches don't run a timer for every entry. They check when you ask: on `get`, if the entry's time is up, treat it as missing and remove it. That's called **lazy expiry**, and it's what the starter asks for.
+Real caches don't run a timer for every entry. They check when you ask: on `get`, if the entry's time is up, treat it as missing and remove it. That's called **lazy expiry**, and it's what the starter asks for. Redis also sweeps a few random keys in the background now and then, so entries nobody reads again don't sit in memory forever.
 
 Two hidden tests are about this. One checks the exact millisecond, so `>` versus `>=` matters again. The other checks that setting a key again replaces its expiry, so an entry set with a TTL and then set again without one never expires.
 
@@ -146,7 +146,7 @@ Use the method from the lesson on how to think about a system. Questions to work
 
 **Reading through the cache.** The usual shape is called **cache-aside**: the app asks the cache, and on a miss asks the database and puts the answer in the cache. Your `getOrLoad` is exactly this.
 
-**Invalidation.** When a price changes, the cached copy is wrong. You can update the cached copy, or delete it so the next read loads the new one. Think about two price changes landing close together, handled by two servers. Which approach can leave the old price in the cache forever, and which can't?
+**Invalidation.** When a price changes, the cached copy is wrong. You can update the cached copy, or delete it so the next read loads the new one. Think about two price changes landing close together, handled by two servers. Which approach can leave the old price in the cache until it expires, or forever if there's no TTL? Deleting is much safer, and it still has one narrow gap: a slow read that started before the change can put the old price back just after the delete. What protects you from that?
 
 **TTL as a safety net.** If a delete is ever missed, how long can a wrong price stay up? What decides how short the TTL should be, and what does a short one cost?
 

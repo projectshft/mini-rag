@@ -96,7 +96,7 @@ Seven characters of base 62 is about 3.5 trillion codes, which at 100 million a 
 
 > *Why: three options, a pick, and the reason, including a downside of the one not picked (guessable codes). This is the shape of every good tradeoff answer.*
 
-**Candidate:** So the simple design is: a load balancer, a few stateless app servers, and one Postgres database. A redirect looks up the code by primary key and returns a 302.
+**Candidate:** So the simple design is: a load balancer, a few stateless app servers, and one Postgres database. Stateless means a server keeps nothing in its own memory between requests, so any server can answer any request and I can add more freely. A redirect looks up the code by primary key and returns a 302.
 
 ```mermaid
 flowchart LR

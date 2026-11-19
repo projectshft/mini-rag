@@ -2,11 +2,11 @@ const test = require("node:test");
 const assert = require("node:assert");
 const { smallestRotated } = require("./smallest-rotated.js");
 
-test("turned by three", () => {
+test("turned by two", () => {
   assert.strictEqual(smallestRotated([3, 4, 5, 1, 2]), 1);
 });
 
-test("turned by four", () => {
+test("turned by three", () => {
   assert.strictEqual(smallestRotated([4, 5, 6, 7, 0, 1, 2]), 0);
 });
 

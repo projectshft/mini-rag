@@ -47,7 +47,7 @@ Kinds of thing that work well: a search engine, a realtime library, a mapping se
 
 - **Deployed** at an address your mentor can visit, the way you did in the deploy project.
 - **Tested**: your own tests, run on every pull request, plus the agent's example cases.
-- **Defended**: a README a stranger can follow, a live walkthrough with your mentor, a recorded demo, and a decision memo. You'll be asked why you built it this way, and "the agent did it" is not an answer.
+- **Defended**: a README a stranger can follow, a design doc with your decisions and what each one cost, a live walkthrough with your mentor, and a recorded demo. You'll be asked why you built it this way, and "the agent did it" is not an answer.
 
 ## Finding an idea
 

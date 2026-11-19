@@ -19,7 +19,9 @@
 // message.
 //
 // When NODE_ENV isn't "production", the app must still start with nothing
-// set, so a fresh download runs. Decide what a safe stand-in is for local work.
+// set, so a fresh download runs. Decide what happens to the token locally
+// when ADMIN_TOKEN isn't set. Never type a token value into the code, not
+// even a local one: the lesson explains why.
 
 const REQUIRED_IN_PRODUCTION = [];
 

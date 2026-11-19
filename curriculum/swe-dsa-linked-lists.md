@@ -102,7 +102,7 @@ Move node forward to the saved next
 
 A slow version copies every value into an array, reverses the array, and builds a brand-new chain. That's O(n) time, but O(n) extra memory, and the interviewer asked you to rewire the nodes you were given. The three-reference walk is O(n) time and O(1) extra memory.
 
-There's also a short recursive version. It's elegant, and it makes one call per node. On a chain of 300,000 nodes, that's 300,000 notes on the call stack, and Node runs out of room long before that. Our tests use a chain that long. If you write it recursively, say why the loop is safer for long chains.
+There's also a short recursive version, using what you learned in the recursion lesson. It's elegant, and it makes one call per node, so every node adds a note to the call stack. Node runs out of room for those notes at around ten thousand calls, so on a chain of a million nodes the recursive version crashes where the loop doesn't. Our tests keep the reversing chains short enough that a correct recursive answer passes. If you write it recursively, be ready to say in an interview why the loop is safer for long chains.
 
 ## When to reach for these techniques
 
@@ -197,7 +197,7 @@ When all six tests pass, commit and push.
 assignment: dsa-linked-lists
 ```
 
-Paste the link to your `parsity-labs` repository. We check the `problems/linked-lists` folder, including empty lists, nodes that repeat a value, and chains of 300,000 nodes. Our tests build their own nodes with only `value` and `next`, so don't rely on anything else from `list.js`.
+Paste the link to your `parsity-labs` repository. We check the `problems/linked-lists` folder, including empty lists, nodes that repeat a value, a long chain to reverse, and chains of 300,000 nodes to check for a loop quickly. Our tests build their own nodes with only `value` and `next`, so don't rely on anything else from `list.js`.
 
 ```quiz
 [

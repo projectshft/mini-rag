@@ -58,7 +58,7 @@ After `explore(friends, "ana", new Set())`, the visited set holds everyone ana i
 
 The `|| []` handles a node with no entry in the object: it has no neighbors.
 
-One warning, the same as for any recursion: a path 100,000 nodes long means 100,000 waiting calls, and the call stack runs out. For huge graphs, use a loop with your own array as a stack instead of recursion, or use breadth-first search.
+One warning, the same as for any recursion: a path 100,000 nodes long means 100,000 waiting calls, and the call stack runs out. For huge graphs, use a loop with your own array as a stack instead of recursion, or use breadth-first search. In this lesson's problems, a recursive depth-first search is fine for the islands: no island in our tests is big enough to run the stack out.
 
 ## Breadth-first search
 
@@ -182,7 +182,7 @@ Breadth-first search from `from`, recording each person's distance as you find t
 <details>
 <summary>Hint 2: what to keep</summary>
 
-A queue array with a `front` position, and an object (or a `Map`) from person to distance. The distance object can double as your visited record: if someone has a distance, they've been seen.
+Write it as a `while` loop that runs until the queue is empty, not as a function that calls itself. A queue array with a `front` position, and an object (or a `Map`) from person to distance. The distance object can double as your visited record: if someone has a distance, they've been seen.
 
 </details>
 
@@ -201,7 +201,7 @@ When all six tests pass, commit and push.
 assignment: dsa-graphs
 ```
 
-Paste the link to your `parsity-labs` repository. We check the `problems/graphs` folder, including U-shaped and hollow islands, corners, an empty map, a 400 by 400 map, a short way and a long way round, circles of friends, people with no friends, and 200,000 people in a line.
+Paste the link to your `parsity-labs` repository. We check the `problems/graphs` folder, including U-shaped and hollow islands, corners, an empty map, a 400 by 400 map, a short way and a long way round, circles of friends, people with no friends, and a web of 200,000 people where the answer is hundreds of steps long.
 
 ```quiz
 [

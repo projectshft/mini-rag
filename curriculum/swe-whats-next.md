@@ -33,7 +33,7 @@ Finishing is a skill, and the last stretch is where people drift. A few things t
 - **Get every project to passing,** including any you left on "nearly". Your repository is a portfolio, and a failing project is the one someone will click.
 - **Tidy your repositories.** READMEs that a stranger can follow, no secrets in the history, pinned on your GitHub profile.
 - **Get your capstone signed off** by your mentor, with the recorded demo linked at the top of its README.
-- **Use your remaining mentor sessions well.** Mock interviews, a resume review, a second design mock. You have support for up to 12 months from when you started, so plan which sessions you'll use for what.
+- **Use your remaining mentor sessions well.** Mock interviews, a resume review, a second design mock. You have up to 12 one-on-one sessions, and support for up to 12 months from when you started, so plan which sessions you'll use for what.
 - **Write your own retrospective.** One page, just for you: what was hardest, what you're proudest of, what you'd tell someone starting today. It's useful in interviews, and you'll be glad you wrote it.
 
 ## Staying sharp

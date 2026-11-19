@@ -4,13 +4,9 @@ A small notes API that works on your laptop and isn't ready for anywhere else.
 You'll make it ready, deploy it to a serverless host, then put it in a
 container and deploy it to a container host.
 
-If you'd rather deploy your own app from the auth project, you can. It has to
-keep the same shape, because the hidden tests load it the same way:
-
-- `app.js` exports one request handler, `(req, res) => ...`. A plain
-  `node:http` handler works, and so does an Express app.
-- `config.js` exports `loadConfig(env)` and `REQUIRED_IN_PRODUCTION`.
-- `server.js` starts the server. `api/index.js` exports the same handler.
+The hidden tests load this app's files by name and call its routes, so
+deploy this app for the graded work. Your auth project app is built in a
+different shape. Deploy it afterwards as a stretch if you'd like it live too.
 
 Files:
 

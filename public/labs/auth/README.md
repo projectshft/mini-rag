@@ -79,6 +79,11 @@ never from the request body or the query string.
 - Passwords are hashed with `crypto.scrypt` and a random salt per user. The
   password itself is never stored anywhere, and no hash ever appears in a response.
 - Compare secrets with `crypto.timingSafeEqual`, never `===`.
+- Use Node's built-in `crypto` module, loaded with `require("node:crypto")`:
+  `crypto.scrypt` or `crypto.scryptSync` to hash (`crypto.pbkdf2` also counts),
+  and `crypto.timingSafeEqual` to compare. The hidden tests watch for those exact
+  calls, so a password package such as `bcrypt` or `argon2` will fail them, even
+  though both are good choices at work.
 - Every login makes a brand-new random session ID, even if the request already
   carried one.
 - A `POST`, `PATCH`, `PUT` or `DELETE` whose `Origin` header is present and is
@@ -99,6 +104,9 @@ The attacks to defend against, each of which gets hidden tests:
 Sessions keep working. Add tokens for scripts and mobile apps.
 
 - `POST /token` with `{ email, password }` gives back `{ token, expiresIn: 900 }`.
+- Sign and check tokens yourself with `crypto.createHmac` and compare signatures
+  with `crypto.timingSafeEqual`. The hidden tests watch for that call, so a token
+  package such as `jsonwebtoken` or `jose` will fail them.
 - The token is a standard JWT signed with HS256 and `secret`. Its payload has
   at least `sub` (the user's id), `iat` and `exp`, both in seconds. It lasts 15
   minutes.

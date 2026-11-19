@@ -112,7 +112,7 @@ Your mentor signs off on the capstone when:
 - The recorded demo is linked at the top of your README.
 - Your LinkedIn post is up.
 
-Your mentor's sign-off is the one part of the capstone a person grades. Everything before it was checked by tests, the AI review and the checks in earlier lessons. This part checks that you can stand behind what you built.
+Your mentor has checked the capstone at every stage: the proposal, the design doc, your check-ins and the live app. The sign-off is the last check, and it's the one that matters most to an employer: that you can stand behind what you built.
 
 ```quiz
 [

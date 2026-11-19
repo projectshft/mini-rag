@@ -160,8 +160,12 @@ from answering the next one.
 
 ## Milestone 2: Postgres
 
-Use these table and column names. Hidden tests read them directly. You may add
-columns, but any column you add needs a default.
+Use these table and column names. Hidden tests read them directly, and they also
+insert rows straight into your tables with SQL, naming only some columns. So:
+
+- Every `id` is filled in by the database (`serial` or `generated always as identity`).
+- `orders.created_at` has a default of `now()`.
+- You may add columns, but any column you add needs a default.
 
 | Table | Columns |
 | --- | --- |
@@ -173,8 +177,9 @@ columns, but any column you add needs a default.
 Where you keep idempotency keys is up to you, as long as they survive a restart.
 
 The database must refuse bad data on its own, even if the app has a bug: negative
-stock, a `qty` below 1, a duplicate email, and an order item that points at an order
-or product that doesn't exist.
+stock, a `qty` below 1, a duplicate email, an order that points at a customer that
+doesn't exist, and an order item that points at an order or product that doesn't
+exist.
 
 Tests use PGlite, which is real Postgres running inside Node, in memory. To keep your
 data between runs of `npm start`, open PGlite with a folder:
@@ -232,9 +237,11 @@ const server = createApp({ db: overNetwork(db) });
 
 PGlite also has a single connection and runs one transaction at a time, so wrapping
 a read-then-write in a transaction hides a bug that a real server with many
-connections would show. So we also check how stock is taken: with a conditional
-update (`UPDATE ... WHERE ... stock >= ...`), a locked row (`SELECT ... FOR UPDATE`)
-or a serializable transaction.
+connections would show. So we also check how stock is taken. Any one of these
+passes: a conditional update (`UPDATE products ... WHERE ... stock >= ...`), an update
+that subtracts in SQL (`SET stock = stock - $1`, guarded by your `CHECK`), a locked
+row (`SELECT ... FOR UPDATE`) or a serializable transaction. Reading the stock into
+JavaScript and writing back a number you worked out there does not.
 
 ## Milestone 4: documents
 

@@ -98,7 +98,7 @@ There are several redirect status codes, and they differ in one thing that matte
 }
 ```
 
-A `301` is cheaper: the second click from the same browser never reaches your server. But if you count clicks, the second click never reaches your counter either, so your numbers are wrong and nobody can tell. Counting clicks is the whole product for most shorteners, so they use `302` (or `307`, which behaves the same way for this purpose).
+A `301` is cheaper: the second click from the same browser never reaches your server. But if you count clicks, the second click never reaches your counter either, so your numbers are wrong and nobody can tell. Counting clicks is the whole product for most shorteners. Some send a `302` (or a `307`, which behaves the same way for this purpose). Others send a `301` along with headers telling the browser not to remember it for long, which gets them most of both. Your clone uses the simple, safe choice: a redirect the browser won't remember.
 
 That's a real tradeoff, and you'll write about it in your design.
 
@@ -239,7 +239,7 @@ Add expiring links: `shorten(url, code, { expiresInMs })`, where a visit after t
     "explain": "Because of the birthday problem, a match becomes likely after a couple of million codes. Without a check, the new link overwrites the old one and nobody sees an error."
   },
   {
-    "q": "Why do most shorteners redirect with 302 instead of 301?",
+    "q": "Why does a shortener that counts clicks redirect with 302 instead of a plain 301?",
     "options": ["Browsers may remember a 301 and skip the shortener next time, so those clicks are never counted", "302 is faster for the browser", "301 is not allowed for links to other sites", "302 keeps the link secret"],
     "answer": 0,
     "explain": "A 301 tells the browser the move is permanent, so it can go straight to the long address next time. That saves a request and loses the click."

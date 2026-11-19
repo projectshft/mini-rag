@@ -50,7 +50,7 @@ Inside one app, `reserveStock(order)` either returns or throws. It takes nanosec
 
 Turn it into a request to another service and all of that changes:
 
-- **It's slow.** Even within one data center, a request costs a fraction of a millisecond to several milliseconds. That's thousands of times slower than a function call. Ten of them in a row add up.
+- **It's slow.** Even within one data center, a request costs a fraction of a millisecond to several milliseconds. A function call takes a few billionths of a second, so the network call is tens of thousands of times slower, or more. Ten of them in a row add up.
 - **It can fail in new ways.** The other service is down, being deployed, or overloaded. The network drops the request.
 - **It can fail halfway.** The request reached inventory and stock was reserved, but the reply was lost. Did it work? You don't know. If you try again, you might reserve twice.
 - **It needs a timeout.** Without one, a service that hangs makes you hang, and then whoever called you hangs.

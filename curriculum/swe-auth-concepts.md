@@ -115,7 +115,7 @@ eyJhbGciOiJIUzI1NiJ9 . eyJzdWIiOiI0MiIsImV4cCI6MTc2MzU2MDkwMH0 . 3q5yc9...
 
 The first two pieces are just base64, a way of writing data as plain characters. **Anyone can decode them and read the contents.** Never put a secret in a token.
 
-The signature is what makes it trustworthy. It's made with HMAC, a hash of the contents mixed with the server's secret key. Change one character of the contents and the signature no longer matches. Without the key, nobody can make a new valid one.
+The signature is what makes it trustworthy. In the kind you'll build, it's made with HMAC, a hash of the contents mixed with the server's secret key. (Login providers usually sign with a private key instead and publish a public key for checking. Same idea, two keys.) Change one character of the contents and the signature no longer matches. Without the key, nobody can make a new valid one.
 
 ### The tradeoff
 

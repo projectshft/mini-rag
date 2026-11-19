@@ -113,7 +113,7 @@ Cutting well means:
 
 - **Cut features, not quality.** A smaller app that works, with tests, a README and a live link, beats a bigger one that half works. Nobody hiring you will count features. They'll click around and see if it breaks.
 - **Cut from the edges.** The core path, the one thing your person comes to do, stays. Settings pages, extra filters and a second kind of user are edges.
-- **Keep the requirements.** Real data, an agent with tools, and your new technology are what make it a capstone. Cut around them.
+- **Keep the requirements.** Real data you found, an agent doing real work with checks, your new technology, and an app that's deployed and tested are what make it a capstone. Cut around them.
 - **Write it down.** Move the cut item to the won't-do list in `DESIGN.md` with one line on why. In an interview, "I cut chat to ship the core on time, and here's how I'd add it" is a strong answer.
 
 A rule of thumb: if you're stuck on one feature for more than two sittings, decide that day whether to cut it, shrink it or ask for help. Don't let it quietly eat a week.

@@ -17,34 +17,22 @@ You'll deploy one app two ways and then decide, with numbers you measured, which
 1. **This part:** make the app ready, and deploy it to a serverless host.
 2. **Next part:** put it in a container, deploy it to a container host, roll back a bad release, measure both, and write the memo.
 
-Which app? You have two choices:
+You'll deploy the provided **notes app**: a small API with no database and no packages, so nothing gets in the way of the deploy itself. Everything you learn on it carries over to any app you deploy later, your capstone included.
 
-- **Your app from the auth project.** If it's a Node server, plain `node:http` or Express, you can bring it. It has to keep the shape the hidden tests expect, which is listed below.
-- **The provided notes app.** A small API with no database and no packages, so nothing gets in the way of the deploy. Choose it if your auth project is built differently, or if you'd like a clean base. You'll learn the same things.
-
-The shape, if you bring your own:
-
-| File | What it must do |
-| --- | --- |
-| `app.js` | Export one request handler. An Express app counts, because it is one |
-| `config.js` | Export `loadConfig(env)` and `REQUIRED_IN_PRODUCTION` |
-| `server.js` | Start the app as a server |
-| `api/index.js` | Export the same handler, for the serverless host |
-| `package.json` | Name and version |
-
-If your app needs Postgres, it needs a hosted database too. Most hosts link to a Postgres provider. Its connection string goes in `DATABASE_URL` in the host's settings, and never in code.
+Why not your app from the auth project? It's a good app, and it's built differently: its code lives in `src/`, `createApp` builds the app from a store instead of exporting one request handler, and it has no `/api/notes` route. The hidden tests for this project load the notes app's files by name and call its routes, so the auth app can't pass them without being rebuilt into this shape. Use the notes app for the graded work. If you'd like your auth app live too, deploy it afterwards as a stretch, using what you learn here. You'll need a fresh `AUTH_SECRET` in the host's settings, and you'll find out what happens to its in-memory sessions when the host stops a copy.
 
 ## Get the starter
 
 From the top of your `parsity-labs` folder:
 
 ```bash
+git switch -c deploy-ready
 curl -sL https://ai.parsity.io/labs/deploy.tar.gz | tar xz
-git add .
+git add deploy
 git commit -m "Add the deploy project"
 ```
 
-If you're bringing your own app, copy its files into `deploy/` now, alongside the starter's `api/`, `vercel.json`, `measure.js`, `public/` and `MEMO.md`.
+Your `main` branch refuses direct pushes now, from the lesson on checks on every pull request, so this whole project happens on branches. When this lesson says push, it means push your branch, open a pull request, and merge it once the checks are green. Once you connect Vercel later in this lesson, it deploys whatever lands on `main`.
 
 Run it and poke it:
 
@@ -82,7 +70,7 @@ Four things, each from the shipping lesson.
 - `port` comes from `PORT`, as a number, and is 3000 when `PORT` isn't set. A `PORT` that isn't a whole number throws an error that names `PORT`.
 - `adminToken` comes from `ADMIN_TOKEN`.
 - `REQUIRED_IN_PRODUCTION` lists the settings production can't run without. When `NODE_ENV` is `"production"` and one of them is missing or empty, `loadConfig` throws an error that names it. Never the value of anything.
-- When `NODE_ENV` isn't `"production"`, the app starts with nothing set, so a fresh download runs. You decide what a safe stand-in for the token is locally, and you explain it in your memo.
+- When `NODE_ENV` isn't `"production"`, the app starts with nothing set, so a fresh download runs. You decide what happens to the token locally when `ADMIN_TOKEN` isn't set, and you explain it in your memo. One rule: no token value is typed into the code, not even a harmless-looking local one. Anything typed into the code is a password everyone who can read the repository knows, and our hidden tests fail any string that looks like a token in your source files. Good choices are making a random token each time the app starts, which locks adding notes until you set one, or refusing every `POST` until `ADMIN_TOKEN` is set.
 
 `NODE_ENV` is a setting most hosts set to `"production"` for you. Check that yours does, or set it yourself.
 
@@ -155,7 +143,7 @@ If you're stuck on one piece for more than 30 minutes, write down what you expec
 
 Hosts change their screens often, so these steps say what to look for. When a label differs, look for the closest match, and check [Vercel's documentation](https://vercel.com/docs).
 
-1. Commit and push your `parsity-labs` repository.
+1. Merge your work into `main` through a pull request, so GitHub has it.
 2. Sign in to Vercel with your GitHub account and import the `parsity-labs` repository as a new project. Vercel has a plan for personal projects. Read its current limits on the pricing page, and set a spending limit if it offers one.
 3. Find the **root directory** setting and set it to `deploy`. Vercel only looks in that folder.
 4. For the framework, pick the option for no framework, usually called **Other**. There's no build step.
@@ -207,9 +195,9 @@ Find your project's logs in the Vercel dashboard. They're usually under a tab ca
 
 ## Preview deployments
 
-Make a branch, change the `name` in the `GET /` response, and push it. Vercel builds a preview deployment of the branch at its own address, while production stays as it was. Open it, check the change, then merge or delete the branch.
+Make a branch, change the `name` in the `GET /` response, push the branch and open a pull request. Vercel builds a preview deployment of the branch at its own address, while production stays as it was. Open it, check the change, then merge or delete the branch.
 
-Environment variables can be set separately for production and for previews. Look at which environments your `ADMIN_TOKEN` applies to and decide whether previews should share it. Say what you decided in your memo.
+Environment variables can be set separately for production and for previews. Look at which environments your `ADMIN_TOKEN` applies to and decide whether previews should share it. Vercel runs previews with `NODE_ENV` set to `"production"` too, so a preview with no `ADMIN_TOKEN` refuses to start: your fail-fast check again. Say what you decided in your memo.
 
 ## Hand it in
 
@@ -219,7 +207,7 @@ Add one line to the very top of `deploy/README.md` with your live address:
 Serverless: https://YOUR-APP.vercel.app
 ```
 
-Commit, push, and paste your `parsity-labs` link here.
+Merge it into `main` through a pull request, and paste your `parsity-labs` link here.
 
 ```submit
 assignment: deploy-1

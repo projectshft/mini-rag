@@ -29,6 +29,8 @@ Read the Milestone 2 section of the README now. It fixes the table and column na
 | `orders` | `id`, `customer_id`, `status`, `created_at` |
 | `order_items` | `order_id`, `product_id`, `qty`, `price_cents` |
 
+The hidden tests also insert rows straight into these tables with SQL, naming only some columns, so every `id` must be filled in by the database and `orders.created_at` needs a default of `now()`.
+
 Notice there's no `items` column on `orders`. An order with three products is one row in `orders` and three rows in `order_items`, each pointing back at the order. Columns in the database use `snake_case`. Fields in your JSON stay `camelCase`. The store translates between them.
 
 ## PGlite, and a real server if you want one
@@ -66,7 +68,7 @@ Add a section to `orders/PLAN.md` before your agent writes anything.
 
 **Draw the tables.** On paper or in text, every table, every column with its type, every primary key, and an arrow for every foreign key. Then answer:
 
-1. **Which constraints?** For every rule in the README's validation list, can the database enforce it too? Stock never below zero. `qty` at least 1. Email unique. Status only `placed` or `cancelled`. Every item points at a real order and a real product.
+1. **Which constraints?** For every rule in the README's validation list, can the database enforce it too? Stock never below zero. `qty` at least 1. Email unique. Status only `placed` or `cancelled`. Every order points at a real customer, and every item at a real order and a real product.
 2. **Which indexes?** List every query your store will run. For each one that finds rows by a column other than a primary key, name the index that serves it.
 3. **Where do idempotency keys live now?** They must survive a restart, so a JavaScript `Map` is out. What table, which columns, and what makes a key unique?
 4. **Customer totals.** Worked out with a query each time, or kept in a column and updated with every order and cancel? What does each cost?
@@ -98,7 +100,7 @@ A note on `CREATE TABLE IF NOT EXISTS` inside migration files: it makes a second
 
 ## Let the database say no
 
-Put every constraint in your first migration. A good test of your schema: try to break it from SQL directly. In a test, insert a product with `stock = -1`, an order item with `qty = 0`, two customers with the same email, an order item for order 999999. Each one should throw.
+Put every constraint in your first migration. A good test of your schema: try to break it from SQL directly. In a test, insert a product with `stock = -1`, an order item with `qty = 0`, two customers with the same email, an order for customer 999999, an order item for order 999999. Each one should throw.
 
 The hidden tests do exactly this, straight against your tables, with no app involved.
 
@@ -135,7 +137,7 @@ Then add tests for what's new:
 - Running `migrate` twice is safe.
 - A second app on the same database sees the first app's orders.
 - A retry with the same `Idempotency-Key` still returns the same order after a restart.
-- The database refuses negative stock, a zero `qty`, a duplicate email and an orphan order item.
+- The database refuses negative stock, a zero `qty`, a duplicate email, an order for a customer who doesn't exist and an orphan order item.
 
 You owe at least 12 passing tests in this part.
 

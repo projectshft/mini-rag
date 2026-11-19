@@ -1,6 +1,6 @@
 # Project: Deploy It Twice. A Container, a Rollback and a Memo
 
-> **In this lesson:** you put the same app in a container and deploy it to a host that keeps it running all the time. You'll learn how a host starts and stops your app, write a Dockerfile line by line, add a check that runs your tests on every pull request, ship a bad release on purpose and roll it back, and measure both deploys. Then you write the memo that says which one you'd choose. This is the second of two parts.
+> **In this lesson:** you put the same app in a container and deploy it to a host that keeps it running all the time. You'll learn how a host starts and stops your app, write a Dockerfile line by line, add this project to the checks that run on every pull request, ship a bad release on purpose and roll it back, and measure both deploys. Then you write the memo that says which one you'd choose. This is the second of two parts.
 
 ## Words you need first
 
@@ -177,37 +177,21 @@ No `.env`, no `node_modules`.
 
 ## Tests on every pull request
 
-You're about to let a host deploy every change to `main` automatically. Before you do, make sure nothing reaches `main` without the tests passing.
+You're about to let a container host deploy every change to `main` automatically, the same as Vercel does. Before you do, make sure nothing reaches `main` without this project's tests passing.
 
-Create `.github/workflows/test.yml` at the **top** of your `parsity-labs` repository, not inside `deploy`:
+You made `.github/workflows/test.yml` in the lesson on checks on every pull request. Add `deploy` to its folder list:
 
 ```yaml
-name: Tests
-
-on:
-  push:
-    branches: [main]
-  pull_request:
-
-jobs:
-  deploy-app:
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: deploy
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-      - run: node --test
+        folder: [toolkit/arrays, toolkit/structures, toolkit/runner, http-server, orders, auth, problems/frequency, deploy]
 ```
 
-It tells GitHub: on every push to `main` and every pull request, start a fresh machine, get the code, install Node 22, and run the tests in `deploy`. Push it and find the run under your repository's **Actions** tab. The lesson on automating checks explains every line, extends it to the whole repository, and makes `main` refuse changes that fail it.
+Your list will have your own folders in it. What matters is that `deploy` is there. Push it on a branch and open a pull request. A new check called `labs (deploy)` appears. Once it's green, add it to the required checks in your ruleset for `main`, and merge.
+
+If you skipped that lesson, go back and do it now. This project's hidden tests look for the workflow file at the top of your repository.
 
 ## Build it with your agent
 
-Plan it first, in your own words: the changes to `server.js`, the Dockerfile, `.dockerignore`, the workflow, and the tests you'll add. Then work through it with your agent one piece at a time, and read each diff.
+Plan it first, in your own words: the changes to `server.js`, the Dockerfile, `.dockerignore`, the workflow change, and the tests you'll add. Then work through it with your agent one piece at a time, and read each diff.
 
 Watch for these in what the agent writes:
 
@@ -239,7 +223,7 @@ Now try the notes experiment again. Add a note and list notes several times. Wit
 
 Do this on purpose now, so the first time isn't during a real outage.
 
-1. Change `version` in `package.json` to `1.1.0`, and make `GET /` throw an error. Commit and push to `main`. Both hosts deploy it.
+1. On a branch, change `version` in `package.json` to `1.1.0`, and make `GET /` throw an error. Open a pull request. The checks pass, unless one of your own tests covers `GET /`. If one does, it goes red and blocks the merge, which is the guard doing its job: write that down, then pick a break your tests don't catch instead. Green checks on a broken change is exactly what a real bad release looks like. Merge it, and both hosts deploy it.
 2. Check both: `/health` says `1.1.0`, and `/` answers 500. That's your outage.
 3. Roll back each host, and time it from the moment you decide to the moment `/health` says `1.0.0` again.
    - **Vercel:** find your list of deployments, choose the previous production deployment, and look for the option to roll back to it or promote it.
@@ -248,7 +232,7 @@ Do this on purpose now, so the first time isn't during a real outage.
 
 A rollback points the host at a build it already has. Nothing is rebuilt, which is why it's fast. But your `main` branch still holds the bad commit, and the next push deploys it again. Some hosts turn off automatic deploys after a rollback for exactly this reason, so read what yours says on screen.
 
-So finish the job in Git: undo the bad commit with `git revert`, which makes a new commit that reverses it, and push. The lesson on automating checks covers reverting properly. Check that both hosts end up healthy on the fixed code.
+So finish the job in Git, the way the lesson on checks on every pull request showed: revert the bad change on a new branch, open a pull request, and merge it once it's green. GitHub's **Revert** button on the merged pull request does the same. Check that both hosts end up healthy on the fixed code, and that `/health` says `1.0.0`. If your host turned off automatic deploys during the rollback, turn them back on.
 
 ## Measure both
 

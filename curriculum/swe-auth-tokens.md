@@ -131,7 +131,7 @@ Add a "Tokens" section to `PLAN.md` before the agent writes anything:
 ## Build it
 
 1. Turn on the milestone 2 tests: in `test/tokens.test.js`, change the `MILESTONE_2` line near the top to `const MILESTONE_2 = {};`. They fail.
-2. With your agent: a small module that signs and checks tokens, using `createHmac` and `timingSafeEqual`. Read it line by line against the order above.
+2. With your agent: a small module that signs and checks tokens, using `createHmac` and `timingSafeEqual` from Node's `crypto`. No token package: the attack suite watches for `timingSafeEqual`, so `jsonwebtoken` or `jose` fails it. Read the module line by line against the order above.
 3. `POST /token`, then accepting `Authorization: Bearer` on every route, next to the cookie.
 4. `POST /logout-all`.
 

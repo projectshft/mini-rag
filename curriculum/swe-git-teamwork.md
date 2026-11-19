@@ -89,10 +89,9 @@ You'll also hear about `git rebase`, which replays your commits on top of `main`
 
 ## Practice: resolve a real conflict
 
-Download the practice lab into your `parsity-labs` repository and build the practice repository. The script makes a separate repository, outside `parsity-labs`, so the two never mix:
+Download the practice lab into your `parsity-labs` repository and build the practice repository. The script makes a separate repository, outside `parsity-labs`, so the two never mix. From the top of your `parsity-labs` repository:
 
 ```bash
-cd parsity-labs
 curl -sL https://ai.parsity.io/labs/teamwork.tar.gz | tar xz
 node teamwork/setup.js
 ```
