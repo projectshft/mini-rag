@@ -3,6 +3,7 @@ import { lmsPrisma } from '@/lib/lms/prisma';
 import { getDays, getTracks } from '@/lib/lms/curriculum';
 import { readTracks } from '@/lib/lms/access';
 import { TrackPicker, accessLabel } from '@/components/lms/TrackPicker';
+import { ActionForm } from '@/components/lms/ActionForm';
 import {
 	litellmConfigured,
 	litellmProxyUrl,
@@ -96,11 +97,13 @@ export default async function AdminPage() {
 			</div>
 
 			{/* Invite */}
-			<form
+			<ActionForm
 				action={inviteStudent}
-				className='space-y-3 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm'
+				label='Send invite'
+				pendingLabel='Sending…'
+				className='flex flex-wrap items-center gap-2 rounded-2xl border border-zinc-200 bg-white p-4 shadow-sm'
+				buttonClassName='cursor-pointer rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700'
 			>
-				<div className='flex flex-wrap items-center gap-2'>
 				<input
 					type='email'
 					name='email'
@@ -108,25 +111,18 @@ export default async function AdminPage() {
 					placeholder='student@example.com'
 					className='min-w-64 flex-1 rounded-xl border border-zinc-200 bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-blue-500'
 				/>
-				<button
-					type='submit'
-					className='cursor-pointer rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-blue-700'
-				>
-					Send invite
-				</button>
-				</div>
-				<div className='flex flex-wrap items-center gap-x-3 gap-y-1.5'>
+				<div className='order-last flex basis-full flex-wrap items-center gap-x-3 gap-y-1.5'>
 					<span className='text-xs font-semibold uppercase tracking-wide text-zinc-400'>
 						Courses
 					</span>
 					<TrackPicker tracks={allTracks} />
 				</div>
-				<p className='text-xs text-zinc-400'>
+				<p className='order-last basis-full text-xs text-zinc-400'>
 					Leave everything unticked for full program access. Tick only Intro to Agentic
 					Engineering for a $47 student: they see that track alone and get the same starter
 					credit as a checkout buyer.
 				</p>
-			</form>
+			</ActionForm>
 
 			{/* Pending invitations */}
 			{pending.length > 0 && (
@@ -137,7 +133,9 @@ export default async function AdminPage() {
 					<ul className='mt-3 divide-y divide-zinc-100 overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm'>
 						{pending.map((inv) => (
 							<li
-								key={inv.id}
+								// Keyed by email, not id: "Save & resend" replaces the invitation
+								// (new id), and the row must survive so its result message shows.
+								key={inv.emailAddress}
 								className='flex items-center justify-between px-4 py-2.5 text-sm'
 							>
 								<span className='min-w-0 flex-1 truncate text-zinc-700'>
@@ -146,24 +144,25 @@ export default async function AdminPage() {
 										{accessLabel(readTracks(inv.publicMetadata ?? undefined), allTracks)}
 									</span>
 								</span>
-								<form
+								<ActionForm
 									action={resendInvitationWithTracks}
-									className='mx-4 flex items-center gap-2'
+									label='Save & resend'
+									pendingLabel='Resending…'
+									className='mx-4 flex max-w-md flex-wrap items-center justify-end gap-2'
+									buttonClassName='cursor-pointer rounded-lg border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600 hover:border-blue-400 hover:text-blue-700'
+									buttonTitle='Clerk invites cannot be edited, so this cancels the invite and emails a new one'
 								>
 									<input type='hidden' name='invitationId' value={inv.id} />
 									<input type='hidden' name='email' value={inv.emailAddress} />
 									<TrackPicker
+										// Remount on saved-state change so the boxes show what was saved
+										// (React resets the form after the action finishes).
+										key={JSON.stringify(readTracks(inv.publicMetadata ?? undefined))}
 										tracks={allTracks}
 										selected={readTracks(inv.publicMetadata ?? undefined)}
 										compact
 									/>
-									<button
-										className='cursor-pointer rounded-lg border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600 hover:border-blue-400 hover:text-blue-700'
-										title='Clerk invites cannot be edited, so this cancels the invite and emails a new one'
-									>
-										Save &amp; resend
-									</button>
-								</form>
+								</ActionForm>
 								<form action={revokeInvitation}>
 									<input type='hidden' name='invitationId' value={inv.id} />
 									<button className='cursor-pointer text-xs font-medium text-zinc-400 hover:text-red-500'>
@@ -409,17 +408,20 @@ export default async function AdminPage() {
 												</form>
 											</td>
 											<td className='whitespace-nowrap px-3 py-2'>
-												<form action={setStudentTracks} className='flex items-center gap-2'>
+												<ActionForm
+													action={setStudentTracks}
+													label='Save'
+													className='flex max-w-md flex-wrap items-center gap-2'
+													buttonClassName='cursor-pointer rounded-lg border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600 hover:border-blue-400 hover:text-blue-700'
+												>
 													<input type='hidden' name='userId' value={s.id} />
 													<TrackPicker
+														key={JSON.stringify(tracksByStudent.get(s.id) ?? null)}
 														tracks={allTracks}
 														selected={tracksByStudent.get(s.id) ?? null}
 														compact
 													/>
-													<button className='cursor-pointer rounded-lg border border-zinc-200 px-2 py-0.5 text-xs font-medium text-zinc-600 hover:border-blue-400 hover:text-blue-700'>
-														Save
-													</button>
-												</form>
+												</ActionForm>
 												<span className='mt-0.5 block text-[11px] text-zinc-400'>
 													{accessLabel(tracksByStudent.get(s.id) ?? null, allTracks)}
 												</span>
