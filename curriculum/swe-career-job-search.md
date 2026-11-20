@@ -1,6 +1,6 @@
 # Career: The Job Search
 
-> **In this lesson:** how to look for your first engineering job: an honest picture of the market, where the jobs actually are, how to write messages people answer, how referrals work, how to track everything so nothing falls through, and how to keep going through rejection. Your mentor checks your setup against a checklist.
+> **In this lesson:** how to look for your first engineering job: an honest picture of the market, the weekly schedule you'll keep from the start of your capstone until you're hired, where the jobs actually are, how to write messages people answer, how referrals work, how to track everything so nothing falls through, and how to keep going through rejection. Your mentor checks your setup against a checklist.
 
 ## Words you need first
 
@@ -16,11 +16,37 @@ Getting a first software engineering job is hard right now. There are fewer entr
 That's the truth, and you deserve to hear it plainly. Here's the rest of the truth:
 
 - **People are getting hired.** Companies still need engineers who can build, test and ship, and who can work with agents without being fooled by them. That's what you've practiced.
-- **Most applicants look the same.** A pile of tutorials and a to-do app. You have seven projects that passed hidden tests, a deployed capstone with an agent in it, and decision memos you can defend. That's different.
+- **Most applicants look the same.** A pile of tutorials and a to-do app. You have seven projects that passed hidden tests, a capstone with an agent in it, and decision memos you can defend. That's different.
 - **Your past career helps.** A company building software for clinics, warehouses, schools or sales teams wants someone who understands that world.
-- **It's a numbers game played with skill.** Most applications get no reply. That's not a verdict on you. You improve your odds by aiming better, getting referred, and getting better at each stage.
+- **It's a numbers game played with skill.** Mass applying works. Networking works. Doing both works best. Most applications get no reply, and that's not a verdict on you. You improve your odds by keeping at it, aiming better, getting referred, and getting better at each stage.
+- **Consistency beats everything else.** The people who get hired are mostly the ones who didn't stop. They picked a routine, changed what wasn't working, and kept going.
 
 No program can promise you a job, and this one doesn't. What we can do is make sure that when someone looks at your work and talks to you, they see an engineer. The rest is a search, and searches take persistence.
+
+## Your weekly schedule
+
+You don't wait until the capstone is finished to start looking. The search starts the week you start building it, and runs alongside it until you're hired. Searches take a while, so starting early means your capstone is done about when the interviews start coming.
+
+Every week:
+
+| What | How much | Where |
+| --- | --- | --- |
+| Apply to jobs | Two a day | LinkedIn and Wellfound, and company job pages you find through them |
+| Send messages | A few a week, three is a good number | People at companies you're interested in, people whose posts you've commented on, people from your past career |
+| Chat with a connection | One a week | A short video or phone call with someone you know or met through a message |
+| Post | One a week | LinkedIn, or X if that's where your people are |
+| Comment | A few most days | Posts by engineers, hiring managers and recruiters in your area |
+
+A few rules that make it work:
+
+- **Two applications a day, not twenty on Sunday.** Small and daily is easier to keep up, and you'll aim better. Miss a day and you don't owe four the next day. Just do two.
+- **Tailor them a little.** Read the post, change your resume summary to match it, and use their words where they're true for you.
+- **Messages give before they ask.** A real comment on something they built, a link that helps them, a question about their work. Never "can you look at my resume" to a stranger.
+- **The weekly chat is for learning, not asking for a job.** Ask how their team works and what made their last hire stand out. Referrals tend to follow good conversations, not requests.
+- **Write it all in your tracker.** Every application, message and chat gets a row.
+- **Put it in your capstone check-in.** One line each week: how many applications, messages and chats, and anything that came of them. Your mentor reads it.
+
+That's about an hour a day. Protect the rest of your time for building. A strong capstone is what makes all of this work.
 
 ## Where the jobs are
 
@@ -32,7 +58,7 @@ Cast a wide net, with most of your effort where your odds are best.
 - **Roles next to engineering.** Support engineer, solutions engineer, implementation engineer, QA or test automation, technical roles on internal tools. Many engineers started in one and moved over. Don't treat them as failure.
 - **Your current employer.** If you're employed, internal moves are often the easiest path. Talk to the engineering team.
 - **Contract and freelance work.** Real projects for real clients count as experience on your resume.
-- **Big job boards.** Use them to find companies and roles. Apply there too, but know that a cold application through a big board has the lowest reply rate of anything on this list.
+- **LinkedIn and Wellfound.** This is where your two a day go. LinkedIn has the most roles. Wellfound lists startups, where there are fewer applicants for each role. When a company looks good, check its own job page too, and apply there if you can. Cold applications have the lowest reply rate of anything on this list, which is why they come with messages and chats, not instead of them.
 
 Look past the title. "Junior" and "entry-level" are rare labels. Many roles that ask for "two years of experience" will talk to someone with strong projects. Apply if you meet most of what's listed and can show it.
 
@@ -45,7 +71,7 @@ A message that works:
 - **Is short.** Four or five sentences. People read on their phones.
 - **Is about them.** Say why you're writing to this person, specifically. A post they wrote, a feature they shipped, a shared background.
 - **Asks for something small.** A short chat, one piece of advice, or the name of the right person. Not "can you get me a job?"
-- **Makes it easy.** Offer a couple of times or say you'll fit around them. Link one thing, your capstone.
+- **Makes it easy.** Offer a couple of times or say you'll fit around them. Link one thing, your best project.
 
 Here's one:
 
@@ -106,7 +132,7 @@ Look at it every week and ask:
 - **Where do things stall?** No replies at all means your resume or your targeting needs work. Screens that don't go further means practice the screen. Late-stage losses mean practice interviews.
 - **What's overdue?** Do the follow-ups.
 
-Set a weekly goal you control. "Get a job" isn't in your control. "Send ten tailored applications, five outreach messages, and have two chats" is.
+Set a weekly goal you control. "Get a job" isn't in your control. Your weekly schedule is: two applications a day, three messages, one chat and one post.
 
 ```match
 {
@@ -141,7 +167,7 @@ Before your next mentor session, set up your search and send your mentor:
 - [ ] Your tracker, with at least fifteen rows, from at least three different sources.
 - [ ] A list of ten target companies, with one line each on why.
 - [ ] Two outreach messages you've sent, and what happened.
-- [ ] Your weekly goal, in numbers you control.
+- [ ] Your weekly schedule: two applications a day on LinkedIn and Wellfound, a few messages, one chat with a connection, one post. Bring last week's numbers.
 - [ ] The one kind of role you're aiming for first, and the one next to it you'd also take.
 
 Your mentor will look for a search that's aimed, not scattered, and help you adjust it.
@@ -150,9 +176,9 @@ Your mentor will look for a search that's aimed, not scattered, and help you adj
 [
   {
     "q": "You've sent fifty applications through big job boards and heard back from two. What's the best change?",
-    "options": ["Move time toward referrals and outreach, and check your resume uses the posts' keywords", "Send a hundred more the same way", "Stop applying until you've built another project", "Apply only to the biggest companies"],
+    "options": ["Keep the two a day, aim them better and check your resume uses the posts' keywords, and put more into messages and chats", "Send a hundred more the same way, all at once", "Stop applying until you've built another project", "Apply only to the biggest companies"],
     "answer": 0,
-    "explain": "Cold board applications have the lowest reply rate. Referrals and well-aimed outreach do far better, and a keyword check makes sure your applications show up."
+    "explain": "Applying still works, so the daily habit stays. Cold applications have the lowest reply rate, so aim them better and lean harder on messages and chats, where referrals come from. A keyword check makes sure your applications show up."
   },
   {
     "q": "Which outreach message is most likely to get a reply?",
@@ -175,7 +201,8 @@ Your mentor will look for a search that's aimed, not scattered, and help you adj
 - Put most of your effort where your odds are best: your network, companies in the world you came from, smaller companies and roles next to engineering.
 - Outreach that works is short, about the other person, and asks for something small.
 - Referrals are the best way in. Ask for advice and they often follow.
-- Track every opportunity, look for patterns each week, and set goals you control.
+- From the start of your capstone: two applications a day on LinkedIn and Wellfound, a few messages a week, one chat with a connection a week, one post a week.
+- Track every opportunity, look for patterns each week, and change what isn't working. Consistency is what gets people hired.
 
 ## Work with AI
 

@@ -23,6 +23,7 @@ Last updated 2026-11-19.
 | Start date | Any time. No cohorts |
 | Mentor sessions | Up to 12 one-on-one sessions with a working software engineer |
 | Career help | Career support and mock interviews. There is no career coach |
+| Job search routine | From the start of the capstone until hired: two applications a day on LinkedIn and Wellfound, a few messages a week, one chat with a connection a week, one post a week. Posting is for showing work to the right people, never for likes |
 | Live time | Weekly office hours and a monthly guest speaker |
 | Student costs | About $20 a month for a coding agent. Claude is recommended and any tool is allowed. $10 of API credit is included |
 | Languages | JavaScript and TypeScript for the projects. Interview problems in any language the student wants |

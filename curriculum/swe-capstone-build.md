@@ -76,7 +76,7 @@ One way to check a test is worth having, from the testing lessons: break the cod
 
 Once a week, while you're building, write a check-in. Add it to the top of a file called `CHECKINS.md` in your capstone repository, commit it, and push. Your mentor reads it.
 
-Keep it short and use the same five headings every time:
+Keep it short and use the same six headings every time. The last one is your job search, which runs alongside the build from this week on: two applications a day, a few messages, one chat with a connection and one post a week.
 
 ```markdown
 ## Week of 2026-12-07
@@ -93,12 +93,16 @@ office hours.
 Reason in DESIGN.md under Changes.
 
 **Next week:** Milestone 3: the landlord's view, and the two failing evals.
+
+**Job search:** 10 applications (6 LinkedIn, 4 Wellfound). 3 messages, 1 reply. Chat with
+a former coworker who's now at a logistics startup. Posted about the photo format bug.
 ```
 
 Why bother writing it down?
 
 - **It keeps you honest about pace.** Three check-ins in a row with the same "Next week" line is a signal no one can miss, including you.
 - **It's how you get help early.** A blocker written on Monday gets an answer. A blocker you sit on until it's urgent costs you a week.
+- **It keeps the search moving.** Building is more fun than applying, so the search is the first thing to slip. One line a week makes it visible to you and your mentor.
 - **It becomes your project story.** When an interviewer asks "what was the hardest part?", your check-ins have the answer, with dates.
 
 Skipped a week? Write the check-in anyway, saying so. A gap with an honest note is far better than a gap.

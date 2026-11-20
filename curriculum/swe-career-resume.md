@@ -27,7 +27,7 @@ In this order:
 
 1. **Name and links.** Name, city or "Remote", email, LinkedIn, GitHub, and a portfolio link if you have one. No full street address.
 2. **One-line summary.** Optional. If you use one, make it specific: "Software engineer who builds full-stack apps with AI agents. Previously six years running operations for a logistics company." Skip phrases like "passionate self-starter".
-3. **Projects.** For a career changer, this is the main event, so it goes above experience. Your capstone first, then two or three of the strongest program projects.
+3. **Projects.** For a career changer, this is the main event, so it goes above experience. Your capstone first, then two or three of the strongest program projects. You'll start applying while you're still building the capstone, so list it as in progress with a link to the repository, and add the live link the day it ships.
 4. **Experience.** Your previous jobs. Yes, even if they weren't in tech. More on this below.
 5. **Skills.** A short, honest list grouped by kind: languages, front end, back end, data, tools.
 6. **Education.** Degrees, and the program. Short.
@@ -69,7 +69,7 @@ Don't invent numbers. If you didn't measure it, don't put a figure on it. An eng
 
 ### Your capstone
 
-Give your capstone three or four bullets and a one-line description with the live link. Cover:
+Give your capstone three or four bullets and a one-line description, with the repository link while you're building and the live link once it ships. Write the bullets about what you've planned and built so far, and update them as it grows. Cover:
 
 - What it does and for whom, in plain words.
 - The agent: what it does, its tools, and how you made it safe and measurable.
@@ -110,7 +110,7 @@ Most applications go through a tracking system first. It doesn't reject you on i
   "ask": "Honestly, it reads like a bootcamp grad. What makes you different from the hundred others I see a week?",
   "note": "Pick what you'd change based on that.",
   "options": [
-    { "text": "Rewrite the project bullets around the hard part and the proof, put my capstone first with its live link, and move my operations experience up with bullets about the systems I built there.", "verdict": "best", "feedback": "You answered the real question: what's specific to you. Hard problems with proof, a live product, and a past career that already shows engineering instincts are things the hundred others don't all have." },
+    { "text": "Rewrite the project bullets around the hard part and the proof, put my capstone first with its link, and move my operations experience up with bullets about the systems I built there.", "verdict": "best", "feedback": "You answered the real question: what's specific to you. Hard problems with proof, a live product, and a past career that already shows engineering instincts are things the hundred others don't all have." },
     { "text": "Add more technologies to the skills section so I match more searches.", "verdict": "weak", "feedback": "A longer list of tools makes you look more like everyone else, and every one is something an engineer can quiz you on." },
     { "text": "Take the program off so it doesn't look like a bootcamp.", "verdict": "weak", "feedback": "Hiding your training makes the gap in your history harder to explain, and the projects are what make the impression." },
     { "text": "Add a summary saying I'm a fast learner who's passionate about technology.", "verdict": "ok", "feedback": "A summary can help, but those words are on every resume in the pile. Make it specific: what you build and what you did before." }
@@ -125,7 +125,7 @@ Write your resume, export it as a PDF, and send it to your mentor before your ne
 
 - [ ] One page, one column, plain layout, text that copies cleanly out of the PDF.
 - [ ] Name, email, LinkedIn and GitHub at the top. All links work.
-- [ ] Capstone first under Projects, with a live link, a one-line description and three or four bullets.
+- [ ] Capstone first under Projects, with a one-line description and three or four bullets. Marked in progress with a repository link until it ships, then the live link.
 - [ ] Two or three more projects, each with at least one bullet that names a hard part and how you know it worked.
 - [ ] Every bullet starts with a verb. No "responsible for", no "helped with" unless you then say what you did.
 - [ ] No buzzwords: no "leveraged", "cutting-edge", "passionate", "revolutionize", "synergy".

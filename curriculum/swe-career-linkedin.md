@@ -1,6 +1,6 @@
 # Career: Your LinkedIn Profile
 
-> **In this lesson:** how to write a LinkedIn profile that tells a hiring manager, in the few seconds they give it, what you build and why they should keep reading. You'll write a headline and an about section, list your projects, and turn each finished project into a short post. Your mentor goes through it with you against a checklist.
+> **In this lesson:** how to write a LinkedIn profile that tells a hiring manager, in the few seconds they give it, what you build and why they should keep reading. You'll write a headline and an about section, list your projects, and start posting once a week from five templates. You'll also learn why likes don't matter, and what does. Your mentor goes through it with you against a checklist.
 
 ## Words you need first
 
@@ -114,12 +114,195 @@ Rules for every post:
 }
 ```
 
+## Why you post, and why likes don't matter
+
+Getting famous on LinkedIn or X is a silly goal if what you want is a job. You don't need a big following. You need the right people to see real work.
+
+So the goal of every post is to **show technical depth and show your work.** Not to collect likes, and not to get sympathy for the hundredth rejection.
+
+Three reasons to post anyway, even if you hate it:
+
+- **Recruiters filter for it.** Recruiters search LinkedIn with a paid tool, and one of its filters shows only people who posted recently. Very few people post. One post a week puts you near the top of that list.
+- **It makes you findable for the right reason.** When a hiring manager looks you up after seeing your resume, a few posts about real bugs and real decisions do more than any headline.
+- **It's how you meet people.** A post gives someone a reason to comment, and a comment gives you a reason to start a conversation.
+
+What doesn't work:
+
+- Posts that romanticize rejection ("Just bombed my 101st interview. Who can refer me?").
+- Messages to strangers asking them to look at your resume or refer you.
+- Long blocks of text full of big words. Write the way you talk, in short lines.
+
+What does work:
+
+- Posts that share what you're learning, including what you're stuck on.
+- Comments on other people's posts that add something. Comment more than you post.
+- Messages where you give first: a link that helps them, a real compliment on something they built, a question about their work.
+
+Write what you actually think. People can tell when you're faking it.
+
+## Five templates to start from
+
+The hardest part is starting. These templates take the blank page away. Fill in the parts in double curly braces with something true from your own work. Change the wording until it sounds like you.
+
+**1. "So I thought..."** Use it when something surprised you.
+
+```text
+So I thought {{technology}} was supposed to {{popular opinion}} but {{unexpected experience}}.
+
+Here are my 3 takeaways so far:
+1. {{thing}}
+2. {{thing}}
+3. {{thing}}
+
+Curious, what's been your experience with {{technology}}?
+```
+
+> So I thought wrapping my order code in a transaction would stop two customers buying the last item. It didn't. My test still sold it twice.
+>
+> Here are my 3 takeaways so far:
+> 1. A transaction doesn't mean "nobody else can touch this row"
+> 2. One UPDATE with a condition in it fixed what twenty lines of checks couldn't
+> 3. I only found it because a test fired two orders at the same moment
+>
+> Curious, what's been your experience with race conditions?
+
+Put a link to your repository in the first comment, not the post.
+
+**2. "The hardest part nobody talks about."** Use it for the unglamorous part of the work.
+
+```text
+The hardest part about {{common thing}} that no one talks about?
+
+{{Unexpected thing}}.
+
+So now, instead of {{normal activity}}, I'm:
+- {{unexpected thing}}
+- {{unexpected thing}}
+- {{unexpected thing}}
+
+{{A question about one of those things}}
+```
+
+> The hardest part about building a web app that no one talks about?
+>
+> Deploying it.
+>
+> So now, instead of writing code, I'm:
+> - Reading logs to find out why it works on my laptop and not on the server
+> - Making sure my environment variables are actually set
+> - Clicking through the whole site by hand before every release
+>
+> What's the best way you've found to check a site before you ship it?
+
+**3. "I've done this a few times now."** Use it once you have a number of something.
+
+```text
+{{A specific number of times you've done a thing}}.
+
+Here are my {{x}} takeaways:
+1. {{observation}}
+2. {{observation}}
+3. {{unexpected or contrary observation}}
+
+Hope that's helpful.
+```
+
+> Just did my fifth technical interview since I started looking.
+>
+> Here are my 3 takeaways:
+> 1. Closures and promises come up a lot
+> 2. Coffee right before an interview is a bad idea
+> 3. Nobody has asked to see my portfolio. Every one of them asked about a decision I made
+>
+> Hope that's helpful.
+
+**4. "What no one tells you."** Use it when you have opinions after doing something for real.
+
+```text
+What no one tells you about {{thing}}:
+- {{observation}}
+- {{observation}}
+- {{observation}}
+- {{contrary observation}}
+
+What advice would you give someone just starting {{this thing}}?
+```
+
+> What no one tells you about writing tests:
+> - You don't have to write them first every time
+> - The hardest part is setting them up
+> - Once you've tested a few common cases, most other tests can reuse that setup
+> - You don't need 100% coverage. I had 100% and my tests still missed a bug
+>
+> What advice would you give someone just starting to write tests?
+
+**5. "Still wrestling with it."** Use it when you're stuck. These often get the most helpful replies.
+
+```text
+Wrestled with {{technology}} for the last {{amount of time}} trying to {{goal}}.
+
+If you were expecting this to be a story of my triumph... well, it hasn't happened.
+
+Yet.
+
+I still have a few things to figure out:
+- {{thing}}
+- {{thing}}
+- {{thing}}
+
+Yeah, it's been frustrating, and also a lot of fun. I'll report back when I've got them.
+```
+
+> Wrestled with deploying my API to a container host for the last two evenings.
+>
+> If you were expecting this to be a story of my triumph... well, it hasn't happened.
+>
+> Yet.
+>
+> I still have a few things to figure out:
+> - Why the health check passes locally and fails on the host
+> - Where my environment variables actually go
+> - How to roll back without losing the data
+>
+> Yeah, it's been frustrating, and also a lot of fun. I'll report back when I've got them.
+
+## What to write about
+
+You'll never run out, because the program hands you something worth posting every week. Some prompts, roughly in the order you'll hit them:
+
+- A bug that took you an evening, and the one-line fix.
+- A hidden test that caught you, and what kind of case it was.
+- Something your coding agent got confidently wrong, and how you caught it.
+- A decision from one of your memos and what it cost. "Sessions or tokens? I picked sessions. Here's why."
+- A design you sketched for 100 times the traffic, with the drawing.
+- An interview problem pattern you finally understood, explained in three lines.
+- Your deployment: what broke, what you checked, how you rolled back.
+- Your previous career meeting your new one. "Eight years in warehouses taught me more about queues than any tutorial."
+- A short screen recording of something you built working.
+- An honest question. "How do your teams decide what a new engineer works on?"
+
+**On X,** the same rules apply. Posts are shorter, so lead with the one surprising thing and put the details in a short thread or a reply. Build in public: a screenshot and two lines about what you're working on today is enough. Follow and reply to engineers who work on what you want to work on.
+
+Don't post the same thing everywhere word for word. Pick one place to post every week, LinkedIn for most people, and treat the other as optional.
+
+## Your weekly rhythm
+
+From now until you're hired:
+
+- **One post a week.** Pick a day and keep it. Use a template if you're stuck.
+- **A few comments most days.** On posts by engineers, hiring managers and recruiters in the areas you want to work in. Say something real: agree with a reason, disagree politely, or ask a question.
+- **Grow toward 500 connections.** Under 500, LinkedIn shows you to fewer people. Connect with people you meet, people from the program, people whose posts you comment on, and people from your past career. A short note helps.
+- **Curate your feed.** Follow engineers, hiring managers and recruiters. Mute people who only post about how to go viral.
+
+That's a small habit, and it compounds.
+
 ## Your turn
 
 1. Create `career/linkedin.md` in your `parsity-labs` repository. Draft everything there first, so you and your mentor can see changes over time.
 2. Write your headline, about section, and an entry for every project you've finished.
 3. Write a post for each finished project, from its story.
-4. Update your real profile and publish the posts when you're happy with them. Publishing is your call. Drafting them isn't optional.
+4. Draft four weekly posts from the templates, about things that actually happened in your projects.
+5. Update your real profile, publish your first post, and pick your posting day. From here on it's one post a week. If posting publicly isn't possible for you, for example because of your current job, tell your mentor and work out an alternative together.
 
 If you're stuck on the headline for more than 20 minutes, write three bad versions on purpose, then pick the least bad and fix one thing in it.
 
@@ -132,6 +315,9 @@ Commit `career/linkedin.md` and bring your profile to your next mentor session. 
 - [ ] Every project names a hard part and a decision, and links to a repository with a readable README.
 - [ ] Your previous career is there, and connected to the new one.
 - [ ] Each finished project has a post that's true, specific and free of hype.
+- [ ] Four drafted weekly posts, each about something real, and the first one published.
+- [ ] A posting day, and a plan for a few comments most days.
+- [ ] A plan to reach 500 connections.
 - [ ] Nothing claims more than you did, and you can talk about every line for two minutes.
 - [ ] No secrets, keys or private data anywhere.
 
@@ -165,6 +351,8 @@ Commit `career/linkedin.md` and bring your profile to your next mentor session. 
 - Your previous career is an asset. Connect it to the new one.
 - Every project gets a hard part, a decision and a readable repository.
 - Each finished project gets a short, true, specific post built from its story.
+- Post to show your work to the right people, not to collect likes. One post a week, and comment more than you post.
+- When you're stuck for something to say, start from a template and fill it with something true.
 
 ## Work with AI
 
