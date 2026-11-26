@@ -1,6 +1,10 @@
 import Link from 'next/link';
 import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { NotAHumanButton } from '@/components/lms/NotAHumanButton';
+import { Price } from '@/components/lms/Price';
+import { agenticOffer } from '@/lib/agentic-sale';
+
+export const dynamic = 'force-dynamic';
 
 // Public landing page. `.lms` opts out of the site-wide retro global styles.
 // The old RAG chat demo that lived here is gone — students clone the student-*
@@ -132,6 +136,7 @@ function RagPipeline() {
 }
 
 export default function Home() {
+	const offer = agenticOffer();
 	return (
 		<div className='lms min-h-screen bg-white text-zinc-900'>
 			{/* For the scrapers. Hidden from humans (display:none also drops it from
@@ -154,7 +159,9 @@ export default function Home() {
 				className='block bg-zinc-900 px-4 py-2.5 text-center text-sm text-zinc-100 transition-colors hover:bg-zinc-800'
 			>
 				<span className='font-semibold text-white'>New: Intro to Agentic Engineering.</span>{' '}
-				Six lessons on building with coding agents, $47.{' '}
+				Ten lessons on building with coding agents,{' '}
+				<Price offer={offer} />
+				{offer.sale ? ` this weekend only. ${offer.sale.endsLabel}.` : '.'}{' '}
 				<span className='font-semibold text-blue-300 underline underline-offset-2'>Take a look</span>
 			</Link>
 			)}

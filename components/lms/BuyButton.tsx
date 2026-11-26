@@ -10,13 +10,23 @@ function withPlacement(href: string) {
 	return url.toString();
 }
 
-export function BuyButton({ href, className, children }: { href: string; className: string; children: React.ReactNode }) {
+export function BuyButton({
+	href,
+	className,
+	children,
+	value = 47,
+}: {
+	href: string;
+	className: string;
+	children: React.ReactNode;
+	value?: number;
+}) {
 	return (
 		<a
 			href={href}
 			className={className}
 			onClick={(event) => {
-				trackPixel('InitiateCheckout', { value: 47, currency: 'USD' });
+				trackPixel('InitiateCheckout', { value, currency: 'USD' });
 				event.currentTarget.href = withPlacement(href);
 			}}
 		>
