@@ -2,7 +2,7 @@ import { clerkClient } from '@clerk/nextjs/server';
 import { AGENTIC_TRACK, agenticCreditUsd, readTracks } from './access';
 
 export type ClaimResult =
-	| { kind: 'invited'; email: string }
+	| { kind: 'invited'; email: string; amountUsd: number }
 	| { kind: 'pending'; email: string }
 	| { kind: 'existing'; email: string }
 	| { kind: 'error'; reason: 'missing' | 'invalid' | 'unpaid' | 'wrong-product' | 'config' | 'failed' };
@@ -10,6 +10,7 @@ export type ClaimResult =
 type CheckoutSession = {
 	payment_status?: string;
 	payment_link?: string | null;
+	amount_total?: number | null;
 	customer_details?: { email?: string | null } | null;
 };
 
@@ -68,8 +69,12 @@ export async function claimPurchase(sessionId: string | undefined): Promise<Clai
 		if (user) {
 			const tracks = readTracks(user.publicMetadata);
 			if (tracks && !tracks.includes(AGENTIC_TRACK)) {
+				const credit = Number(user.publicMetadata?.creditUsd);
 				await client.users.updateUserMetadata(user.id, {
-					publicMetadata: { tracks: [...tracks, AGENTIC_TRACK] },
+					publicMetadata: {
+						tracks: [...tracks, AGENTIC_TRACK],
+						...(Number.isFinite(credit) && credit > 0 ? {} : { creditUsd: agenticCreditUsd() }),
+					},
 				});
 			}
 			return { kind: 'existing', email };
@@ -95,7 +100,8 @@ export async function claimPurchase(sessionId: string | undefined): Promise<Clai
 			notify: true,
 			ignoreExisting: true,
 		});
-		return { kind: 'invited', email };
+		const amountUsd = typeof session.amount_total === 'number' ? session.amount_total / 100 : 0;
+		return { kind: 'invited', email, amountUsd };
 	} catch (e) {
 		const codes = clerkErrorCodes(e);
 		if (codes.includes('duplicate_record')) return { kind: 'pending', email };
