@@ -1,15 +1,24 @@
 import type { Metadata } from 'next';
 import { BuyButton } from '@/components/lms/BuyButton';
 import { MetaPixel } from '@/components/lms/MetaPixel';
+import { Price } from '@/components/lms/Price';
+import { SaleCountdown } from '@/components/lms/SaleCountdown';
+import { agenticOffer, formatUsd } from '@/lib/agentic-sale';
 
-const BUY_URL = 'https://buy.stripe.com/eVq9ATgrv0Mkbd75Lx4wM0y';
+export const dynamic = 'force-dynamic';
+
 const ON_SALE = Boolean(process.env.STRIPE_SECRET_KEY && process.env.AGENTIC_PAYMENT_LINK_ID);
 
-export const metadata: Metadata = {
-	title: 'Intro to Agentic Engineering | Parsity',
-	description:
-		'Project-based training on building software with coding agents. Trust the code, verify the claims, and build a software factory. Monthly office hours included. $47.',
-};
+export function generateMetadata(): Metadata {
+	const offer = agenticOffer();
+	const price = offer.onSale
+		? `${formatUsd(offer.priceUsd)} this weekend (normally ${formatUsd(offer.regularPriceUsd)}).`
+		: `${formatUsd(offer.priceUsd)}.`;
+	return {
+		title: 'Intro to Agentic Engineering | Parsity',
+		description: `Project-based training on building software with coding agents. Trust the code, verify the claims, and build a software factory. Monthly office hours included. ${price}`,
+	};
+}
 
 const HABITS = [
 	{
@@ -81,7 +90,7 @@ const FAQ = [
 	},
 	{
 		q: 'What is not included?',
-		a: 'No Slack, no 1:1 mentor and no code review. If you want those, that is the full AI Engineering program, and the $47 comes off its tuition.',
+		a: 'No Slack, no 1:1 mentor and no code review. If you want those, that is the full AI Engineering program, and what you paid for this course comes off its tuition.',
 	},
 	{
 		q: 'Are there videos?',
@@ -90,9 +99,18 @@ const FAQ = [
 ];
 
 export default function AgenticEngineeringPage() {
+	const now = Date.now();
+	const offer = agenticOffer(now);
+	const showSale = ON_SALE && offer.sale !== null;
 	return (
 		<main className='lms min-h-screen bg-white text-zinc-900'>
 			<MetaPixel />
+			{showSale && offer.sale && (
+				<SaleCountdown endsAt={offer.sale.endsAt} initialNow={now}>
+					<span className='font-semibold text-white'>{offer.sale.name}:</span>{' '}
+					{formatUsd(offer.priceUsd)} (normally {formatUsd(offer.regularPriceUsd)}). {offer.sale.endsLabel}.
+				</SaleCountdown>
+			)}
 			<section className='mx-auto max-w-3xl px-4 pb-14 pt-16 sm:pt-24'>
 				<p className='text-xs font-semibold uppercase tracking-wider text-blue-600'>
 					Project-based, from Parsity
@@ -108,10 +126,11 @@ export default function AgenticEngineeringPage() {
 				<div className='mt-8 flex flex-wrap items-center gap-4'>
 					{ON_SALE ? (
 						<BuyButton
-							href={BUY_URL}
+							href={offer.buyUrl}
+							value={offer.priceUsd}
 							className='rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-blue-700'
 						>
-							Start building for $47
+							Start building for <Price offer={offer} strikeClassName='text-blue-200' />
 						</BuyButton>
 					) : (
 						<span className='inline-block rounded-xl bg-zinc-100 px-6 py-3 text-base font-semibold text-zinc-500'>
@@ -120,6 +139,12 @@ export default function AgenticEngineeringPage() {
 					)}
 					<span className='text-sm text-zinc-500'>
 						Includes the practice codebase, $5 in API credits and monthly office hours
+						{showSale && offer.sale && (
+							<>
+								. Code <span className='font-mono font-semibold text-zinc-700'>{offer.sale.code}</span>{' '}
+								is applied at checkout.
+							</>
+						)}
 					</span>
 				</div>
 			</section>
@@ -213,15 +238,16 @@ export default function AgenticEngineeringPage() {
 				<div className='mx-auto max-w-3xl px-4 py-16 text-center'>
 					<h2 className='text-2xl font-bold tracking-tight'>Stop typing the code</h2>
 					<p className='mx-auto mt-3 max-w-xl text-zinc-600'>
-						$47 for the lessons, the practice codebase, $5 in API credits, monthly office hours and
-						a guest speaker session.
+						<Price offer={offer} /> for the lessons, the practice codebase, $5 in API credits,
+						monthly office hours and a guest speaker session.
 					</p>
 					{ON_SALE ? (
 						<BuyButton
-							href={BUY_URL}
+							href={offer.buyUrl}
+							value={offer.priceUsd}
 							className='mt-6 inline-block rounded-xl bg-blue-600 px-6 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-blue-700'
 						>
-							Start building for $47
+							Start building for <Price offer={offer} strikeClassName='text-blue-200' />
 						</BuyButton>
 					) : (
 						<span className='inline-block rounded-xl bg-zinc-100 px-6 py-3 text-base font-semibold text-zinc-500'>
