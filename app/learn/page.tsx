@@ -16,7 +16,7 @@ import {
 import { ensureCreditKey, getAccess, isTrackAllowed } from '@/lib/lms/access';
 import { litellmProxyUrl } from '@/lib/lms/litellm';
 import { lmsPrisma } from '@/lib/lms/prisma';
-import { CreditKeyCard } from '@/components/lms/CreditKeyCard';
+import { CreditKeyCard, CreditKeyPending } from '@/components/lms/CreditKeyCard';
 
 export default async function LearnPage({
 	searchParams,
@@ -107,12 +107,16 @@ export default async function LearnPage({
 				<p className='mt-3 max-w-2xl text-sm leading-6 text-zinc-600'>{blurb}</p>
 			)}
 
-			{creditStudent?.apiKey && (
+			{creditStudent?.apiKey ? (
 				<CreditKeyCard
 					apiKey={creditStudent.apiKey}
 					budget={creditStudent.apiKeyBudget ?? access.creditUsd ?? 0}
 					baseUrl={litellmProxyUrl()}
 				/>
+			) : (
+				restricted &&
+				access.creditUsd !== null &&
+				!access.creditKeyMinted && <CreditKeyPending budget={access.creditUsd} />
 			)}
 
 			<div className='mt-5 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm'>

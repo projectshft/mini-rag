@@ -109,13 +109,22 @@ yarn dev
   `creditUsd`, `source: "agentic-47"`. Reloading is safe: a pending invite
   shows "check your inbox", an existing account shows "sign in". An existing
   track-restricted user gets the track appended; full-access users are never
-  touched. No webhook — if a buyer closes the tab before the redirect, invite
+  touched. The claim does not check the amount, so a promo-code purchase
+  (e.g. the $19.99 `AGENTIC20` weekend sale) claims the same way. An existing
+  track-restricted user who buys also gets `creditUsd` if they had none, so
+  they get the credit key too. No webhook — if a buyer closes the tab before the redirect, invite
   them from `/admin` with only Intro to Agentic Engineering ticked.
 - **Credit key**: on a restricted buyer's first `/learn` visit (LiteLLM
   configured, no key yet) a key with budget `creditUsd` is minted and shown
   on `/learn` with the proxy URL. Clerk `privateMetadata.creditKeyMintedAt`
   records it, so revoking the key in `/admin` does not trigger a re-mint.
-  Full-access students never see a key on `/learn`.
+  Full-access students never see a key on `/learn`. Until the key exists
+  (LiteLLM env vars missing, or the mint failed), a restricted buyer sees a
+  "credits coming soon, email assistant@parsity.io" card in its place.
+- **Sales**: `lib/agentic-sale.ts` holds the $47 price, the payment link and
+  the current sale (price, promo code, end time). `/agentic-engineering` and
+  the `/` banner render per request and drop the sale on their own once the
+  end time passes.
 
 ## Graded submissions
 - **What it is**: a lesson with a ` ```submit ` block shows a "Hand it in" box.
